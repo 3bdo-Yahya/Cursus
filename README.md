@@ -2,7 +2,7 @@
 
 **Your AI-Powered Academic Advisor & Smart Graduation Planner**
 
-> DEPI Graduation Project — Full-Stack Web Development (.NET & React)
+> DEPI Graduation Project — Full-Stack Web Development (.NET)
 
 ---
 
@@ -45,10 +45,11 @@ The platform models standard credit-hour system rules:
 
 | Layer          | Technology                                  |
 |----------------|---------------------------------------------|
-| Frontend       | React, React Flow (graph visualization)     |
-| Backend        | ASP.NET Core 8 Web API, C#                  |
+| Application    | ASP.NET Core 8 MVC, C#, Razor Views        |
+| Styling        | Bootstrap 5 + custom CSS                    |
+| Graph Viz      | Cytoscape.js (interactive graphs)           |
 | Database       | SQL Server + Entity Framework Core          |
-| Auth           | ASP.NET Identity + JWT                      |
+| Auth           | ASP.NET Identity (cookie-based)             |
 | AI             | OpenAI API (GPT-3.5-turbo)                  |
 | Deployment     | Free-tier cloud hosting                     |
 
@@ -83,7 +84,8 @@ Cursus/
 | Document | Description |
 |----------|-------------|
 | [Project Proposal](docs/Cursus_Project_Proposal.md) | Original project idea and motivation |
-| [Project Plan](docs/Project_Plan.md) | Full SDLC Stage 1 document: requirements, features, architecture, timeline, and team structure |
+| [Project Plan](docs/Project_Plan.md) | SDLC Stage 1: scope, features, architecture, timeline, and team structure |
+| [SRS](docs/SRS.md) | SDLC Stage 2: detailed functional requirements, data dictionary, and module specifications |
 
 ---
 
@@ -91,10 +93,10 @@ Cursus/
 
 | Role                       | Responsibilities                                        |
 |----------------------------|---------------------------------------------------------|
-| Team Lead + Backend Lead   | Architecture, prerequisite engine, impact analyzer      |
-| Backend Developer          | Auth, student module, admin APIs, GPA services          |
-| Frontend Lead              | Dashboard, course map visualization, impact animation   |
-| Frontend Developer         | Progress tracker, GPA simulator, admin panel, chat UI   |
+| Team Lead + Architecture   | Architecture, prerequisite engine, impact analyzer      |
+| Backend Developer          | Auth, admin module, GPA calculation services            |
+| Full-Stack Developer       | Dashboard, course map (Cytoscape.js), impact animation  |
+| Full-Stack Developer       | Progress tracker, GPA simulator, admin panel, chat UI   |
 | Data & AI Integration      | Data seeding, OpenAI integration, prompt engineering    |
 | QA & DevOps                | Testing, deployment, documentation, demo preparation    |
 
@@ -115,7 +117,8 @@ Cursus/
 ## Status
 
 📋 **Stage 1: Planning & Requirements Analysis** — Complete
+📋 **Stage 2: Software Requirements Specification** — Complete
 
 ---
 
-*DEPI Graduation Project 2026 · Full-Stack Web Development (.NET & React)*
+*DEPI Graduation Project 2026 · Full-Stack Web Development (.NET)*

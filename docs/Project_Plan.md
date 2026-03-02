@@ -5,10 +5,10 @@
 | Field              | Value                                                 |
 |--------------------|-------------------------------------------------------|
 | **Project Name**   | Cursus *(working title — name under review)*          |
-| **Program**        | DEPI — Full-Stack Web Development (.NET & React)      |
+| **Program**        | DEPI — Full-Stack Web Development (.NET)              |
 | **Team Size**      | 6 Members                                             |
 | **Duration**       | 12 Weeks (March – June 2026)                          |
-| **Version**        | 1.0                                                   |
+| **Version**        | 1.1 *(Updated: MVC architecture per instructor)*      |
 | **Date**           | March 2, 2026                                         |
 | **Document Owner** | Team Lead                                             |
 
@@ -63,7 +63,7 @@ The platform's core principle: **every academic decision has consequences that r
 
 | ID    | Objective                                                                                    |
 |-------|----------------------------------------------------------------------------------------------|
-| OBJ-1 | Build a fully functional web platform demonstrating mastery of .NET Core, React, and SQL Server |
+| OBJ-1 | Build a fully functional web platform demonstrating mastery of ASP.NET Core MVC, EF Core, and SQL Server |
 | OBJ-2 | Implement a prerequisite dependency engine that accurately models course relationships        |
 | OBJ-3 | Deliver a fail/drop impact analyzer that performs forward cascade analysis in real-time       |
 | OBJ-4 | Provide a visual, interactive course map showing the student's full degree status             |
@@ -131,7 +131,7 @@ The platform's core principle: **every academic decision has consequences that r
 | ID     | Requirement                                                                       | Priority |
 |--------|-----------------------------------------------------------------------------------|----------|
 | F1-01  | Students can register with email and password                                     | Must     |
-| F1-02  | Users can log in and receive a JWT access token + refresh token                   | Must     |
+| F1-02  | Users can log in via ASP.NET Identity (cookie-based authentication)               | Must     |
 | F1-03  | Role-based access control enforces Student vs Admin permissions                   | Must     |
 | F1-04  | Student profile stores: department, academic year, current semester               | Must     |
 | F1-05  | Admin can create and manage student accounts                                      | Must     |
@@ -148,7 +148,7 @@ The platform's core principle: **every academic decision has consequences that r
 |--------|-----------------------------------------------------------------------------------|----------|
 | F2-01  | Admin can create, edit, and deactivate courses (code, name, credits, type, semester availability) | Must |
 | F2-02  | Admin can define prerequisite relationships between courses                       | Must     |
-| F2-03  | System displays all courses as an interactive directed graph (React Flow)         | Must     |
+| F2-03  | System displays all courses as an interactive directed graph (Cytoscape.js)       | Must     |
 | F2-04  | Courses are color-coded by student status: completed (green), in-progress (blue), remaining (gray), blocked (dark/locked) | Must |
 | F2-05  | Student can click any course node to see details (credits, prerequisites, status) | Must     |
 | F2-06  | Graph layout automatically organizes courses by semester/year level               | Should   |
@@ -275,11 +275,11 @@ The platform's core principle: **every academic decision has consequences that r
 | Category          | Requirement                                                          |
 |-------------------|----------------------------------------------------------------------|
 | **Performance**   | All primary views load within 2 seconds under normal conditions      |
-| **Security**      | JWT authentication with refresh tokens; passwords hashed with ASP.NET Identity; input validation against XSS/SQL injection |
+| **Security**      | Cookie-based authentication via ASP.NET Identity; passwords hashed; CSRF protection; input validation against XSS/SQL injection |
 | **Usability**     | English-only UI; responsive design for desktop and tablet viewports  |
 | **Scalability**   | Architecture supports future multi-department / multi-university extension without re-engineering |
 | **Availability**  | Deployed to a publicly accessible URL for demo purposes              |
-| **Maintainability** | Clean 3-layer architecture; consistent code style; documented API endpoints |
+| **Maintainability** | MVC 3-layer architecture (Controller → Service → Data); consistent code style |
 | **Data Integrity** | Prerequisite relationships enforce referential integrity at DB level |
 
 ---
@@ -373,15 +373,16 @@ Cumulative GPA = Σ(all_semesters_credit_hours × grade_points) / Σ(all_credit_
 
 | Layer              | Technology                                               |
 |--------------------|----------------------------------------------------------|
-| **Frontend**       | React 18, React Router, Axios, React Flow (graph viz)    |
-| **Styling**        | CSS / component library (TBD based on team preference)   |
-| **Backend**        | ASP.NET Core 8 Web API, C#                               |
+| **Application**    | ASP.NET Core 8 MVC, C#, Razor Views                     |
+| **Styling**        | Bootstrap 5 + custom CSS                                 |
+| **Graph Viz**      | Cytoscape.js (client-side, loaded in Razor views)        |
 | **ORM**            | Entity Framework Core 8                                  |
-| **Database**       | SQL Server (LocalDB for dev, Azure SQL or hosted for demo) |
-| **Authentication** | ASP.NET Identity + JWT Bearer + Refresh Tokens           |
-| **AI Integration** | OpenAI API (GPT-3.5-turbo)                               |
+| **Database**       | SQL Server (LocalDB for dev, hosted SQL for demo)        |
+| **Authentication** | ASP.NET Identity (cookie-based authentication)           |
+| **AI Integration** | OpenAI API (GPT-3.5-turbo) via AJAX calls                |
+| **Client-Side**    | jQuery (bundled with MVC), vanilla JavaScript            |
 | **Version Control**| Git + GitHub (branch-per-feature workflow)               |
-| **Deployment**     | Free-tier hosting (Azure App Service free tier, or Somee/SmartASP for SQL Server, or Railway/Render for API) |
+| **Deployment**     | Free-tier hosting (Azure App Service / Somee / MonsterASP) |
 | **Project Mgmt**   | GitHub Projects or Jira (free tier)                      |
 
 ---
@@ -390,19 +391,20 @@ Cumulative GPA = Σ(all_semesters_credit_hours × grade_points) / Σ(all_credit_
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│                   React Frontend                     │
-│    React Router · Axios · React Flow · CSS           │
-└────────────────────────┬─────────────────────────────┘
-                         │ REST API (JSON over HTTPS)
-┌────────────────────────▼─────────────────────────────┐
-│             ASP.NET Core 8 Web API                   │
+│           ASP.NET Core 8 MVC (Monolithic)             │
 │                                                      │
 │  Controllers/   →   Services/   →   Data/            │
-│  (HTTP layer)       (Business       (EF Core         │
+│  (HTTP + Views)     (Business       (EF Core         │
 │                      Logic)          DbContext)       │
 │                        ↕                             │
 │               OpenAI API Client                      │
 │               (AI Advisor only)                      │
+│                                                      │
+│  Views/  (Razor)     wwwroot/                        │
+│  ├── Shared/         ├── css/                        │
+│  ├── Student/        ├── js/ (Cytoscape.js, custom)  │
+│  ├── Admin/          └── lib/ (Bootstrap, jQuery)    │
+│  └── Account/                                        │
 └────────────────────────┬─────────────────────────────┘
                          │
 ┌────────────────────────▼─────────────────────────────┐
@@ -414,7 +416,7 @@ Cumulative GPA = Σ(all_semesters_credit_hours × grade_points) / Σ(all_credit_
 └──────────────────────────────────────────────────────┘
 ```
 
-**Architecture pattern:** Pragmatic 3-layer (Controller → Service → Data). Organized and testable without the boilerplate overhead of full Clean Architecture or CQRS.
+**Architecture pattern:** ASP.NET Core MVC monolith with Razor views. Interactive components (graph, chat, GPA calculator) use client-side JavaScript (Cytoscape.js, jQuery AJAX) within server-rendered pages.
 
 ---
 
@@ -485,10 +487,10 @@ Lean, fully relational, no graph database needed. The prerequisite graph is mode
 
 | Phase | Weeks | Focus | Key Deliverables |
 |---|---|---|---|
-| **1 — Foundation** | 1–2 | Setup & Core | Git repo, DB schema + migrations, seed data from curriculum PDF, Auth API (register/login/JWT), Admin CRUD for courses & prerequisites, Student profile API |
-| **2 — Engine** | 3–5 | Core Logic & Viz | Prerequisite graph API, React Flow visualization, course status color-coding, student course history display |
-| **3 — Killer Features** | 6–8 | Differentiators | Impact Analyzer (cascade engine + API + animated frontend), Progress Tracker (audit by category + projections), GPA Simulator |
-| **4 — Intelligence** | 9–10 | AI & Rules | AI Advisor chat integration, academic standing engine, danger alerts, grade improvement logic, honor badges |
+| **1 — Foundation** | 1–2 | Setup & Core | MVC project setup, DB schema + migrations, seed data from curriculum PDF, Identity auth (register/login/cookies), Admin CRUD for courses & prerequisites |
+| **2 — Engine** | 3–5 | Core Logic & Viz | Prerequisite engine, Cytoscape.js graph visualization, course status color-coding, student dashboard, course history display |
+| **3 — Killer Features** | 6–8 | Differentiators | Impact Analyzer (cascade engine + animated graph), Progress Tracker (audit by category + projections), GPA Simulator |
+| **4 — Intelligence** | 9–10 | AI & Rules | AI Advisor chat (AJAX), academic standing engine, danger alerts, grade improvement logic, honor badges |
 | **5 — Polish** | 11 | Quality | UI polish, error handling, loading states, responsive design, edge case testing, admin panel refinement |
 | **6 — Demo** | 12 | Delivery | Deployment, demo data setup, demo script rehearsal (5+ runs), documentation cleanup |
 
@@ -515,18 +517,18 @@ Lean, fully relational, no graph database needed. The prerequisite graph is mode
 
 | Member   | Role                  | Primary Responsibilities                                              |
 |----------|-----------------------|-----------------------------------------------------------------------|
-| Member 1 | **Team Lead + Backend Lead** | Project management, API architecture, Prerequisite Engine, Impact Analyzer logic |
-| Member 2 | Backend Developer     | Auth system (Identity + JWT), Student module APIs, Admin APIs, GPA calculation services |
-| Member 3 | Frontend Lead         | React app structure, Student Dashboard, Course Map (React Flow), Impact Analyzer animation |
-| Member 4 | Frontend Developer    | Progress Tracker UI, GPA Simulator UI, Admin Panel UI, AI Chat UI     |
+| Member 1 | **Team Lead + Architecture** | Project management, MVC architecture, Prerequisite Engine, Impact Analyzer logic |
+| Member 2 | Backend Developer     | Auth system (Identity + Cookies), Admin controllers & services, GPA calculation services |
+| Member 3 | Full-Stack Developer  | Student Dashboard views, Course Map (Cytoscape.js), Impact Analyzer animation (JS) |
+| Member 4 | Full-Stack Developer  | Progress Tracker views, GPA Simulator (JS), Admin Panel views, AI Chat UI |
 | Member 5 | Data & AI Integration | Curriculum data extraction & seeding, OpenAI API integration, prompt engineering, test data scenarios |
-| Member 6 | QA & DevOps           | API testing, deployment pipeline, documentation, demo preparation     |
+| Member 6 | QA & DevOps           | Testing, deployment pipeline, documentation, demo preparation         |
 
 ### Team Rules
 
-- **Frontend ownership:** Only Members 3 and 4 work on React code. Backend members deliver APIs and documentation — they do not touch the frontend.
-- **API-first workflow:** Backend delivers documented endpoints → Frontend consumes them. Use Swagger/OpenAPI for documentation.
-- **No solo silos:** Every feature has at least one backend dev and one frontend dev collaborating.
+- **MVC unified codebase:** All team members work in the same ASP.NET Core MVC project. No separate frontend project.
+- **Controller ownership:** Each feature module has a designated controller owner. Views and services are developed together.
+- **No solo silos:** Every feature has clear ownership but code reviews ensure team-wide awareness.
 
 ---
 
@@ -552,9 +554,9 @@ Lean, fully relational, no graph database needed. The prerequisite graph is mode
 ### 13.3 Definition of Done
 
 A feature is "done" when:
-- [ ] Backend API endpoint is implemented and tested
-- [ ] Frontend UI is implemented and connected to the API
-- [ ] Edge cases are handled (empty states, errors, loading)
+- [ ] Controller actions and service logic are implemented and tested
+- [ ] Razor views are implemented with proper layout, validation, and styling
+- [ ] Edge cases are handled (empty states, validation errors, loading states)
 - [ ] Code is reviewed and merged to `develop`
 - [ ] Feature works in the deployed environment
 
@@ -568,10 +570,9 @@ A feature is "done" when:
 | R2 | **Impact Analyzer graph logic is more complex than expected** | 🟠 Medium | Medium | Build and test the BFS/DFS engine in isolation first (Week 3). Write unit tests for edge cases (circular deps, multiple paths). |
 | R3 | **OpenAI API rate limits or downtime**     | 🟡 Low   | Medium      | Implement graceful fallback message. Use GPT-3.5-turbo (higher rate limits). Cache common prompts if possible. |
 | R4 | **Scope creep — team wants to add features mid-project** | 🔴 High | High | Feature scope is locked at Week 2. All new ideas go to a "Future Enhancements" backlog. Team Lead enforces. |
-| R5 | **Frontend bottleneck (only 2 React devs)** | 🟠 Medium | High | Prioritize frontend tasks in sprint planning. Backend team delivers APIs early so frontend is never blocked. |
+| R5 | **Cytoscape.js learning curve**             | 🟡 Low   | Medium      | One team member prototypes the graph in Week 3. Use dagre layout plugin. Plenty of documentation and examples online. |
 | R6 | **Team coordination issues across 6 members** | 🟠 Medium | Medium | Clear ownership per feature. Daily async standups. GitHub PR reviews enforce quality. |
 | R7 | **Free-tier hosting limitations**          | 🟡 Low   | Low         | Test deployment early (Week 8). Identify backup hosting options. Keep database small (seed data for 1 department). |
-| R8 | **React Flow learning curve**              | 🟡 Low   | Medium      | Assign to the strongest frontend developer. Start with a basic graph in Week 3, iterate on visuals later. |
 
 ---
 
@@ -626,9 +627,9 @@ A feature is "done" when:
 
 | #  | Deliverable                            | Format            | Due      |
 |----|----------------------------------------|-------------------|----------|
-| D1 | Project Plan (this document)           | Markdown          | Week 1   |
-| D2 | Database schema + seed data            | SQL / EF Migration | Week 2  |
-| D3 | API documentation (Swagger)            | Auto-generated    | Ongoing  |
+| D1 | Project Plan                           | Markdown          | Week 1   |
+| D2 | Software Requirements Specification    | Markdown          | Week 1   |
+| D3 | Database schema + seed data            | SQL / EF Migration | Week 2  |
 | D4 | Working application (deployed)         | Web URL           | Week 11  |
 | D5 | Demo script                            | Document          | Week 12  |
 | D6 | Final presentation                     | Slides            | Week 12  |
@@ -642,4 +643,4 @@ A feature is "done" when:
 
 ---
 
-*Document Version 1.0 — March 2, 2026*
+*Document Version 1.1 — March 2, 2026 (Updated for MVC architecture per instructor directive)*
