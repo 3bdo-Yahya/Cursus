@@ -16,28 +16,22 @@ Cursus is a web platform that helps university students **see, understand, and p
 
 ## Key Features
 
-### 1. Interactive Course Map
-A visual, interactive graph of every course in the student's department. Courses are connected by prerequisite relationships and color-coded by status (completed, in-progress, remaining, blocked). Students see their entire degree at a glance.
+### 🗺️ Interactive Course Map
+A visual, interactive graph of every course in the student's department. Courses are connected by prerequisite relationships and color-coded by status (completed, in-progress, remaining, blocked). Built with Cytoscape.js for smooth, zoomable graph interactions.
 
-### 2. Impact Analyzer ⚡
-The core differentiator. When a student fails or drops a course, the system performs a **forward cascade analysis**: it instantly identifies every downstream course that is now blocked, calculates how many semesters are affected, and suggests a recovery path — including when to retake the course and when blocked courses will unlock. The Course Map animates the cascade in real-time.
+### ⚡ Impact Analyzer
+The core differentiator. When a student fails or drops a course, the system performs a **forward cascade analysis**: it instantly identifies every downstream course that is now blocked, calculates the graduation delay, and suggests a recovery path with animated visualizations.
 
-### 3. Progress & Planning
-A graduation audit that tracks the student's progress by course category (core, department elective, free elective, university requirement). It shows credits completed, courses remaining, projected graduation date, and warns if a student is at risk of not meeting graduation GPA requirements.
+### 📊 Progress & Planning
+A graduation audit tracking progress by course category (core, elective, free, university requirements), with GPA simulation — predict grades, set targets, and see exactly what you need to hit your goals. Includes grade improvement tracking and academic standing alerts.
 
-Includes a **GPA Simulator** where students can predict grades for current courses, set GPA targets, and see what grades they need to hit those targets. Courses eligible for grade improvement are flagged.
-
-### 4. AI Advisor 🤖
-A chat interface powered by OpenAI's GPT where students ask natural-language questions about their academic situation. The AI uses the student's real data (courses, grades, impact analysis results) as context, so responses are personalized and data-driven — not generic advice.
+### 🤖 AI Advisor
+A chat interface powered by OpenAI's GPT where students ask natural-language questions about their academic situation. The AI uses the student's real data as context, so responses are personalized and data-driven.
 
 > **Design principle:** AI is the *voice*, not the brain. All core logic (prerequisite resolution, GPA calculation, graduation audit) is handled by deterministic algorithms. AI translates the results into supportive, human-readable guidance.
 
-### 5. Academic Rules Engine
-The platform models standard credit-hour system rules:
-- **Academic Standing** — Good Standing, Warning, Probation, and Dismissal based on GPA thresholds
-- **Credit Hour Limits** — overload eligibility for high-GPA students, restrictions for probation students
-- **Grade Improvement** — flags courses eligible for retake and shows the GPA impact
-- **Honor Recognition** — motivational badges for Honor List, Dean's List, and President's List qualification
+### 🎓 Academic Rules Engine
+Models standard credit-hour system rules: academic standing (Good → Warning → Probation → Dismissal), credit hour limits by GPA, grade improvement eligibility, and honor recognition (Honor / Dean's / President's List).
 
 ---
 
@@ -47,20 +41,10 @@ The platform models standard credit-hour system rules:
 |----------------|---------------------------------------------|
 | Application    | ASP.NET Core 8 MVC, C#, Razor Views        |
 | Styling        | Bootstrap 5 + custom CSS                    |
-| Graph Viz      | Cytoscape.js (interactive graphs)           |
+| Graph Viz      | Cytoscape.js (interactive prerequisite map) |
 | Database       | SQL Server + Entity Framework Core          |
 | Auth           | ASP.NET Identity (cookie-based)             |
 | AI             | OpenAI API (GPT-3.5-turbo)                  |
-| Deployment     | Free-tier cloud hosting                     |
-
----
-
-## User Roles
-
-| Role        | What They Do                                                          |
-|-------------|-----------------------------------------------------------------------|
-| **Student** | View course map, run impact analysis, track progress, simulate GPA, chat with AI |
-| **Admin**   | Manage courses, prerequisites, student grades, and graduation requirements      |
 
 ---
 
@@ -68,24 +52,47 @@ The platform models standard credit-hour system rules:
 
 ```
 Cursus/
-├── backend/         # ASP.NET Core Web API
-├── frontend/        # React application
-├── docs/            # Project documentation
-│   ├── Cursus_Project_Proposal.md
-│   └── Project_Plan.md
+├── src/                # ASP.NET Core MVC application
+│   ├── Controllers/    # MVC controllers
+│   ├── Services/       # Business logic layer
+│   ├── Models/         # Entities + View Models
+│   ├── Data/           # EF Core DbContext + migrations
+│   ├── Views/          # Razor views
+│   └── wwwroot/        # Static files (CSS, JS, Cytoscape.js)
 ├── .gitignore
+├── CONTRIBUTING.md
+├── LICENSE.txt
 └── README.md
 ```
 
 ---
 
-## Documentation
+## Getting Started
 
-| Document | Description |
-|----------|-------------|
-| [Project Proposal](docs/Cursus_Project_Proposal.md) | Original project idea and motivation |
-| [Project Plan](docs/Project_Plan.md) | SDLC Stage 1: scope, features, architecture, timeline, and team structure |
-| [SRS](docs/SRS.md) | SDLC Stage 2: detailed functional requirements, data dictionary, and module specifications |
+### Prerequisites
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (LocalDB or Express)
+- A code editor (Visual Studio 2022 or VS Code)
+
+### Run Locally
+
+```bash
+# Clone the repository
+git clone https://github.com/3bdo-Yahya/Cursus.git
+cd Cursus/src
+
+# Restore dependencies
+dotnet restore
+
+# Apply database migrations
+dotnet ef database update
+
+# Run the application
+dotnet run
+```
+
+The app will be available at `https://localhost:5001` (or the port shown in the terminal).
 
 ---
 
@@ -102,22 +109,15 @@ Cursus/
 
 ---
 
-## Timeline
+## Contributing
 
-| Phase             | Weeks  | Focus                                                |
-|-------------------|--------|------------------------------------------------------|
-| Foundation        | 1–2    | Auth, DB schema, seed data, project setup            |
-| Core Engine       | 3–5    | Course catalog, prerequisite graph, visualization    |
-| Killer Features   | 6–8    | Impact analyzer, progress tracker, GPA simulator     |
-| Intelligence      | 9–10   | AI advisor, academic standing, polish                |
-| Demo Prep         | 11–12  | UI polish, deployment, demo rehearsal                |
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for our development workflow, branching strategy, and coding conventions.
 
 ---
 
-## Status
+## License
 
-📋 **Stage 1: Planning & Requirements Analysis** — Complete
-📋 **Stage 2: Software Requirements Specification** — Complete
+This project is licensed under the terms specified in [LICENSE.txt](LICENSE.txt).
 
 ---
 
