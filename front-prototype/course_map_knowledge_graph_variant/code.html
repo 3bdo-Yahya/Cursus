@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Cursus - Course Map</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4f46e5",
+                        "background-light": "#f9fafb",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Public Sans', sans-serif; }
+        #cy {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            background-color: #f9fafb;
+            background-image: radial-gradient(circle at 1px 1px, rgba(79, 70, 229, 0.04) 1px, transparent 0);
+            background-size: 32px 32px;
+        }
+        .side-panel { transform: translateX(100%); }
+        .side-panel.open { transform: translateX(0); }
+        .impact-banner { transform: translateY(-100%); opacity: 0; }
+        .impact-banner.show { transform: translateY(0); opacity: 1; }
+        .impact-summary { transform: translateY(100%); opacity: 0; }
+        .impact-summary.show { transform: translateY(0); opacity: 1; }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+            100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+        }
+    </style>
+</head>
+<body class="bg-background-light min-h-screen font-display text-slate-900">
+
+<div class="relative flex h-screen w-full flex-col overflow-hidden">
+    <!-- Top Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 h-14">
+        <div class="max-w-full mx-auto px-5 h-full flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-2 text-primary">
+                    <span class="material-symbols-outlined text-2xl">school</span>
+                    <h1 class="text-lg font-bold tracking-tight text-slate-900">Cursus</h1>
+                </div>
+                <div class="hidden md:flex items-center gap-6">
+                    <a class="text-slate-600 text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+                    <a class="text-primary font-semibold text-sm border-b-2 border-primary pb-0.5" href="#">Course Map</a>
+                    <a class="text-slate-600 text-sm font-medium hover:text-primary transition-colors" href="#">Progress & Planning</a>
+                    <a class="text-slate-600 text-sm font-medium hover:text-primary transition-colors" href="#">AI Advisor</a>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full">
+                    <span class="material-symbols-outlined text-xl">notifications</span>
+                </button>
+                <div class="h-9 w-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-sm">AH</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative flex-1 mt-14 overflow-hidden">
+
+        <!-- Cytoscape Graph Container -->
+        <div id="cy"></div>
+
+        <!-- Floating Toolbar (top-left) -->
+        <div class="absolute top-4 left-4 z-20 flex flex-col gap-1">
+            <div class="bg-white/95 backdrop-blur shadow-lg border border-slate-200 p-1 rounded-xl flex flex-col">
+                <button id="btn-zoom-in" class="p-2 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors" title="Zoom In">
+                    <span class="material-symbols-outlined text-xl">add</span>
+                </button>
+                <button id="btn-zoom-out" class="p-2 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors" title="Zoom Out">
+                    <span class="material-symbols-outlined text-xl">remove</span>
+                </button>
+                <div class="h-px bg-slate-200 my-0.5 mx-2"></div>
+                <button id="btn-fit" class="p-2 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors" title="Fit to Screen">
+                    <span class="material-symbols-outlined text-xl">filter_center_focus</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Floating Legend (top-right) -->
+        <div class="absolute top-4 right-4 z-20">
+            <div class="bg-white/95 backdrop-blur shadow-lg border border-slate-200 px-4 py-3 rounded-xl">
+                <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Legend</h3>
+                <div class="flex flex-wrap gap-x-4 gap-y-1.5">
+                    <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-[11px] font-medium">Passed</span></div>
+                    <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span><span class="text-[11px] font-medium">Failed</span></div>
+                    <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span><span class="text-[11px] font-medium">In Progress</span></div>
+                    <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span><span class="text-[11px] font-medium">Remaining</span></div>
+                    <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span><span class="text-[11px] font-medium">Blocked</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impact Analyzer Banner (hidden by default) -->
+        <div id="impact-banner" class="impact-banner absolute top-0 left-0 right-0 z-30 transition-all duration-300">
+            <div class="bg-amber-50 border-b border-amber-200 px-5 py-2.5 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-amber-600 text-lg">warning</span>
+                    <span class="text-sm font-semibold text-amber-800">Simulation Mode</span>
+                    <span class="text-sm text-amber-700">— Viewing impact of failing <strong id="impact-course-name"></strong></span>
+                </div>
+                <button id="btn-clear-sim-banner" class="text-sm font-semibold text-amber-700 hover:text-amber-900 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-base">close</span> Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Side Panel (slides in from right) -->
+        <div id="side-panel" class="side-panel absolute top-0 right-0 h-full w-80 bg-white shadow-2xl border-l border-slate-200 z-40 transition-transform duration-300 overflow-y-auto">
+            <div class="p-5">
+                <div class="flex items-center justify-between mb-5">
+                    <span id="panel-status-badge" class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"></span>
+                    <button id="btn-close-panel" class="text-slate-400 hover:text-slate-600 p-1">
+                        <span class="material-symbols-outlined text-xl">close</span>
+                    </button>
+                </div>
+                <h2 id="panel-code" class="text-xl font-bold mb-0.5"></h2>
+                <p id="panel-name" class="text-sm text-slate-500 mb-1"></p>
+                <p id="panel-credits" class="text-xs text-slate-400 mb-5"></p>
+
+                <div class="space-y-5">
+                    <!-- Status & Grade -->
+                    <div id="panel-grade-section" class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span id="panel-status-icon" class="material-symbols-outlined text-lg"></span>
+                            <span id="panel-status-text" class="text-sm font-bold"></span>
+                        </div>
+                        <p id="panel-grade-text" class="text-xs text-slate-500"></p>
+                    </div>
+
+                    <!-- Details Grid -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="text-xs"><span class="text-slate-400 block mb-0.5">Type</span><span id="panel-type" class="font-semibold"></span></div>
+                        <div class="text-xs"><span class="text-slate-400 block mb-0.5">Availability</span><span id="panel-availability" class="font-semibold"></span></div>
+                        <div class="text-xs"><span class="text-slate-400 block mb-0.5">Passing Grade</span><span id="panel-passing" class="font-semibold"></span></div>
+                        <div class="text-xs"><span class="text-slate-400 block mb-0.5">Department</span><span id="panel-dept" class="font-semibold"></span></div>
+                    </div>
+
+                    <!-- Prerequisites -->
+                    <div>
+                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Prerequisites</h4>
+                        <div id="panel-prereqs" class="space-y-1.5"></div>
+                    </div>
+
+                    <!-- Dependents -->
+                    <div>
+                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Unlocks</h4>
+                        <div id="panel-dependents" class="flex flex-wrap gap-1.5"></div>
+                    </div>
+
+                    <!-- Simulate Button -->
+                    <div id="panel-simulate-section">
+                        <button id="btn-simulate" class="w-full border-2 border-red-200 hover:bg-red-50 text-red-600 font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
+                            <span class="material-symbols-outlined text-lg">bolt</span>
+                            Simulate Failure
+                        </button>
+                    </div>
+                    <div id="panel-clear-section" class="hidden">
+                        <button id="btn-clear-sim-panel" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
+                            <span class="material-symbols-outlined text-lg">refresh</span>
+                            Clear Simulation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impact Summary Card (bottom) -->
+        <div id="impact-summary" class="impact-summary absolute bottom-4 left-1/2 -translate-x-1/2 z-30 transition-all duration-400 w-full max-w-xl px-4">
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-red-500">bolt</span> Impact Summary
+                        </h3>
+                        <span id="summary-blocked-badge" class="px-2.5 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full"></span>
+                    </div>
+                    <div class="grid grid-cols-3 divide-x divide-slate-100 mb-4">
+                        <div class="text-center px-3">
+                            <div id="summary-blocked-count" class="text-2xl font-bold text-red-600"></div>
+                            <div class="text-[10px] text-slate-400 mt-0.5">Courses Blocked</div>
+                        </div>
+                        <div class="text-center px-3">
+                            <div id="summary-semesters" class="text-2xl font-bold text-amber-600"></div>
+                            <div class="text-[10px] text-slate-400 mt-0.5">Semesters Affected</div>
+                        </div>
+                        <div class="text-center px-3">
+                            <div id="summary-delay" class="text-2xl font-bold text-slate-700"></div>
+                            <div class="text-[10px] text-slate-400 mt-0.5">Graduation Delay</div>
+                        </div>
+                    </div>
+                    <div id="summary-blocked-list" class="flex flex-wrap gap-1.5 mb-4"></div>
+                    <!-- Recovery -->
+                    <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 mb-4">
+                        <div class="text-xs font-bold text-emerald-700 mb-1.5 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">route</span> Recovery Plan
+                        </div>
+                        <div id="summary-recovery" class="text-xs text-emerald-600 space-y-1"></div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="btn-clear-sim-summary" class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-2 rounded-xl transition-all text-sm">Clear Simulation</button>
+                        <a href="#" class="text-xs text-slate-400 hover:text-primary font-medium">Ask AI Advisor →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+// ============================================================
+// COURSE DATA — realistic CS department prerequisite graph
+// ============================================================
+const courses = [
+    // Year 1
+    { id: 'CS101', name: 'Intro to Computer Science', credits: 3, type: 'Core', avail: 'Fall & Spring', dept: 'Computer Science', passing: 'D', status: 'passed', grade: 'A', prereqs: [], year: 1 },
+    { id: 'MTH101', name: 'Calculus I', credits: 3, type: 'Core', avail: 'Fall & Spring', dept: 'Mathematics', passing: 'D', status: 'passed', grade: 'B+', prereqs: [], year: 1 },
+    { id: 'ENG101', name: 'English Composition', credits: 2, type: 'University Req', avail: 'All', dept: 'English', passing: 'D', status: 'passed', grade: 'A-', prereqs: [], year: 1 },
+    { id: 'CS102', name: 'Programming I', credits: 3, type: 'Core', avail: 'Fall & Spring', dept: 'Computer Science', passing: 'D', status: 'passed', grade: 'B', prereqs: ['CS101'], year: 1 },
+    { id: 'MTH102', name: 'Calculus II', credits: 3, type: 'Core', avail: 'Fall & Spring', dept: 'Mathematics', passing: 'D', status: 'passed', grade: 'C+', prereqs: ['MTH101'], year: 1 },
+    // Year 2
+    { id: 'CS201', name: 'Data Structures', credits: 3, type: 'Core', avail: 'Fall & Spring', dept: 'Computer Science', passing: 'D', status: 'passed', grade: 'A-', prereqs: ['CS102'], year: 2 },
+    { id: 'CS202', name: 'Discrete Mathematics', credits: 3, type: 'Core', avail: 'Fall', dept: 'Computer Science', passing: 'D', status: 'in-progress', grade: null, prereqs: ['CS102', 'MTH101'], year: 2 },
+    { id: 'CS203', name: 'Programming II (OOP)', credits: 3, type: 'Core', avail: 'Spring', dept: 'Computer Science', passing: 'D', status: 'passed', grade: 'B+', prereqs: ['CS102'], year: 2 },
+    { id: 'MTH201', name: 'Linear Algebra', credits: 3, type: 'Core', avail: 'Fall', dept: 'Mathematics', passing: 'D', status: 'in-progress', grade: null, prereqs: ['MTH102'], year: 2 },
+    // Year 3
+    { id: 'CS301', name: 'Algorithms', credits: 3, type: 'Core', avail: 'Fall', dept: 'Computer Science', passing: 'D', status: 'remaining', grade: null, prereqs: ['CS201', 'CS202'], year: 3 },
+    { id: 'CS302', name: 'Database Systems', credits: 3, type: 'Core', avail: 'Spring', dept: 'Computer Science', passing: 'D', status: 'remaining', grade: null, prereqs: ['CS201'], year: 3 },
+    { id: 'CS303', name: 'Operating Systems', credits: 3, type: 'Core', avail: 'Fall', dept: 'Computer Science', passing: 'D', status: 'remaining', grade: null, prereqs: ['CS201', 'CS203'], year: 3 },
+    { id: 'CS304', name: 'Computer Networks', credits: 3, type: 'Core', avail: 'Spring', dept: 'Computer Science', passing: 'D', status: 'remaining', grade: null, prereqs: ['CS203'], year: 3 },
+    { id: 'CS305', name: 'Software Engineering', credits: 3, type: 'Core', avail: 'Fall', dept: 'Computer Science', passing: 'D', status: 'blocked', grade: null, prereqs: ['CS301', 'CS302'], year: 3 },
+    // Year 4
+    { id: 'CS401', name: 'Artificial Intelligence', credits: 3, type: 'Dept Elective', avail: 'Fall', dept: 'Computer Science', passing: 'D', status: 'blocked', grade: null, prereqs: ['CS301', 'MTH201'], year: 4 },
+    { id: 'CS402', name: 'Compiler Design', credits: 3, type: 'Dept Elective', avail: 'Spring', dept: 'Computer Science', passing: 'D', status: 'blocked', grade: null, prereqs: ['CS301', 'CS303'], year: 4 },
+    { id: 'CS403', name: 'Machine Learning', credits: 3, type: 'Dept Elective', avail: 'Spring', dept: 'Computer Science', passing: 'D', status: 'blocked', grade: null, prereqs: ['CS401'], year: 4 },
+    { id: 'CS490', name: 'Graduation Project', credits: 6, type: 'Core', avail: 'Spring', dept: 'Computer Science', passing: 'C', status: 'blocked', grade: null, prereqs: ['CS305', 'CS304'], year: 4 },
+];
+
+// Status → color map
+const statusColors = {
+    'passed':      { bg: '#10b981', text: '#fff', border: '#059669' },
+    'failed':      { bg: '#ef4444', text: '#fff', border: '#dc2626' },
+    'in-progress': { bg: '#0ea5e9', text: '#fff', border: '#0284c7' },
+    'remaining':   { bg: '#e2e8f0', text: '#475569', border: '#cbd5e1' },
+    'blocked':     { bg: '#475569', text: '#94a3b8', border: '#334155' },
+    'cascade':     { bg: '#ef4444', text: '#fff', border: '#b91c1c' },
+};
+
+// ============================================================
+// BUILD CYTOSCAPE GRAPH
+// ============================================================
+const elements = [];
+
+// Nodes
+courses.forEach(c => {
+    const col = statusColors[c.status];
+    elements.push({
+        data: {
+            id: c.id,
+            label: c.id + '\n' + c.name,
+            shortLabel: c.id,
+            fullName: c.name,
+            ...c,
+            bgColor: col.bg,
+            textColor: col.text,
+            borderColor: col.border,
+            originalStatus: c.status,
+        },
+        classes: c.status,
+    });
+});
+
+// Edges
+courses.forEach(c => {
+    c.prereqs.forEach(pre => {
+        elements.push({
+            data: {
+                id: pre + '->' + c.id,
+                source: pre,
+                target: c.id,
+            }
+        });
+    });
+});
+
+// Initialize Cytoscape
+const cy = cytoscape({
+    container: document.getElementById('cy'),
+    elements: elements,
+    userZoomingEnabled: true,
+    userPanningEnabled: true,
+    boxSelectionEnabled: false,
+    style: [
+        {
+            selector: 'node',
+            style: {
+                'label': 'data(label)',
+                'text-wrap': 'wrap',
+                'text-max-width': '130px',
+                'font-size': '11px',
+                'font-family': 'Public Sans, sans-serif',
+                'font-weight': '600',
+                'text-halign': 'center',
+                'text-valign': 'center',
+                'width': '150',
+                'height': '55',
+                'shape': 'roundrectangle',
+                'background-color': 'data(bgColor)',
+                'color': 'data(textColor)',
+                'border-width': '2',
+                'border-color': 'data(borderColor)',
+                'transition-property': 'background-color, border-color, color, width, height, opacity',
+                'transition-duration': '300ms',
+                'text-outline-width': 0,
+                'overlay-padding': '6px',
+            },
+        },
+        {
+            selector: 'node:active',
+            style: {
+                'overlay-color': '#4F46E5',
+                'overlay-opacity': 0.15,
+            }
+        },
+        {
+            selector: 'node.hover',
+            style: {
+                'border-width': 3,
+                'width': 158,
+                'height': 60,
+            }
+        },
+        {
+            selector: 'node.selected-node',
+            style: {
+                'border-width': 3,
+                'border-color': '#4F46E5',
+                'border-style': 'solid',
+                'width': 158,
+                'height': 60,
+            }
+        },
+        {
+            selector: 'node.dimmed',
+            style: {
+                'opacity': 0.25,
+            }
+        },
+        {
+            selector: 'node.cascade-hit',
+            style: {
+                'background-color': '#ef4444',
+                'border-color': '#b91c1c',
+                'color': '#fff',
+            }
+        },
+        {
+            selector: 'node.cascade-source',
+            style: {
+                'background-color': '#dc2626',
+                'border-color': '#991b1b',
+                'border-width': 4,
+                'color': '#fff',
+                'width': 160,
+                'height': 62,
+            }
+        },
+        {
+            selector: 'edge',
+            style: {
+                'width': 2,
+                'line-color': '#cbd5e1',
+                'target-arrow-color': '#cbd5e1',
+                'target-arrow-shape': 'triangle',
+                'arrow-scale': 0.8,
+                'curve-style': 'bezier',
+                'transition-property': 'line-color, target-arrow-color, opacity, width',
+                'transition-duration': '300ms',
+            },
+        },
+        {
+            selector: 'edge.dimmed',
+            style: { 'opacity': 0.1 }
+        },
+        {
+            selector: 'edge.cascade-edge',
+            style: {
+                'line-color': '#ef4444',
+                'target-arrow-color': '#ef4444',
+                'width': 3,
+            }
+        },
+    ],
+    layout: {
+        name: 'preset',
+        positions: (function() {
+            // Layout by year (columns) with spacing
+            const yearX = { 1: 100, 2: 380, 3: 660, 4: 940 };
+            const positions = {};
+            const yearCounts = {};
+            courses.forEach(c => {
+                if (!yearCounts[c.year]) yearCounts[c.year] = 0;
+                const count = yearCounts[c.year]++;
+                const coursesInYear = courses.filter(x => x.year === c.year).length;
+                const totalHeight = (coursesInYear - 1) * 100;
+                positions[c.id] = {
+                    x: yearX[c.year],
+                    y: -totalHeight / 2 + count * 100
+                };
+            });
+            return function(node) { return positions[node.id()]; };
+        })(),
+    },
+    minZoom: 0.4,
+    maxZoom: 2.5,
+});
+
+// Fit after render
+cy.fit(undefined, 60);
+
+// ============================================================
+// INTERACTIONS
+// ============================================================
+let selectedNode = null;
+let simulationActive = false;
+let simulatedCourseId = null;
+
+// --- Hover ---
+cy.on('mouseover', 'node', function(e) {
+    if (!simulationActive) e.target.addClass('hover');
+    document.getElementById('cy').style.cursor = 'pointer';
+});
+cy.on('mouseout', 'node', function(e) {
+    e.target.removeClass('hover');
+    document.getElementById('cy').style.cursor = 'default';
+});
+
+// --- Node Click → Open Side Panel ---
+cy.on('tap', 'node', function(e) {
+    const node = e.target;
+    const d = node.data();
+
+    // Deselect previous
+    if (selectedNode) selectedNode.removeClass('selected-node');
+    selectedNode = node;
+    node.addClass('selected-node');
+
+    openPanel(d);
+});
+
+// --- Click background → close panel ---
+cy.on('tap', function(e) {
+    if (e.target === cy) {
+        closePanel();
+        if (selectedNode) { selectedNode.removeClass('selected-node'); selectedNode = null; }
+    }
+});
+
+// --- Zoom Controls ---
+document.getElementById('btn-zoom-in').addEventListener('click', () => cy.zoom({ level: cy.zoom() * 1.3, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } }));
+document.getElementById('btn-zoom-out').addEventListener('click', () => cy.zoom({ level: cy.zoom() / 1.3, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } }));
+document.getElementById('btn-fit').addEventListener('click', () => cy.animate({ fit: { padding: 60 }, duration: 400, easing: 'ease-out-cubic' }));
+
+// ============================================================
+// SIDE PANEL
+// ============================================================
+function openPanel(d) {
+    const panel = document.getElementById('side-panel');
+    const badge = document.getElementById('panel-status-badge');
+    const statusText = d.originalStatus === 'cascade' ? 'remaining' : (d.originalStatus || d.status);
+
+    const badgeColors = {
+        'passed': 'bg-emerald-100 text-emerald-700',
+        'failed': 'bg-red-100 text-red-700',
+        'in-progress': 'bg-sky-100 text-sky-700',
+        'remaining': 'bg-slate-100 text-slate-600',
+        'blocked': 'bg-slate-200 text-slate-600',
+    };
+
+    badge.className = 'px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ' + (badgeColors[statusText] || badgeColors['remaining']);
+    badge.textContent = statusText.replace('-', ' ');
+
+    document.getElementById('panel-code').textContent = d.id;
+    document.getElementById('panel-name').textContent = d.fullName;
+    document.getElementById('panel-credits').textContent = d.credits + ' Credit Hours';
+    document.getElementById('panel-type').textContent = d.type;
+    document.getElementById('panel-availability').textContent = d.avail;
+    document.getElementById('panel-passing').textContent = d.passing;
+    document.getElementById('panel-dept').textContent = d.dept;
+
+    // Status section
+    const statusIcon = document.getElementById('panel-status-icon');
+    const statusTextEl = document.getElementById('panel-status-text');
+    const gradeText = document.getElementById('panel-grade-text');
+    const icons = { 'passed': 'check_circle', 'failed': 'cancel', 'in-progress': 'autorenew', 'remaining': 'radio_button_unchecked', 'blocked': 'lock' };
+    const iconColors = { 'passed': 'text-emerald-500', 'failed': 'text-red-500', 'in-progress': 'text-sky-500', 'remaining': 'text-slate-400', 'blocked': 'text-slate-500' };
+    statusIcon.textContent = icons[statusText] || 'help';
+    statusIcon.className = 'material-symbols-outlined text-lg ' + (iconColors[statusText] || '');
+    statusTextEl.textContent = statusText.charAt(0).toUpperCase() + statusText.slice(1).replace('-', ' ');
+    gradeText.textContent = d.grade ? 'Grade: ' + d.grade : (statusText === 'in-progress' ? 'Grade pending' : '');
+
+    // Prerequisites
+    const prereqsEl = document.getElementById('panel-prereqs');
+    prereqsEl.innerHTML = '';
+    if (d.prereqs && d.prereqs.length > 0) {
+        d.prereqs.forEach(pId => {
+            const pCourse = courses.find(c => c.id === pId);
+            const isPassed = pCourse && pCourse.status === 'passed';
+            const div = document.createElement('div');
+            div.className = 'flex items-center justify-between p-2 rounded-lg text-xs font-medium cursor-pointer transition-colors ' +
+                (isPassed ? 'bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100' : 'bg-slate-50 text-slate-600 border border-slate-100 hover:bg-slate-100');
+            div.innerHTML = '<span>' + pId + ': ' + (pCourse ? pCourse.name : '') + '</span>' +
+                (isPassed ? '<span class="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>' : '<span class="material-symbols-outlined text-slate-400 text-sm">radio_button_unchecked</span>');
+            div.addEventListener('click', () => {
+                const n = cy.getElementById(pId);
+                if (n.length) { cy.animate({ center: { eles: n }, duration: 300 }); n.emit('tap'); }
+            });
+            prereqsEl.appendChild(div);
+        });
+    } else {
+        prereqsEl.innerHTML = '<span class="text-xs text-slate-400 italic">No prerequisites</span>';
+    }
+
+    // Dependents
+    const depsEl = document.getElementById('panel-dependents');
+    depsEl.innerHTML = '';
+    const dependents = courses.filter(c => c.prereqs.includes(d.id));
+    if (dependents.length > 0) {
+        dependents.forEach(dep => {
+            const chip = document.createElement('span');
+            chip.className = 'px-2 py-1 bg-slate-100 text-slate-600 text-[11px] rounded font-medium cursor-pointer hover:bg-primary hover:text-white transition-colors';
+            chip.textContent = dep.id;
+            chip.addEventListener('click', () => {
+                const n = cy.getElementById(dep.id);
+                if (n.length) { cy.animate({ center: { eles: n }, duration: 300 }); n.emit('tap'); }
+            });
+            depsEl.appendChild(chip);
+        });
+    } else {
+        depsEl.innerHTML = '<span class="text-xs text-slate-400 italic">Terminal course</span>';
+    }
+
+    // Show/hide simulate button
+    const showSimulate = (statusText === 'passed' || statusText === 'in-progress') && !simulationActive;
+    document.getElementById('panel-simulate-section').classList.toggle('hidden', !showSimulate);
+    document.getElementById('panel-clear-section').classList.toggle('hidden', !simulationActive);
+
+    panel.classList.add('open');
+}
+
+function closePanel() {
+    document.getElementById('side-panel').classList.remove('open');
+}
+
+document.getElementById('btn-close-panel').addEventListener('click', () => {
+    closePanel();
+    if (selectedNode) { selectedNode.removeClass('selected-node'); selectedNode = null; }
+});
+
+// ============================================================
+// IMPACT ANALYZER — Cascade Simulation
+// ============================================================
+document.getElementById('btn-simulate').addEventListener('click', startSimulation);
+document.getElementById('btn-clear-sim-banner').addEventListener('click', clearSimulation);
+document.getElementById('btn-clear-sim-panel').addEventListener('click', clearSimulation);
+document.getElementById('btn-clear-sim-summary').addEventListener('click', clearSimulation);
+
+function startSimulation() {
+    if (!selectedNode) return;
+    simulationActive = true;
+    simulatedCourseId = selectedNode.data().id;
+
+    // BFS to find all transitively blocked courses
+    const blocked = [];
+    const queue = [simulatedCourseId];
+    const visited = new Set([simulatedCourseId]);
+
+    while (queue.length > 0) {
+        const current = queue.shift();
+        const dependents = courses.filter(c => c.prereqs.includes(current));
+        dependents.forEach(dep => {
+            if (!visited.has(dep.id)) {
+                visited.add(dep.id);
+                blocked.push(dep);
+                queue.push(dep.id);
+            }
+        });
+    }
+
+    // Animate: dim everything, then highlight cascade
+    cy.nodes().addClass('dimmed');
+    cy.edges().addClass('dimmed');
+
+    // Source node
+    const sourceNode = cy.getElementById(simulatedCourseId);
+    sourceNode.removeClass('dimmed').addClass('cascade-source');
+
+    // Staggered cascade animation
+    blocked.forEach((dep, i) => {
+        setTimeout(() => {
+            const node = cy.getElementById(dep.id);
+            node.removeClass('dimmed').addClass('cascade-hit');
+            // Highlight edges leading to this node
+            node.incomers('edge').forEach(edge => {
+                if (visited.has(edge.source().id())) {
+                    edge.removeClass('dimmed').addClass('cascade-edge');
+                }
+            });
+        }, (i + 1) * 200);
+    });
+
+    // Keep passed/in-progress nodes visible but slightly dimmed
+    courses.filter(c => c.status === 'passed' || c.status === 'in-progress').forEach(c => {
+        if (c.id !== simulatedCourseId) {
+            const n = cy.getElementById(c.id);
+            n.style('opacity', 0.5);
+            n.removeClass('dimmed');
+        }
+    });
+
+    // Show impact banner
+    document.getElementById('impact-course-name').textContent = simulatedCourseId + ' ' + courses.find(c => c.id === simulatedCourseId).name;
+    document.getElementById('impact-banner').classList.add('show');
+
+    // Show summary card after cascade finishes
+    setTimeout(() => {
+        const semestersAffected = new Set(blocked.map(b => b.avail.split(' & ')[0])).size;
+        document.getElementById('summary-blocked-count').textContent = blocked.length;
+        document.getElementById('summary-semesters').textContent = Math.min(semestersAffected + 1, 3);
+        document.getElementById('summary-delay').textContent = blocked.length > 3 ? '+2 sem' : '+1 sem';
+        document.getElementById('summary-blocked-badge').textContent = blocked.length + ' blocked';
+
+        const listEl = document.getElementById('summary-blocked-list');
+        listEl.innerHTML = '';
+        blocked.forEach(b => {
+            const chip = document.createElement('span');
+            chip.className = 'px-2 py-1 bg-red-100 text-red-700 text-[11px] rounded-full font-semibold';
+            chip.textContent = b.id + ' ' + b.name;
+            listEl.appendChild(chip);
+        });
+
+        const recoveryEl = document.getElementById('summary-recovery');
+        const src = courses.find(c => c.id === simulatedCourseId);
+        recoveryEl.innerHTML =
+            '<div>📅 Retake <strong>' + simulatedCourseId + '</strong> in <strong>' + src.avail.split(' & ')[0] + ' 2026</strong></div>' +
+            blocked.slice(0, 3).map((b, i) =>
+                '<div>🔓 <strong>' + b.id + '</strong> unlocks in ' + (i === 0 ? 'Spring' : 'Fall') + ' 2027</div>'
+            ).join('');
+
+        document.getElementById('impact-summary').classList.add('show');
+    }, blocked.length * 200 + 300);
+
+    // Update panel
+    document.getElementById('panel-simulate-section').classList.add('hidden');
+    document.getElementById('panel-clear-section').classList.remove('hidden');
+}
+
+function clearSimulation() {
+    simulationActive = false;
+    simulatedCourseId = null;
+
+    // Reset all classes
+    cy.nodes().removeClass('dimmed cascade-hit cascade-source');
+    cy.edges().removeClass('dimmed cascade-edge');
+    cy.nodes().style('opacity', 1);
+
+    // Hide impact UI
+    document.getElementById('impact-banner').classList.remove('show');
+    document.getElementById('impact-summary').classList.remove('show');
+
+    // Update panel buttons
+    document.getElementById('panel-simulate-section').classList.remove('hidden');
+    document.getElementById('panel-clear-section').classList.add('hidden');
+
+    // Re-open panel if a node was selected
+    if (selectedNode) openPanel(selectedNode.data());
+}
+</script>
+<script src="../nav.js"></script>
+</body>
+</html>

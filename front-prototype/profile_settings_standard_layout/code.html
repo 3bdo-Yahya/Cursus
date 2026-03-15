@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile Settings - Cursus</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4F46E5",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen font-display">
+<!-- Navigation Header -->
+<nav class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-[960px] mx-auto px-4 h-16 flex items-center justify-between">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl">school</span>
+<span class="text-slate-900 dark:text-slate-100 text-xl font-bold tracking-tight">Cursus</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
+<img class="h-full w-full object-cover" data-alt="User profile avatar placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ8_01OTFtrM2doEDw2-MWeF46Vs8c8lr5Iyj7JEeEcfWzjPG1WP4Rvp8qBUsL4J9IAeIYZdy_4_WSyVwqN4giGuwYVCnCmZi0lnPGdF0UAAGdYXuJ31A5aOEK3V3BJxrhgBQnefTtLu4GEVkV_w3hZLya0FzA0SfHUD-502vdpRfm9LtgDm3P-_pl6Qn6HqcuYU5xWb0E_u6BAXiKwVw00X-9Zkfkw0n0W7X6ymIEOqdrzz1iBPtw_9ablzEVw4hXaJo-g1FRdZqI"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="max-w-[550px] mx-auto px-4 py-12">
+<!-- Page Header -->
+<div class="mb-8">
+<h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">Profile Settings</h1>
+<p class="text-slate-500 dark:text-slate-400 mt-1">Manage your account information</p>
+</div>
+<div class="flex flex-col gap-6">
+<!-- Section 1: Personal Information -->
+<section class="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800">
+<h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Personal Information</h2>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Full Name</label>
+<input class="w-full px-4 py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" type="text" value="Alex Thompson"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
+<input class="w-full px-4 py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" type="email" value="alex.thompson@cursus.edu"/>
+</div>
+<div class="pt-2">
+<button class="bg-primary hover:bg-primary/90 text-white font-semibold py-2 px-6 rounded transition-colors w-full sm:w-auto">
+                            Save Changes
+                        </button>
+</div>
+</div>
+</section>
+<!-- Section 2: Academic Information (Student View) -->
+<section class="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800">
+<h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Academic Information</h2>
+</div>
+<div class="p-6 space-y-4">
+<!-- Info Banner -->
+<div class="flex items-start gap-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
+<span class="material-symbols-outlined text-slate-400 text-xl">info</span>
+<p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                            Academic data is managed by the registrar's office and is read-only. Contact support if you find any discrepancies.
+                        </p>
+</div>
+<div class="grid grid-cols-1 gap-4 text-sm">
+<div class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800">
+<span class="text-slate-500 dark:text-slate-400">Department</span>
+<span class="font-medium text-slate-900 dark:text-slate-100">Computer Science &amp; Engineering</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800">
+<span class="text-slate-500 dark:text-slate-400">Current Year</span>
+<span class="font-medium text-slate-900 dark:text-slate-100">3rd Year</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800">
+<span class="text-slate-500 dark:text-slate-400">Semester</span>
+<span class="font-medium text-slate-900 dark:text-slate-100">Fall 2024</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800">
+<span class="text-slate-500 dark:text-slate-400">Academic Standing</span>
+<span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">Excellent</span>
+</div>
+<div class="flex justify-between items-center py-2">
+<span class="text-slate-500 dark:text-slate-400">Cumulative GPA</span>
+<span class="font-bold text-primary text-lg">3.92</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Change Password -->
+<section class="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Change Password</h2>
+<span class="material-symbols-outlined text-slate-400">lock</span>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Current Password</label>
+<input class="w-full px-4 py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="••••••••" type="password"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">New Password</label>
+<input class="w-full px-4 py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Min. 8 characters" type="password"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Confirm New Password</label>
+<input class="w-full px-4 py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Repeat new password" type="password"/>
+</div>
+<div class="pt-2">
+<button class="bg-primary hover:bg-primary/90 text-white font-semibold py-2 px-6 rounded transition-colors w-full sm:w-auto">
+                            Update Password
+                        </button>
+</div>
+</div>
+</section>
+<!-- Footer Help -->
+<div class="text-center py-4">
+<p class="text-sm text-slate-500 dark:text-slate-400">
+                    Need help with your account? <a class="text-primary hover:underline font-medium" href="#">Contact Academic Services</a>
+</p>
+</div>
+</div>
+</main>
+<script src="../nav.js"></script></body></html>

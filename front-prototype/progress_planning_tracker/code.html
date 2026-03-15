@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Student Progress Tracker</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Header Section -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 md:px-10 py-3">
+<div class="flex items-center gap-4">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">school</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight">Academic Portal</h2>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-xl h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-xl h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<main class="flex flex-1 justify-center py-8 px-4 md:px-10">
+<div class="layout-content-container flex flex-col max-w-[1024px] flex-1 gap-8">
+<!-- Navigation / Identity Section -->
+<div class="flex flex-col gap-1">
+<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Degree Progress</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Student: Alex Rivers • ID: 2024-001 • Major: Computer Science</p>
+</div>
+<!-- Tabs -->
+<div class="border-b border-slate-200 dark:border-slate-800">
+<div class="flex gap-8">
+<a class="flex flex-col items-center justify-center border-b-[3px] border-primary text-primary pb-3 pt-2" href="#">
+<p class="text-sm font-bold leading-normal tracking-wide">Progress Tracker</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-transparent text-slate-500 dark:text-slate-400 pb-3 pt-2 hover:text-slate-700 dark:hover:text-slate-200" href="#">
+<p class="text-sm font-bold leading-normal tracking-wide">GPA Simulator</p>
+</a>
+</div>
+</div>
+<!-- Hero Progress Section -->
+<div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex flex-col gap-6">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-1">
+<h2 class="text-3xl font-extrabold text-slate-900 dark:text-slate-100">84 of 132 credits completed</h2>
+<p class="text-slate-500 dark:text-slate-400 font-medium">Projected Graduation: Spring 2027</p>
+</div>
+<div class="text-right">
+<span class="text-4xl font-black text-primary">64%</span>
+</div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-4 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 64%;"></div>
+</div>
+</div>
+</div>
+<!-- 2x2 Grid of Category Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Card 1: Core Courses -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<h3 class="font-bold text-lg text-slate-900 dark:text-slate-100">Core Courses</h3>
+<span class="text-xs font-bold px-2 py-1 bg-primary/10 text-primary rounded">48 / 60 cr</span>
+</div>
+<ul class="flex flex-col gap-3">
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">CS101: Intro to Programming</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">CS202: Data Structures</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-lg">radio_button_unchecked</span>
+<span class="text-slate-700 dark:text-slate-300">CS301: Operating Systems</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-lg">lock</span>
+<span class="text-slate-400 dark:text-slate-500 italic">CS499: Senior Capstone (Locked)</span>
+</li>
+</ul>
+</div>
+<!-- Card 2: Department Elective -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<h3 class="font-bold text-lg text-slate-900 dark:text-slate-100">Department Elective</h3>
+<span class="text-xs font-bold px-2 py-1 bg-primary/10 text-primary rounded">12 / 18 cr</span>
+</div>
+<ul class="flex flex-col gap-3">
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">AI402: Machine Learning</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">WEB200: Modern Frontend</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-lg">radio_button_unchecked</span>
+<span class="text-slate-700 dark:text-slate-300">DS305: Database Systems</span>
+</li>
+</ul>
+</div>
+<!-- Card 3: Free Elective -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<h3 class="font-bold text-lg text-slate-900 dark:text-slate-100">Free Elective</h3>
+<span class="text-xs font-bold px-2 py-1 bg-primary/10 text-primary rounded">9 / 12 cr</span>
+</div>
+<ul class="flex flex-col gap-3">
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">MUS101: Music Appreciation</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-lg">radio_button_unchecked</span>
+<span class="text-slate-700 dark:text-slate-300">PSYC101: Intro to Psychology</span>
+</li>
+</ul>
+</div>
+<!-- Card 4: University Requirements -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<h3 class="font-bold text-lg text-slate-900 dark:text-slate-100">University Requirements</h3>
+<span class="text-xs font-bold px-2 py-1 bg-primary/10 text-primary rounded">15 / 18 cr</span>
+</div>
+<ul class="flex flex-col gap-3">
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">ENG102: Academic Writing</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">HIST201: World History</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-lg">radio_button_unchecked</span>
+<span class="text-slate-700 dark:text-slate-300">PHIL105: Ethics in Tech</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Bottom Alert Card -->
+<div class="bg-white dark:bg-slate-900 border-l-4 border-green-500 p-5 rounded-lg shadow-sm flex items-start gap-4">
+<div class="text-green-500">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-slate-900 dark:text-slate-100 text-base">You're on track.</h4>
+<p class="text-slate-600 dark:text-slate-400 text-sm">At your current pace, you'll complete all requirements by Spring 2027.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Simple Footer -->
+<footer class="mt-auto py-6 px-10 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+<div class="max-w-[1024px] mx-auto flex justify-between items-center text-slate-400 text-xs font-medium">
+<p>© 2024 University Academic Portal</p>
+<div class="flex gap-4">
+<a class="hover:text-primary" href="#">Support</a>
+<a class="hover:text-primary" href="#">Contact Advisor</a>
+</div>
+</div>
+</footer>
+</div>
+</div>
+<script src="../nav.js"></script></body></html>

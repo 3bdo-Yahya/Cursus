@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Cursus - GPA Simulator</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4f46e5",
+                        "background-light": "#f9fafb",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Public Sans', sans-serif; }
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+        .gpa-change-positive { color: #10b981; }
+        .gpa-change-negative { color: #ef4444; }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.12); } 100% { transform: scale(1); } }
+        .gpa-pop { animation: pop 0.3s ease-out; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .honor-glow { background: linear-gradient(90deg, transparent, rgba(251,191,36,0.15), transparent); background-size: 200% 100%; animation: shimmer 2s infinite; }
+    </style>
+</head>
+<body class="bg-background-light min-h-screen font-display text-slate-900">
+
+<!-- Top Navbar -->
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 h-14">
+    <div class="max-w-6xl mx-auto px-5 h-full flex items-center justify-between">
+        <div class="flex items-center gap-8">
+            <div class="flex items-center gap-2 text-primary">
+                <span class="material-symbols-outlined text-2xl">school</span>
+                <h1 class="text-lg font-bold tracking-tight text-slate-900">Cursus</h1>
+            </div>
+            <div class="hidden md:flex items-center gap-6">
+                <a class="text-slate-600 text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+                <a class="text-slate-600 text-sm font-medium hover:text-primary transition-colors" href="#">Course Map</a>
+                <a class="text-primary font-semibold text-sm border-b-2 border-primary pb-0.5" href="#">Progress & Planning</a>
+                <a class="text-slate-600 text-sm font-medium hover:text-primary transition-colors" href="#">AI Advisor</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full"><span class="material-symbols-outlined text-xl">notifications</span></button>
+            <div class="h-9 w-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-sm">AH</div>
+        </div>
+    </div>
+</nav>
+
+<!-- Tab Navigation -->
+<div class="bg-white border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-5 flex gap-8">
+        <a class="py-3 text-sm font-medium text-slate-500 hover:text-primary border-b-2 border-transparent transition-colors" href="../progress_planning_tracker/code.html">Progress Tracker</a>
+        <a class="py-3 text-sm font-bold text-primary border-b-2 border-primary" href="#">GPA Simulator</a>
+    </div>
+</div>
+
+<main class="max-w-6xl mx-auto px-5 py-8">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold">GPA Simulator</h1>
+        <p class="text-sm text-slate-500 mt-1">Select expected grades for your current courses — results update instantly</p>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-6 lg:items-start">
+
+        <!-- LEFT COLUMN: Course Inputs -->
+        <div class="flex-1 space-y-6">
+
+            <!-- Current Status Bar -->
+            <div class="bg-white rounded-xl border border-slate-200 p-5 flex items-center divide-x divide-slate-100">
+                <div class="flex-1 text-center px-3">
+                    <div class="text-2xl font-bold" id="current-cgpa">3.24</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider font-semibold">Current CGPA</div>
+                </div>
+                <div class="flex-1 text-center px-3">
+                    <div class="text-2xl font-bold" id="last-sgpa">2.85</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider font-semibold">Last SGPA</div>
+                </div>
+                <div class="flex-1 text-center px-3">
+                    <span id="current-standing" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>Good Standing
+                    </span>
+                </div>
+            </div>
+
+            <!-- Predict Your Grades Table -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-100">
+                    <h3 class="font-bold text-sm">Predict Your Grades</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Select expected grades for your current courses</p>
+                </div>
+                <table class="w-full text-left" id="grade-table">
+                    <thead>
+                        <tr class="text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                            <th class="px-5 py-3">Course</th>
+                            <th class="px-5 py-3 text-center w-20">Credits</th>
+                            <th class="px-5 py-3 text-right w-44">Your Prediction</th>
+                        </tr>
+                    </thead>
+                    <tbody id="courses-body"></tbody>
+                </table>
+            </div>
+
+            <!-- Grade Improvement Section -->
+            <div id="improvement-section" class="bg-white rounded-xl border border-amber-200 overflow-hidden">
+                <div class="bg-amber-50 px-5 py-3 border-b border-amber-100 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-amber-600 text-lg">refresh</span>
+                    <div>
+                        <h3 class="font-bold text-sm text-amber-800">Grade Improvement Eligible</h3>
+                        <p class="text-[11px] text-amber-600">Courses you can retake (original grade ≤ D+)</p>
+                    </div>
+                </div>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                            <th class="px-5 py-3">Course</th>
+                            <th class="px-5 py-3 text-center w-24">Original</th>
+                            <th class="px-5 py-3 text-right w-44">New Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="improvement-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Results -->
+        <aside class="w-full lg:w-[360px] lg:sticky lg:top-20 space-y-5">
+
+            <!-- Live Prediction Card (hero) -->
+            <div class="rounded-2xl bg-gradient-to-br from-primary to-indigo-500 p-6 text-white shadow-xl shadow-primary/20">
+                <h3 class="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-5">Live Prediction</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-4xl font-bold tracking-tight" id="predicted-sgpa">—</div>
+                        <div class="mt-1 text-[11px] font-medium opacity-70">Predicted SGPA</div>
+                    </div>
+                    <div class="border-l border-white/20 pl-4">
+                        <div class="text-4xl font-bold tracking-tight" id="predicted-cgpa">—</div>
+                        <div class="mt-1 text-[11px] font-medium opacity-70 flex items-center gap-1">
+                            Predicted CGPA <span id="cgpa-change" class="font-bold"></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Standing prediction -->
+                <div id="standing-prediction" class="mt-5 px-3 py-2 rounded-lg bg-white/10 text-xs font-semibold text-center"></div>
+                <!-- Honor badges -->
+                <div id="honor-badge" class="mt-3 text-center hidden">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold"></span>
+                </div>
+            </div>
+
+            <!-- Target GPA -->
+            <div class="bg-white rounded-xl border border-slate-200 p-5">
+                <h4 class="font-bold text-sm flex items-center gap-2 mb-4">
+                    <span class="material-symbols-outlined text-primary text-lg">flag</span> Set a Target
+                </h4>
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Target CGPA</label>
+                <div class="flex items-center gap-4 mt-2">
+                    <input type="range" id="target-slider" min="1.0" max="4.0" step="0.05" value="3.50" class="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary"/>
+                    <span id="target-value" class="text-lg font-bold tabular-nums w-12 text-right">3.50</span>
+                </div>
+                <div id="target-result" class="mt-3"></div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="bg-white rounded-xl border border-slate-200 p-5">
+                <h4 class="font-bold text-sm flex items-center gap-2 mb-4">
+                    <span class="material-symbols-outlined text-primary text-lg">insights</span> Semester Summary
+                </h4>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between"><span class="text-slate-500">Semester Credits</span><span id="total-credits" class="font-bold">—</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Total Completed Credits</span><span class="font-bold">84</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Completed Quality Points</span><span class="font-bold">272.16</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">CGPA Change</span><span id="cgpa-impact" class="font-bold">—</span></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<footer class="mt-12 border-t border-slate-200 py-6">
+    <p class="text-center text-sm text-slate-400">© 2026 Cursus · DEPI Graduation Project</p>
+</footer>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const gradeScale = {
+    'A+': 4.00, 'A': 4.00, 'A-': 3.67,
+    'B+': 3.33, 'B': 3.00, 'B-': 2.67,
+    'C+': 2.33, 'C': 2.00, 'C-': 1.67,
+    'D+': 1.33, 'D': 1.00, 'F': 0.00,
+};
+const gradeOptions = ['—', 'A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
+
+// Student's completed history
+const completedCredits = 84;
+const completedQualityPoints = 272.16; // 84 * 3.24
+
+// Current semester courses (in-progress)
+const currentCourses = [
+    { id: 'CS202', name: 'Discrete Mathematics', credits: 3 },
+    { id: 'MTH201', name: 'Linear Algebra', credits: 3 },
+    { id: 'CS301', name: 'Operating Systems', credits: 3 },
+    { id: 'ENG201', name: 'Technical Writing', credits: 2 },
+    { id: 'CS303', name: 'Computer Networks', credits: 3 },
+];
+
+// Courses eligible for grade improvement (grade ≤ D+)
+const improvableCourses = [
+    { id: 'MTH102', name: 'Calculus II', credits: 3, originalGrade: 'D', originalPoints: 1.00 },
+    { id: 'CS102', name: 'Programming I', credits: 3, originalGrade: 'D+', originalPoints: 1.33 },
+];
+
+// ============================================================
+// RENDER TABLES
+// ============================================================
+function renderCourseTable() {
+    const tbody = document.getElementById('courses-body');
+    tbody.innerHTML = '';
+    currentCourses.forEach((c, i) => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-50 hover:bg-slate-50/50 transition-colors';
+        tr.innerHTML = `
+            <td class="px-5 py-3.5">
+                <div class="font-semibold text-sm">${c.id}</div>
+                <div class="text-[11px] text-slate-400">${c.name}</div>
+            </td>
+            <td class="px-5 py-3.5 text-center text-sm text-slate-500 font-medium">${c.credits}</td>
+            <td class="px-5 py-3.5 text-right">
+                <select data-index="${i}" class="grade-select w-28 px-3 py-2 pr-8 text-sm font-semibold rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer text-slate-900">
+                    ${gradeOptions.map(g => `<option value="${g}">${g}</option>`).join('')}
+                </select>
+            </td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+function renderImprovementTable() {
+    const tbody = document.getElementById('improvement-body');
+    tbody.innerHTML = '';
+    improvableCourses.forEach((c, i) => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-50 hover:bg-amber-50/30 transition-colors';
+        tr.innerHTML = `
+            <td class="px-5 py-3.5">
+                <div class="font-semibold text-sm">${c.id}</div>
+                <div class="text-[11px] text-slate-400">${c.name}</div>
+            </td>
+            <td class="px-5 py-3.5 text-center">
+                <span class="inline-flex px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700">${c.originalGrade}</span>
+            </td>
+            <td class="px-5 py-3.5 text-right">
+                <select data-improve-index="${i}" class="improve-select w-28 px-3 py-2 pr-8 text-sm font-semibold rounded-lg border border-amber-200 bg-amber-50 focus:ring-2 focus:ring-amber-300/30 focus:border-amber-400 transition-all cursor-pointer text-slate-900">
+                    <option value="—">—</option>
+                    ${Object.keys(gradeScale).filter(g => gradeScale[g] > gradeScale[c.originalGrade]).map(g => `<option value="${g}">${g}</option>`).join('')}
+                </select>
+            </td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+// ============================================================
+// CALCULATION ENGINE
+// ============================================================
+function calculate() {
+    const selects = document.querySelectorAll('.grade-select');
+    const improveSelects = document.querySelectorAll('.improve-select');
+
+    let semesterCredits = 0;
+    let semesterQP = 0;
+    let allSelected = true;
+
+    // Current semester courses
+    selects.forEach((sel, i) => {
+        const grade = sel.value;
+        if (grade === '—') { allSelected = false; return; }
+        const credits = currentCourses[i].credits;
+        semesterCredits += credits;
+        semesterQP += credits * gradeScale[grade];
+
+        // Color the dropdown based on grade quality
+        sel.className = sel.className.replace(/border-\S+/g, '');
+        const points = gradeScale[grade];
+        if (points >= 3.67) sel.classList.add('border-emerald-300', 'bg-emerald-50');
+        else if (points >= 3.0) sel.classList.add('border-sky-300', 'bg-sky-50');
+        else if (points >= 2.0) sel.classList.add('border-slate-200', 'bg-white');
+        else if (points >= 1.0) sel.classList.add('border-amber-300', 'bg-amber-50');
+        else sel.classList.add('border-red-300', 'bg-red-50');
+    });
+
+    // Grade improvement adjustments
+    let improvementQPDelta = 0;
+    let improvementCreditsForCGPA = 0;
+    improveSelects.forEach((sel, i) => {
+        const grade = sel.value;
+        if (grade === '—') return;
+        const c = improvableCourses[i];
+        const newPoints = gradeScale[grade];
+        const oldPoints = c.originalPoints;
+        improvementQPDelta += c.credits * (newPoints - oldPoints);
+    });
+
+    const totalCredits = currentCourses.reduce((s, c) => s + c.credits, 0);
+    document.getElementById('total-credits').textContent = totalCredits;
+
+    if (!allSelected) {
+        // Check if at least one is selected for partial display
+        const anySelected = Array.from(selects).some(s => s.value !== '—');
+        if (!anySelected) {
+            document.getElementById('predicted-sgpa').textContent = '—';
+            document.getElementById('predicted-cgpa').textContent = '—';
+            document.getElementById('cgpa-change').textContent = '';
+            document.getElementById('cgpa-impact').textContent = '—';
+            document.getElementById('standing-prediction').textContent = 'Select grades to see prediction';
+            document.getElementById('honor-badge').classList.add('hidden');
+            updateTargetResult();
+            return;
+        }
+    }
+
+    // SGPA = semester QP / semester credits
+    const sgpa = semesterCredits > 0 ? (semesterQP / semesterCredits) : 0;
+
+    // CGPA = (old QP + new QP + improvement) / (old credits + new credits)
+    const totalQP = completedQualityPoints + semesterQP + improvementQPDelta;
+    const totalCr = completedCredits + semesterCredits;
+    const cgpa = totalCr > 0 ? (totalQP / totalCr) : 0;
+
+    const cgpaDelta = cgpa - 3.24; // current CGPA is 3.24
+    const sgpaEl = document.getElementById('predicted-sgpa');
+    const cgpaEl = document.getElementById('predicted-cgpa');
+
+    // Animate the numbers
+    sgpaEl.textContent = sgpa.toFixed(2);
+    cgpaEl.textContent = cgpa.toFixed(2);
+    sgpaEl.classList.remove('gpa-pop');
+    cgpaEl.classList.remove('gpa-pop');
+    void sgpaEl.offsetWidth; // force reflow
+    sgpaEl.classList.add('gpa-pop');
+    cgpaEl.classList.add('gpa-pop');
+
+    // CGPA change indicator
+    const changeEl = document.getElementById('cgpa-change');
+    if (cgpaDelta > 0) {
+        changeEl.textContent = '(+' + cgpaDelta.toFixed(2) + ')';
+        changeEl.className = 'font-bold text-emerald-300';
+    } else if (cgpaDelta < 0) {
+        changeEl.textContent = '(' + cgpaDelta.toFixed(2) + ')';
+        changeEl.className = 'font-bold text-red-300';
+    } else {
+        changeEl.textContent = '(±0.00)';
+        changeEl.className = 'font-bold opacity-60';
+    }
+
+    // Impact stat
+    const impactEl = document.getElementById('cgpa-impact');
+    if (cgpaDelta > 0) {
+        impactEl.textContent = '+' + cgpaDelta.toFixed(2);
+        impactEl.className = 'font-bold text-emerald-500';
+    } else if (cgpaDelta < 0) {
+        impactEl.textContent = cgpaDelta.toFixed(2);
+        impactEl.className = 'font-bold text-red-500';
+    } else {
+        impactEl.textContent = '±0.00';
+        impactEl.className = 'font-bold text-slate-400';
+    }
+
+    // Standing prediction
+    const standingEl = document.getElementById('standing-prediction');
+    if (sgpa < 1.0) {
+        standingEl.innerHTML = '⚠️ Predicted: <strong>Dismissal Risk</strong> — SGPA below 1.0';
+        standingEl.className = 'mt-5 px-3 py-2 rounded-lg bg-red-500/20 text-xs font-semibold text-center';
+    } else if (sgpa < 2.0) {
+        standingEl.innerHTML = '⚠️ Predicted: <strong>Academic Probation</strong>';
+        standingEl.className = 'mt-5 px-3 py-2 rounded-lg bg-amber-400/20 text-xs font-semibold text-center';
+    } else {
+        standingEl.innerHTML = '✅ Predicted: <strong>Good Standing</strong>';
+        standingEl.className = 'mt-5 px-3 py-2 rounded-lg bg-emerald-400/20 text-xs font-semibold text-center';
+    }
+
+    // Honor badges
+    const honorEl = document.getElementById('honor-badge');
+    const badgeSpan = honorEl.querySelector('span');
+    if (sgpa >= 3.75) {
+        honorEl.classList.remove('hidden');
+        honorEl.className = 'mt-3 text-center honor-glow rounded-lg py-1';
+        badgeSpan.innerHTML = '🏅 President\'s List';
+        badgeSpan.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-400/30 text-amber-100';
+    } else if (sgpa >= 3.5) {
+        honorEl.classList.remove('hidden');
+        honorEl.className = 'mt-3 text-center honor-glow rounded-lg py-1';
+        badgeSpan.innerHTML = '🎓 Dean\'s List';
+        badgeSpan.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-indigo-400/30 text-indigo-100';
+    } else if (sgpa >= 3.0) {
+        honorEl.classList.remove('hidden');
+        honorEl.className = 'mt-3 text-center';
+        badgeSpan.innerHTML = '📋 Honor List';
+        badgeSpan.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white/80';
+    } else {
+        honorEl.classList.add('hidden');
+    }
+
+    updateTargetResult();
+}
+
+// ============================================================
+// TARGET GPA BACK-CALCULATION
+// ============================================================
+const targetSlider = document.getElementById('target-slider');
+const targetValue = document.getElementById('target-value');
+
+targetSlider.addEventListener('input', () => {
+    targetValue.textContent = parseFloat(targetSlider.value).toFixed(2);
+    updateTargetResult();
+});
+
+function updateTargetResult() {
+    const target = parseFloat(targetSlider.value);
+    const resultEl = document.getElementById('target-result');
+    const totalCredits = currentCourses.reduce((s, c) => s + c.credits, 0);
+
+    // Required QP = target * (completedCredits + semesterCredits) - completedQP
+    const requiredTotalQP = target * (completedCredits + totalCredits);
+    const requiredSemesterQP = requiredTotalQP - completedQualityPoints;
+    const requiredSGPA = requiredSemesterQP / totalCredits;
+
+    if (requiredSGPA > 4.0) {
+        resultEl.innerHTML = `
+            <div class="p-3 rounded-lg bg-red-50 border border-red-100">
+                <p class="text-xs text-red-700 leading-relaxed">
+                    ⚠️ A CGPA of <strong>${target.toFixed(2)}</strong> is <strong>not achievable</strong> with your current course load.
+                    Maximum possible: <strong>${((completedQualityPoints + totalCredits * 4.0) / (completedCredits + totalCredits)).toFixed(2)}</strong>
+                </p>
+            </div>`;
+    } else if (requiredSGPA < 0) {
+        resultEl.innerHTML = `
+            <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-100">
+                <p class="text-xs text-emerald-700 leading-relaxed">
+                    ✅ You've <strong>already exceeded</strong> a CGPA of <strong>${target.toFixed(2)}</strong>. Any passing grades will keep you above this target.
+                </p>
+            </div>`;
+    } else {
+        const requiredGrade = Object.entries(gradeScale).find(([g, p]) => p <= requiredSGPA + 0.16) || ['A+', 4.0];
+        resultEl.innerHTML = `
+            <div class="p-3 rounded-lg bg-primary/5 border border-primary/10">
+                <p class="text-xs text-slate-700 leading-relaxed">
+                    To reach <strong>${target.toFixed(2)} CGPA</strong>, you need a minimum semester GPA of
+                    <strong class="text-primary">${requiredSGPA.toFixed(2)}</strong>
+                    (roughly <strong>${requiredGrade[0]}</strong> average across all courses)
+                </p>
+            </div>`;
+    }
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('grade-select') || e.target.classList.contains('improve-select')) {
+        calculate();
+    }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+renderCourseTable();
+renderImprovementTable();
+calculate();
+updateTargetResult();
+</script>
+<script src="../nav.js"></script>
+</body>
+</html>

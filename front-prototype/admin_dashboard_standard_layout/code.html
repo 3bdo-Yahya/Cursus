@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cursus Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4F46E5",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen font-display">
+<!-- Top Navigation Bar -->
+<nav class="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16">
+<div class="flex items-center gap-8">
+<!-- Logo -->
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl font-bold">school</span>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold tracking-tight">Cursus</h2>
+</div>
+<!-- Search Bar -->
+<div class="hidden md:flex items-center">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-64 text-sm transition-all outline-none text-slate-900 dark:text-white" placeholder="Search courses, students..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Nav Links & Profile -->
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center gap-8">
+<a class="text-primary text-sm font-semibold border-b-2 border-primary py-5" href="#">Dashboard</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary text-sm font-medium transition-colors" href="#">Courses</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary text-sm font-medium transition-colors" href="#">Students</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary text-sm font-medium transition-colors" href="#">Settings</a>
+</div>
+<div class="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden border-2 border-primary/20">
+<img alt="Admin Avatar" class="h-full w-full object-cover" data-alt="Professional headshot of a male administrator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCeQQpWcb_xsNWXg_UhyKkBSQPXPyOl_OEU23Y2A924g1YcOcuvqNsVsV-le09Jqo2PBC59ehHnGOv8XNaIpBQbPmOo6lEzYHj-yRQ-mTz_QErZ6fge8loepI9IACVF0X6g6qQDxDbb0LILMK5-lgGxdsfSoyN00Q0mU_klSlhVU5Ditwn1altgQRPDn_V39Pl08-JM8wP8V6SOLvFabuam_nZULkKMj5is93WMxR0ih3rf6IWfgXCtDIIGqV7tiut0FBSmdW5pThV"/>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Welcome Header -->
+<div class="mb-8">
+<h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Admin Dashboard</h1>
+<p class="text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                Monday, October 30, 2023
+            </p>
+</div>
+<!-- Metric Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Courses</p>
+<h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-1">42</h3>
+</div>
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">menu_book</span>
+</div>
+</div>
+<div class="mt-4 flex items-center text-emerald-600 dark:text-emerald-400 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                    +2% from last month
+                </div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Registered Students</p>
+<h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-1">156</h3>
+</div>
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">group</span>
+</div>
+</div>
+<div class="mt-4 flex items-center text-emerald-600 dark:text-emerald-400 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                    +12% from last month
+                </div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Departments</p>
+<h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-1">3</h3>
+</div>
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">account_tree</span>
+</div>
+</div>
+<div class="mt-4 flex items-center text-slate-400 text-sm font-medium">
+<span class="material-symbols-outlined text-sm mr-1">horizontal_rule</span>
+                    Stable performance
+                </div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border-l-4 border-amber-500 border-t border-r border-b border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">High-Failure Alerts</p>
+<h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-1">4</h3>
+</div>
+<div class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+<span class="material-symbols-outlined text-amber-600 dark:text-amber-400">warning</span>
+</div>
+</div>
+<div class="mt-4 flex items-center text-orange-600 dark:text-orange-400 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm mr-1">trending_down</span>
+                    -5% improvement
+                </div>
+</div>
+</div>
+<!-- Quick Action Cards -->
+<h2 class="text-xl font-bold text-slate-900 dark:text-white mb-4">Quick Actions</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+<div class="group bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-primary/50 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="h-16 w-16 flex items-center justify-center bg-primary/5 rounded-xl group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-3xl text-primary group-hover:text-white">edit_note</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Manage Courses</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">View, edit, and create new academic courses and curriculum schedules.</p>
+</div>
+<div class="ml-auto">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-700">chevron_right</span>
+</div>
+</div>
+</div>
+<div class="group bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-primary/50 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="h-16 w-16 flex items-center justify-center bg-primary/5 rounded-xl group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-3xl text-primary group-hover:text-white">person_search</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Manage Students</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Access student profiles, enrollment data, and performance analytics.</p>
+</div>
+<div class="ml-auto">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-700">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+<!-- High Failure Rates Card -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border-l-4 border-amber-500 border-t border-r border-b border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Courses with High Failure Rates</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Critical courses requiring academic intervention</p>
+</div>
+<button class="px-4 py-2 text-primary hover:bg-primary/5 rounded-lg text-sm font-semibold transition-colors">
+                    View Full Report
+                </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50">
+<th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Course ID</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Course Name</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Department</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Failure Rate</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">CS201</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Data Structures &amp; Algorithms</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Computer Science</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="flex-1 bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden min-w-[100px]">
+<div class="bg-red-500 h-full w-[40%]"></div>
+</div>
+<span class="text-sm font-bold text-red-600">40%</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<button class="text-sm font-medium text-primary hover:underline">Notify Dept</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">MTH102</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Linear Algebra</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Mathematics</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="flex-1 bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden min-w-[100px]">
+<div class="bg-amber-500 h-full w-[32%]"></div>
+</div>
+<span class="text-sm font-bold text-amber-600">32%</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<button class="text-sm font-medium text-primary hover:underline">Notify Dept</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+<td class="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">PHY101</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">General Physics I</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Physics</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="flex-1 bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden min-w-[100px]">
+<div class="bg-amber-500 h-full w-[21%]"></div>
+</div>
+<span class="text-sm font-bold text-amber-600">21%</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<button class="text-sm font-medium text-primary hover:underline">Notify Dept</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-slate-200 dark:border-slate-800 mt-12">
+<div class="flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-sm text-slate-500 dark:text-slate-400">© 2023 Cursus Learning Management System. Admin Panel.</p>
+<div class="flex gap-6">
+<a class="text-xs font-medium text-slate-400 hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-xs font-medium text-slate-400 hover:text-primary transition-colors" href="#">Support Center</a>
+<a class="text-xs font-medium text-slate-400 hover:text-primary transition-colors" href="#">System Status</a>
+</div>
+</div>
+</footer>
+<script src="../nav.js"></script></body></html>

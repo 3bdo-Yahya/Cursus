@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: "Public Sans", sans-serif; }
+        .material-symbols-outlined { font-size: 20px; vertical-align: middle; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="layout-container flex flex-col h-full grow">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 md:px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined">school</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight">Cursus Admin</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-primary text-sm font-semibold border-b-2 border-primary pb-1" href="#">Students</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Courses</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Faculty</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<label class="hidden sm:flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+<div class="text-slate-400 flex items-center justify-center pl-3">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="w-full border-none bg-transparent focus:ring-0 text-sm placeholder:text-slate-400 px-3" placeholder="Search students..."/>
+</div>
+</label>
+<button class="relative p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 size-2 bg-primary rounded-full"></span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-primary/20" data-alt="Administrator profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDSuZdPLG06BSvd4s2n1cvyciUAjsU48xoO2RPepRhq6_SqD1cl5KValYhtgL340JSCnIiLiFhE1JpV6OFAkw6YSLR2ziRvqLUrHdM2i5dsih76q1xN8xqwG1QdSZEFh8dXWem99MwEecOeBX1XA-ycutEWbEv2JbeEKCabnjSnpd3Wt-wfbVfJ7o7zV5MvZQWEPLVifORgf_h96Lhwjv6UHlfFmTo5dODbO1np2owglhAPuGNqCyM23qd5tdFxX2y7VFVvNtN0yViz");'></div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto w-full p-4 md:p-8 space-y-8">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<a class="hover:text-primary transition-colors" href="#">Students</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">Ahmed Hassan</span>
+</div>
+<!-- Profile Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-6">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-2xl size-24 md:size-32 shadow-lg" data-alt="Student portrait of Ahmed Hassan" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBanJ3h3t8n0rmW-KH5l9vzmIA5Rk_5TdqkxpnIRy-mJDn4pnhbmB0gYIuF_f-qYfAczmy2kQJrEXsf-_a48ejHFb8OnjweX_h1w00PS1jyDIjPTvVY5bAB5x-pcUXgLmgQYNyFaOGepDsQpnyqWUczKs6erZOUXtQnyio3__da5S2sFfRlncN_KQ8uMOLKS63b1kxK-mzhCEh8zF9ycYFJH6e-YjX65Vmd1jJzNUoByWg1qJdc03bkF8W_OinjSL5O6D-cTj9ONpDI");'></div>
+<span class="absolute -bottom-2 -right-2 bg-green-500 size-5 rounded-full border-4 border-white dark:border-slate-900"></span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-slate-100 text-3xl font-bold tracking-tight">Ahmed Hassan</h1>
+<p class="text-primary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">mail</span>
+                            ahmed.hassan@university.edu
+                        </p>
+<div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-slate-500 dark:text-slate-400 text-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">account_balance</span> Computer Science Dept</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span> 3rd Year</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">layers</span> Semester 6</span>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 rounded-xl h-11 px-6 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">edit</span>
+                        Edit Profile
+                    </button>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 rounded-xl h-11 px-6 bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">download</span>
+                        Transcript
+                    </button>
+</div>
+</div>
+<!-- Metrics -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">CGPA</p>
+<span class="material-symbols-outlined text-primary/40">grade</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-3xl font-bold">3.24</p>
+<div class="flex items-center gap-1 text-green-500 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                        +0.12% increase
+                    </div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Credits Earned</p>
+<span class="material-symbols-outlined text-primary/40">analytics</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-3xl font-bold">84 / 132</p>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 63%"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Completed Courses</p>
+<span class="material-symbols-outlined text-primary/40">menu_book</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-3xl font-bold">28 / 44</p>
+<p class="text-slate-400 dark:text-slate-500 text-sm">16 remaining</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Academic Standing</p>
+<span class="material-symbols-outlined text-primary/40">verified_user</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-3xl font-bold">Good</p>
+<div class="flex items-center gap-1 text-slate-400 text-sm font-medium">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                        Stable status
+                    </div>
+</div>
+</div>
+<!-- Course History Table -->
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Course History</h3>
+<button class="flex items-center gap-2 bg-primary text-white text-sm font-bold px-4 py-2 rounded-xl hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+                        Add Course Record
+                    </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
+<th class="px-6 py-4">Course Code</th>
+<th class="px-6 py-4">Course Name</th>
+<th class="px-6 py-4">Credits</th>
+<th class="px-6 py-4">Grade</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-mono text-sm text-primary">CS301</td>
+<td class="px-6 py-4 font-medium">Data Structures &amp; Algorithms</td>
+<td class="px-6 py-4">4.0</td>
+<td class="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">A-</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold uppercase">Completed</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-1.5 text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-1.5 text-slate-400 hover:text-red-500 transition-colors"><span class="material-symbols-outlined">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-mono text-sm text-primary">CS304</td>
+<td class="px-6 py-4 font-medium">Operating Systems</td>
+<td class="px-6 py-4">3.0</td>
+<td class="px-6 py-4 font-bold text-slate-400">—</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-bold uppercase">In-Progress</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-1.5 text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-1.5 text-slate-400 hover:text-red-500 transition-colors"><span class="material-symbols-outlined">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-mono text-sm text-primary">MATH202</td>
+<td class="px-6 py-4 font-medium">Linear Algebra</td>
+<td class="px-6 py-4">3.0</td>
+<td class="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">B+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold uppercase">Completed</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-1.5 text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-1.5 text-slate-400 hover:text-red-500 transition-colors"><span class="material-symbols-outlined">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-mono text-sm text-primary">PHYS101</td>
+<td class="px-6 py-4 font-medium">General Physics I</td>
+<td class="px-6 py-4">4.0</td>
+<td class="px-6 py-4 font-bold text-red-500">F</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold uppercase">Failed</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-1.5 text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-1.5 text-slate-400 hover:text-red-500 transition-colors"><span class="material-symbols-outlined">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/20 border-t border-slate-100 dark:border-slate-800 flex justify-center">
+<button class="text-primary text-sm font-bold hover:underline">View All 28 Records</button>
+</div>
+</div>
+<!-- Standing History (Collapsible Style) -->
+<details class="group bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-all" open="">
+<summary class="list-none cursor-pointer px-6 py-5 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">history_edu</span>
+<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Academic Standing History</h3>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="px-6 pb-6 pt-2">
+<div class="space-y-6 relative before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100 dark:before:bg-slate-800">
+<div class="relative pl-8">
+<div class="absolute left-0 top-1.5 size-6 bg-white dark:bg-slate-900 border-2 border-primary rounded-full flex items-center justify-center">
+<div class="size-2 bg-primary rounded-full"></div>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Good Standing</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Maintained CGPA above 3.0</p>
+</div>
+<span class="text-xs font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full uppercase">Current Semester</span>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1.5 size-6 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center">
+<div class="size-2 bg-slate-300 dark:bg-slate-600 rounded-full"></div>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Probation Level 1</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">CGPA dropped to 2.89 due to PHYS101 failure</p>
+</div>
+<span class="text-xs font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full uppercase">Fall 2023</span>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1.5 size-6 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center">
+<div class="size-2 bg-slate-300 dark:bg-slate-600 rounded-full"></div>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Good Standing</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Dean's list entry semester</p>
+</div>
+<span class="text-xs font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full uppercase">Spring 2023</span>
+</div>
+</div>
+</div>
+</div>
+</details>
+</main>
+<!-- Footer -->
+<footer class="mt-auto p-6 text-center text-slate-400 dark:text-slate-600 text-sm border-t border-slate-200 dark:border-slate-800">
+            © 2024 Cursus University Admin System. All rights reserved.
+        </footer>
+</div>
+<script src="../nav.js"></script></body></html>

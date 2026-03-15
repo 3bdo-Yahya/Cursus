@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4F46E5",
+                        "primary-hover": "#4338ca",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>Cursus - Sign In</title>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center">
+<div class="flex w-full min-h-screen">
+<!-- Left Panel: Indigo Gradient -->
+<div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#4F46E5] to-[#6366F1] relative flex-col items-center justify-center p-12 text-white overflow-hidden">
+<!-- Background Decoration: Abstract Nodes -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" data-alt="Abstract illustration of connected nodes and prerequisite graph lines">
+<svg class="w-full h-full" viewbox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+<circle cx="200" cy="200" fill="white" r="4"></circle>
+<circle cx="400" cy="150" fill="white" r="6"></circle>
+<circle cx="600" cy="300" fill="white" r="4"></circle>
+<circle cx="300" cy="500" fill="white" r="5"></circle>
+<circle cx="500" cy="650" fill="white" r="4"></circle>
+<line stroke="white" stroke-width="1" x1="200" x2="400" y1="200" y2="150"></line>
+<line stroke="white" stroke-width="1" x1="400" x2="600" y1="150" y2="300"></line>
+<line stroke="white" stroke-width="1" x1="300" x2="400" y1="500" y2="150"></line>
+<line stroke="white" stroke-width="1" x1="300" x2="500" y1="500" y2="650"></line>
+<line stroke="white" stroke-width="1" x1="600" x2="500" y1="300" y2="650"></line>
+</svg>
+</div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="mb-4">
+<h1 class="text-7xl font-black tracking-tighter">Cursus</h1>
+</div>
+<p class="text-xl font-medium text-white/90">Your AI-Powered Academic Advisor</p>
+</div>
+<div class="absolute bottom-12 left-12 z-10">
+<p class="text-sm font-light tracking-wide text-white/80">DEPI Graduation Project · 2026</p>
+</div>
+</div>
+<!-- Right Panel: Sign In Form -->
+<div class="w-full lg:w-1/2 flex flex-col justify-center items-center bg-white dark:bg-background-dark px-6 py-12 lg:px-24">
+<!-- Mobile Logo -->
+<div class="lg:hidden mb-8 flex flex-col items-center">
+<h1 class="text-4xl font-black tracking-tighter text-primary">Cursus</h1>
+<p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">Academic Advisor</p>
+</div>
+<div class="w-full max-w-md">
+<div class="mb-8">
+<h2 class="text-3xl font-bold text-slate-900 dark:text-slate-100">Welcome back</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-2">Sign in to continue to your dashboard</p>
+</div>
+<form action="#" class="space-y-6">
+<div>
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2" for="email">Email</label>
+<input class="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 outline-none" id="email" name="email" placeholder="Enter your email" type="email"/>
+</div>
+<div>
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2" for="password">Password</label>
+<div class="relative">
+<input class="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 outline-none pr-12" id="password" name="password" placeholder="Enter your password" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<label class="flex items-center group cursor-pointer">
+<input class="w-5 h-5 rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary transition-colors cursor-pointer" type="checkbox"/>
+<span class="ml-3 text-sm text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200">Remember me</span>
+</label>
+<a class="text-sm font-semibold text-primary hover:underline" href="#">Forgot password?</a>
+</div>
+<button class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 transition-all duration-200 active:scale-[0.98]" type="submit">
+                        Sign In
+                    </button>
+</form>
+<div class="mt-12 text-center">
+<p class="text-sm text-slate-400 dark:text-slate-500">
+                        Access is managed by your university administrator
+                    </p>
+</div>
+</div>
+</div>
+</div>
+<script src="../nav.js"></script></body></html>

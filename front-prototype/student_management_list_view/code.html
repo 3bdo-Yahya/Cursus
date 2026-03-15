@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cursus Admin - Student Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Navigation Header -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 md:px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<div class="size-8 flex items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined">school</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight">Cursus Admin</h2>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<button class="hidden md:flex min-w-[84px] cursor-pointer items-center justify-center rounded-xl h-10 px-4 bg-primary text-white text-sm font-bold transition-opacity hover:opacity-90">
+<span class="truncate">Quick Actions</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-slate-200 dark:border-slate-700" data-alt="User profile avatar portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAXwu5vGCygUsRHL_DRRw2ofWb2EbULCovsXJM4Sf2EyC_qQrAzs8FKzGPCDg1nKQstz0ushen-4SxC-ilpYuwoQ1onmbOS6neMMI50C_z3_rA_2fldFXFqUarw8mo3INIjAtziPcBijFjnUnB1ZAz_7YsgQqHege8pthb2w6yLglLtj-eToaKKuSxPlDBlWCUc2U7jzx9B9FMx8qRJUUxj9wbzViG8gyurMsNQz7mTC_bZjdEwDmjOQCI0wLT8I-q2Fkb2NzEwweyE");'></div>
+</div>
+</header>
+<main class="flex-1 max-w-7xl mx-auto w-full px-4 md:px-10 py-8">
+<!-- Title Section -->
+<div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+<div class="flex flex-col gap-1">
+<h1 class="text-slate-900 dark:text-slate-100 text-4xl font-black tracking-tight">Students</h1>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal">156 students across 3 departments</p>
+</div>
+<button class="flex items-center gap-2 cursor-pointer justify-center rounded-xl h-12 px-6 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-lg">add</span>
+<span>Create Student</span>
+</button>
+</div>
+<!-- Filters & Search -->
+<div class="bg-white dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 flex flex-col lg:flex-row gap-4">
+<div class="flex-1">
+<label class="relative flex items-center">
+<span class="absolute left-4 text-slate-400 material-symbols-outlined">search</span>
+<input class="w-full h-12 pl-12 pr-4 rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary text-sm" placeholder="Search by name, email or ID..."/>
+</label>
+</div>
+<div class="flex flex-wrap gap-4">
+<div class="w-full sm:w-48">
+<select class="w-full h-12 rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary text-sm px-4">
+<option>All Departments</option>
+<option>Computer Science</option>
+<option>Business Admin</option>
+<option>Graphic Design</option>
+</select>
+</div>
+<div class="w-full sm:w-48">
+<select class="w-full h-12 rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary text-sm px-4">
+<option>Filter by Standing</option>
+<option>Good</option>
+<option>Warning</option>
+<option>Probation</option>
+<option>Dismissed</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Table Card -->
+<div class="bg-white dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Name</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Email</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Department</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-center">Year</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-center">CGPA</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Standing</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-200 overflow-hidden" data-alt="Student headshot thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBgjWCixAMdfmbyKpvhOhIATbXeQbPBlEGuFmmPmk-Q-zICNVyzwn2JzWOfYScfTuFLVNZZjncqc16fO2o9fCYhIj9f1L2IelHTtBhnv7YyPOoFJR52p8JZeniN4w40BOsZm6WDpYbESwaRUSZjLgcNKP_AgVSLf028byRqmc6Mq_bhftfDeNjWZn8V6ZJaEmNDghiqvlvnBF20YLVf3rwjO1n6-JjpmqI8JbLf5dHr4hDcS9xcs_Bb03p9ByyjR1mgmfIySE8w3s-z')"></div>
+<span class="font-semibold text-slate-900 dark:text-slate-100">Alex Rivers</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">a.rivers@cursus.edu</td>
+<td class="px-6 py-4 text-sm">Computer Science</td>
+<td class="px-6 py-4 text-center text-sm">Jr.</td>
+<td class="px-6 py-4 text-center">
+<span class="text-emerald-600 dark:text-emerald-400 font-bold">3.85</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">Good</span>
+</td>
+<td class="px-6 py-4 text-right">
+<a class="text-primary hover:underline text-sm font-bold" href="#">View Profile</a>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-200 overflow-hidden" data-alt="Student headshot thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC9JUWs4VzDgQ4HilxzN_fNAp52RG5Yhio5MyI9NyLqbITFYCVwY9p0ibIqyXKP_9w64WP2BYX99kJBdg_XBJt262I4NIBjx0N8cGWX_YCd5IjWEKSNBPZXRIZ2XHuHtMPJOHD-CecILuF1RrMI59MA1nb9xUZ1pgSVlrPP2QJlMTJMfpiOWl3MoNhSsYQJAKPMaTUNx4sBSGIJ40w7BKRNhd84HEeUBDPjeHMUq8NyaKalxZWPOkznI64UBcVRi7MqTn1ngKrH0R8M')"></div>
+<span class="font-semibold text-slate-900 dark:text-slate-100">Jordan Smith</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">j.smith@cursus.edu</td>
+<td class="px-6 py-4 text-sm">Business Admin</td>
+<td class="px-6 py-4 text-center text-sm">So.</td>
+<td class="px-6 py-4 text-center">
+<span class="text-amber-600 dark:text-amber-400 font-bold">2.40</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Warning</span>
+</td>
+<td class="px-6 py-4 text-right">
+<a class="text-primary hover:underline text-sm font-bold" href="#">View Profile</a>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-200 overflow-hidden" data-alt="Student headshot thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCpF6a4eRXVaMoSLRBjs4LR6Cdh-xEZveFsWJuYtuyMuC800r2vnpq91S058b6PnaPsMUzy8l4fwLNKSJh-SOjPZTgnbg4F_nnoieuTEPvaDVnCbwPhwylwCoP4TYB21bl3DjYfICKMKEFS3fC_Nl-1QtHbr9bkTUPlOBPPrI8a8hK6wsQLtmhkM8qFbdvn7QZEzSdmG8WOXxFwIBPnyadeNprtqEIcrQTC9eWHsLqoeW9iDuoykbXw1SMmYz6GmbITaMzASErbcAaN')"></div>
+<span class="font-semibold text-slate-900 dark:text-slate-100">Casey Morgan</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">c.morgan@cursus.edu</td>
+<td class="px-6 py-4 text-sm">Graphic Design</td>
+<td class="px-6 py-4 text-center text-sm">Sr.</td>
+<td class="px-6 py-4 text-center">
+<span class="text-rose-600 dark:text-rose-400 font-bold">1.82</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400">Probation</span>
+</td>
+<td class="px-6 py-4 text-right">
+<a class="text-primary hover:underline text-sm font-bold" href="#">View Profile</a>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-200 overflow-hidden" data-alt="Student headshot thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDa7y_IAlhc2oKXT3rUYdPffmErqkObAPrEhRXc5e1Ipo-ZtGJTJM_qFwdRBKvz88vW_JMPh8CEErSM0IqZjmKuCWbpH9eTFY-2LgWVoptKofnMqwXzBwaSaB_agXpe30hbDfZtEL0Kjjgi5N4JZfmSJ9qUTFQIA4AAqNckNUpHykSV0hcrhKi3pZJMwGB1AQUHvNJ6T6dxRqWJe_ax-kqdHvFtpIeU8ZMz_sMPDoMVyo1oGyHMiQbtqHLvjfhftaiS6j6Fksci7UrB')"></div>
+<span class="font-semibold text-slate-900 dark:text-slate-100">Blake Jensen</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">b.jensen@cursus.edu</td>
+<td class="px-6 py-4 text-sm">Computer Science</td>
+<td class="px-6 py-4 text-center text-sm">Fr.</td>
+<td class="px-6 py-4 text-center">
+<span class="text-slate-900 dark:text-slate-100 font-bold">0.00</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300">Dismissed</span>
+</td>
+<td class="px-6 py-4 text-right">
+<a class="text-primary hover:underline text-sm font-bold" href="#">View Profile</a>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-slate-200 overflow-hidden" data-alt="Student headshot thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCCF9ut1rDwRJNrAlej9_BlTfPgGK8SurxTYzvBZIKbAYPAUqXukP-Fn5xs1s3HaOePw6AiZ-fePtTgZonYRJT5Xw7A674NwKxAuAC8Hmt4d4m4JLDE2e8MvUINUnio-U28Pf888X2MZTvghfQu-RLRGs3zpggiKDAQ4EkPNMpKE2k5JkJiKZPGsUrnglhZhz2I4Uin3L2RGGp4V71II7giT9Bgs273I40RfJ37EQUxX76x63olBuDSeIPq8HDu3gWRL6ZAoh8dcFNh')"></div>
+<span class="font-semibold text-slate-900 dark:text-slate-100">Sarah Lee</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">s.lee@cursus.edu</td>
+<td class="px-6 py-4 text-sm">Business Admin</td>
+<td class="px-6 py-4 text-center text-sm">Jr.</td>
+<td class="px-6 py-4 text-center">
+<span class="text-emerald-600 dark:text-emerald-400 font-bold">3.92</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">Good</span>
+</td>
+<td class="px-6 py-4 text-right">
+<a class="text-primary hover:underline text-sm font-bold" href="#">View Profile</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between border-t border-slate-200 dark:border-slate-800">
+<span class="text-sm text-slate-500 dark:text-slate-400">Showing 1 to 5 of 156 results</span>
+<div class="flex gap-2">
+<button class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium hover:bg-white dark:hover:bg-slate-800 transition-colors disabled:opacity-50" disabled="">Previous</button>
+<button class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Next</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script src="../nav.js"></script></body></html>

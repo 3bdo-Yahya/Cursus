@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Cursus Admin - Create New Student</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<header class="w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 sticky top-0 z-10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined block">school</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight">Cursus Admin</h2>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="py-12 px-4 sm:px-6">
+<div class="max-w-[550px] mx-auto bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-6 sm:p-8">
+<div class="mb-8">
+<h1 class="text-2xl font-bold">Create New Student</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Register a new student account and assign academic details.</p>
+</div>
+<form class="space-y-8">
+<div class="space-y-4">
+<div class="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+<span class="material-symbols-outlined text-primary text-xl">person</span>
+<h3 class="font-semibold text-base uppercase tracking-wider text-slate-500 dark:text-slate-400 text-xs">Account Credentials</h3>
+</div>
+<div class="grid gap-4">
+<div class="space-y-1.5">
+<label class="text-sm font-medium" for="full_name">Full Name</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-transparent focus:ring-primary focus:border-primary px-4 py-2.5" id="full_name" placeholder="e.g. Jane Doe" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-medium" for="email">Email Address</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-transparent focus:ring-primary focus:border-primary px-4 py-2.5" id="email" placeholder="student@university.edu" type="email"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-medium" for="password">Temporary Password</label>
+<div class="relative">
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-transparent focus:ring-primary focus:border-primary px-4 py-2.5" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" type="button">
+<span class="material-symbols-outlined text-sm">visibility</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+<span class="material-symbols-outlined text-primary text-xl">history_edu</span>
+<h3 class="font-semibold text-base uppercase tracking-wider text-slate-500 dark:text-slate-400 text-xs">Academic Information</h3>
+</div>
+<div class="grid gap-4">
+<div class="space-y-1.5">
+<label class="text-sm font-medium" for="department">Department</label>
+<select class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-transparent focus:ring-primary focus:border-primary px-4 py-2.5 appearance-none" id="department">
+<option value="">Select Department</option>
+<option value="cs">Computer Science</option>
+<option value="eng">Engineering</option>
+<option value="math">Mathematics</option>
+<option value="phy">Physics</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="text-sm font-medium" for="year">Academic Year</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-transparent focus:ring-primary focus:border-primary px-4 py-2.5" id="year" placeholder="2024" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-medium" for="semester">Semester</label>
+<select class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-transparent focus:ring-primary focus:border-primary px-4 py-2.5 appearance-none" id="semester">
+<option value="fall">Fall</option>
+<option value="spring">Spring</option>
+<option value="summer">Summer</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-6 flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-primary/20" type="submit">
+                            Create Student
+                        </button>
+<a class="w-full text-center text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 text-sm font-medium py-2 transition-colors" href="#">
+                            Cancel
+                        </a>
+</div>
+</form>
+</div>
+</div>
+<div class="max-w-[550px] mx-auto mt-8 flex justify-center opacity-30">
+<img class="grayscale" data-alt="Abstract subtle geometric background pattern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMUG6qn3QfLuXEbfE372cMgDMHdZdu2wjGmjg0DpeAYjP0q16L_WtPC76KTZIwzZfuFyGEN8Lmx8QONEA3VznpOqW_4qGhEOouy_aXz0nVS9L4taaiX5M-MG-a9nkCmw1lmEjeuI4MPDe6EAnQXylQtZly_RSEMbOB4bU7R1BVt9voHIM92ceCQ04iVrVI8l4RnmejShcJna9d6qyJtcKWV3orcT9pcDHARp-cXrw1kp34CkF8Uoy9gXRdkFZy1RuTK4F9K2Qy4uxH"/>
+</div>
+</main>
+<script src="../nav.js"></script></body></html>

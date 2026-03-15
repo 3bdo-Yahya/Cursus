@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Cursus — Frontend Prototype</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4F46E5",
+                        "primary-hover": "#4338ca",
+                        "background-light": "#f9fafb",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light min-h-screen font-display">
+    <!-- Header -->
+    <div class="bg-gradient-to-br from-[#4F46E5] to-[#6366F1] text-white py-16 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-5xl font-black tracking-tight mb-3">Cursus</h1>
+            <p class="text-xl text-white/80 font-medium">Frontend Prototype — Page Navigator</p>
+            <p class="text-sm text-white/60 mt-2">Click any page to preview. Use the navbar links inside each page to navigate between them.</p>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+
+        <!-- Public Pages -->
+        <section>
+            <h2 class="text-lg font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-xl">lock_open</span> Public
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <a href="updated_login_page_split_screen/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="updated_login_page_split_screen/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Login"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Login</h3>
+                        <p class="text-sm text-slate-500 mt-1">Split-screen sign-in page</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Student Pages -->
+        <section>
+            <h2 class="text-lg font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-xl">school</span> Student Pages
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <a href="student_dashboard_concept_1/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="student_dashboard_concept_1/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Student Dashboard"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Student Dashboard</h3>
+                        <p class="text-sm text-slate-500 mt-1">High-level academic overview</p>
+                    </div>
+                </a>
+                <a href="course_map_knowledge_graph_variant/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="course_map_knowledge_graph_variant/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Course Map"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Course Map</h3>
+                        <p class="text-sm text-slate-500 mt-1">Interactive prerequisite graph</p>
+                    </div>
+                </a>
+                <a href="impact_analyzer_split_panel_variant/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="impact_analyzer_split_panel_variant/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Impact Analyzer"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Impact Analyzer</h3>
+                        <p class="text-sm text-slate-500 mt-1">Failure cascade simulation</p>
+                    </div>
+                </a>
+                <a href="progress_planning_tracker/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="progress_planning_tracker/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Progress Tracker"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Progress Tracker</h3>
+                        <p class="text-sm text-slate-500 mt-1">Graduation audit by category</p>
+                    </div>
+                </a>
+                <a href="gpa_simulator_split_pane_dashboard_variant/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="gpa_simulator_split_pane_dashboard_variant/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="GPA Simulator"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">GPA Simulator</h3>
+                        <p class="text-sm text-slate-500 mt-1">Grade prediction & target setting</p>
+                    </div>
+                </a>
+                <a href="ai_advisor_empty_state/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="ai_advisor_empty_state/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="AI Advisor Empty"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">AI Advisor (Empty)</h3>
+                        <p class="text-sm text-slate-500 mt-1">Chat initial state with suggestions</p>
+                    </div>
+                </a>
+                <a href="ai_advisor_active_conversation/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="ai_advisor_active_conversation/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="AI Advisor Active"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">AI Advisor (Active)</h3>
+                        <p class="text-sm text-slate-500 mt-1">Chat with active conversation</p>
+                    </div>
+                </a>
+                <a href="ai_advisor_loading_error_states/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="ai_advisor_loading_error_states/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="AI Advisor States"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">AI Advisor (Loading/Error)</h3>
+                        <p class="text-sm text-slate-500 mt-1">Loading & error fallback states</p>
+                    </div>
+                </a>
+                <a href="profile_settings_standard_layout/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="profile_settings_standard_layout/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Profile Settings"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Profile Settings</h3>
+                        <p class="text-sm text-slate-500 mt-1">Account & academic info</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Admin Pages -->
+        <section>
+            <h2 class="text-lg font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-xl">admin_panel_settings</span> Admin Pages
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <a href="admin_dashboard_standard_layout/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="admin_dashboard_standard_layout/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Admin Dashboard"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Admin Dashboard</h3>
+                        <p class="text-sm text-slate-500 mt-1">Stats, quick actions, alerts</p>
+                    </div>
+                </a>
+                <a href="course_list_standard/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="course_list_standard/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Course List"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Course List</h3>
+                        <p class="text-sm text-slate-500 mt-1">Searchable course catalog table</p>
+                    </div>
+                </a>
+                <a href="course_form_standard/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="course_form_standard/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Course Form"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Add/Edit Course</h3>
+                        <p class="text-sm text-slate-500 mt-1">Course creation & editing form</p>
+                    </div>
+                </a>
+                <a href="course_detail_standard/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="course_detail_standard/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Course Detail"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Course Detail</h3>
+                        <p class="text-sm text-slate-500 mt-1">Prerequisites & dependents management</p>
+                    </div>
+                </a>
+                <a href="student_management_list_view/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="student_management_list_view/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Student List"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Student List</h3>
+                        <p class="text-sm text-slate-500 mt-1">Filterable student directory</p>
+                    </div>
+                </a>
+                <a href="student_management_create_student/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="student_management_create_student/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Create Student"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Create Student</h3>
+                        <p class="text-sm text-slate-500 mt-1">Account & academic info form</p>
+                    </div>
+                </a>
+                <a href="student_management_detail_view/code.html" class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/40 transition-all">
+                    <div class="h-40 overflow-hidden bg-slate-100">
+                        <img src="student_management_detail_view/screen.png" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform" alt="Student Detail"/>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-900">Student Detail</h3>
+                        <p class="text-sm text-slate-500 mt-1">Profile, course history & grade entry</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-slate-200 py-8 mt-8">
+        <p class="text-center text-sm text-slate-400">Cursus Frontend Prototype · DEPI 2026</p>
+    </footer>
+</body>
+</html>

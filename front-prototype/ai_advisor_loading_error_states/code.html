@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cursus AI Advisor - Loading &amp; Error States</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4F46E5",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 lg:px-20 py-3">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined text-2xl">school</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Cursus AI</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Courses</a>
+<a class="text-sm font-medium text-primary" href="#">Progress</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-700 border-2 border-primary/20 overflow-hidden" data-alt="User profile avatar photo" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBwcJ857qsNEdeyvYQJHwy4ZrxrBNzF_72_u0kdjuJFmA48-tSWED2DT-Ywa0l5MUwVF-AH3Mdeh2H3So7EPI3mSwsKWTEsABA2d1MFqikwVEWn5ZoRgWcgvF17tXaoLekjQY6Xy68inX9txnSaL_9Qj88SsziDLlyv0A9FtOwDtH2mTYhtG6A_Mi1HLaf2Ae6EQHFLTIOC8Y4o5TMSFcJOEcDm6_OoMA91V-ha3-kUwGMjhwuuCx62yfmkep-Adkyyap54jMrp74NU'); background-size: cover;"></div>
+</div>
+</div>
+</header>
+<main class="flex flex-col items-center px-4 py-8 md:py-12">
+<!-- Main Chat Container -->
+<div class="w-full max-w-[720px] flex flex-col h-[calc(100vh-200px)] min-h-[600px] bg-white dark:bg-slate-900 rounded-xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-800 overflow-hidden">
+<!-- Chat Header -->
+<div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div>
+<h3 class="text-sm font-bold">AI Advisor</h3>
+<div class="flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-amber-500"></span>
+<span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Unstable Connection</span>
+</div>
+</div>
+</div>
+<button class="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-slate-400">more_horiz</span>
+</button>
+</div>
+<!-- Messages Area -->
+<div class="flex-1 overflow-y-auto p-6 space-y-8">
+<!-- AI Message -->
+<div class="flex gap-4 max-w-[85%]">
+<div class="size-9 rounded-full bg-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+</div>
+<div class="space-y-1">
+<p class="text-[12px] font-semibold text-slate-400 px-1">Cursus Advisor</p>
+<div class="bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none shadow-sm">
+<p class="text-sm leading-relaxed">Hello! I've been reviewing your latest performance in the "Data Structures" module. You're doing great with Linked Lists, but I noticed some challenges with Binary Search Trees. Would you like to deep dive into those topics today?</p>
+</div>
+</div>
+</div>
+<!-- Student Message -->
+<div class="flex gap-4 max-w-[85%] ml-auto flex-row-reverse">
+<div class="size-9 rounded-full bg-slate-200 dark:bg-slate-700 shrink-0 overflow-hidden" data-alt="Student profile picture" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCl3o-0JTqvJWCrTvmohxOQNCrttGNhxR9JwL9eyMQTngMryT4txSfy9E1zDWjlNZ235Y4dfZHAdAJCsRv_aGqKG0iVkGRcIFhpueNgyFCo2qlBZopKgkvH3vscIxDdrdNbaQp3SZNZgGQaNLqLuCCpxIaan1wXiD9pKnkqglSNP_2BAEwBbXrdcl-pzz0OA2ELcQfc-gW65oTsWpR2eKELCtO8YTYtLZ4hU4Qh8-3jY0hkPIW_PJ9Abpv46-y0KaWzRSdUVJGNxy98'); background-size: cover;"></div>
+<div class="space-y-1 items-end flex flex-col">
+<p class="text-[12px] font-semibold text-slate-400 px-1">You</p>
+<div class="bg-primary text-white p-4 rounded-2xl rounded-tr-none shadow-md shadow-primary/10">
+<p class="text-sm leading-relaxed">Yes, please. Can you explain why we need to balance the trees and show me how an AVL tree rotation works?</p>
+</div>
+</div>
+</div>
+<!-- Loading State Message -->
+<div class="flex gap-4 max-w-[85%] items-end">
+<div class="size-9 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-3 px-5 rounded-2xl rounded-bl-none">
+<div class="flex gap-1">
+<span class="text-primary text-lg leading-none animate-pulse">●</span>
+<span class="text-primary/60 text-lg leading-none animate-pulse" style="animation-delay: 0.2s">●</span>
+<span class="text-primary/30 text-lg leading-none animate-pulse" style="animation-delay: 0.4s">●</span>
+</div>
+</div>
+</div>
+<!-- Error State Alert -->
+<div class="border-l-4 border-amber-500 bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-amber-500">warning</span>
+<div class="space-y-2">
+<p class="text-sm font-bold text-slate-800 dark:text-slate-100">The AI Advisor is temporarily unavailable.</p>
+<p class="text-sm text-slate-600 dark:text-slate-400 leading-snug">Please try again in a moment. While we reconnect, you can review your curriculum milestones in the <a class="text-primary hover:underline font-medium" href="#">Progress Tracker</a> or visit the course forum.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer / Input Area -->
+<div class="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+<div class="relative group">
+<input class="w-full bg-slate-200 dark:bg-slate-800 border-none rounded-xl py-4 pl-4 pr-14 text-sm cursor-not-allowed text-slate-400 italic placeholder:text-slate-400" disabled="" placeholder="Messaging is currently disabled..." type="text"/>
+<div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+<button class="p-2 text-slate-400 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<button class="p-2 bg-slate-300 dark:bg-slate-700 text-white rounded-lg cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+<p class="text-center text-[10px] text-slate-400 mt-3 uppercase tracking-widest font-medium">System Maintenance Active</p>
+</div>
+</div>
+<!-- Sidebar Navigation (Responsive/Floating) -->
+<div class="fixed left-6 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-4">
+<button class="size-12 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm hover:border-primary transition-all group">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">grid_view</span>
+</button>
+<button class="size-12 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white">chat</span>
+</button>
+<button class="size-12 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm hover:border-primary transition-all group">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">trending_up</span>
+</button>
+<button class="size-12 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm hover:border-primary transition-all group">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">settings</span>
+</button>
+</div>
+</main>
+<script src="../nav.js"></script></body></html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+<div>
+<h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Courses</h1>
+<p class="mt-2 text-sm text-slate-600 dark:text-slate-400">42 courses across 3 departments in Cursus University</p>
+</div>
+<div class="mt-4 md:mt-0">
+<button class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+<span class="material-icons text-sm mr-2">add</span>
+                    Add Course
+                </button>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 mb-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+<span class="material-icons text-lg">search</span>
+</span>
+<input class="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Search by name or code" type="text"/>
+</div>
+<div>
+<select class="block w-full pl-3 pr-10 py-2 text-sm border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-primary focus:border-primary">
+<option>All Departments</option>
+<option>Computer Science</option>
+<option>Business Administration</option>
+<option>Engineering</option>
+</select>
+</div>
+<div>
+<select class="block w-full pl-3 pr-10 py-2 text-sm border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-primary focus:border-primary">
+<option>All Types</option>
+<option>Core</option>
+<option>Elective</option>
+<option>Laboratory</option>
+</select>
+</div>
+<div>
+<select class="block w-full pl-3 pr-10 py-2 text-sm border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-primary focus:border-primary">
+<option>Availability</option>
+<option>Open</option>
+<option>Closed</option>
+<option>Waitlist</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+<div class="overflow-x-auto">
+<table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+<thead class="bg-slate-50 dark:bg-slate-900/50">
+<tr>
+<th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Code</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Name</th>
+<th class="px-6 py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Credits</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Type</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Availability</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Prerequisites</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Status</th>
+<th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" scope="col">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+<!-- Row 1: Normal Row -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-white">CS101</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">Introduction to Computer Science</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-600 dark:text-slate-300">4</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">Core</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">Open</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300">None</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                    Active
+                                </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<a class="text-primary hover:text-primary/80 mr-3" href="#">View</a>
+<a class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" href="#">Edit</a>
+</td>
+</tr>
+<!-- Row 2: Warning Row -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-white">
+<div class="flex items-center">
+                                    CS205
+                                    <span class="material-icons text-amber-500 text-base ml-2 cursor-help" title="High failure rate detected">warning</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">Advanced Algorithms &amp; Logic</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-600 dark:text-slate-300">3</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">Core</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">Waitlist</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20">CS101</span>
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20">MA102</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                    Active
+                                </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<a class="text-primary hover:text-primary/80 mr-3" href="#">View</a>
+<a class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" href="#">Edit</a>
+</td>
+</tr>
+<!-- Row 3: Inactive Row -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-white">BUS310</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">Corporate Finance Fundamentals</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-600 dark:text-slate-300">3</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">Elective</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-400">Closed</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20">BUS101</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 dark:bg-slate-700/50 dark:text-slate-400">
+                                    Archived
+                                </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<a class="text-primary hover:text-primary/80 mr-3" href="#">View</a>
+<a class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" href="#">Edit</a>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-white">ENG102</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">Principles of Thermodynamics</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-600 dark:text-slate-300">4</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">Core</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">Open</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20">PH101</span>
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20">MA101</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                    Active
+                                </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<a class="text-primary hover:text-primary/80 mr-3" href="#">View</a>
+<a class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" href="#">Edit</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+<div class="flex-1 flex justify-between sm:hidden">
+<button class="relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50">
+                        Previous
+                    </button>
+<button class="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50">
+                        Next
+                    </button>
+</div>
+<div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+<div>
+<p class="text-sm text-slate-700 dark:text-slate-300">
+                            Showing <span class="font-semibold text-primary">1</span> to <span class="font-semibold text-primary">10</span> of <span class="font-semibold text-primary">42</span> results
+                        </p>
+</div>
+<div>
+<nav aria-label="Pagination" class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+<button class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700">
+<span class="sr-only">Previous</span>
+<span class="material-icons text-lg">chevron_left</span>
+</button>
+<button class="z-10 bg-primary/10 border-primary text-primary relative inline-flex items-center px-4 py-2 border text-sm font-medium">1</button>
+<button class="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</button>
+<button class="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium">3</button>
+<span class="relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-700">...</span>
+<button class="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 relative inline-flex items-center px-4 py-2 border text-sm font-medium">5</button>
+<button class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700">
+<span class="sr-only">Next</span>
+<span class="material-icons text-lg">chevron_right</span>
+</button>
+</nav>
+</div>
+</div>
+</div>
+</div>
+<!-- System Stats Footer (Contextual Information) -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex items-center">
+<div class="p-3 rounded-lg bg-primary/10 text-primary">
+<span class="material-icons">school</span>
+</div>
+<div class="ml-4">
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active Enrollments</p>
+<p class="text-xl font-bold text-slate-900 dark:text-white">1,248</p>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex items-center">
+<div class="p-3 rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
+<span class="material-icons">fact_check</span>
+</div>
+<div class="ml-4">
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Capacity Rate</p>
+<p class="text-xl font-bold text-slate-900 dark:text-white">87%</p>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex items-center">
+<div class="p-3 rounded-lg bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
+<span class="material-icons">report_problem</span>
+</div>
+<div class="ml-4">
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Review Required</p>
+<p class="text-xl font-bold text-slate-900 dark:text-white">3 Courses</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="../nav.js"></script></body></html>
