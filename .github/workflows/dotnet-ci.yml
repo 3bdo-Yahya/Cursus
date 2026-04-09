@@ -1,0 +1,40 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET Cursus CI Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET 10
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build Project
+      # Building in Release mode catches more potential issues than Debug: run: dotnet build --configuration Release --no-restore
+      run: dotnet build --no-restore
+      
+#    - name: Test
+#      run: dotnet test --no-build --verbosity normal
+
+#    - name: Verify Code Formatting
+#      # This ensures the team is following consistent style rules
+#      run: dotnet format --verify-no-changes --no-restore
