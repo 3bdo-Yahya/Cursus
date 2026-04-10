@@ -1,0 +1,4045 @@
+[
+  {
+    "code": "AI301",
+    "name": "Artificial Intelligence",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Fundamental issues in intelligent systems - History of artificial intelligence - Agents: Definition of agents; successful applications and state-of-the-art agent-based systems; software agents, personal assistants, and information access; multi-agent systems - Modeling the world; the role of heuristics - Search and constraint satisfaction - Knowledge representation and reasoning - Advanced search: Genetic algorithms; simulated annealing; local search - Advanced knowledge representation and reasoning - Structured representation; nonmonotonic reasoning; reasoning on action and change - AI planning systems: Definition and examples of planning systems; planning as search; operator-based planning; propositional planning.",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS211"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Data Structures I",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        5
+      ],
+      "IS": [
+        5
+      ],
+      "AI": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "AI311",
+    "name": "Data Analytics",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Design, build, verify, and test predictive data models to make data-driven decisions - concepts, methods, and applications of pattern discovery in data mining - concepts of cluster analysis - clustering methodologies, algorithms, and applications - partitioning methods, hierarchical methods, and density-based methods - steps of data preparation, analysis, learning and modeling, and identifying the predictive/descriptive model that produces the best results.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "MA222"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Probability and Statistics II",
+    "courseTypeByMajor": {
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "AI": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "AI312",
+    "name": "Data Science",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to data science - Theoretical and practical aspects related to building data driven models - linear models for regression and classification - kernel machines - Neural networks - emphasis will be placed on practical computational complexity and programming aspects of such models - exposition will be made of the problem of over fitting - the bias-variance dilemma - model regularization - and model validation.",
+    "semester": [
+      5
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "MA222"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Probability and Statistics II",
+    "courseTypeByMajor": {
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "AI": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "AI313",
+    "name": "Neural Networks",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Overview of Computational Intelligence and Artificial Evolution - Introduction to ANNs -Learning in ANNs - Supervised Learning in ANNs - Unsupervised Learning in ANNs - Reinforcement Learning in ANNs - Deep Learning in ANNs - Performance of ANNs - Fundamentals of Evolution - Introduction to Evolutionary Computation (EC) - Common EC Methods - Genetic Algorithms - Genetic Programming - Evolutionary Programming - Evolution Strategies - Grammatical Evolution - Cultural Evolution - Introduction to Artificial Life (ALife( - Introduction to Neuroevolution - Weight Evolution - Topology Evolution - Learning Rule Evolution - Combinations - Deep Neuroevolution - ANNs in ALife - Evolutionary Robotics",
+    "semester": [
+      6
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "AI312"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Data Science",
+    "courseTypeByMajor": {
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "AI": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "AI321",
+    "name": "Computational Intelligence",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to Computational Intelligence topics - Fundamental concepts Introduction to Evolutionary Computing -Evolutionary computation terms - Canonical genetic algorithm - Evolutionary computation variations - Evolutionary programming and Evolution strategies - Implementation of Evolutionary Computing - Swarm Intelligence, Particle Swarm Optimization - Classification, Learning, and Adaptation - Supervised, Unsupervised, Reinforcement Learning - Data partitioning and Cross Validation - Error metrics: Mean squared error, receiver operating characteristic curves - Neural Networks and Evolutionary Computation: Explanation and Sensitivity Analysis - Neural Networks Implementation.",
+    "semester": [
+      5
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "MA113",
+      "MA222"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Math II - Probability and Statistics II",
+    "courseTypeByMajor": {
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "AI": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "AI401",
+    "name": "Natural Language Processing",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Introduction - Language Models - Text Classification - Information Retrieval - Information Extraction - Morphological Analysis and the Lexicon Phrase Structure Grammars - Parsing - Context Free Grammar - Augmented grammar rules - Semantic interpretation - Machine Translation Systems - Statistical Machine Translation.",
+    "semester": [],
+    "major": [
+      "CS",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS311"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Algorithms Analysis and Design",
+    "courseTypeByMajor": {
+      "CS": "DeptElective",
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {
+      "CS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "AI411",
+    "name": "Deep Learning",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Convolutional Neural Networks - Invariance- stability - Variability models (deformation model, stochastic model) - Scattering networks - Group Formalism - Supervised Learning: classification - Properties of CNN representations: invertibility, stability, invariance - covariance/invariance: capsules and related models - Connections with other models: dictionary learning, LISTA - Other tasks: localization, regression - Embeddings (DrLim), inverse problems - Extensions to non-euclidean domains - Dynamical systems: RNNs - Guest Lecture - Deep Unsupervised Learning - Autoencoders (standard, denoising, contractive, etc) - Variational Autoencoders - Adversarial Generative Networks - Maximum Entropy Distributions - Guest Lecture.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "AI312",
+      "AI301"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Data Science - Artificial Intelligence",
+    "courseTypeByMajor": {
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "AI": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "AI412",
+    "name": "Data Visualization",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Exploratory data analysis - Information design Interactive data visualization - Descriptive statistics - Inferential statistics Statistical graphics - Human perception/cognition and data visualization - Visual perception and data visualization - Data presentation architecture - Visual Data Mining",
+    "semester": [
+      7
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "MA222",
+      "MA112"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Probability and Statistics II - Discrete Structures",
+    "courseTypeByMajor": {
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {
+      "AI": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "AI413",
+    "name": "Machine Learning",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to machine learning - Definition and examples of machine learning - Supervised learning (of classification and regression functions); K-nearest neighbors, decision trees, nai\u0308ve Bayes, support vector machines, logistic regression, evolutionary algorithms, Bayesian Networks, hidden Markov model, neural networks, boosting - Unsupervised learning and clustering K-means, hierarchical clustering (agglomerative and divisive), principal component analysis, independent component analysis, Expectation Maximization algorithm - Reinforcement learning - Kernel methods - Sparse kernel machines - Mixture models and the EM algorithm - Combining multiple learners.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "AI"
+    ],
+    "prerequisites": [
+      "MA113",
+      "MA222"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Math II - Probability and Statistics II",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        7
+      ],
+      "IS": [
+        7
+      ],
+      "AI": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "AI421",
+    "name": "Semantic Web and Ontology",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Introduction Semantic web - Descriptive logic - Describing web resources in RDF Ontology development - Ontology development - Ontology language - Web ontology language OWL - OWL API - Rule Interchange Format RIF - Query language. Semantic Portals - applying Semantic Web technologies to the Social Web.",
+    "semester": [],
+    "major": [
+      "CS",
+      "AI"
+    ],
+    "prerequisites": [
+      "AI301",
+      "IS212"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Artificial Intelligence - Web technology",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "AI": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "AI422",
+    "name": "Decision Making Systems",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Paradigms in decision support - involving uncertainty/risk - multiple objectives/attributes and multiple actors/stakeholders Sources of uncertainty; data analysis and uncertainty modeling - Basic probability concepts; operations involving probabilities - reviewing expectations with new information: the Bayes' theorem - Variability and probability distributions - expectations and extreme values - risk assessment - Preference modeling - attitudes towards risk - utility theory - Decision trees and influence diagrams - Value of information - Bayes analysis.",
+    "semester": [],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "MA302"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Linear and Integer Programming",
+    "courseTypeByMajor": {
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "AI423",
+    "name": "Computational Linguistics",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Fundamental concepts and algorithms in computational linguistics and natural language processing - computational analysis from morphological level to word level all the way to the cross-linguistic level - finite state machine - Naive Bayes Classification - More generative models - Word counting - frequency dictionaries - simple n-gram models - the training corpus. n-gram language model - part-of-speech tagging - probabilistic statistical parsing - Rule-based taggers - J&M Context Free Grammars of English-Treebanks- CKY algorithm- decoding with HMMs - computational distributional lexical semantics - machine translation - Text normalization - edit distance - lemmatization - segmentation - Regular Expressions.",
+    "semester": [],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "CS311"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Algorithms Analysis and Design",
+    "courseTypeByMajor": {
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "AI424",
+    "name": "Agent-Based Modeling and Complex Systems",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Concepts of agent-based modeling (ABM) and complex systems -agents, their internal structure, their interactions, simulation environment -model validation complex adaptive systems; feedback loops, externalities, nonlinearity, chaos theory, self-organization theory, emergent properties resilient and robustness, schemata and cellular automata - real life case studies, applications and ABM implementations are stressed throughout the course.",
+    "semester": [],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "AI321"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computational Intelligence",
+    "courseTypeByMajor": {
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "AI425",
+    "name": "Expert Systems",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Application Areas of Intelligent Systems \uf02d Intelligent System Architecture \uf02d Knowledge Engineering and Control \uf02dLanguages Used in Expert Systems \uf02d Bayesian Interference \uf02d Fuzzy Logic \uf02d Decision Support Systems \uf02d Software tools for developing expert systems \uf02d Software tool for developing intelligent systems). Robotics: Overview; configuration space; planning; sensing; robot programming; navigation and control.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "AI301"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Artificial Intelligence",
+    "courseTypeByMajor": {
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {
+      "AI": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "AI426",
+    "name": "Evolutionary Computing",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to Evolutionary Computation - Search Operators - Mutation for strings - Recombination/Crossover and mutation rates - Recombination for real-valued representations - Selection Schemes - Fitness proportional selection and fitness scaling -Ranking - Tournament selection - Selection pressure and its impact on evolutionary search - Search Operators and Representations - Mixing different search operators - An anomaly of self- adaptive mutations- The importance of representation - Adaptive representations - Evolutionary Combinatorial Optimization - Evolutionary algorithms for TSPs - Evolutionary algorithms for lecture room assignment - Hybrid evolutionary and local search algorithms - Co-evolution - Cooperative co-evolution - Competitive co-evolution - Niching and Speciation - Fitness sharing (explicit and implicit) - Crowding and mating restriction - Constraint Handling - Common techniques, e.g., penalty methods, repair methods - Genetic Programming - Trees as individuals - Major steps of genetic programming. - Search operators on trees - Automatically defined functions - Issues in genetic programming - Multiobjective Evolutionary Optimisation - Pareto optimality - Multiobjective evolutionary algorithms - Learning Classifier Systems - Basic ideas and motivations - Main components and the main cycle - Theoretical Analysis of Evolutionary Algorithms - Schema theorems - Convergence of EAs - Computational time complexity of EAs.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "CS311"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Algorithms Analysis and Design",
+    "courseTypeByMajor": {
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {
+      "AI": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "AI431",
+    "name": "Artificial Intelligence Project Management",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to the context and addresses the principles and the basic techniques of project management - various project management techniques related to project definition, project scheduling, managing projects under resource limitation, and managing project risks -integrated planning, scheduling, and control systems for planning the scope of a project - real life case studies and state of art software will be used throughout the course.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "MA231"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Operations Research",
+    "courseTypeByMajor": {
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {
+      "AI": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "AI432",
+    "name": "Internet Of Things",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Overview of IoT and High level Architecture. IoT Cloud Infrastructure Performance and Security in IoT - Core concepts and networking protocols for IoT applications - application areas for Internet of Things with resource- constrained devices (such as sensors and actuators) - practical programming of resource-constrained - evaluation of networking protocols using simple simulation - additional topics: higher layers in IoT protocols, IoT security.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "CS241"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Object-Oriented Programming",
+    "courseTypeByMajor": {
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {
+      "AI": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "AI434",
+    "name": "Graduation Project",
+    "creditHours": 6,
+    "courseType": "Core",
+    "semesterAvailability": "FallSpring",
+    "passingGradeThreshold": "D",
+    "description": "This course will continue for two semesters. In the first semester - a group of students will select one of the projects proposed by the department - and analyze the underlying problem. In the second semester - the design and implementation of the project will be conducted.",
+    "semester": [
+      7,
+      8
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": 108,
+    "prerequisiteText": "Passing 108 Credit Hours",
+    "courseTypeByMajor": {
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "AI": [
+        7,
+        8
+      ]
+    }
+  },
+  {
+    "code": "AI435",
+    "name": "Fuzzy Computing",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to fuzzy computing - Fuzzy logic - Fuzzy systems - Fuzzy operators- Fuzzy rule-based systems - Neural networks - Feed forward neural networks- Back propagation algorithm - Bias - Scaling - Proof of Delta rule - Performance issues - Hybrid systems - Feature selection- Training of NNs with GAs - Evolution of fuzzy rule-based systems - Genetic programming - Immune systems - Evolution strategy. Genetic Algorithms - Chromosomes - Population - Fitness functions - Crossover - Mutation - Binary bit chromosomes - Floating point array chromosomes - Schema theory.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "CS",
+      "AI"
+    ],
+    "prerequisites": [
+      "MA121",
+      "MA113"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Probability and Statistics I - Math II",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        8
+      ],
+      "AI": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "CS121",
+    "name": "Computer Science Fundamentals",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Introduction: Brief history of computing; the components of a computing system. Machine level representation of data: Bits, bytes, and words; numeric data representation and number bases; signed and twos- complement representations; fundamental operations on bits; representation of nonnumeric data. Digital logic: Switching circuits; gates; memory. Assembly level machine organization: Basic organization of the von Neumann machine; control unit; instruction fetch, decode, and execution; instruction sets and types; assembly/machine language programming; instruction formats. Hardware realizations of algorithms: Data representation; the von Neumann model of computation; the fetch/decode/execute cycle; basic machine organization. Operating systems and virtual machines: Historical evolution of operating systems; responsibilities of an operating system; basic components of an operating system. Computing applications: Word processing; spreadsheets; editors; files and directories. Introduction to net-centric computing: Background and history of networking and the Internet; demonstration and use of networking software including e-mail, telnet, and FTP.",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        1
+      ],
+      "IS": [
+        1
+      ],
+      "IT": [
+        1
+      ],
+      "AI": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "CS141",
+    "name": "Programming Fundamentals",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Fundamental programming constructs: Syntax and semantics of a higher- level language; variables, types, expressions, and assignment - Simple I/O - Conditional and iterative control structures - Functions and parameter passing - Structured decomposition - Algorithms and problem-solving: Problem-solving strategies; the role of algorithms in the problem-solving process; implementation strategies for algorithms; debugging strategies; the concept and properties of algorithms - Fundamental data structures - Machine level representation of data - Human-computer interaction: Introduction to design issues - Software development methodology: Fundamental design concepts and principles; structured design; testing and debugging strategies; test-case design; programming environments; testing and debugging tools.",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        2
+      ],
+      "IS": [
+        2
+      ],
+      "IT": [
+        2
+      ],
+      "AI": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "CS211",
+    "name": "Data Structures I",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Review of elementary programming concepts - Fundamental data structures: Stacks; queues; linked lists; hash tables; trees; graphs - Binary tree - binary search tree - balanced tree - simple graphs - and hash tables. Quadratic and sub-quadratic linear sorting algorithms - asymptotic complexity. (e.g., quick sort - merge sort - heap sort - insertion sort - selection sort and count Built-in data structures. Sorting algorithms - searching algorithms - and hashing. Abstract data types (ADT).",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS241"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Object Oriented Programming",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        4
+      ],
+      "IS": [
+        4
+      ],
+      "IT": [
+        4
+      ],
+      "AI": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "CS241",
+    "name": "Object Oriented Programming",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Concepts of object-oriented programming - use of classes - fundamentals of object-oriented design- Encapsulation - Data Abstraction - Polymorphism - and Inheritance - analysis of algorithms - basic searching and sorting techniques.",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS141"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Programming Fundamentals",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        3
+      ],
+      "IS": [
+        3
+      ],
+      "IT": [
+        3
+      ],
+      "AI": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "CS242",
+    "name": "Parallel Programming",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Overview: Parallel computing, architectural demands and trends, goals of parallelism, communication, coordination, Independence and partitioning, Data and task decomposition, Synchronization , Shared Memory, Threads, Message Passing, Consistency, Shared memory programming and OpenMP, Threads programming with TBB, Programming using the message passing paradigm, Parallel computing with MapReduce, GPGPUs and CUDA programming, Pipelining, Superscalar, Out-of-order execution, Multithreading: pThreads, Uniprocessor memory systems, Multicore chips, Relationship of communication, data locality and architecture, Orchestration for performance: load balancing, Characteristics: speed- up, cost, scalability, isoefficiency, Distributed computing, Shared memory model (OpenMP), Threads model (pthread, cilk TBB), MPI, GPGPU programming model ( cuda or openCL).",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS241"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Object Oriented Programming",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        4
+      ],
+      "IS": [
+        4
+      ],
+      "IT": [
+        4
+      ],
+      "AI": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "CS291",
+    "name": "Modeling And Simulation",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Definition of simulation and modeling: Purpose including benefits and limitations - Important application areas: healthcare; economics and finance; classroom of the future; training and education; city and urban simulations; simulation in science and in engineering; games; military simulation - Different kinds of simulations - The simulation process - Model building: use of mathematical formula or equation, graphs, constraints - Use of time stepping for dynamic systems - Theoretical considerations; Monte Carlo methods, stochastic processes, queuing theory - Technologies in support of simulation and modeling - Assessing and evaluating simulations in a variety of contexts - Software in support of simulation and modeling; packages, languages.",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS141"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Programming Fundamentals",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        4
+      ],
+      "IS": [
+        4
+      ],
+      "IT": [
+        4
+      ],
+      "AI": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "CS311",
+    "name": "Algorithms Analysis and Design",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Review of proof techniques - Basic algorithmic analysis: Asymptotic analysis of upper and average complexity bounds; best, average, and worst case behaviors; big-O, little-o, \u03a9, and \u0398 notation; standard complexity classes; empirical measurements of performance; time and space tradeoffs in algorithms; using recurrence relations to analyze recursive algorithms - Algorithmic strategies: branch-and-bound; heuristics; pattern matching and string/text algorithms; numerical approximation - Graph and tree algorithms: Shortest-path algorithms (Dijkstra's and Floyd's algorithms); transitive closure (Floyd's algorithm); minimum spanning tree (Prim's and Kruskal's algorithms); topological sort - Dynamic Programming - Randomized Algorithms - NP-complete problems.",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS211"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Data Structures I",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        5
+      ],
+      "IS": [
+        5
+      ],
+      "IT": [
+        5
+      ],
+      "AI": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "CS312",
+    "name": "Data Structures II",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "An exploration of data structures (particularly persistent structures) using object-oriented design. Dynamic optimality - memory hierarchy - hashing - dynamic graphs - and strings (searching for phrases in giant text). Indexing of unstructured data - Btree B+ tree B* tree.",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS211"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Data Structures I",
+    "courseTypeByMajor": {
+      "CS": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "CS321",
+    "name": "Operating Systems I",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Core concepts of operating systems: Types of operating systems. Operating Systems structures: system components and services - virtual machines. Processes and threads: CPU scheduling: Scheduling concepts and algorithms - underlying technologies that make contemporary operating systems work efficiently. Memory management - File systems - Input and Output device management. Secondary storage management - Disk scheduling - virtual memory.",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS121"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Science Fundamentals",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        5
+      ],
+      "IS": [
+        5
+      ],
+      "IT": [
+        5
+      ],
+      "AI": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "CS322",
+    "name": "Computer Architecture and Organization",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Register transfer notation; physical considerations (gate delays, fan-in, fan- out). Assembly level organization: Basic organization of the von Neumann machine; control unit; instruction fetch, decode, and execution; instruction sets and types (data manipulation, control, I/O); assembly/machine language programming; instruction formats; addressing modes; subroutine call and return mechanisms; I/O and interrupts. Memory systems: Storage systems and their technology; coding, data compression, and data integrity; memory hierarchy; main memory organization and operations; latency, cycle time, bandwidth, and interleaving; cache memories (address mapping, block size, replacement and store policy); virtual memory (page table, TLB); fault handling and reliability. Interfacing and communication: I/O fundamentals: handshaking, buffering, programmed I/O, interrupt-driven I/O; interrupt structures: vectored and prioritized, interrupt acknowledgment; external storage, physical organization, and drives; buses: bus protocols, arbitration, direct-memory access (DMA); introduction to networks; multimedia support; raid architectures. Functional organization: Implementation of simple datapaths; control unit: hardwired realization vs. microprogrammed realization; instruction pipelining; introduction to instruction-level parallelism (ILP). Multiprocessor and alternative architectures: Introduction to SIMD, MIMD, VLIW, EPIC; systolic architecture; interconnection networks; shared memory systems; cache coherence; memory models and memory consistency. Performance enhancements: RISC architecture; branch prediction; prefetching; scalability. Contemporary architectures: Hand-held devices; embedded systems; trends in processor architecture.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CS",
+      "IT"
+    ],
+    "prerequisites": [
+      "EE201"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Logic Design",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "CS331",
+    "name": "Visual Programming",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Graphical user interface (GUI), review of concepts, and anatomy of a windows program using different languages. Available developing tools. Keyboard and mouse input, menus creating, adding menus to programs. Dialog boxes: buttons, text, list boxes, grids and spreadsheets. Graphics files and file handling. Multiple documents interfaces and views (MDI). Exception Handling and Debugging. Object Linking and Embedding (OLE).",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS211"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Data Structures I",
+    "courseTypeByMajor": {
+      "CS": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "CS341",
+    "name": "Concepts of Programming Languages",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Different types of programming languages - programming languages implementation methods - Declarative programming - Functional Programming Describing Syntax and Semantics - BNF notations and Parse Trees - denotational and operational semantics- names - Binding - Lifetime - and scope- Data Types - type checking - Expressions and Assignment Statements - side effect - short-circuit evaluation - Subprograms - Parameter passing - lambda expressions - concurrency.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS312"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Data Structures II",
+    "courseTypeByMajor": {
+      "CS": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "CS351",
+    "name": "Computer Graphics I",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "FallSpring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to Computer Graphics - Overview of Graphics systems - Line drawing algorithms - Circle drawing algorithms - Ellipse drawing algorithms - Area filling algorithms - Polygon filling algorithms - Line clipping algorithms - Polygon clipping algorithms - Two dimensional transformations - (translation rotation - scaling - general transformations - composite transformations) - Three dimensional object representation and Projections - Three dimensional modeling and transformations (translation - rotation - scaling - sheer - reflection - composite) - Three dimensional Viewing and Camera Model.",
+    "semester": [
+      5,
+      6
+    ],
+    "major": [
+      "CS",
+      "IT"
+    ],
+    "prerequisites": [
+      "MA113"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Math II",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        6
+      ],
+      "IT": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "CS352",
+    "name": "Image Processing",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Scope and applications of image are processing. Perspective transformations (Modeling picture taking, perspective transformations in homogeneous coordinates and with two reference frames). Enhancement and restoration, image segmentation. Image representation: (Spatial differentiation and smoothing, template matching, region analysis, contour following). Descriptive methods in scene analysis. Hardware and software considerations. Applications. Image Pyramids - Subband Coding - Haar Transform - Multiresolution Theory Wavelet Transform - Fast Wavelet Transform - Wavelet Packets - Applications of Wavelet Transform/Packets in Image Processing and Examples Image Formation - Color Systems - Pseudo Color Image Processing - Full Color Image Processing - Object and Region Representation Methods - Object and Region Description Methods - Image Alias - Fuzzy Image Processing - Integral Image and Real Time Image Classification - Thresholding - Image Watermarking Theories and Techniques.",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS241"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Object-Oriented Programming",
+    "courseTypeByMajor": {
+      "CS": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "CS362",
+    "name": "Pattern Recognition I",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction - Statistical Decision Theory - Statistical Decision Theory continued - Parameter Estimation - Parameter Estimation continued - Introduction to Principal Component Analysis and Linear Discriminant Analysis - Face Recognition - Non-parametric Techniques - Decision Trees - Neural Networks - Classifier Combination - Feature Selection - Unsupervised Learning, Clustering, and Multidimensional Scaling - Semi- supervised learning.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "MA222",
+      "IT341"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Probability and Statistics-2 - Signals and Systems",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "CS391",
+    "name": "Software Engineering",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "FallSpring",
+    "passingGradeThreshold": "D",
+    "description": "Software processes: Software life-cycle and process models; process assessment models; software process metrics. Software requirements and specifications. Software design: Fundamental design concepts and principles; software architecture; structured design; object-oriented analysis and design; component-level design; design for reuse. Software validation: Validation planning; testing fundamentals; unit, integration, validation, and system testing; object-oriented testing; inspections. Software evolution: Software maintenance; characteristics of maintainable software; reengineering; legacy systems; software reuse. Software project management. Component-based computing: Fundamentals; basic techniques; applications; architecture of component-based systems; component-oriented design; event handling; middleware. Software architecture - Architectural styles - Service oriented architectures - Advanced design patterns - Software quality assurance - Reviews - Refactoring- Testing - Software Configuration management - Software evolution and maintenance. Specific techniques for maintenance, evolution, dependability, reliability, safety, security, and resilience.",
+    "semester": [
+      5,
+      6
+    ],
+    "major": [
+      "CS",
+      "IS"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        5
+      ],
+      "IS": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "CS401",
+    "name": "Computation Theory",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Regular languages - Regular expressions - Properties of regular expressions. Proofs. Finite automata - Non-deterministic finite automata - Deterministic finite automata. Transformation of regular expressions to finite automata - Transformation of DFAs to NFAs. Transformation of finite automata to regular expressions - Context-free grammars - Push- down automata - Parsing - Turing machines - Complexity theory-down automata - Parsing - Turing machines - Complexity theory - Complexity Theory, P and NP.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "MA112"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Discrete Structures",
+    "courseTypeByMajor": {
+      "CS": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "CS411",
+    "name": "Bioinformatics Systems",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Biological background related to bioinformatics -the genome, protein and motif databases - DNA replication-motifs finding algorithms- local and global pairwise sequence alignment - scoring matrices - introduction to multiple sequence alignment - genome assembly algorithms - microarray gene expression databases- applications on microarrays datasets- genome compression - in-depth knowledge of all the necessary concepts related to bioinformatics, be it biology, basic engineering, information technology, computer languages and design or soft skill development.",
+    "semester": [],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS311"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Algorithms Analysis and Design",
+    "courseTypeByMajor": {
+      "CS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS413",
+    "name": "High Performance Computing",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Foundations of parallel processing and the limitations of uniprocessors - Basic concepts of parallel processing and their impact on computer architecture - Various kinds of system architectures - design methodologies - communication networks for parallel computers - various programming models - performance evaluation - parallelizing techniques - parallel algorithms and resource management of parallel and distributed systems. algorithms that can be used on shared- and distributed memory systems. Parallel programming models such as OpenMP and MPI models, analytical modeling of parallel algorithms. Quick Overview about Parallel Processing Concepts - Fundamental Design Issues in Parallel Computing - Synchronization, Scheduling- Job Partitioning - Dependency Analysis - Mapping Parallel Algorithms onto Parallel Architectures - Performance Analysis of Parallel Algorithms - Parallel programming Models - shard Memory - Message Passing - Fundamental Limitations Facing Parallel Computing - Bandwidth Limitations - Latency Limitations, Latency Hiding/Tolerating Techniques and their limitations.",
+    "semester": [],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS242"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Parallel Programming",
+    "courseTypeByMajor": {
+      "CS": "Core"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS421",
+    "name": "Operating Systems II",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "System support for Internet-scale computing. Operating system for different platforms - cell phones - multi-core - parallel systems - distributed systems - embedded systems - and cloud computing. Parallel and distributed operating systems. Load sharing, scheduling, reliability, recovery, memory management. Distributed file systems, distributed agreement, and object- oriented operating systems",
+    "semester": [],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS321"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Operating Systems I",
+    "courseTypeByMajor": {
+      "CS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS431",
+    "name": "Big Data Analysis",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Map Reduce - Clustering algorithms for high-dimensional data - Basic Neural Network and Tensor Flow - Neural Networks and Deep Learning - predictive analytics - Dimensionality reduction - Application of machine learning algorithms for analyzing structure of large graphs like social network graphs - Technologies for extracting important properties of large datasets.",
+    "semester": [],
+    "major": [
+      "CS",
+      "AI"
+    ],
+    "prerequisites": [
+      "IS211"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Database",
+    "courseTypeByMajor": {
+      "CS": "DeptElective",
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {
+      "CS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "CS441",
+    "name": "Compiler Construction",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Compiler Functions, Language Elements - BNF Grammars, Regular Expressions, Finite State Machines, Lexical Analyzers - Context Free Grammars, Grammar Ambiguity, Parse Trees, Push Down Automata - Parsing Methods; Top-Down, Recursive Descent, LL, LR - Symbol Table Construction, Type Checking - Code Generation - Handling Recursion and Arrays - Code Optimization Techniques.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS322"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Architecture and Organization",
+    "courseTypeByMajor": {
+      "CS": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "CS442",
+    "name": "Embedded Systems Programming",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Basics of Principles and practices in modeling, designing, and analyzing an embedded system - microprocessors micro-controllers - PICs and FPGAs - Embedded systems programming languages and environments - Integrating assembly programming and microC with high level programming for embedded systems Sensing and controlling physical world - Types of embedded development boards.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS322",
+      "CS241"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Architecture and Organization - Object Oriented Programming",
+    "courseTypeByMajor": {
+      "CS": "DeptElective"
+    },
+    "semesterByMajor": {
+      "CS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "CS443",
+    "name": "Mobile Programming",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to mobile software development for those with programming experience - Mobile systems and devices - Mobile operating systems - Types of mobile devices - Application development - Mobile application development with sensors of mobile and controllers of mobile - Mobile integration with embedded systems - Mobile development project.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS321"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Operating Systems I",
+    "courseTypeByMajor": {
+      "CS": "DeptElective"
+    },
+    "semesterByMajor": {
+      "CS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "CS451",
+    "name": "Human Computer Interaction",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Foundations of human-computer interaction: Motivation; contexts for HCI; human centered development and evaluation; human performance models; human performance models; accommodating human diversity; principles of good design and good designers; engineering tradeoffs; introduction to usability testing. Human-centered software evaluation: Setting goals for evaluation; evaluation without users; evaluation with users. Human- centered software development: Approaches, characteristics, and overview of process; functionality and usability; specifying interaction and presentation; prototyping techniques and tools. Graphical user-interface design: Choosing interaction styles and interaction techniques; HCI aspects of common widgets; HCI aspects of screen design; handling human failure; beyond simple screen design; multi-modal interaction; 3D interaction and virtual reality. Graphical user-interface programming: Dialogue independence and levels of analysis; widget classes; event management and user interaction; geometry management; GUI builders and UI programming environments; cross-platform design. HCI aspects of multimedia systems: Categorization and architectures of information; information retrieval and human performance; HCI design of multimedia information systems; speech recognition and natural language processing; information appliances and mobile computing. HCI aspects of collaboration and communication: Groupware to support specialized tasks; asynchronous group communication; synchronous group communication; online communities; software characters and intelligent agents.",
+    "semester": [],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS311",
+      "CS391"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Algorithms Analysis and Design- Software Engineering",
+    "courseTypeByMajor": {
+      "CS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS453",
+    "name": "Computer Vision",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "An introduction to the concepts and applications in computer vision - cameras and projection models - low-level image processing methods such as filtering and edge detection; mid-level vision topics such as segmentation and clustering; shape reconstruction from stereo, as well as high-level vision tasks such as object recognition, scene recognition, face detection and human motion categorization. Applications such as scene reconstruction and tracking",
+    "semester": [],
+    "major": [
+      "CS",
+      "IT"
+    ],
+    "prerequisites": [
+      "CS352",
+      "CS351"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Image Processing - Computer Graphics I",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {
+      "CS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "CS454",
+    "name": "Computer Graphics II",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Visible surface detection algorithms - Reflection and illumination models - Rendering algorithms for 3-D objects - Parametric representation of 3-D objects Shadows algorithms - 2-D texture mapping - 3-D texture mapping - Ray tracing - Volume rendering - Anti-Aliasing - Introduction to fractals - 3-D computer animation - Color Space in Computer Graphics.",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "CS351"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Graphics I",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS455",
+    "name": "Computer Animation",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "3D Modeling - Rendering Techniques - Key framing - Interpolations - Hierarchical animation - Camera animation - Light animation - Special effects Digital animation techniques - Recording and production planning.",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "CS351"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Graphics I",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS456",
+    "name": "Digital Video Processing",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "video segmentation- partitioning video domain into disjoint sets corresponding to certain -events\u2016- Various types of video segmentation will be presented. The spatial frequency domain (The sampling theorem, template matching and the convolution theorem, spatial filtering)- video enhancement methods (noise reduction, super-resolution, error concealment, mosaicking)- the motion-compensated hybrid DCT/DPCM coding - H.26X and MPEG-X families.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "CS352"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Image Processing",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IT": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "CS464",
+    "name": "Knowledge Discovery",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Knowledge discovery in databases - Data mining - Data cleaning and preparation - Mining association rules - Classification - Prediction - Clustering- Web mining - Applications of web mining - Mining advanced databases.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "IS211",
+      "AI301"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Database - Artificial Intelligence",
+    "courseTypeByMajor": {
+      "CS": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "CS466",
+    "name": "Pattern Recognition II",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Decision Tree classifier - Convolutional Neural Network (CNN) - Recurrent Neural Network (RNN) - Long Short Term Memory LSTM network Support Vector Machines (SVM). Kernel Functions. SVM with Kernels. Multi-classifier Approaches. Technical Training Issues (Data Size - Over fitting - Data Augmentation - Stopping criteria) technical implementation issues.",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "CS362"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Pattern Recognition I",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS471",
+    "name": "Software Security",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Software design process - choices of programming languages - operating systems - databases and platforms for building secure systems; common software vulnerabilities - such as buffer overflows and race conditions - auditing software - proving properties of software - and the benefits of open and closed source development.",
+    "semester": [],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS311",
+      "CS391"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Algorithms Analysis and Design - Software Engineering",
+    "courseTypeByMajor": {
+      "CS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS473",
+    "name": "Concurrent and Distributed Programming",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Introduction, Concurrent and Distributed Systems, Processes, Threads - Fundamentals of Concurrent Computing, Mutual Exclusion, Locks - Synchronization Primitives, Semaphores, Monitors - Deadlock - Dynamic Data Race Detection for Multithreaded Programs - Model Checking for Synchronization Problems - Distributed Programming Tools: UDP, TCP, RMI - Fundamentals of Distributed Computing: Models and Clocks: Partial Order Model, Logical and Vector Clocks - Resource Allocation: Mutual Exclusion, Dining Philosophers - Global Snapshot - Global Properties: Predicate Detection - Detecting Termination and Deadlocks - Message Ordering: FIFO, Causal, Total Order - Parallel Architectures, Parallel Patterns.",
+    "semester": [],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Visual Programming",
+    "courseTypeByMajor": {
+      "CS": "Core"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS481",
+    "name": "Graduation Project",
+    "creditHours": 6,
+    "courseType": "Core",
+    "semesterAvailability": "FallSpring",
+    "passingGradeThreshold": "D",
+    "description": "This course will continue for two semesters. In the first semester - a group of students will select one of the projects proposed by the department - and analyze the underlying problem. In the second semester - the design and implementation of the project will be conducted.",
+    "semester": [
+      7,
+      8
+    ],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": 108,
+    "prerequisiteText": "Passing 108 Credit Hours",
+    "courseTypeByMajor": {
+      "CS": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        7,
+        8
+      ]
+    }
+  },
+  {
+    "code": "CS491",
+    "name": "Cloud Computing",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to distributed systems - Overview of Cloud Computing; Advantages- History - Characteristics - Service and Deployment Models- concepts of cloud computing services - such as Infrastructure as a Service (IaaS) - Platform as a Service (PaaS) and Software as a Service (SaaS)- Virtualization Concepts- Migration Approaches- Resource Management",
+    "semester": [],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS321"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Operating Systems I",
+    "courseTypeByMajor": {
+      "CS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS492",
+    "name": "Software Testing and Quality Assurance",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Quality: how to assure it and verify it - the need for a culture of quality. Avoidance of errors and other quality problems - Inspections and reviews. Testing - verification and validation techniques - Process assurance versus Product assurance - Quality process standards - Product and process assurance - Problem analysis and reporting.",
+    "semester": [],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS311",
+      "CS391"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Algorithms Analysis and Design - Software Engineering",
+    "courseTypeByMajor": {
+      "CS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CS493",
+    "name": "Software Design and Architecture",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Study of design patterns - Frameworks and architectures - Survey of current middleware architectures - Design of distributed systems using middleware - Component based design - Measurement theory and appropriate use of metrics in design - Designing for software qualities attributes - Measuring internal qualities and complexity of software - Evaluation and evolution of designs - Basics of software evolution - reengineering - reverse engineering.",
+    "semester": [],
+    "major": [
+      "CS"
+    ],
+    "prerequisites": [
+      "CS311",
+      "CS391"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Algorithms Analysis and Design - Software Engineering",
+    "courseTypeByMajor": {
+      "CS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "EE101",
+    "name": "Electronics",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Basic electrical circuits - Columb`s law - Gauss law - Capacitors - Resistors-Inductors-Kirchhoff's law - Basic circuit theory and circuit analysis- phase circuits and transformers - Fundamentals of semiconductor devices - Bipolar junction and field effect transistors structures - Semiconductor devices and circuits - Fundamentals of filters - Power supply and Rectification - Amplifiers - Integrated Circuits and VLSI.",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        1
+      ],
+      "IS": [
+        1
+      ],
+      "IT": [
+        1
+      ],
+      "AI": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "EE201",
+    "name": "Logic Design",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Basic logic concepts: Logic states - number systems - Boolean algebra - basic logical operations - gates and truth tables. Combinational logic: Minimization techniques - multiplexers and de-multiplexers - encoders - decoders - adders and subtractors - comparators - programmable logic arrays and memories - design with MSI - logic families - tri-state devices. Sequential logic: Flip flops - mono-stable multi-vibrators - latches and registers - Counters.",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "EE101"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Electronics",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        3
+      ],
+      "IS": [
+        3
+      ],
+      "IT": [
+        3
+      ],
+      "AI": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "HU111",
+    "name": "English Language I",
+    "creditHours": 2,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "The material reflects the stylistic variety that advanced earners have to be able to deal with. The course gives practice in specific points of grammar to consolidate and extend learners existing knowledge. Analysis of syntax; comprehension; skimming and scanning exercises develop the learner's skills, comprehension questions interpretation and implication. The activities aim to develop listening, speaking and writing skills through a communicative, functional approach, with suggested topics for discussion and exercises in summary writing and composition.",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CS": [
+        1
+      ],
+      "IS": [
+        1
+      ],
+      "IT": [
+        1
+      ],
+      "AI": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "HU112",
+    "name": "English Language II",
+    "creditHours": 2,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "The course aims at enabling the students to further polish and develop their skills in English language through various interactive activities. The need for more articulate written English is reinforced through further in depth study of applied grammar. Again a conversational and situational dialogue based contents are presented to attract students' interest. Pronunciations and comparatively complex grammar are simultaneously introduced. Field related terminology and longer conversations are also presented with emphasis on contrastive grammar and a more articulate pronunciation.",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "HU111"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "English Language I",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CS": [
+        2
+      ],
+      "IS": [
+        2
+      ],
+      "IT": [
+        2
+      ],
+      "AI": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "HU113",
+    "name": "Creative Thinking and Communication Skills",
+    "creditHours": 1,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Meta-cognition (thinking about thinking) - Edward do Bono's CoRT (cognitive research trust) program of learning thinking - Vertical and lateral thinking approaches - Creative thinking tools like Brainstorming, Tony Buzan's Mind mapping and Edward do Bono's Six Thinking hats. Theories of communication - How to translate theories into complete strategies to communicate with diverse audience - Written Communications: Memoranda, Letters, Executive summaries, Business and research reports - Oral Communications: Listening, Presentation skills, Interviewing, Conducting meetings, Interpersonal communication - Negotiation - Intercultural communication - Importance of communication in team building.",
+    "semester": [],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "HU121",
+    "name": "Social Context of Computing",
+    "creditHours": 1,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to the social implications of computing - Social informatics - Social impact of IT on society - Social implications of networked communication - Growth of, control of, and access to the Internet - International issues - Online communities & social implications - Philosophical context - Diversity issues - Gender-related issues - Cultural issues - Accessibility issues - Globalization issues - Economic issues in computing -Digital divide",
+    "semester": [],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "HU122",
+    "name": "Marketing and Sales",
+    "creditHours": 2,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Define marketing - Marketing process - Market analysis: customer base; competition - Best practices and lessons learned - Business research and forecasting tools and techniques - Trend analysis: economics; social; political; environmental; technology - Technology assessment practices and techniques - Presentation skills; Sales and advertising practices - Customer satisfaction strategies - Marketing and branding techniques - Product portfolio analysis - Global trade and international operations - Pricing strategies - Managing marketing through: customer relationships - social responsibility - marketing ethics - E-Commerce Application and Implementation through Business Models and Technology Essentials.",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CS": [
+        2
+      ],
+      "IS": [
+        2
+      ],
+      "IT": [
+        2
+      ],
+      "AI": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "HU131",
+    "name": "Organizational Behavior",
+    "creditHours": 2,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Perception, learning, motivation and value; individual differences and work performance; understanding yourself; motivating yourself and others, working within groups, achieving success through goal setting, achieving high personal productivity and quality; achieving rewarding and satisfying career; communicating with people; leading and influencing others; building relationships with supervisors, co-workers and customers.",
+    "semester": [],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "HU132",
+    "name": "Technical Writing",
+    "creditHours": 2,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "The basic rudiments of report writing - the rationale for report writing - the structure of reports and such details as physical appearance and linguistic style writing reports.",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CS": [
+        2
+      ],
+      "IS": [
+        2
+      ],
+      "IT": [
+        2
+      ],
+      "AI": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "HU133",
+    "name": "Computing Economics",
+    "creditHours": 2,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Monopolies and their economic implications; Effect of skilled labor supply and demand on the quality of computing products; Pricing strategies in the computing domain; cost-benefit analysis and break-even analysis; return on investment; analysis of options; time value of money; management of money: economic analysis, accounting for risk; Differences in access to computing resources and the possible effects thereof.",
+    "semester": [],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "HU141",
+    "name": "Computers and Ethics",
+    "creditHours": 2,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Critical examination of ethical problems associated with computer science and engineering - legal and quasi-legal (i.e. policy and regulative) issues - Process of ethical decision-making - Privacy and confidentiality - Computer crime - Professional codes and responsibilities - Software piracy - Impact of computers on society.",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CS": [
+        1
+      ],
+      "IS": [
+        1
+      ],
+      "IT": [
+        1
+      ],
+      "AI": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "HU142",
+    "name": "Computer Law",
+    "creditHours": 2,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "History and examples of computer crime - -Cracking\u2016 (-hacking\u2016) and its effects - Viruses, worms, and Trojan horses - Crime prevention strategies - System use policies & monitoring - Risks and liabilities of computer- based systems - accountability, responsibility, liability.",
+    "semester": [],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "HU151",
+    "name": "History of Computing",
+    "creditHours": 3,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Prehistory-the world before 1946; Implications of: History of computer hardware, software; History of the Internet; Telecommunications ; The IT profession; IT education; Pioneers of computing.",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CS": [
+        1
+      ],
+      "IS": [
+        1
+      ],
+      "IT": [
+        1
+      ],
+      "AI": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "HU152",
+    "name": "Hand Drawing",
+    "creditHours": 3,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Introduction and proportions - Gestalt theory and gestural drawing - Blind contour drawing - Using light and dark; discovering mass drawing; using negative space as a tool to create atmosphere and shape - Exploring different mediums and paper - Conclusion and final portfolio drawing",
+    "semester": [],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "HU153",
+    "name": "Scientific Thinking",
+    "creditHours": 2,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Personal Development Planning - Learning and personal skills development - Transferable skills development, including time and stress management, note taking, essay writing, literature finding, and exam and revision skills - Develops an understanding of the nature of scientific thinking - Scientific methods are introduced and evaluated - Critical and creative thinking skills - The processes of induction and deduction - Empirical reasoning and the evaluation of evidence - Heuristic strategies for critical and creative thinking - A range of motivating examples on sustainability and personal development.",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CS": [
+        1
+      ],
+      "IS": [
+        1
+      ],
+      "IT": [
+        1
+      ],
+      "AI": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "HU231",
+    "name": "Business Administration",
+    "creditHours": 1,
+    "courseType": "UniversityReq",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Management concepts, level and types of management, planning and organization of work flow, delegation, leadership styles, decision making, stress and time management, and employee relations, decision-making in such areas as investment in operations, productions planning, scheduling and control, reliability and maintenance.",
+    "semester": [],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "UniversityReq",
+      "IS": "UniversityReq",
+      "IT": "UniversityReq",
+      "AI": "UniversityReq"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IS211",
+    "name": "Database",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Database systems: History and motivation for database systems; components of database systems; DBMS functions; database architecture and data independence. Data modeling: Data modeling; conceptual models; object-oriented model; relational data model. Relational databases: Mapping conceptual schema to a relational schema; entity and referential integrity; relational algebra and relational calculus. Database query languages: Overview of database languages; SQL; query optimization; 4th- generation environments; embedding non-procedural queries in a procedural language; introduction to Object Query Language. Relational database design: Database design; functional dependency; normal forms; multivalued dependency; join dependency; representation theory.",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        4
+      ],
+      "IS": [
+        4
+      ],
+      "IT": [
+        4
+      ],
+      "AI": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "IS212",
+    "name": "Web Technology",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to Internet Concepts - Front End Development: HTML - CSS - JS. Backend Development: Web Development Platforms: J2EE - PHP - Content Management Systems: Drupal - Joomla - Introduction to Web Development Frameworks: Laravel - Symfony.",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS241"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Object Oriented Programming",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        4
+      ],
+      "IS": [
+        4
+      ],
+      "IT": [
+        4
+      ],
+      "AI": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "IS221",
+    "name": "Project Management",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "system and database integration issues; network management; project tracking, metrics, and system performance evaluation; managing expectations of managers, clients, team members, and others; determining skill requirements and staffing; cost-effectiveness analysis; reporting and presentation techniques; management of behavioral and technical aspects of the project; change management. Software tools for project tracking and monitoring. Team collaboration techniques and tools.",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS121"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Science Fundamentals",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        3
+      ],
+      "IS": [
+        3
+      ],
+      "IT": [
+        3
+      ],
+      "AI": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "IS301",
+    "name": "Information Systems Fundamentals",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "The main objective of this course is to teach students the fundamental concepts of the Information Systems (IS) and to make them aware of the importance and the role of IS in the organization. The course includes the following topics : The business and its components and environment, the management functions and considerations, the information systems types and components, the Information Technology (IT) and its impact on information systems, the IS development cycle, the information age and the information society, the IT indicators and the digital divide, and the contemporary applications of IT in IS: E-Business, E-Government, E- Commerce, E-Learning.",
+    "semester": [],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS211"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Database",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IS311",
+    "name": "Database Management Systems",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Transaction Management - Concurrency Control - Database Recovery - Query Processing - Query Optimization - Database Security - Different Architectures of DBMSs - Advanced SQL - Stored Procedures and Triggers.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS211",
+      "CS241"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Database - Object Oriented Programming",
+    "courseTypeByMajor": {
+      "IS": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "IS312",
+    "name": "Data Warehousing",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "FallSpring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to data warehouses - Data warehouses and decision support systems data warehouses characteristics and architecture - data warehouse tools - Design issues - Dimensional models and data cubes - Data warehouse models: star schema and snowflake schema - Data warehouses in real world: Sales - Inventory - Education - Health - Transportation - and others - Querying data warehouses using MDX.",
+    "semester": [
+      5,
+      6
+    ],
+    "major": [
+      "IS",
+      "AI"
+    ],
+    "prerequisites": [
+      "IS211"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Database",
+    "courseTypeByMajor": {
+      "IS": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        5
+      ],
+      "AI": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "IS313",
+    "name": "File Management and Processing",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to the Design and Specification of File Structures - Fundamental File Processing Operations - Fundamental File Structure Concepts - Managing Files of Records - Secondary Storage and System Software - Organizing Files for Performance. Indexing - Multi-Level Indexing and B-Trees - Indexed Sequential File Access and Prefix B+ Trees. Hashing",
+    "semester": [
+      5
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "CS211"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Data Structures I",
+    "courseTypeByMajor": {
+      "IS": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "IS314",
+    "name": "Web-based Information Systems Development",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Architecture - I2EE - Sessions - Security - Data connectivity - MVC - Advanced JavaScript - AJAX - JQuery - Framework for JS: Angular JS - Framework for Java: Spring - Hibernate - JSF.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS212"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Web Technology",
+    "courseTypeByMajor": {
+      "IS": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "IS331",
+    "name": "Analysis and Design of Information Systems",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to Systems analysis and design - Systems development lifecycle - Requirements Engineering - Object-oriented Systems analysis - Use cases - Domain Classes - Behavioral modelling - Architectural design - Detailed design User and System interfaces - Extending requirements model into design models - Design-specific Models - Design Principles - Deploying the system - Agile Methodologies: Unified Process - Extreme Programming - SCRUM - Traditional System development approach - Data Flow Diagrams - Process Descriptions - Data descriptions/dictionary.",
+    "semester": [
+      5
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS211"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Database",
+    "courseTypeByMajor": {
+      "IS": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "IS341",
+    "name": "Information Retrieval",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Boolean and vector-Space Retrieval Models - Basic tokenizing, Text Indexing, Text similarity - Performance evaluation of Information Retrieval Systems - Web Search, Automated Text Categorization, Text Clustering - Text classification, and Recommender Systems - Query Expansion - Automatic Local Analysis - Automatic Global Analysis Stopwards, stemming, thesauri - File (Text) organization (invert, suff) - Text statistics (properties) - Text compression Knuth-Morris-Pratt - Boyer-Moore family - Suffix automaton - Phrases and Proximity.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "IS",
+      "AI"
+    ],
+    "prerequisites": [
+      "IS211",
+      "MA222"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Database - Probability and Statistics II",
+    "courseTypeByMajor": {
+      "IS": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        6
+      ],
+      "AI": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "IS342",
+    "name": "Business Process Management",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to BPM - Business Process Lifecycle - Process Modeling Techniques - Business Process Model and Notation - Petri nets - Correctness of Business Process Models - Simulation of Business Process Models - Process Instantiation Semantics - BPEL - Mapping from BPMN to BPEL.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Analysis and Design of Information Systems",
+    "courseTypeByMajor": {
+      "IS": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "IS411",
+    "name": "Data Mining",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Introduction and Basic Concepts - Data Exploration - Summary statistics - Graphic Displays of Data Summaries - Measuring Data Similarity and Dissimilarity - Data Preprocessing - Mining Frequent Patterns - Associations and Correlations - Pattern Evaluation - Clustering - Classification and Prediction.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS341"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Information Retrieval",
+    "courseTypeByMajor": {
+      "IS": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "IS412",
+    "name": "Service-Oriented Architecture",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "XML document structure - Well-formed and valid documents - DTD - XML Schema - Parsing XML using DOM, SAX - XPath - XML Transformation and XSL - Xquery - Characteristics of SOA, Benefits of SOA , Comparing SOA with Client-Server and Distributed architectures -- Principles of Service Orientation - Service layers - Web Services Platform - Service descriptions - WSDL - Messaging with SOAP - Service discovery - UDDI - Service-Level Interaction Patterns - Orchestration and Choreography - WS-Addressing - WS-ReliableMessaging - WS-Policy - WS-Coordination - WS -Transactions - WS-Security - Examples - SOA delivery strategies - Service oriented analysis - Service Modelling - Service oriented design - Standards and composition guidelines - Service design - Business process design - Case Study.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS314"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Web-based Information Systems Development",
+    "courseTypeByMajor": {
+      "IS": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "IS413",
+    "name": "Cloud Databases",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Cloud storage: Blobs - NoSQL (Tables) and Relational (SQL Database) - CDNs Cloud Databases - CAP Theorem - NoSQL Database System - Database-as- a-Service Virtualized Database Servers - Data Partitioning - Concurrency Management Replication Management - Scalable Data Management in the Cloud - Dynamic provisioning - Map-Reduce queries - - Hadoop Distributed File system (HDFS) - Data Locality for Hadoop in the Cloud.",
+    "semester": [],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS311"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Database Management Systems",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IS414",
+    "name": "Distributed Database",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "DBMS Internal - Parallel Architectures for DBMSs - Data Placement Strategies Parallel Algorithms - Parallel DBMS Implementation Techniques - Distributed DBMS Architectures - Distributed Database Design - Distributed Query Processing - Multi database Systems Peer-to- Peer Systems - Transaction Management in distributed databases - approaches to concurrency control in Distributed database - deadlock and recovery in Distributed database.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS311"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Database Management Systems",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "IS415",
+    "name": "Mobile Computing Applications",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Android basics, layout - GUI widgets file processing - media player - multiple activities and Intents - activity lifecycle - state and preferences - dynamic UIs with Layout Inflater - fragments - landscape orientation - user login - text-to- speech; camera - local databases and SQL - RESTful web APIs (list) - remote databases - Firebase (docs) - 2D graphics - services - notifications.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS212"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Web Technology",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "IS421",
+    "name": "Information Systems Development Methodologies",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Information System development methodologies - tools and techniques - different models of SDLC - Process Methodologies - Object-Oriented Methodologies - Rapid Application Development life-cycles such as iterative - spiral and agile - Framework Methodologies - Organization methodologies - and people methodologies.",
+    "semester": [],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Analysis and Design of Information Systems",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IS422",
+    "name": "Information System Applications",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Management information systems. How IT is used in organizations for the improvement of quality and productivity. A variety of cases which highlight problems many corporations encounter, as well as international cases. State- of-the-art advances in management information systems. Fundamentals of Geographic Information Systems concepts to create, edit, and query spatial data. An introduction to map projections, coordinate systems, data capture, attribute tables, data manipulation, remote sensing, aerial and satellite imagery and using Global Position Systems (GPS). Transferring data to GIS data models. Spatial relationships analysis and making decisions from presented information through various geo-processing techniques. Using GIS in many fields. Hands-on experience in GIS techniques using appropriate tools.",
+    "semester": [],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Analysis and Design of Information Systems",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IS431",
+    "name": "Managing and Modeling Big Data",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to big data and its characteristics - Big data sources and applications - Data science and big data analytics - Introduction to virtualization and cloud computing - Data analytics life cycle - Hadoop ecosystem (Hive - PIG - Spark etc.) - Map-Reduce paradigm - R-language for querying and analyzing big data - NoSQL vs relational databases - Machine learning techniques for big data analytics - Graph databases for representing big data and social networks - Introduction to recommendation systems and other applications.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS311"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Database Management Systems",
+    "courseTypeByMajor": {
+      "IS": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "IS441",
+    "name": "Business Process Mining",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Review over business process management - Event logs - Process Mining: Discovery - Conformance - Enhancement - Discovery Approaches - Conformance Checking Approaches - Enhancement Approaches - Log- based Performance Analysis - Tools: ProM/Disco.",
+    "semester": [],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS342"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Business process Management",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IS442",
+    "name": "Information Systems Quality Assurance",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Quality Assurance in designing information systems. Data quality in information systems. Quality Assurance in Designing the Supply Chain Network. Supply Chain Performance, Metrics, and Quality Attributes. Optimization and Uncertainty of Supply Chain Network. Demand Uncertainty: Forecasting. Managing Uncertainty in the Supply Chain (Safety Inventory). Decision-Support Systems for Supply Chain.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Analysis and Design of Information Systems",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "IS443",
+    "name": "Information Systems Security and Risk Management",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Information Security includes an evaluation of the techniques, policies and strategies to ensure that data stored in an organization's computers cannot be accessed or processed without the consent of the organization - Analysis of Information Security & Risk Management, Access Control - Physical Security - Security Architecture & Design- Business Continuity - Disaster Recovery Planning - The building blocks of information systems and cryptography is provided to reinforce the scope of security management.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Analysis and Design of Information Systems",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "IS444",
+    "name": "Information Systems Audit and Control",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Tasks of IS auditor during the process of auditing IS - Management of IS audit function - IS audit and assurance standards and guidelines - IS controls - Performing an IS audit - Control Self -assessment - Tasks of IS auditor during the Governance and Management of IT - Corporate Governance - IS strategy - Maturity of and process improvement models - IT investment and allocation practices - Policies and procedures - Risk management - IT management practices - Auditing IT governance structure - Business Continuity Plans - Auditing Business Continuity.",
+    "semester": [],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Analysis and Design of Information Systems",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IS445",
+    "name": "Enterprise Information Systems",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "The role that Enterprise Resource Planning Systems (ERPs) play in an organization and the challenging task of managing the Information Systems (IS) function - How ERP systems use relational databases - the role of an ERP in carrying out business processes in a company - an entire business process chain in different business cycle areas (Accounting - Sales - Procurement - Inventory Management...) - the advantages and challenges of ERP solutions and how to analyze operational data - Enterprise Resource Planning - Supply Chain Management - Customer Relationship Management - Business Process Management - evolution of enterprise systems and provide a theoretical understanding of enterprise systems in organisation - enterprise systems implementation life cycle and use in organisations - working with case studies.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS314"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Web-based Information Systems Development",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "IS446",
+    "name": "Information Systems Project Management",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "The world of project management - The manager - the organization - and the team - Project activity and risk planning - Scheduling the project - Allocating resources to the project - Monitoring and controlling the project - Evaluating and terminating the project.",
+    "semester": [],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Analysis and Design of Information Systems",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IS447",
+    "name": "E-Business",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to the fundamental principles of e\u2010Business and e\u2010 Commerce and the underlying used technologies with emphasis on Internet Technologies: web- based tools - e-commerce software - security issues - e- payment systems - web auctions - legal - ethical - international - and tax issues - application of tools and services to the development of small scale e\u2010Commerce applications.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [
+      "IS331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Analysis and Design of Information Systems",
+    "courseTypeByMajor": {
+      "IS": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "IS451",
+    "name": "Graduation Project",
+    "creditHours": 6,
+    "courseType": "Core",
+    "semesterAvailability": "FallSpring",
+    "passingGradeThreshold": "D",
+    "description": "This course will continue for two semesters. In the first semester - a group of students will select one of the projects proposed by the department - and analyze the underlying problem. In the second semester - the design and implementation of the project will be conducted.",
+    "semester": [
+      7,
+      8
+    ],
+    "major": [
+      "IS"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": 108,
+    "prerequisiteText": "Passing 108 Credit Hours",
+    "courseTypeByMajor": {
+      "IS": "Core"
+    },
+    "semesterByMajor": {
+      "IS": [
+        7,
+        8
+      ]
+    }
+  },
+  {
+    "code": "IT231",
+    "name": "Computer Networks I",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Standards bodies. Switched vs. packets networking - OSI model - Internet model (TCP/IP). Nodes & links. LAN - WAN. Bandwidth - throughput. Components and architectures - Routing and switching. Communication protocols. Application, Transport, and network layers protocols.",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "CS121"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Science Fundamentals",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        3
+      ],
+      "IS": [
+        3
+      ],
+      "IT": [
+        3
+      ],
+      "AI": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "IT301",
+    "name": "Micro Controllers",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Microcontroller Basics - Microcontroller Components - Processor Core - Memory - Digital I/O - Analog I/O - Interrupts - Timer - Communication Interfaces - SCI - SPI - IIC - Development Cycle - Assembly Language Programming - Debugging - Hardware Switch Keypad - Potentiometer - Phototransistor - Position - Numeric Display - Multiplexed - Switching Loads - Motors",
+    "semester": [
+      5
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "EE201"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Logic Design",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "IT302",
+    "name": "Cryptography",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to Data Compression Approaches (lossless - Lossy - Near lossless and Constant bit rate) - Dictionary based compression approach (LZ77 - LZ 78 -LZW - different variants) - Introduction to information theory and Entropy calculation - Shannon theorem and its applications - Huffman Coding approaches (Standard Huffman - Modified Huffman - Adaptive Huffman) - Arithmetic Coding Approaches ( Floating point Arithmetic coding - Binary Arithmetic Coding - Integer arithmetic coding) - Quantization with application (Uniform Quantizers - Optimal Quantizers - Vector Quantizers) - Prediction Coding techniques (PCM - DPCM - Linear predictors - non-linear predictors - Delta Modulation). Transform Coding and DCT - Compression of Color images JPEG Compression and its building blocks - Video basics - MPEG Compression and its building blocks - Motion Estimation and compensation in Video.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CS",
+      "IT"
+    ],
+    "prerequisites": [
+      "MA113"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Math II",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "IT331",
+    "name": "Computer Networks II",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to Network Architectures - LANs/MANs topologies - transmission and protocols - Medium Access Control (MAC) protocols - Ethernet types and technologies - Internet routing protocols - Transport network protocols - Introduction to Data Center Networks - Fundamentals of Network/Internet management and measurements - Introduction to Software Defined Networks - Introduction to Cloud-based Networks - Content distribution networks.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT231"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Networks I",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "IT332",
+    "name": "Data Communication",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Basic concepts of data communications - Layered architecture of communication protocols - OSI reference model - TCP/IP protocol suite - Guided/unguided transmission media - Analog/digital data transmission - Encoding techniques - Multiplexing techniques - Error detection and correction - Data link protocol.",
+    "semester": [
+      5
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "MA113"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Math II",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "IT341",
+    "name": "Signals and Systems",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Signals Applications - Signals Definitions and Classifications - Signals' Power and Energy - Basic Signals - Systems and Systems' Properties - Linear and Time-Invariant (LTI) Systems - Fourier series - Fourier transform for continuous and discrete time signals - Sampling theorem - Laplace transform - Z-Transform - Transfer function - State apace representation - Filters design and applications.",
+    "semester": [
+      5
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "IT342",
+    "name": "Digital Signal Processing",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to Digital Signal Processing - Discrete-Time Signals and System: Discrete-Time Signals: Sequences - Discrete-Time Systems - Linear Time- Invariant Systems -Linear Constant-Coefficient Difference Equations - Freq. Domain Representation of Discrete-Time Signals - Representation of Sequences by Fourier Transforms - Symmetry Properties of the Fourier Transform - Fourier Transform Theorems - The Z- Transform-The Discrete-Fourier Transform: Discrete Fourier Series - Properties of the Discrete Fourier Series - The Fourier Transform of Periodic Signals - Sampling the - Fourier Transform - The Discrete Fourier Transform - Properties of the DFT - Sampling of Continuous-Time Signals - Periodic (Uniform) Sampling - Frequency-Domain Representation of Sampling -Block Diagram Representation - Signal Flow Graph Representation - Basic Structures for IIR Systems - Transposed Forms - Basic Structures for FIR Systems - Filter Design Techniques - Design of Discrete-Time IIR Filters from Continuous- Time Filters - Design of FIR Filters by Windowing - Optimum Approximation.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT341"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Signals and Systems",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "IT411",
+    "name": "Information and Computer Networks Security",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Basic concepts of information and network security - Hash functions/algorithms Classical encryption techniques - Public and Private Key Cryptography - Basic and Advanced Encryption - Authentication - Hashing - Symmetric and asymmetric crypto - Digital Signature and Authentication - Application Security (email security) - Network security and Firewalls - Web Security - Introduction to digital steganography and watermarking techniques.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Networks II",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "IT412",
+    "name": "Cyber Security",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Network attacks and defenses - operating system holes - web security - e- mail Botnet - malware - social engineering attacks - Privacy - and digital rights management - Security standards in government and industry. Computer system protection principles (UNIX and Windows) - Access controls, including MAC, DAC, and role-based. Cryptography fundamentals. Authentication, passwords, introduction to protocols - Kerberos. Security operations. Attacks: software attacks, malicious code, buffer overflows, injection attacks, and related defense tools. Network attacks: Denial of service, flooding, sniffing and traffic redirection, defense tools and strategies. Attacking web sites: cross-site scripting. Ethics, SP issues that are related. Introduction to Forensics.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT411"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Information and Computer Networks Security",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IT": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "IT421",
+    "name": "Internet Programming and Protocols",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "The principal structure of the internet and its most important protocols - including TCP - IP - in addition to application layer protocols (DHCP - DNS - HTTP - SMTP - POP - IMAP ) - basics of socket and thread programming.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Networks II",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "IT422",
+    "name": "Human Language Technology",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Natural text parsing - semantic understanding - text generation - dialogue systems management - name entity recognition - word sense disambiguation - carefreeness resolution - sentiment analysis - machine translation - phonetics - speech synthesis - speech recognition - handwriting recognition.",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "CS362"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Pattern Recognition I",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IT431",
+    "name": "Communication Technology",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Communication technology concepts and terminology - Optical Circuit/ Packet/ Burst Switching - Passive Optical Networks - RFID Technology - Internet of Things Technologies - Wireless Communication Fundamentals - 3G/4G/5G Communication Fundamentals - Recent Trends in Communication Technologies. Protocols; SS7 protocol; Optical technology; Fundamental of optical networking; Optical sources.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT231"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Networks I",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "IT432",
+    "name": "Wireless and Mobile Networks",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Antennas: types - Radiation patterns - Antenna gain - Propagation models - Line of sight transmission - Impairments - Fading in wireless environment - Satellites: orbits types - Geostationary satellites - LEO satellites - MEO satellites - Footprint - Capacity allocation: FDMA - TDMA - CDMA - Cellular networks: definition - architecture - frequency reuse - Call forwarding - Handoff - power control - Main architecture - Last generation architecture - Ad-hoc networks: definition - problems - MAC protocol - routing - energy management - Wireless sensor networks: definition - applications - routing - energy consumption - aggregation techniques.",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Networks II",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IT433",
+    "name": "Cloud Computing Networks",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to cloud computing - Cloud computing reference model - Physical Layer (Compute/Storage - FC SAN - IPSAN - FcoE) - Virtual layer (VLAN - VSAN - Tunneling Protocols) - Characteristics of cloud networking - Deployment models - Network virtualization techniques used in data centers - Data center evolution - Routing inside a Data center.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Networks II",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "IT434",
+    "name": "Optical Networks",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Optical Multiplexing (WDM - SONET - SDH) - Optical Transmission System Optical Devices Components - Optical Circuit/Packet/Burst Switching - Optical Switch Architectures and technologies - Passive Optical Networks - Free / -Space Optical Networks - Optical Data Centers - Optical Sensors - Optical Networks Measurements - Optical Networks Emerging Technologies",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT331"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Networks II",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IT435",
+    "name": "Wireless Sensor Networks",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Sensor node architecture - Introduction to applications - Network architecture - Key aspects of the communication protocol stack - Physical layer - MAC IEEE 802.15.4 - Routing - RPL - Distributed detection - Distributed estimation - localization and positioning - Time synchronization - Sensor operation system - TinyOS - WSN control.",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT432"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Wireless and Mobile networks",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IT441",
+    "name": "Multimedia Mining",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Data Collection and Pre-processing - Multimedia Mining Techniques - Image and Video Mining - Audio and Speech Mining - Text Mining - indexing text and DNA strings, clustering, information filtering, LSI (singular value decomposition) - Fundamental signal processing methods: Discrete Fourier Transform, wavelets, JPEG and MPEG compression - Time sequences, photographs and medical images - video clips - feature extraction - continuous media storage and delivery.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "CS362"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Pattern Recognition I",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "IT442",
+    "name": "Robotics",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Theory and application of mathematical models to analyze the kinematics and dynamics of robot mechanisms or their components using vector algebra - differential equations - and computer simulations - robot vehicle kinematics - robot arm kinematics - and robot dynamics with computational examples and problems. Some basic programming skills and familiarity with MATLAB are expected.",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "IT301"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Micro Controllers",
+    "courseTypeByMajor": {
+      "IT": "DeptElective",
+      "AI": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IT": [
+        8
+      ],
+      "AI": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "IT443",
+    "name": "Embedded Systems",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Embedded systems software design - either in assembly language or a high- level language or both - for typical embedded systems applications using modern tools and approaches for development and debugging - Digital interfacing using both parallel and asynchronous/synchronous serial techniques incorporating typical on-chip modules as such as general purpose I/O - timers - and serial communication modules (i.e. - UART - SPI - I2C - CAN - etc.) - analog interfacing using analog-to-digital convertors connected to common sensor elements and digital-to-analog converters connected to typical actuator elements Mobile and wireless embedded systems using both short-range (Bluetooth - 802.15.4) and long- range (cellular - Ethernet) in various interconnection architectures.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT301"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Micro Controllers",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "IT444",
+    "name": "Virtual Reality",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Stereoscopic display; Force feedback simulation, haptic devices; Viewer tracking - Collision detection; Visibility computation - Time-critical rendering - multiple levels of details (LOD) - Image-base VR system - Distributed VR - collaboration over computer network - Interactive modeling - User interface issues - Applications in medicine, simulation, and training.",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "CS352",
+      "CS351"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Image Processing - Computer Graphics I",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IT445",
+    "name": "Speech Processing",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to Speech Processing and Related Technologies - Fundamentals of DSP (Revision): z-Transform - Fourier Transform - Digital Filters - Sampling Theorem - Fundamentals of Speech Science: Speech Production Mechanism - Sound Units - Acoustic Theory - Digital Modeling - Speech Analysis: time- domain analysis - frequency-domain analysis - Linear Prediction Analysis - Speech Recognition: Feature Extraction - Template Matching - Statistical Modeling - Design of Recognition Systems.",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT342"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Digital Signal Processing",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IT461",
+    "name": "Graduation Project",
+    "creditHours": 6,
+    "courseType": "Core",
+    "semesterAvailability": "FallSpring",
+    "passingGradeThreshold": "D",
+    "description": "This course will continue for two semesters. In the first semester - a group of students will select one of the projects proposed by the department - and analyze the underlying problem. In the second semester - the design and implementation of the project will be conducted.",
+    "semester": [
+      7,
+      8
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": 108,
+    "prerequisiteText": "Passing 108 Credit Hours",
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7,
+        8
+      ]
+    }
+  },
+  {
+    "code": "IT471",
+    "name": "Mobile Computing",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Overview on various mobile computing applications - Mobile Technologies - Mobile Systems - Mobile Devices - Information Architecture - Design Elements - Mobile Web versus Native Applications - Limited Resource Computing - Low Power Computing - Fault Tolerance and Persistence - TCP/IP in the mobile setting.",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "IT432"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Wireless and Mobile Networks",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "IT472",
+    "name": "Concurrency and Parallel Computing",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Paradigms of concurrency and parallel computing and distinguish between them. Parallel architectures including multi-core - considerations of cache coherence Parallel programming models - Methodologies - Parallel algorithms - Limitations of parallelism - Parallel programming performance.",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "CS322"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Architecture and Organization",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "IT473",
+    "name": "Quantum Computing",
+    "creditHours": 3,
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "passingGradeThreshold": "D",
+    "description": "Physics of information processing - Quantum logic - Quantum algorithms including Shor's factoring algorithm and Grover's search algorithm - Quantum error correction - Quantum communication - and cryptography.",
+    "semester": [],
+    "major": [
+      "IT"
+    ],
+    "prerequisites": [
+      "CS322",
+      "CS211"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Computer Architecture and Organization - Data Structures I",
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "MA111",
+    "name": "Math I",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Functions - Limits and Continuity - Differentiation: definition of the derivativesome differentiation formulas - Higher order derivatives - the chain rule - implicit differentiation - differentials - differentiation of exponential and logarithmic functions - differentiation of trigonometric - and inverse trigonometric functions - hyperbolic - and inverse hyperbolic functions - parametric differentiation - nth- derivative of a function and Leibentiz theorem. Applications of Differentiation: Roll`s theorem and the mean value theorem - Taylor and Maclaurin series - indeterminate forms and L`Hopital rule - maximum and minimum values - curve sketching. Anti-derivative and indefinite Integral: definition and properties of indefinite integral - indefinite integral substitution method - standard forms of integration. Techniques of integration: integration by parts, reduction formulas - integration of rational functions by partial fractions - integration by substitution. Definite integral: definite integral as a limit of Riemann sum - properties of definite integral - the fundamental theorem of calculus - improper integrals. Applications of definite integrals: area between curves - solids of revolution - arc length - surface areas of revolution.",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        1
+      ],
+      "IS": [
+        1
+      ],
+      "IT": [
+        1
+      ],
+      "AI": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "MA112",
+    "name": "Discrete Structures",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Introduction to logic and proofs - Fundamental structures: Functions; relations; sets; cardinality and countability - Boolean algebra - Propositional logic: Logical connectives; truth tables; normal forms; validity - Elementary number theory: Factorability; properties of primes; greatest common divisors and least common multiples; Euclid's algorithm; modular arithmetic; the Chinese Remainder Theorem - Basics of counting: Counting arguments; pigeonhole principle; permutations and combinations; binomial coefficients - Predicate logic: Universal and existential quantification; modus ponens and modus tollens; limitations of predicate logic - Recurrence relations: Basic formulae; elementary solution techniques - Graphs and trees: Fundamental definitions; simple algorithms; traversal strategies; proof techniques; spanning trees; applications.",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        2
+      ],
+      "IS": [
+        2
+      ],
+      "IT": [
+        2
+      ],
+      "AI": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "MA113",
+    "name": "Math II",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Partial Differentiation - First Order Differential Equations - Second and Higher Order Linear Ordinary Differential Equations - Laplace Transform - Multiple Integral - Line and surface integral.",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "MA111"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Math I",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        2
+      ],
+      "IS": [
+        2
+      ],
+      "IT": [
+        2
+      ],
+      "AI": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "MA121",
+    "name": "Probability and Statistics I",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Define statistics (types of data - types of statistics - population versus sample- Measurement's levels) - Describing Data (Frequency tables - Graphic Presentation - Numerical Measures - Displaying and Exploring Data) - Survey of Probability Concept (Rules of probability - Conditional probability- Total Probability Theory and Bays Rule) - Random Variables and its probability distribution with some properties - Discrete probability distribution (Binomial - Poisson - Negative Binomial - Geometric- Hyper geometric) - Continuous Probability distribution (Normal - Exponential).",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "MA111"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Math I",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        2
+      ],
+      "IS": [
+        2
+      ],
+      "IT": [
+        2
+      ],
+      "AI": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "MA222",
+    "name": "Probability and Statistics II",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Sampling Distribution (distribution of mean) - Central limit theorem - Concept of estimation theory - Point estimation - some properties (maximum likelihood method - Moment method) - Interval estimation (population mean and variance two population mean and variance) - concept of testing hypothesis (population mean and variance - two population mean and variance) - chi-square test - Introduction to Correlation and Regression.",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "MA121"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Probability and Statistics I",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        3
+      ],
+      "IS": [
+        3
+      ],
+      "IT": [
+        3
+      ],
+      "AI": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "MA231",
+    "name": "Operations Research",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Principles of problem identification and definition, model formulation, solution approaches, analysis and implementation - linear programming - integer programming - networks - project management - simulation models - solution approaches of these models with the help of relevant software packages will be covered - introduction to decision support systems (DSS) - principles of computer modeling languages, applications and use of integrated software packages.",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [
+      "MA113"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Math II",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        3
+      ],
+      "IS": [
+        3
+      ],
+      "IT": [
+        3
+      ],
+      "AI": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "MA301",
+    "name": "Probabilistic Reasoning",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "passingGradeThreshold": "D",
+    "description": "Independences and Graphical Representations - Pearl's Axiomatic System for Independence - Properties of Independence Relations - The Bayesian Network Formalism - Probabilistic Inference - Building a Bayesian Network - Identifying Variables and Values - Constructing the Digraph",
+    "semester": [
+      5
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "MA222"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Probability and Statistics II",
+    "courseTypeByMajor": {
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "AI": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "MA302",
+    "name": "Linear and Integer Programming",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Integer programming modeling concepts. Branch-and-bound for solving integer programs. An introduction to software for solving integer programs - Complexity Theory: Basic complexity classes P, NP, and NP-Complete - The concept of problem reduction to determine complexity - Polyhedral Theory: Concepts of dimension, faces, facets, polyhedral representations, and polarity -The equivalence of separation and optimization - Preprocessing and probing in integer programs. Primal heuristics for integer programs - Advanced branching and node selection rules for integer programs. Techniques for obtaining valid inequalities - Gomory's cutting planes - mixed integer rounding - lifting - cover inequalities - Lagrangian Relaxation, Bender's Decomposition, Branch-and-Price, Primal and Lattice-based methods for integer programs.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "AI"
+    ],
+    "prerequisites": [
+      "MA231",
+      "MA113"
+    ],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "Operations Research - Math II",
+    "courseTypeByMajor": {
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "AI": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "PH201",
+    "name": "Physics",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Mechanics: Physics and measurements; Motion in one dimension; Vectors; Motion in two dimensions; Laws of motion;Circu1ar motion and its applications; Work and energy;Potentia1 energy and conservation of energy; Linear momentum and collision; Rotation of a rigid body; Rolling motion; Law of gravity. Waves: Oscillatory motion; Wave motion; Sound waves. Magnetic fields: Definitions and properties; Sources of magnetic fields; electromagnetic waves; the four Maxwell's equations.",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": null,
+    "prerequisiteText": "None",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        4
+      ],
+      "IS": [
+        4
+      ],
+      "IT": [
+        4
+      ],
+      "AI": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "TR301",
+    "name": "Field Training",
+    "creditHours": 3,
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "passingGradeThreshold": "D",
+    "description": "Particular emphasis is placed on the importance of practical experience and all teaching involves industry standard hardware, software, methods and techniques. Students asked to complete training on chosen area of specialization to be familiar with the industry.",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CS",
+      "IS",
+      "IT",
+      "AI"
+    ],
+    "prerequisites": [],
+    "minimumPassedCreditHours": 72,
+    "prerequisiteText": "Passing 72 Credit Hours",
+    "courseTypeByMajor": {
+      "CS": "Core",
+      "IS": "Core",
+      "IT": "Core",
+      "AI": "Core"
+    },
+    "semesterByMajor": {
+      "CS": [
+        6
+      ],
+      "IS": [
+        6
+      ],
+      "IT": [
+        6
+      ],
+      "AI": [
+        6
+      ]
+    }
+  }
+]

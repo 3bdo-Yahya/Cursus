@@ -1,0 +1,3223 @@
+[
+  {
+    "code": "CSW110",
+    "name": "Introduction to Computer & Internet Technology",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        1
+      ],
+      "IDSS": [
+        1
+      ],
+      "IT": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "CSW121",
+    "name": "Logic Design",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT110"
+    ],
+    "prerequisiteText": "Introduction to Electronics",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        2
+      ],
+      "IDSS": [
+        2
+      ],
+      "IT": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "CSW221",
+    "name": "Data Structure",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW232"
+    ],
+    "prerequisiteText": "Computer Programming (1)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        3
+      ],
+      "IDSS": [
+        3
+      ],
+      "IT": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "CSW225",
+    "name": "Computer Architecture",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW110",
+      "CSW121"
+    ],
+    "prerequisiteText": "Introduction to Computer & Internet Technology + Logic Design",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        4
+      ],
+      "IDSS": [
+        4
+      ],
+      "IT": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "CSW232",
+    "name": "Computer Programming (1)",
+    "creditHours": 4,
+    "prerequisites": [
+      "CSW110"
+    ],
+    "prerequisiteText": "Introduction to Computer & Internet Technology",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        2
+      ],
+      "IDSS": [
+        2
+      ],
+      "IT": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "CSW234",
+    "name": "Computer Programming (2)",
+    "creditHours": 4,
+    "prerequisites": [
+      "CSW232"
+    ],
+    "prerequisiteText": "Computer Programming (1)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        3
+      ],
+      "IDSS": [
+        3
+      ],
+      "IT": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "CSW241",
+    "name": "File Organization & Processing",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW221"
+    ],
+    "prerequisiteText": "Data Structure",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        3
+      ],
+      "IDSS": [
+        3
+      ],
+      "IT": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "CSW242",
+    "name": "Operating Systems (1)",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW241"
+    ],
+    "prerequisiteText": "File Organization & Processing",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        4
+      ],
+      "IDSS": [
+        4
+      ],
+      "IT": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "CSW263",
+    "name": "Software Engineering",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW232"
+    ],
+    "prerequisiteText": "Computer Programming (1)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        3
+      ],
+      "IDSS": [
+        3
+      ],
+      "IT": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "CSW323",
+    "name": "Operating Systems (2)",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW242"
+    ],
+    "prerequisiteText": "Operating Systems (1)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        5
+      ],
+      "IDSS": [
+        5
+      ],
+      "IT": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "CSW325",
+    "name": "Parallel Processing",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW225"
+    ],
+    "prerequisiteText": "Computer Architecture",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        5
+      ],
+      "IDSS": [
+        5
+      ],
+      "IT": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "CSW326",
+    "name": "Compiler",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW221"
+    ],
+    "prerequisiteText": "Data Structure",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CSW337",
+    "name": "Web client side Programming",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW234"
+    ],
+    "prerequisiteText": "Computer Programming (2)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "CSW338",
+    "name": "Programming for WWW",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW234"
+    ],
+    "prerequisiteText": "Computer Programming (2)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "CSW339",
+    "name": "Programming for Digital Media",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW234"
+    ],
+    "prerequisiteText": "Computer Programming (2)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "CSW351",
+    "name": "Artificial Intelligence",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW232"
+    ],
+    "prerequisiteText": "Computer Programming (1)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        5
+      ],
+      "IDSS": [
+        5
+      ],
+      "IT": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "CSW362",
+    "name": "Software Construction",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW225"
+    ],
+    "prerequisiteText": "Computer Architecture",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "CSW367",
+    "name": "Software Methods for remote Databases",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW234",
+      "ISD242"
+    ],
+    "prerequisiteText": "Computer Programming (2) + Database System",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "CSW433",
+    "name": "Concept of Computer Programming",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW241"
+    ],
+    "prerequisiteText": "File Organization & Processing",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "DeptElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "CSW461",
+    "name": "Software Eng. Approach to Human Interaction",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW362"
+    ],
+    "prerequisiteText": "Software Construction",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "CSW462",
+    "name": "Software Design & Architecture",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW225"
+    ],
+    "prerequisiteText": "Computer Architecture",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "CSW463",
+    "name": "Software Process & Management",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW464"
+    ],
+    "prerequisiteText": "Software Eng. (2)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "CSW464",
+    "name": "Software Eng. (2)",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW362"
+    ],
+    "prerequisiteText": "Software Construction",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "CSW465",
+    "name": "Software Quality Assurance & Testing",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW464"
+    ],
+    "prerequisiteText": "Software Eng. (2)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "CSW466",
+    "name": "Formal Methods in Software Eng.",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW462"
+    ],
+    "prerequisiteText": "Software Design & Architecture",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "CSW467",
+    "name": "Design Architecture of large SW Systems",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW234"
+    ],
+    "prerequisiteText": "Computer Programming (2)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "DeptElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "CSW468",
+    "name": "Software Requirement Analysis",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW462"
+    ],
+    "prerequisiteText": "Software Design & Architecture",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "CSW469",
+    "name": "Selected Topics in SW Eng",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "CSW498",
+    "name": "SW/ENG Project (1)",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "CSW499",
+    "name": "SW/ENG Proj (2)",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "HU100",
+    "name": "Sinai History",
+    "creditHours": 0,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Fall",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "UniversityReq",
+      "CSSE": "UniversityReq",
+      "IDSS": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        1
+      ],
+      "IDSS": [
+        1
+      ],
+      "IT": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "HU110",
+    "name": "English Language",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Fall",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "UniversityReq",
+      "CSSE": "UniversityReq",
+      "IDSS": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        1
+      ],
+      "IDSS": [
+        1
+      ],
+      "IT": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "HU111",
+    "name": "Composition + Technical Writing",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Spring",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "UniversityReq",
+      "CSSE": "UniversityReq",
+      "IDSS": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        2
+      ],
+      "IDSS": [
+        2
+      ],
+      "IT": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "HU120",
+    "name": "Ethical + Professional Issues",
+    "creditHours": 1,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "UniversityReq",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "UniversityReq",
+      "CSSE": "UniversityReq",
+      "IDSS": "UniversityReq"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "HU212",
+    "name": "Reading & Presentation Skills",
+    "creditHours": 2,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Spring",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "UniversityReq",
+      "CSSE": "UniversityReq",
+      "IDSS": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        4
+      ],
+      "IDSS": [
+        4
+      ],
+      "IT": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "HU213",
+    "name": "Creative Thinking",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Fall",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "UniversityReq",
+      "CSSE": "UniversityReq",
+      "IDSS": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        3
+      ],
+      "IDSS": [
+        3
+      ],
+      "IT": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "HU230",
+    "name": "Communication Skills",
+    "creditHours": 1,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "UniversityReq",
+    "semesterAvailability": "Spring",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "UniversityReq",
+      "CSSE": "UniversityReq",
+      "IDSS": "UniversityReq"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        2
+      ],
+      "IDSS": [
+        2
+      ],
+      "IT": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "INT110",
+    "name": "Introduction to Electronics",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        1
+      ],
+      "IDSS": [
+        1
+      ],
+      "IT": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "INT232",
+    "name": "Computer Network",
+    "creditHours": 3,
+    "prerequisites": [
+      "MA110"
+    ],
+    "prerequisiteText": "Linear Algebra",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        4
+      ],
+      "IDSS": [
+        4
+      ],
+      "IT": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "INT326",
+    "name": "Digital Image Development",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT330"
+    ],
+    "prerequisiteText": "Data Communication",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT327",
+    "name": "Digital Audio Development",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT330"
+    ],
+    "prerequisiteText": "Data Communication",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT328",
+    "name": "Digital Video Development",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT330"
+    ],
+    "prerequisiteText": "Data Communication",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT329M",
+    "name": "DM Project",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT330",
+    "name": "Data Communication",
+    "creditHours": 3,
+    "prerequisites": [
+      "MA110",
+      "MA111"
+    ],
+    "prerequisiteText": "Linear Algebra + Calculus",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT338",
+    "name": "Network - Based Multimedia",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT353",
+      "INT232"
+    ],
+    "prerequisiteText": "Multimedia + Computer Network",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT339E",
+    "name": "DE Project",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT341",
+    "name": "Web Technology",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW110"
+    ],
+    "prerequisiteText": "Introduction to Computer & Internet Technology",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "DeptElective",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        5
+      ],
+      "IDSS": [
+        5
+      ],
+      "IT": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "INT342",
+    "name": "Web Design for E-Commerce",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT341"
+    ],
+    "prerequisiteText": "Web Technology",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT343-EL",
+    "name": "Web Environments for Learning & Information",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT341"
+    ],
+    "prerequisiteText": "Web Technology",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT343-WDT",
+    "name": "Website Design & Implementation",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT341",
+      "CSW338"
+    ],
+    "prerequisiteText": "Web Technology + Programming for WWW",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT349W",
+    "name": "WDT Project",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT351",
+    "name": "Computer Graphics",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW234"
+    ],
+    "prerequisiteText": "Computer Programming (2)",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "DeptElective",
+      "CSSE": "DeptElective",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        5
+      ],
+      "IDSS": [
+        5
+      ],
+      "IT": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "INT353",
+    "name": "Multimedia",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW225"
+    ],
+    "prerequisiteText": "Computer Architecture",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      5
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        5
+      ],
+      "IDSS": [
+        5
+      ],
+      "IT": [
+        5
+      ]
+    }
+  },
+  {
+    "code": "INT355",
+    "name": "Introduction to Computer Vision",
+    "creditHours": 3,
+    "prerequisites": [
+      "MA110",
+      "MA111"
+    ],
+    "prerequisiteText": "Linear Algebra + Calculus",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT356",
+    "name": "Computer Graphics: Geometric Modeling",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT351"
+    ],
+    "prerequisiteText": "Computer Graphics",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT357",
+    "name": "Computer Graphics: Image Synthesis",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT351"
+    ],
+    "prerequisiteText": "Computer Graphics",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT358",
+    "name": "Geometric Algorithms",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT351"
+    ],
+    "prerequisiteText": "Computer Graphics",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT359G",
+    "name": "CG Project",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT372",
+    "name": "Multimedia Applications",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT353"
+    ],
+    "prerequisiteText": "Multimedia",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT373",
+    "name": "Distance Educational Technology Support System",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT341"
+    ],
+    "prerequisiteText": "Web Technology",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT374",
+    "name": "Education & Training Tech. Support System",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT341"
+    ],
+    "prerequisiteText": "Web Technology",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT379L",
+    "name": "EL Project",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "INT421",
+    "name": "Digital Signal Processing",
+    "creditHours": 3,
+    "prerequisites": [
+      "MA110",
+      "MA111"
+    ],
+    "prerequisiteText": "Linear Algebra + Calculus",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "INT422",
+    "name": "Pattern Recognitions",
+    "creditHours": 3,
+    "prerequisites": [
+      "MA110",
+      "MA111"
+    ],
+    "prerequisiteText": "Linear Algebra + Calculus",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "INT423",
+    "name": "Image Processing",
+    "creditHours": 3,
+    "prerequisites": [
+      "MA110"
+    ],
+    "prerequisiteText": "Linear Algebra",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "INT433",
+    "name": "Broadband Network & Communication",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT330"
+    ],
+    "prerequisiteText": "Data Communication",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "INT434",
+    "name": "Network Operations & Administration",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT232"
+    ],
+    "prerequisiteText": "Computer Network",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "INT435",
+    "name": "Information & Networks Security",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT232"
+    ],
+    "prerequisiteText": "Computer Network",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "CSSE",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "DeptElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        8
+      ],
+      "IT": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "INT437",
+    "name": "Wireless & Mobile Network",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT232"
+    ],
+    "prerequisiteText": "Computer Network",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IT": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "INT453",
+    "name": "Digital Multimedia",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT353"
+    ],
+    "prerequisiteText": "Multimedia",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "INT461",
+    "name": "Information Engineering",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT232"
+    ],
+    "prerequisiteText": "Computer Network",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "DeptElective",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "INT489",
+    "name": "Selected Topics in IT",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "DeptElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "DeptElective"
+    },
+    "semesterByMajor": {
+      "IT": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "INT498",
+    "name": "IT Project (1)",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "INT499",
+    "name": "IT Project (2)",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core"
+    },
+    "semesterByMajor": {
+      "IT": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "ISD100",
+    "name": "Introduction to Systems & Informatics",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        2
+      ],
+      "IDSS": [
+        2
+      ],
+      "IT": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "ISD110",
+    "name": "Introduction to Management",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "UniversityReq",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "UniversityReq",
+      "CSSE": "UniversityReq",
+      "IDSS": "UniversityReq"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "ISD111",
+    "name": "Introduction to Economics",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "UniversityReq",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "UniversityReq",
+      "CSSE": "UniversityReq",
+      "IDSS": "UniversityReq"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "ISD220",
+    "name": "Introduction to Operations Research",
+    "creditHours": 4,
+    "prerequisites": [
+      "MA110",
+      "ST120"
+    ],
+    "prerequisiteText": "Linear Algebra + Statistics & Probability",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        4
+      ],
+      "IDSS": [
+        4
+      ],
+      "IT": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "ISD242",
+    "name": "Database System",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW221"
+    ],
+    "prerequisiteText": "Data Structure",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      4
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        4
+      ],
+      "IDSS": [
+        4
+      ],
+      "IT": [
+        4
+      ]
+    }
+  },
+  {
+    "code": "ISD321",
+    "name": "Modeling & Simulation",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD220"
+    ],
+    "prerequisiteText": "Introduction to Operations Research",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "DeptElective",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "ISD330",
+    "name": "Project Management",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD100",
+      "ISD220"
+    ],
+    "prerequisiteText": "Introduction to Systems & Informatics / Introduction to Operations Research",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "ISD331",
+    "name": "Queuing theory",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD220"
+    ],
+    "prerequisiteText": "Introduction to Operations Research",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "DeptElective",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "ISD340",
+    "name": "Data Mining",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD242"
+    ],
+    "prerequisiteText": "Database System",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "ISD342",
+    "name": "Database System (2)",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD242"
+    ],
+    "prerequisiteText": "Database System",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE",
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "DeptElective",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "ISD351",
+    "name": "Information System Fundamentals",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD242"
+    ],
+    "prerequisiteText": "Database System",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "ISD352",
+    "name": "Information System Analysis & Design",
+    "creditHours": 3,
+    "prerequisites": [
+      "CSW263",
+      "ISD100"
+    ],
+    "prerequisiteText": "Software Engineering + Introduction to Systems & Informatics",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "DeptElective",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "DeptElective"
+    },
+    "semesterByMajor": {}
+  },
+  {
+    "code": "ISD358",
+    "name": "e-Business System Fundamentals",
+    "creditHours": 3,
+    "prerequisites": [
+      "INT341"
+    ],
+    "prerequisiteText": "Web Technology",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "FreeElective",
+    "semesterAvailability": "Spring",
+    "semester": [
+      6
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "FreeElective",
+      "CSSE": "FreeElective",
+      "IDSS": "FreeElective"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        6
+      ],
+      "IDSS": [
+        6
+      ],
+      "IT": [
+        6
+      ]
+    }
+  },
+  {
+    "code": "ISD421",
+    "name": "Modeling & Simulation",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD220"
+    ],
+    "prerequisiteText": "Introduction to Operations Research",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "ISD423",
+    "name": "Selected Topic in ISD",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "ISD425",
+    "name": "Network Optimization",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD220",
+      "INT232"
+    ],
+    "prerequisiteText": "Introduction to Operations Research / Computer Network",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "DeptElective",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "ISD431",
+    "name": "Queuing theory",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD220"
+    ],
+    "prerequisiteText": "Introduction to Operations Research",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "ISD440",
+    "name": "Data Mining",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "ISD442",
+    "name": "Database Design",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD242"
+    ],
+    "prerequisiteText": "Database System",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "All",
+    "semester": [],
+    "major": [
+      "CSSE",
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "CSSE": "DeptElective",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "ISD448",
+    "name": "ISD Project (1)",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      7
+    ],
+    "major": [
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        7
+      ]
+    }
+  },
+  {
+    "code": "ISD449",
+    "name": "ISD Project (2)",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "ISD451",
+    "name": "Information System Fundamentals",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD242"
+    ],
+    "prerequisiteText": "Database System",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "ISD452",
+    "name": "Information System Analysis & Design",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD100"
+    ],
+    "prerequisiteText": "Introduction to Systems & Informatics",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "ISD458",
+    "name": "e-Business System Fundamentals",
+    "creditHours": 3,
+    "prerequisites": [
+      "ISD220"
+    ],
+    "prerequisiteText": "Introduction to Operations Research",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      8
+    ],
+    "major": [
+      "IDSS"
+    ],
+    "courseTypeByMajor": {
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "IDSS": [
+        8
+      ]
+    }
+  },
+  {
+    "code": "MA110",
+    "name": "Linear Algebra",
+    "creditHours": 3,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Spring",
+    "semester": [
+      2
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        2
+      ],
+      "IDSS": [
+        2
+      ],
+      "IT": [
+        2
+      ]
+    }
+  },
+  {
+    "code": "MA111",
+    "name": "Calculus",
+    "creditHours": 4,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        1
+      ],
+      "IDSS": [
+        1
+      ],
+      "IT": [
+        1
+      ]
+    }
+  },
+  {
+    "code": "MA212",
+    "name": "Discrete Mathematics",
+    "creditHours": 4,
+    "prerequisites": [
+      "MA110"
+    ],
+    "prerequisiteText": "Linear Algebra",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      3
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        3
+      ],
+      "IDSS": [
+        3
+      ],
+      "IT": [
+        3
+      ]
+    }
+  },
+  {
+    "code": "ST120",
+    "name": "Statistics & Probability",
+    "creditHours": 4,
+    "prerequisites": [],
+    "prerequisiteText": "No Prerequisite",
+    "passingGradeThreshold": "D",
+    "description": "",
+    "courseType": "Core",
+    "semesterAvailability": "Fall",
+    "semester": [
+      1
+    ],
+    "major": [
+      "CSSE",
+      "IDSS",
+      "IT"
+    ],
+    "courseTypeByMajor": {
+      "IT": "Core",
+      "CSSE": "Core",
+      "IDSS": "Core"
+    },
+    "semesterByMajor": {
+      "CSSE": [
+        1
+      ],
+      "IDSS": [
+        1
+      ],
+      "IT": [
+        1
+      ]
+    }
+  }
+]

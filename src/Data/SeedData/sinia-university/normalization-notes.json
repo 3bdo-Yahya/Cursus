@@ -1,0 +1,67 @@
+[
+  {
+    "type": "code_normalization",
+    "code": "INT343-EL",
+    "sourceCode": "INT343",
+    "note": "The brochure uses INT343 for two different minor-specialization courses. This seed normalizes the e-learning course with a -EL suffix to keep course codes unique."
+  },
+  {
+    "type": "code_normalization",
+    "code": "INT343-WDT",
+    "sourceCode": "INT343",
+    "note": "The brochure uses INT343 for two different minor-specialization courses. This seed normalizes the web-development course with a -WDT suffix to keep course codes unique."
+  },
+  {
+    "type": "code_correction",
+    "code": "ISD342",
+    "sourceCode": "ISD442",
+    "note": "The IDSS semester plan prints ISD442 for Database System (2), but the dedicated course table uses ISD342 for the same title and prerequisite. The seed keeps ISD342."
+  },
+  {
+    "type": "code_correction",
+    "code": "ISD423",
+    "sourceCode": "ISD4223",
+    "note": "The brochure prints ISD4223 for Selected Topic in ISD. The seed normalizes this to ISD423."
+  },
+  {
+    "type": "code_correction",
+    "code": "ISD449",
+    "sourceCode": "ISD4215",
+    "note": "The brochure prints ISD4215 for ISD Project (2). The seed normalizes this to ISD449 to match the ISD448 / ISD449 project sequence."
+  },
+  {
+    "type": "credit_preservation",
+    "code": "HU100",
+    "sourceCode": "HU100",
+    "note": "Sinai History is printed with total credit hours = 0 in the brochure, and the seed preserves that value."
+  },
+  {
+    "type": "program_inference",
+    "major": "IDSS",
+    "note": "The brochure does not include a standalone IDSS specialization requirements table. IDSS course categories and graduation-category totals were inferred from the published semester plan."
+  },
+  {
+    "type": "prerequisite_conflict",
+    "code": "ISD330",
+    "sourceCode": "ISD330",
+    "note": "Different brochure tables list different prerequisites for Project Management. The seed keeps both ISD100 and ISD220."
+  },
+  {
+    "type": "prerequisite_conflict",
+    "code": "ISD425",
+    "sourceCode": "ISD425",
+    "note": "Different brochure tables list different prerequisites for Network Optimization. The seed keeps both ISD220 and INT232."
+  },
+  {
+    "type": "prerequisite_normalization",
+    "code": "CSW463",
+    "sourceCode": "CSW463",
+    "note": "The printed software-engineering table creates an impossible same-semester cycle among CSW463, CSW465, and CSW468. The seed normalizes CSW463 to depend on CSW464 so the sequence remains acyclic and consistent with the semester plan."
+  },
+  {
+    "type": "prerequisite_normalization",
+    "code": "CSW464",
+    "sourceCode": "CSW464",
+    "note": "The printed software-engineering table places CSW464 after CSW463 in a way that conflicts with the semester plan. The seed normalizes CSW464 to depend on CSW362 so the sequence remains acyclic and semester-consistent."
+  }
+]
