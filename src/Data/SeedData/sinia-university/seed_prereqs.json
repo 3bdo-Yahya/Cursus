@@ -108,6 +108,10 @@
     "prerequisiteCourseCode": "CSW234"
   },
   {
+    "courseCode": "CSW467",
+    "prerequisiteCourseCode": "INT232"
+  },
+  {
     "courseCode": "CSW468",
     "prerequisiteCourseCode": "CSW462"
   },

@@ -41,6 +41,10 @@
     "note": "The brochure does not include a standalone IDSS specialization requirements table. IDSS course categories and graduation-category totals were inferred from the published semester plan."
   },
   {
+    "type": "contact_hours_normalization",
+    "note": "Most Sinai tables publish a combined P/T column rather than separate practical and tutorial hours. The seed stores that published combined value in contactHours.lab and leaves contactHours.tutorial null unless the brochure explicitly splits P and T."
+  },
+  {
     "type": "prerequisite_conflict",
     "code": "ISD330",
     "sourceCode": "ISD330",
@@ -51,6 +55,18 @@
     "code": "ISD425",
     "sourceCode": "ISD425",
     "note": "Different brochure tables list different prerequisites for Network Optimization. The seed keeps both ISD220 and INT232."
+  },
+  {
+    "type": "prerequisite_conflict",
+    "code": "CSW467",
+    "sourceCode": "CSW467",
+    "note": "The CSSE elective table lists both CSW234 and INT232 for Design Architecture of large SW Systems, while the semester plan lists only INT232. The seed keeps both prerequisites."
+  },
+  {
+    "type": "contact_hours_conflict",
+    "code": "CSW498",
+    "sourceCode": "CSW498",
+    "note": "The CSSE specialization table prints CSW498 as 2 lecture + 2 P/T hours, while the semester plan prints it as 0 lecture + 6 P/T hours. The seed keeps the semester-plan contact hours."
   },
   {
     "type": "prerequisite_normalization",
