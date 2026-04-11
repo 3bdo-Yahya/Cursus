@@ -5,7 +5,7 @@
   "categories": {
     "UniversityReq": {
       "totalCredits": 15,
-      "requiredCredits": 15,
+      "requiredCredits": 9,
       "electiveCredits": 6
     },
     "Core": {
