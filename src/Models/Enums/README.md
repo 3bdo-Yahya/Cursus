@@ -13,6 +13,11 @@ Using enums improves:
 
 All enums are stored as **integers in the database** by default using Entity Framework Core.
 
+See also:
+
+* [../Entities/README.md](../Entities/README.md)
+* [../../Data/Configurations/README.md](../../Data/Configurations/README.md)
+
 ---
 
 ## List of Enums
@@ -112,3 +117,8 @@ After defining enums, proceed to implement the core entity classes:
 * Course
 
 These will use the enums defined in this folder.
+
+Then read:
+
+* [../Entities/README.md](../Entities/README.md)
+* [../../Data/Configurations/README.md](../../Data/Configurations/README.md)
