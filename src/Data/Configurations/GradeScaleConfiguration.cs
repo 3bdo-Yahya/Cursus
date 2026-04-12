@@ -8,6 +8,15 @@ namespace Cursus.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<GradeScale> builder)
         {
+            // Keep grade points inside a realistic GPA range even if data is loaded directly through SQL scripts.
+            builder.ToTable(tableBuilder =>
+            {
+                // Restrict point values to the standard 0.00..4.00 range used by the current domain model.
+                tableBuilder.HasCheckConstraint(
+                    "CK_GradeScales_PointValue_Range",
+                    "[PointValue] >= 0 AND [PointValue] <= 4");
+            });
+
             builder.Property(gradeScale => gradeScale.LetterGrade)
                 .IsRequired()
                 .HasMaxLength(2);

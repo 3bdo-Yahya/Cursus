@@ -8,6 +8,20 @@ namespace Cursus.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Department> builder)
         {
+            // Enforce valid graduation settings in SQL Server so direct inserts cannot create invalid departments.
+            builder.ToTable(tableBuilder =>
+            {
+                // Require departments to have a positive graduation-credit total.
+                tableBuilder.HasCheckConstraint(
+                    "CK_Departments_TotalCreditsRequired_Positive",
+                    "[TotalCreditsRequired] > 0");
+
+                // Keep the minimum graduation GPA inside the common 0.00..4.00 academic scale.
+                tableBuilder.HasCheckConstraint(
+                    "CK_Departments_MinGpaForGraduation_Range",
+                    "[MinGpaForGraduation] >= 0 AND [MinGpaForGraduation] <= 4");
+            });
+
             builder.Property(department => department.Name)
                 .IsRequired()
                 .HasMaxLength(100);

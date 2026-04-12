@@ -8,6 +8,20 @@ namespace Cursus.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<StandingHistory> builder)
         {
+            // Keep GPA snapshots valid in SQL Server so reporting logic never reads impossible academic values.
+            builder.ToTable(tableBuilder =>
+            {
+                // Restrict semester GPA to the supported 0.00..4.00 range.
+                tableBuilder.HasCheckConstraint(
+                    "CK_StandingHistories_SemesterGpa_Range",
+                    "[SemesterGpa] >= 0 AND [SemesterGpa] <= 4");
+
+                // Restrict cumulative GPA to the supported 0.00..4.00 range.
+                tableBuilder.HasCheckConstraint(
+                    "CK_StandingHistories_CumulativeGpa_Range",
+                    "[CumulativeGpa] >= 0 AND [CumulativeGpa] <= 4");
+            });
+
             builder.Property(history => history.StudentId)
                 .IsRequired();
 

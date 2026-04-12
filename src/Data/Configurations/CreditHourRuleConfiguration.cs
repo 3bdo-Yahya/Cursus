@@ -8,6 +8,15 @@ namespace Cursus.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<CreditHourRule> builder)
         {
+            // Protect the table from impossible credit-limit rows such as negative values or a max below the min.
+            builder.ToTable(tableBuilder =>
+            {
+                // Require both bounds to be non-negative and ordered correctly for scheduling logic.
+                tableBuilder.HasCheckConstraint(
+                    "CK_CreditHourRules_MinCredits_MaxCredits",
+                    "[MinCredits] >= 0 AND [MaxCredits] >= [MinCredits]");
+            });
+
             builder.HasOne(rule => rule.Department)
                 .WithMany(department => department.CreditHourRules)
                 .HasForeignKey(rule => rule.DepartmentId)
@@ -15,7 +24,9 @@ namespace Cursus.Data.Configurations
 
             builder.HasIndex(rule => rule.DepartmentId);
 
-            builder.HasIndex(rule => new { rule.DepartmentId, rule.Standing });
+            // Prevent duplicate credit-hour policies for the same department and academic standing.
+            builder.HasIndex(rule => new { rule.DepartmentId, rule.Standing })
+                .IsUnique();
         }
     }
 }
