@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using Cursus.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.Domain.Entities
 {
@@ -44,11 +43,9 @@ namespace Cursus.Domain.Entities
         public Department? Department { get; set; }
 
         // الكورس هنا بيبقي عنده متطلبات عشان يتفتح
-        [DeleteBehavior(DeleteBehavior.Restrict)]
         public ICollection<CoursePrerequisite> Prerequisites { get; set; } = new List<CoursePrerequisite>();
 
         // في نفس الوقت هوا في حد ذاته متطلب لمجموعة من الكورسات
-        [DeleteBehavior(DeleteBehavior.Restrict)]
         public ICollection<CoursePrerequisite> IsPrerequisiteFor { get; set; } = new List<CoursePrerequisite>();
 
         public ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
