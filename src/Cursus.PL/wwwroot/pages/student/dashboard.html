@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — Student Dashboard</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/auth/login.css"/>
+  <link rel="stylesheet" href="../../css/pages/student/dashboard.css"/>
+</head>
+<body>
+
+<!-- ─── Navbar ───────────────────────────────────────── -->
+<nav class="navbar-cursus fixed-top d-flex align-items-center">
+  <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+
+    <div class="d-flex align-items-center gap-3">
+      <a href="dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+        <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+      </a>
+      <div class="d-none d-md-flex align-items-center gap-1">
+        <a href="dashboard.html"  class="nav-pill active">Dashboard</a>
+        <a href="course-map.html" class="nav-pill">Course Map</a>
+        <a href="planner.html"    class="nav-pill">Planner</a>
+        <a href="ai-advisor.html" class="nav-pill">AI Advisor</a>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-1">
+      <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+        <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+      </button>
+      <div class="position-relative">
+        <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+          <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+          <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+        </button>
+        <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+          <div class="px-4 py-3 d-flex align-items-center justify-content-between border-token" style="border-bottom:1px solid var(--c-border);">
+            <span class="fw-700" style="font-size:13px;">Notifications</span>
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:12px;">Semester plan approved</p>
+            <p class="text-muted mb-0" style="font-size:11px;">Your advisor approved Spring 2026 · 2h ago</p>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;">
+            <p class="fw-700 mb-0" style="font-size:12px;">Grade posted — CS301</p>
+            <p class="text-muted mb-0" style="font-size:11px;">Midterm grade: B+ · Yesterday</p>
+          </div>
+          <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2 ms-1" style="cursor:pointer;">
+        <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+             style="width:36px;height:36px;background:var(--c-soft);border:2px solid rgba(79,70,229,.2);color:var(--c-primary);font-size:13px;">
+          AK
+        </div>
+        <div class="d-none d-md-block">
+          <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Ahmed Kamal</p>
+          <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">CS · Year 3</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- ─── End Navbar ───────────────────────────────────────── -->
+
+
+<!-- ─── Main ───────────────────────────────────────── -->
+<main style="padding-top:80px;padding-bottom:72px;">
+<div class="container-xl px-4" style="max-width:1140px;">
+<div class="d-flex flex-column gap-4">
+
+  <!-- Welcome Bar -->
+  <section class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 pt-2 anim-fade-up">
+    <div class="d-flex align-items-center gap-3">
+      <div class="position-relative flex-shrink-0">
+        <div class="d-flex align-items-center justify-content-center rounded-3 text-white fw-900 user-select-none"
+             style="width:62px;height:62px;font-size:20px;
+                    background:linear-gradient(135deg,#4F46E5,#7c3aed);
+                    box-shadow:0 8px 24px rgba(79,70,229,.28);">AK</div>
+        <div class="status-dot"></div>
+      </div>
+      <div>
+        <h2 id="greeting-text" class="fw-800 mb-1" data-username="Ahmed" style="font-size:1.4rem;letter-spacing:-.3px;color:var(--c-text);">
+          greetingEl, Ahmed!
+        </h2>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <span style="font-size:13px;color:var(--c-muted);">Computer Science · Year 3 · Spring 2026</span>
+          <span class="d-inline-flex align-items-center gap-1 rounded-pill px-2 py-1 fw-700 badge-standing" style="font-size:11px;">
+            <span class="rounded-circle bg-success" style="width:5px;height:5px;display:inline-block;flex-shrink:0;"></span>
+            Good Standing
+          </span>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary d-flex align-items-center gap-2 fw-700 px-4 py-2"
+            style="border-radius:12px;box-shadow:0 4px 14px rgba(79,70,229,.3);font-size:13.5px;"
+            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(79,70,229,.38)'"
+            onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(79,70,229,.3)'">
+      <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">calendar_today</span>
+      Schedule Sync
+    </button>
+  </section>
+
+  <!-- Metric Cards — staggered scroll group -->
+  <section class="row g-3 anim-fade-up-1" data-scroll-group>
+
+    <!-- CGPA -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="surface metric-card h-100 p-4">
+        <div class="d-flex align-items-start justify-content-between mb-3">
+          <div>
+            <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">CGPA</p>
+            <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">3.24</p>
+            <p class="fw-600 mb-0" style="font-size:11px;color:#10b981;">↑ +0.12 from last semester</p>
+          </div>
+          <div class="position-relative flex-shrink-0" style="width:52px;height:52px;">
+            <svg viewBox="0 0 48 48" width="52" height="52" style="transform:rotate(-90deg)">
+              <circle cx="24" cy="24" r="19" fill="none" stroke="var(--c-border)" stroke-width="4"/>
+              <circle id="gpa-ring" cx="24" cy="24" r="19" fill="none" stroke="var(--c-primary)" stroke-width="4" stroke-linecap="round" stroke-dasharray="119.4" stroke-dashoffset="119.4"/>
+            </svg>
+            <span class="position-absolute top-50 start-50 translate-middle fw-800" style="font-size:10px;color:var(--c-primary);">81%</span>
+          </div>
+        </div>
+        <div class="pt-2" style="border-top:1px solid var(--c-border);">
+          <span style="font-size:11px;color:var(--c-muted);">Out of 4.0 max</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Credits -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="surface metric-card h-100 p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <p class="fw-700 mb-0 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Credits</p>
+          <div class="d-flex align-items-center justify-content-center rounded-2 icon-box-blue" style="width:32px;height:32px;">
+            <span class="material-symbols-outlined" style="font-size:16px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">auto_stories</span>
+          </div>
+        </div>
+        <p class="fw-900 lh-1 mb-0" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">
+          84 <span class="fw-500" style="font-size:1rem;color:var(--c-muted);">/ 132</span>
+        </p>
+        <div class="rounded-pill overflow-hidden mt-3 mb-2" style="height:7px;background:var(--c-border);">
+          <div class="credits-bar" style="--target-w:63.6%;"></div>
+        </div>
+        <p class="mb-0" style="font-size:11px;color:var(--c-muted);">63.6% of degree completed</p>
+      </div>
+    </div>
+
+    <!-- Courses left -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="surface metric-card h-100 p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <p class="fw-700 mb-0 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Courses Left</p>
+          <div class="d-flex align-items-center justify-content-center rounded-2 icon-box-purple" style="width:32px;height:32px;">
+            <span class="material-symbols-outlined" style="font-size:16px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 400">list_alt</span>
+          </div>
+        </div>
+        <p class="fw-900 lh-1 mb-3" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">16</p>
+        <div class="d-flex flex-wrap gap-1">
+          <span class="rounded-pill px-2 py-1 fw-700 badge-core" style="font-size:11px;">12 Core</span>
+          <span class="rounded-pill px-2 py-1 fw-700 badge-elective" style="font-size:11px;">4 Electives</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graduation -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="surface metric-card h-100 p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <p class="fw-700 mb-0 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Graduation</p>
+          <div class="d-flex align-items-center justify-content-center rounded-2 icon-box-amber" style="width:32px;height:32px;">
+            <span class="material-symbols-outlined text-warning" style="font-size:16px;font-variation-settings:'FILL' 1,'wght' 400">school</span>
+          </div>
+        </div>
+        <p class="fw-900 lh-1 mb-1" style="font-size:1.65rem;letter-spacing:-.5px;color:var(--c-text);">Spring 2027</p>
+        <p class="mb-3" style="font-size:11px;color:var(--c-muted);">On track · 3.5 years total</p>
+        <div class="d-flex align-items-center gap-1">
+          <div class="sem-pip" style="background:#22c55e;"></div>
+          <div class="sem-pip" style="background:#22c55e;"></div>
+          <div class="sem-pip" style="background:#22c55e;"></div>
+          <div class="sem-pip" style="background:var(--c-border);"></div>
+          <div class="sem-pip" style="background:var(--c-border);"></div>
+          <span class="ms-1 flex-shrink-0" style="font-size:11px;color:var(--c-muted);">3 / 5</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Tiles — scroll with stagger -->
+  <section class="row g-3" data-scroll-group>
+    <div class="col-6 col-lg-3">
+      <a href="course-map.html" class="surface feature-tile">
+        <div class="tile-icon tile-blue">
+          <span class="material-symbols-outlined" style="font-size:22px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">map</span>
+        </div>
+        <span class="fw-700" style="font-size:13px;">Course Map</span>
+      </a>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <a href="#" class="surface feature-tile">
+        <div class="tile-icon tile-red">
+          <span class="material-symbols-outlined text-danger" style="font-size:22px;font-variation-settings:'FILL' 0,'wght' 300">analytics</span>
+        </div>
+        <span class="fw-700" style="font-size:13px;">Impact Analyzer</span>
+      </a>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <a href="#" class="surface feature-tile">
+        <div class="tile-icon tile-green">
+          <span class="material-symbols-outlined text-success" style="font-size:22px;font-variation-settings:'FILL' 0,'wght' 300">event_note</span>
+        </div>
+        <span class="fw-700" style="font-size:13px;">Semester Planner</span>
+      </a>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <a href="#" class="surface feature-tile">
+        <div class="tile-icon tile-purple">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 300">psychology</span>
+        </div>
+        <span class="fw-700" style="font-size:13px;">AI Advisor</span>
+      </a>
+    </div>
+
+  </section>
+
+  <!-- Alerts + Schedule -->
+  <div class="row g-4">
+
+    <!-- Alerts — scroll from left -->
+    <div class="col-12 col-lg-7" data-scroll="fade-right">
+      <div class="d-flex align-items-center justify-content-between mb-3 px-1">
+        <h3 class="fw-800 mb-0" style="font-size:15px;letter-spacing:-.2px;color:var(--c-text);">Alerts &amp; Updates</h3>
+        <span style="font-size:12px;color:var(--c-muted);">2 unread</span>
+      </div>
+      <div class="d-flex flex-column gap-2">
+
+        <div class="alert-item alert-warn">
+          <div class="alert-icon alert-icon-warn">
+            <span class="material-symbols-outlined" style="font-size:17px;color:#d97706;font-variation-settings:'FILL' 1,'wght' 400">warning</span>
+          </div>
+          <div class="flex-fill min-w-0">
+            <p class="fw-700 mb-1 alert-title-warn" style="font-size:13px;">Grade improvement available</p>
+            <p class="mb-2 alert-text-warn" style="font-size:12px;line-height:1.55;"><strong>CS102: Data Structures</strong> (D) — retaking could boost CGPA to 3.32</p>
+            <button class="btn btn-link p-0 fw-700 text-decoration-none alert-text-warn" style="font-size:12px;">Explore options →</button>
+          </div>
+        </div>
+
+        <div class="alert-item alert-ok">
+          <div class="alert-icon alert-icon-ok">
+            <span class="material-symbols-outlined" style="font-size:17px;color:#059669;font-variation-settings:'FILL' 1,'wght' 400">task_alt</span>
+          </div>
+          <div class="flex-fill min-w-0">
+            <p class="fw-700 mb-1 alert-title-ok" style="font-size:13px;">Credit overload eligible</p>
+            <p class="mb-2 alert-text-ok" style="font-size:12px;line-height:1.55;">Your GPA qualifies you for <strong>up to 21 credits</strong> next semester</p>
+            <button class="btn btn-link p-0 fw-700 text-decoration-none alert-text-ok" style="font-size:12px;">Learn more →</button>
+          </div>
+        </div>
+
+        <div class="alert-item alert-info">
+          <div class="alert-icon alert-icon-info">
+            <span class="material-symbols-outlined" style="font-size:17px;color:#2563eb;font-variation-settings:'FILL' 1,'wght' 400">person</span>
+          </div>
+          <div class="flex-fill min-w-0">
+            <p class="fw-700 mb-1 alert-title-info" style="font-size:13px;">Note from Dr. Mona Hassan</p>
+            <p class="mb-2 alert-text-info" style="font-size:12px;line-height:1.55;">"Please register CS401 next semester — it's a prerequisite blocker."</p>
+            <button class="btn btn-link p-0 fw-700 text-decoration-none alert-text-info" style="font-size:12px;">View profile →</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Schedule — scroll from right -->
+    <div class="col-12 col-lg-5" data-scroll="fade-left">
+      <div class="surface d-flex flex-column h-100 overflow-hidden">
+        <div class="d-flex align-items-center justify-content-between px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+          <h3 class="fw-800 mb-0" style="font-size:14px;color:var(--c-text);">Spring 2026 Courses</h3>
+          <a href="course-map.html" class="fw-700 text-decoration-none" style="font-size:12px;color:var(--c-primary);">Full map →</a>
+        </div>
+        <div class="flex-fill p-3 d-flex flex-column gap-1">
+          <div class="course-row">
+            <div class="course-bar" style="background:#c7d2fe;"></div>
+            <div class="flex-fill min-w-0">
+              <p class="fw-700 mb-0 text-truncate" style="font-size:13px;color:var(--c-text);">CS301: Operating Systems</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Mon, Wed 10:00 · Room 402</p>
+            </div>
+            <span class="rounded-2 fw-600 flex-shrink-0" style="font-size:11px;padding:3px 8px;background:var(--c-border);color:var(--c-muted);">3 cr</span>
+          </div>
+          <div class="course-row">
+            <div class="course-bar" style="background:#c7d2fe;"></div>
+            <div class="flex-fill min-w-0">
+              <p class="fw-700 mb-0 text-truncate" style="font-size:13px;color:var(--c-text);">CS304: Database Systems</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Tue, Thu 14:00 · Online</p>
+            </div>
+            <span class="rounded-2 fw-600 flex-shrink-0" style="font-size:11px;padding:3px 8px;background:var(--c-border);color:var(--c-muted);">4 cr</span>
+          </div>
+          <div class="course-row">
+            <div class="course-bar" style="background:#c7d2fe;"></div>
+            <div class="flex-fill min-w-0">
+              <p class="fw-700 mb-0 text-truncate" style="font-size:13px;color:var(--c-text);">MATH301: Linear Algebra</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Sun, Tue 09:00 · Room 210</p>
+            </div>
+            <span class="rounded-2 fw-600 flex-shrink-0" style="font-size:11px;padding:3px 8px;background:var(--c-border);color:var(--c-muted);">3 cr</span>
+          </div>
+          <div class="course-row">
+            <div class="course-bar" style="background:#ddd6fe;"></div>
+            <div class="flex-fill min-w-0">
+              <p class="fw-700 mb-0 text-truncate" style="font-size:13px;color:var(--c-text);">CS3XX: Free Elective</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Wed 13:00 · TBD</p>
+            </div>
+            <span class="rounded-2 fw-600 flex-shrink-0 badge-elec-cr" style="font-size:11px;padding:3px 8px;">Elective</span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between px-4 py-2 bg-token" style="border-top:1px solid var(--c-border);">
+          <span style="font-size:11px;color:var(--c-muted);">Total: 13 credits this semester</span>
+          <span class="fw-700" style="font-size:11px;color:#059669;">✓ Within limit</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- AI Advisor — zoom scroll -->
+  <section data-scroll="zoom">
+    <div class="ai-banner p-4 p-sm-5">
+      <div class="position-absolute w-100 h-100 top-0 start-0 pointer-events-none" style="opacity:.07;">
+        <svg width="100%" height="100%" viewBox="0 0 500 130" preserveAspectRatio="xMidYMid slice">
+          <circle cx="60" cy="45" r="3.5" fill="white"/><circle cx="170" cy="22" r="5" fill="white"/>
+          <circle cx="320" cy="68" r="3.5" fill="white"/><circle cx="430" cy="35" r="4.5" fill="white"/>
+          <circle cx="240" cy="100" r="3" fill="white"/>
+          <line x1="60" y1="45" x2="170" y2="22" stroke="white" stroke-width="1"/>
+          <line x1="170" y1="22" x2="320" y2="68" stroke="white" stroke-width="1"/>
+          <line x1="320" y1="68" x2="430" y2="35" stroke="white" stroke-width="1"/>
+          <line x1="170" y1="22" x2="240" y2="100" stroke="white" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="position-relative d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-4">
+        <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+             style="width:52px;height:52px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);">
+          <span class="material-symbols-outlined text-white" style="font-size:26px;font-variation-settings:'FILL' 1,'wght' 400">psychology</span>
+        </div>
+        <div class="flex-fill">
+          <p class="text-white fw-800 mb-1" style="font-size:1.15rem;letter-spacing:-.2px;">Ask your AI Advisor</p>
+          <p class="mb-0" style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;">
+            "Can I still graduate on time?" &nbsp;·&nbsp; "What if I drop Calculus 2?" &nbsp;·&nbsp;
+          </p>
+        </div>
+        <button class="btn fw-800 flex-shrink-0 px-4 py-2"
+                style="background:white;color:var(--c-primary);border-radius:12px;font-size:13.5px;box-shadow:0 4px 16px rgba(0,0,0,.15);"
+                onmouseover="this.style.transform='translateY(-2px)'"
+                onmouseout="this.style.transform=''">
+          Open Advisor
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>
+</div>
+</main>
+<!-- ─── Footer ───────────────────────────────────────── -->
+<footer class="py-4" style="border-top:1px solid var(--c-border);">
+  <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1140px;">
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8</p>
+  </div>
+</footer>
+
+<script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/site.js"></script>
+<script src="../../js/pages/auth/login.js"></script>
+<script src="../../js/pages/student/dashboard.js"></script>
+</body>
+</html>
