@@ -22,7 +22,9 @@ build/
 *.snupkg
 project.lock.json
 appsettings.Development.json
-
+Cursus.PL.csproj.lscache
+Cursus.BLL.csproj.lscache
+Cursus.DAL.csproj.lscache
 # =========================
 # IDE & OS
 # =========================
