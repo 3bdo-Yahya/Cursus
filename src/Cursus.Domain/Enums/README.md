@@ -1,4 +1,4 @@
-# Enums (Models/Enums)
+# Enums (Cursus.Domain/Enums)
 
 ## Overview
 
