@@ -219,7 +219,7 @@ dotnet ef database update --project src/Cursus.csproj
 
 If you are tracing a schema issue, read in this order:
 
-1. the entity in `Models/Entities`
+1. the entity in `Cursus.Domain/Entities`
 2. the matching configuration in this folder
 3. `ApplicationDbContext`
-4. the generated migration in `Data/Migrations`
+4. the generated migration file in the EF Core migrations location for this solution
