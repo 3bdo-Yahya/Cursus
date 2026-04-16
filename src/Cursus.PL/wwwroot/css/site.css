@@ -195,3 +195,13 @@ html.dark .nav-pill.active { background: rgba(79,70,229,0.18); }
   border-radius: 16px;
   color:         var(--c-text);
 }
+/* ── User Menu Dropdown ─────────────────────────────────── */
+.user-menu-item {
+  transition: background-color 0.15s ease !important;
+}
+.user-menu-item:hover {
+  background: var(--c-bg);
+}
+.user-menu-item:hover span[class*="material"] {
+  color: var(--c-primary) !important;
+}

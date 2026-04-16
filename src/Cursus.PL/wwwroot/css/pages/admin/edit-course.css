@@ -1,0 +1,116 @@
+/* ── Page load stagger ────────────────────── */
+.anim-fade-up-3 { animation: fadeUp .55s .21s ease both; }
+
+/* ── Edit course badge in header ────────────────────────── */
+.edit-course-badge {
+  display:       inline-flex;
+  align-items:   center;
+  padding:       4px 12px;
+  border-radius: 8px;
+  font-size:     13px;
+  font-weight:   700;
+  background:    var(--c-soft);
+  color:         var(--c-primary);
+  border:        1px solid rgba(79,70,229,.25);
+  letter-spacing: .5px;
+}
+html.dark .edit-course-badge {
+  background:   rgba(79,70,229,.2);
+  border-color: rgba(79,70,229,.4);
+}
+
+/* ── Unsaved changes banner ──────────────────────────────── */
+.unsaved-banner {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  padding:       10px 16px;
+  border-radius: 10px;
+  background:    rgba(79,70,229,.07);
+  border:        1px solid rgba(79,70,229,.22);
+  color:         var(--c-primary);
+  font-size:     13px;
+  animation:     fadeUp .3s ease both;
+}
+html.dark .unsaved-banner {
+  background:   rgba(79,70,229,.14);
+  border-color: rgba(79,70,229,.35);
+}
+
+.btn-link-reset {
+  background:  none;
+  border:      none;
+  padding:     0;
+  font-size:   12px;
+  font-weight: 600;
+  color:       var(--c-muted);
+  cursor:      pointer;
+  text-decoration: underline;
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+.btn-link-reset:hover { color: #dc2626; }
+
+/* ── Edit sections ───────────────────────────────────────── */
+.edit-section {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.edit-section:focus-within {
+  border-color: rgba(79,70,229,.3) !important;
+  box-shadow:   0 0 0 3px rgba(79,70,229,.07);
+}
+
+/* ── Sticky action bar ───────────────────────────────────── */
+.edit-action-bar {
+  position:        sticky;
+  bottom:          16px;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             12px;
+  padding:         14px 20px;
+  background:      var(--c-surface);
+  border:          1px solid var(--c-border);
+  border-radius:   16px;
+  box-shadow:      0 8px 28px rgba(0,0,0,.10);
+  z-index:         100;
+  backdrop-filter: blur(12px);
+  flex-wrap:       wrap;
+}
+html.dark .edit-action-bar {
+  background: rgba(22,27,39,0.95);
+  box-shadow: 0 8px 28px rgba(0,0,0,.35);
+}
+
+.save-hint {
+  font-size:  11px;
+  color:      var(--c-muted);
+  font-style: italic;
+}
+
+/* ── Archive confirm modal ───────────────────────────────── */
+.modal-overlay {
+  position:         fixed;
+  inset:            0;
+  background:       rgba(0,0,0,.45);
+  backdrop-filter:  blur(4px);
+  z-index:          2000;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  padding:          16px;
+  animation:        fadeIn .2s ease both;
+}
+html.dark .modal-overlay { background: rgba(0,0,0,.65); }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(16px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+.modal-box {
+  width:         100%;
+  max-width:     420px;
+  border-radius: 18px !important;
+  animation:     modalIn .25s cubic-bezier(.34,1.56,.64,1) both;
+}

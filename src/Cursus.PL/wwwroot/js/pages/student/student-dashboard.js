@@ -19,7 +19,7 @@ if (greetingEl) {
 const gpaRing = document.getElementById('gpa-ring');
 
 if (gpaRing) {
-  const gpa = 3.2; // temp
+  const gpa = 3.2;
   const ratio = Math.min(gpa / 4.0, 1);
 
   const run = () => {
@@ -42,7 +42,7 @@ function updateGpaDisplay(sgpa, cgpa) {
   const value = parseFloat(cgpa);
 
   if (ring && !isNaN(value)) {
-    const radius = 19; // keep it reusable
+    const radius = 19; 
     const circumference = 2 * Math.PI * radius;
     const ratio = Math.min(value / 4.0, 1);
 

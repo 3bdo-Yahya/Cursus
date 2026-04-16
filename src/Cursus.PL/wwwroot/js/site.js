@@ -19,3 +19,19 @@ if (notifBtn && notifPanel) {
   notifBtn.addEventListener('click', e => { e.stopPropagation(); notifPanel.classList.toggle('d-none'); });
   document.addEventListener('click', () => notifPanel.classList.add('d-none'));
 }
+/* ── User Menu Dropdown ────────────────────────────────── */
+const userMenuBtn     = document.getElementById('user-menu-btn');
+const userMenuPanel   = document.getElementById('user-menu-panel');
+const userMenuChevron = document.getElementById('user-menu-chevron');
+if (userMenuBtn && userMenuPanel) {
+  userMenuBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpen = !userMenuPanel.classList.contains('d-none');
+    userMenuPanel.classList.toggle('d-none');
+    if (userMenuChevron) userMenuChevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  });
+  document.addEventListener('click', () => {
+    userMenuPanel.classList.add('d-none');
+    if (userMenuChevron) userMenuChevron.style.transform = 'rotate(0deg)';
+  });
+}
