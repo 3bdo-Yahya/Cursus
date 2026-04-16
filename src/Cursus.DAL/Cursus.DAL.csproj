@@ -11,4 +11,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.3" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cursus.Domain\Cursus.Domain.csproj" />
+  </ItemGroup>
 </Project>
