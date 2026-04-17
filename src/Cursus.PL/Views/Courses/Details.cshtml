@@ -1,0 +1,50 @@
+@model Course
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<h1 class="h3 mb-3">Course Details</h1>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Code</dt>
+            <dd class="col-sm-8">@Model.Code</dd>
+
+            <dt class="col-sm-4">Name</dt>
+            <dd class="col-sm-8">@Model.Name</dd>
+
+            <dt class="col-sm-4">Department</dt>
+            <dd class="col-sm-8">@Model.Department?.Name</dd>
+
+            <dt class="col-sm-4">Credit Hours</dt>
+            <dd class="col-sm-8">@Model.CreditHours</dd>
+
+            <dt class="col-sm-4">Course Type</dt>
+            <dd class="col-sm-8">@Model.CourseType</dd>
+
+            <dt class="col-sm-4">Semester Availability</dt>
+            <dd class="col-sm-8">@Model.SemesterAvailability</dd>
+
+            <dt class="col-sm-4">Passing Grade Threshold</dt>
+            <dd class="col-sm-8">@Model.PassingGradeThreshold</dd>
+
+            <dt class="col-sm-4">Status</dt>
+            <dd class="col-sm-8">
+                @if (Model.IsActive)
+                {
+                    <span class="badge text-bg-success">Active</span>
+                }
+                else
+                {
+                    <span class="badge text-bg-secondary">Inactive</span>
+                }
+            </dd>
+        </dl>
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>

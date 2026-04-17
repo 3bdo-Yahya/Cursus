@@ -17,11 +17,15 @@ namespace Cursus.Domain.Entities
         public int UniversityId { get; set; }
 
         [Required]
+        [Range(1, 400)]
         public int TotalCreditsRequired { get; set; }
 
         [Required]
+        [Range(typeof(decimal), "0.00", "4.00")]
         [Column(TypeName = "decimal(3,2)")]
         public decimal MinGpaForGraduation { get; set; } = 2.00m;
+
+        public bool IsActive { get; set; } = true;
 
         public University? University { get; set; }
 

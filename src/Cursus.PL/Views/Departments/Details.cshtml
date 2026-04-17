@@ -1,0 +1,41 @@
+@model Department
+
+@{
+    ViewData["Title"] = "Department Details";
+}
+
+<h1 class="h3 mb-3">Department Details</h1>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Name</dt>
+            <dd class="col-sm-8">@Model.Name</dd>
+
+            <dt class="col-sm-4">University</dt>
+            <dd class="col-sm-8">@Model.University?.Name</dd>
+
+            <dt class="col-sm-4">Total Credits Required</dt>
+            <dd class="col-sm-8">@Model.TotalCreditsRequired</dd>
+
+            <dt class="col-sm-4">Minimum GPA For Graduation</dt>
+            <dd class="col-sm-8">@Model.MinGpaForGraduation</dd>
+
+            <dt class="col-sm-4">Status</dt>
+            <dd class="col-sm-8">
+                @if (Model.IsActive)
+                {
+                    <span class="badge text-bg-success">Active</span>
+                }
+                else
+                {
+                    <span class="badge text-bg-secondary">Inactive</span>
+                }
+            </dd>
+        </dl>
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>

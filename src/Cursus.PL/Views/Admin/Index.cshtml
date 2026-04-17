@@ -1,0 +1,85 @@
+@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <h1 class="display-6 mb-2">Admin Dashboard</h1>
+        <p class="text-muted mb-0">Use this area to manage the core data entry tables for the demo.</p>
+    </div>
+    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <a asp-action="DepartmentIndex" class="btn btn-primary me-2">Manage Departments</a>
+        <a asp-action="CourseIndex" class="btn btn-outline-primary">Manage Courses</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-uppercase text-muted small mb-1">Universities</div>
+                <div class="fs-2 fw-semibold">@Model.TotalUniversities</div>
+                <div class="text-muted">Institution records available for departments.</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-uppercase text-muted small mb-1">Departments</div>
+                <div class="fs-2 fw-semibold">@Model.TotalDepartments</div>
+                <div class="text-muted">@Model.ActiveDepartments active, @Model.InactiveDepartments inactive</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-uppercase text-muted small mb-1">Graduation Requirements</div>
+                <div class="fs-2 fw-semibold">@Model.TotalGraduationRequirements</div>
+                <div class="text-muted">Rules ready for degree plan setup.</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-uppercase text-muted small mb-1">Courses</div>
+                <div class="fs-2 fw-semibold">@Model.TotalCourses</div>
+                <div class="text-muted">@Model.ActiveCourses active, @Model.InactiveCourses inactive</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm h-100 border-success">
+            <div class="card-body">
+                <div class="text-uppercase text-muted small mb-1">Department Work</div>
+                <div class="fs-4 fw-semibold">Create / Edit / Deactivate</div>
+                <div class="text-muted">Keep university structure ready for the demo.</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm h-100 border-info">
+            <div class="card-body">
+                <div class="text-uppercase text-muted small mb-1">Course Work</div>
+                <div class="fs-4 fw-semibold">Create / Edit / Deactivate</div>
+                <div class="text-muted">Populate the catalog from here.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h2 class="h5 mb-0">Quick Actions</h2>
+    </div>
+    <div class="card-body d-flex flex-wrap gap-2">
+        <a asp-action="DepartmentIndex" class="btn btn-outline-primary">Open Departments</a>
+        <a asp-action="DepartmentCreate" class="btn btn-outline-primary">Create Department</a>
+        <a asp-action="CourseIndex" class="btn btn-outline-primary">Open Courses</a>
+        <a asp-action="CourseCreate" class="btn btn-outline-primary">Create Course</a>
+    </div>
+</div>

@@ -29,6 +29,9 @@ namespace Cursus.DAL.Configurations
             builder.Property(department => department.MinGpaForGraduation)
                 .HasPrecision(3, 2);
 
+            builder.Property(department => department.IsActive)
+                .HasDefaultValue(true);
+
             builder.HasOne(department => department.University)
                 .WithMany(university => university.Departments)
                 .HasForeignKey(department => department.UniversityId)
