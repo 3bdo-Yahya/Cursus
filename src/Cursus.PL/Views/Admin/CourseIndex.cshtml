@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Course Management";
     var includeInactive = (bool?)ViewData["IncludeInactive"] ?? false;
+    var searchTerm = ViewData["SearchTerm"] as string;
+    var selectedDepartmentId = ViewData["SelectedDepartmentId"]?.ToString();
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -10,19 +12,41 @@
     <a asp-action="CourseCreate" class="btn btn-primary">Create Course</a>
 </div>
 
-@if (TempData["StatusMessage"] is string statusMessage)
-{
-    <div class="alert alert-success" role="alert">@statusMessage</div>
-}
+<partial name="_AdminAlerts" />
+
+<form asp-action="CourseIndex" method="get" class="card card-body mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label" for="searchTerm">Search</label>
+            <input id="searchTerm" name="searchTerm" value="@searchTerm" class="form-control" placeholder="Search by course code or name" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="departmentId">Department</label>
+            <select id="departmentId" name="departmentId" class="form-select" asp-items="ViewBag.FilterDepartmentId">
+                <option value="">All departments</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="includeInactive" name="includeInactive" value="true" @(includeInactive ? "checked" : null) />
+                <label class="form-check-label" for="includeInactive">Include inactive</label>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                <a asp-action="CourseIndex" class="btn btn-outline-secondary w-100">Clear</a>
+            </div>
+        </div>
+    </div>
+</form>
 
 <div class="mb-3">
     @if (includeInactive)
     {
-        <a asp-action="CourseIndex" class="btn btn-outline-secondary btn-sm">Show Active Only</a>
+        <a asp-action="CourseIndex" asp-route-searchTerm="@searchTerm" asp-route-departmentId="@selectedDepartmentId" class="btn btn-outline-secondary btn-sm">Show Active Only</a>
     }
     else
     {
-        <a asp-action="CourseIndex" asp-route-includeInactive="true" class="btn btn-outline-secondary btn-sm">Show Including Inactive</a>
+        <a asp-action="CourseIndex" asp-route-searchTerm="@searchTerm" asp-route-departmentId="@selectedDepartmentId" asp-route-includeInactive="true" class="btn btn-outline-secondary btn-sm">Show Including Inactive</a>
     }
 </div>
 
@@ -64,12 +88,9 @@
                 </td>
                 <td class="text-end">
                     <a asp-action="CourseEdit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                    @if (item.IsActive)
-                    {
-                        <form asp-action="CourseDeactivate" asp-route-id="@item.Id" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deactivate this course?');">Deactivate</button>
-                        </form>
-                    }
+                    <form asp-action="CourseDeactivate" asp-route-id="@item.Id" asp-route-searchTerm="@searchTerm" asp-route-departmentId="@selectedDepartmentId" asp-route-includeInactive="@includeInactive" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm @(item.IsActive ? "btn-outline-danger" : "btn-outline-success")" onclick="return confirm('@(item.IsActive ? "Deactivate" : "Reactivate") this course?');">@(item.IsActive ? "Deactivate" : "Reactivate")</button>
+                    </form>
                 </td>
             </tr>
         }

@@ -9,10 +9,7 @@
     <a asp-action="DepartmentCreate" class="btn btn-primary">Create Department</a>
 </div>
 
-@if (TempData["StatusMessage"] is string statusMessage)
-{
-    <div class="alert alert-success" role="alert">@statusMessage</div>
-}
+<partial name="_AdminAlerts" />
 
 <div class="table-responsive">
     <table class="table table-striped table-hover align-middle">

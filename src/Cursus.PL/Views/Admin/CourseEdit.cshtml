@@ -6,6 +6,8 @@
 
 <h1 class="h3 mb-3">Edit Course</h1>
 
+<partial name="_AdminAlerts" />
+
 <div class="row">
     <div class="col-lg-9">
         <form asp-action="CourseEdit" method="post" class="card shadow-sm">
@@ -60,6 +62,7 @@
                 <div class="col-12 form-check ms-1">
                     <input asp-for="IsActive" class="form-check-input" />
                     <label asp-for="IsActive" class="form-check-label"></label>
+                    <span asp-validation-for="IsActive" class="text-danger"></span>
                 </div>
             </div>
             <div class="card-footer d-flex gap-2">
