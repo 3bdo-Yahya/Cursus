@@ -8,13 +8,13 @@ namespace Cursus.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<GraduationRequirement> builder)
         {
-            // Block invalid graduation rows that would require zero or negative credits.
+            // Allow zero-credit categories such as optional or placeholder requirements, but block negatives.
             builder.ToTable(tableBuilder =>
             {
-                // Force every graduation requirement to contribute a positive credit amount.
+                // Graduation requirements must never be negative.
                 tableBuilder.HasCheckConstraint(
                     "CK_GraduationRequirements_RequiredCredits_Positive",
-                    "[RequiredCredits] > 0");
+                    "[RequiredCredits] >= 0");
             });
 
             builder.HasOne(requirement => requirement.Department)

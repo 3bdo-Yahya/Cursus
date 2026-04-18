@@ -1,0 +1,32 @@
+@model IEnumerable<University>
+
+@{
+    ViewData["Title"] = "University Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">University Management</h1>
+    <a asp-action="UniversityCreate" class="btn btn-primary">Create University</a>
+</div>
+
+<partial name="_AdminAlerts" />
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Departments</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Departments.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
