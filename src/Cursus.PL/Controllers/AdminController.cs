@@ -35,6 +35,55 @@ public class AdminController : Controller
         return View(dashboard);
     }
 
+    public async Task<IActionResult> UniversityIndex()
+    {
+        var universities = await _context.Universities
+            .Include(university => university.Departments)
+            .AsNoTracking()
+            .OrderBy(university => university.Name)
+            .ToListAsync();
+
+        return View(universities);
+    }
+
+    [HttpGet]
+    public IActionResult UniversityCreate()
+    {
+        return View(new University());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UniversityCreate([Bind("Name")] University university)
+    {
+        university.Name = university.Name?.Trim() ?? string.Empty;
+
+        if (await IsUniversityNameDuplicateAsync(university.Name))
+        {
+            ModelState.AddModelError(nameof(University.Name), "University name must be unique.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(university);
+        }
+
+        _context.Universities.Add(university);
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            TempData["StatusMessage"] = "University created successfully.";
+            return RedirectToAction(nameof(UniversityIndex));
+        }
+        catch (DbUpdateException)
+        {
+            TempData["ErrorMessage"] = "Unable to create university.";
+            ModelState.AddModelError(string.Empty, "Unable to save university. Ensure university name is unique.");
+            return View(university);
+        }
+    }
+
     public async Task<IActionResult> DepartmentIndex()
     {
         var departments = await _context.Departments
@@ -378,6 +427,7 @@ public class AdminController : Controller
     private async Task PopulateDepartmentsDropDownListAsync(int? selectedDepartment = null)
     {
         var departments = await _context.Departments
+            .Include(department => department.University)
             .AsNoTracking()
             .Where(department => department.IsActive)
             .OrderBy(department => department.Name)
@@ -387,6 +437,7 @@ public class AdminController : Controller
             !departments.Any(department => department.Id == selectedDepartment.Value))
         {
             var selectedInactiveDepartment = await _context.Departments
+                .Include(department => department.University)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(department => department.Id == selectedDepartment.Value);
 
@@ -399,17 +450,38 @@ public class AdminController : Controller
             }
         }
 
-        ViewData["DepartmentId"] = new SelectList(departments, "Id", "Name", selectedDepartment);
+        var departmentOptions = departments
+            .Select(department => new
+            {
+                department.Id,
+                DisplayName = department.University is null
+                    ? department.Name
+                    : $"{department.Name} ({department.University.Name})"
+            })
+            .ToList();
+
+        ViewData["DepartmentId"] = new SelectList(departmentOptions, "Id", "DisplayName", selectedDepartment);
     }
 
     private async Task PopulateDepartmentsFilterDropDownListAsync(int? selectedDepartment = null)
     {
         var departments = await _context.Departments
+            .Include(department => department.University)
             .AsNoTracking()
             .OrderBy(department => department.Name)
             .ToListAsync();
 
-        ViewData["FilterDepartmentId"] = new SelectList(departments, "Id", "Name", selectedDepartment);
+        var departmentOptions = departments
+            .Select(department => new
+            {
+                department.Id,
+                DisplayName = department.University is null
+                    ? department.Name
+                    : $"{department.Name} ({department.University.Name})"
+            })
+            .ToList();
+
+        ViewData["FilterDepartmentId"] = new SelectList(departmentOptions, "Id", "DisplayName", selectedDepartment);
     }
 
     private Task<bool> IsCourseCodeDuplicateAsync(int departmentId, string code, int? excludedCourseId = null)
@@ -442,5 +514,11 @@ public class AdminController : Controller
         }
 
         return query.AnyAsync();
+    }
+
+    private Task<bool> IsUniversityNameDuplicateAsync(string name)
+    {
+        var normalizedName = name.ToUpper();
+        return _context.Universities.AnyAsync(university => university.Name.ToUpper() == normalizedName);
     }
 }

@@ -14,9 +14,10 @@ public class CoursesController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index(string? searchTerm, int? departmentId)
+    public async Task<IActionResult> Index(string? searchTerm, int? universityId, int? departmentId)
     {
         ViewData["SearchTerm"] = searchTerm;
+        ViewData["SelectedUniversityId"] = universityId;
         ViewData["SelectedDepartmentId"] = departmentId;
 
         var coursesQuery = _context.Courses
@@ -30,6 +31,11 @@ public class CoursesController : Controller
             coursesQuery = coursesQuery.Where(course => course.DepartmentId == departmentId.Value);
         }
 
+        if (universityId.HasValue)
+        {
+            coursesQuery = coursesQuery.Where(course => course.Department!.UniversityId == universityId.Value);
+        }
+
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             var normalizedSearchTerm = searchTerm.Trim();
@@ -38,9 +44,23 @@ public class CoursesController : Controller
                 course.Name.Contains(normalizedSearchTerm));
         }
 
-        ViewData["Departments"] = await _context.Departments
+        ViewData["Universities"] = await _context.Universities
+            .AsNoTracking()
+            .OrderBy(university => university.Name)
+            .ToListAsync();
+
+        var departmentsQuery = _context.Departments
+            .Include(department => department.University)
             .AsNoTracking()
             .Where(department => department.IsActive)
+            .AsQueryable();
+
+        if (universityId.HasValue)
+        {
+            departmentsQuery = departmentsQuery.Where(department => department.UniversityId == universityId.Value);
+        }
+
+        ViewData["Departments"] = await departmentsQuery
             .OrderBy(department => department.Name)
             .ToListAsync();
 

@@ -2,8 +2,10 @@
 
 @{
     ViewData["Title"] = "Courses";
+    var selectedUniversityId = ViewData["SelectedUniversityId"] as int?;
     var selectedDepartmentId = ViewData["SelectedDepartmentId"] as int?;
     var searchTerm = ViewData["SearchTerm"] as string;
+    var universities = ViewData["Universities"] as IEnumerable<University>;
     var departments = ViewData["Departments"] as IEnumerable<Department>;
 }
 
@@ -16,11 +18,31 @@
 
 <form method="get" class="card shadow-sm mb-4">
     <div class="card-body row g-3 align-items-end">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label" for="searchTerm">Search</label>
             <input id="searchTerm" name="searchTerm" value="@searchTerm" class="form-control" placeholder="Search by code or name" />
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <label class="form-label" for="universityId">University</label>
+            <select id="universityId" name="universityId" class="form-select">
+                <option value="">All universities</option>
+                @if (universities is not null)
+                {
+                    foreach (var university in universities)
+                    {
+                        if (selectedUniversityId == university.Id)
+                        {
+                            <option value="@university.Id" selected>@university.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@university.Id">@university.Name</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
             <label class="form-label" for="departmentId">Department</label>
             <select id="departmentId" name="departmentId" class="form-select">
                 <option value="">All departments</option>
@@ -30,11 +52,11 @@
                     {
                         if (selectedDepartmentId == department.Id)
                         {
-                            <option value="@department.Id" selected>@department.Name</option>
+                            <option value="@department.Id" selected>@department.Name (@department.University?.Name)</option>
                         }
                         else
                         {
-                            <option value="@department.Id">@department.Name</option>
+                            <option value="@department.Id">@department.Name (@department.University?.Name)</option>
                         }
                     }
                 }

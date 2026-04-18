@@ -94,7 +94,7 @@ dotnet run
 
 The app will be available at `https://localhost:5001` (or the port shown in the terminal).
 
-To bootstrap the first admin account in a fresh environment, set `IdentityBootstrap:AdminUser:Email` and `IdentityBootstrap:AdminUser:Password` before starting the app. `IdentityBootstrap:AdminUser:UserName` is optional and defaults to the email address.
+Startup seeding creates an initial admin account for testing with email/username `admin@cursus.local` and password `ChangeMe123!`.
 
 ---
 
