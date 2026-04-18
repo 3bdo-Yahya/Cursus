@@ -159,7 +159,7 @@ Major found in the data:
 
 ### Sinai University
 
-- Stored under `sinia-university`.
+- Stored under `sinai-university`.
 - Multiple majors exist in the same folder.
 - Graduation requirements are major-specific.
 

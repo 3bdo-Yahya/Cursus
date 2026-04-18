@@ -57,7 +57,7 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DepartmentCreate([Bind("Name,UniversityId,TotalCreditsRequired,MinGpaForGraduation,IsActive")] Department department)
     {
-        department.Name = department.Name.Trim();
+        department.Name = department.Name?.Trim() ?? string.Empty;
 
         if (department.UniversityId <= 0)
         {
@@ -119,7 +119,7 @@ public class AdminController : Controller
             return NotFound();
         }
 
-        department.Name = department.Name.Trim();
+        department.Name = department.Name?.Trim() ?? string.Empty;
 
         if (department.UniversityId <= 0)
         {
@@ -236,8 +236,8 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CourseCreate([Bind("Code,Name,CreditHours,CourseType,SemesterAvailability,PassingGradeThreshold,DepartmentId,IsActive")] Course course)
     {
-        course.Code = course.Code.Trim();
-        course.Name = course.Name.Trim();
+        course.Code = course.Code?.Trim() ?? string.Empty;
+        course.Name = course.Name?.Trim() ?? string.Empty;
 
         if (course.DepartmentId <= 0)
         {
@@ -299,8 +299,8 @@ public class AdminController : Controller
             return NotFound();
         }
 
-        course.Code = course.Code.Trim();
-        course.Name = course.Name.Trim();
+        course.Code = course.Code?.Trim() ?? string.Empty;
+        course.Name = course.Name?.Trim() ?? string.Empty;
 
         if (course.DepartmentId <= 0)
         {

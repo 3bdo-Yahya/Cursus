@@ -39,7 +39,7 @@ Models standard credit-hour system rules: academic standing (Good â†’ Warning â†
 
 | Layer          | Technology                                  |
 |----------------|---------------------------------------------|
-| Application    | ASP.NET Core 8 MVC, C#, Razor Views        |
+| Application    | ASP.NET Core 10 MVC, C#, Razor Views       |
 | Styling        | Bootstrap 5 + custom CSS                    |
 | Graph Viz      | Cytoscape.js (interactive prerequisite map) |
 | Database       | SQL Server + Entity Framework Core          |
@@ -71,7 +71,7 @@ Cursus/
 
 ### Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (LocalDB or Express)
 - A code editor (Visual Studio 2022 or VS Code)
 
