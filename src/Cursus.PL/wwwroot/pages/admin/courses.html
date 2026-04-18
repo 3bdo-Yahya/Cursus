@@ -53,12 +53,36 @@
             </div>
           </div>
         </div>
-        <div class="d-flex align-items-center gap-2 ms-1" style="cursor:pointer;">
-          <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
-               style="width:36px;height:36px;background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.2);color:#dc2626;font-size:13px;">MA</div>
-          <div class="d-none d-md-block">
-            <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Dr. Mona Hassan</p>
-            <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">Dept. Admin</p>
+        <!-- User dropdown -->
+        <div class="custom-select-wrap position-relative ms-1">
+          <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+            <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+                 style="width:36px;height:36px;background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.2);color:#dc2626;font-size:13px;">MA</div>
+            <div class="d-none d-md-block text-start">
+              <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">Dept. Admin</p>
+            </div>
+            <span class="material-symbols-outlined d-none d-md-block" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
+          </button>
+          <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:200px;z-index:1060;">
+            <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">mona.hassan@svu.edu</p>
+            </div>
+            <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+              <span class="custom-dropdown-label">My Profile</span>
+            </a>
+            <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+              <span class="custom-dropdown-label">Settings</span>
+            </a>
+            <div style="border-top:1px solid var(--c-border);">
+              <a href="#" class="custom-dropdown-item text-decoration-none">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+                <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -192,7 +216,9 @@
           Courses
         </h1>
         <p class="mb-0" style="font-size:13px;color:var(--c-muted);">
-          <span id="header-dept-name">Computer Science</span> · South Valley University · Spring 2026
+          <span id="header-dept-name">Computer Science</span> · 
+          <span id="header-uni-name">South Valley University</span> · 
+          Spring 2026
         </p>
       </div>
       <a href="add-course.html" class="btn btn-primary d-flex align-items-center gap-2 fw-700 flex-shrink-0 text-decoration-none"
@@ -205,7 +231,7 @@
     </div>
 
 
-    <!-- Stat Pills Row -->
+    <!-- Stat Pills -->
     <div class="d-flex flex-wrap gap-2 mb-4 anim-fade-up-2" id="stat-pills">
       <div class="stat-pill d-flex align-items-center gap-2">
         <span class="stat-pill-dot" style="background:#4F46E5;"></span>
@@ -378,6 +404,7 @@
           </thead>
           <tbody id="courses-tbody">
 
+            <!-- ── 1 ── -->
             <tr class="course-row" data-code="CS121" data-name="Computer Science Fundamentals"
                 data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
               <td class="col-code"><span class="course-code">CS121</span></td>
@@ -388,11 +415,12 @@
               <td class="col-prereqs"><span class="prereq-none">None</span></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 2 ── -->
             <tr class="course-row" data-code="CS141" data-name="Programming Fundamentals"
                 data-dept="cs" data-type="core" data-avail="spring" data-status="active" data-credits="3">
               <td class="col-code"><span class="course-code">CS141</span></td>
@@ -403,11 +431,12 @@
               <td class="col-prereqs"><span class="prereq-none">None</span></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 3 ── -->
             <tr class="course-row" data-code="CS241" data-name="Object Oriented Programming"
                 data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
               <td class="col-code"><span class="course-code">CS241</span></td>
@@ -418,11 +447,12 @@
               <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS141</span></div></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 4 ── -->
             <tr class="course-row course-row-warn" data-code="CS211" data-name="Data Structures I"
                 data-dept="cs" data-type="core" data-avail="spring" data-status="active" data-credits="3">
               <td class="col-code">
@@ -438,11 +468,12 @@
               <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS241</span></div></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 5 ── -->
             <tr class="course-row" data-code="CS311" data-name="Algorithms Analysis and Design"
                 data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
               <td class="col-code"><span class="course-code">CS311</span></td>
@@ -453,11 +484,12 @@
               <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS211</span></div></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 6 ── -->
             <tr class="course-row" data-code="CS312" data-name="Data Structures II"
                 data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
               <td class="col-code"><span class="course-code">CS312</span></td>
@@ -468,11 +500,12 @@
               <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS211</span></div></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 7 ── -->
             <tr class="course-row" data-code="CS321" data-name="Operating Systems I"
                 data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
               <td class="col-code"><span class="course-code">CS321</span></td>
@@ -483,11 +516,12 @@
               <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS121</span></div></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 8 ── -->
             <tr class="course-row" data-code="CS391" data-name="Software Engineering"
                 data-dept="cs" data-type="core" data-avail="both" data-status="active" data-credits="3">
               <td class="col-code"><span class="course-code">CS391</span></td>
@@ -498,11 +532,12 @@
               <td class="col-prereqs"><span class="prereq-none">None</span></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 9 ── -->
             <tr class="course-row course-row-warn" data-code="AI301" data-name="Artificial Intelligence"
                 data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
               <td class="col-code">
@@ -518,11 +553,12 @@
               <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS211</span></div></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 10 ── -->
             <tr class="course-row" data-code="AI413" data-name="Machine Learning"
                 data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
               <td class="col-code"><span class="course-code">AI413</span></td>
@@ -533,11 +569,12 @@
               <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">MA113</span><span class="prereq-tag">MA222</span></div></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 11 ── -->
             <tr class="course-row" data-code="AI401" data-name="Natural Language Processing"
                 data-dept="cs" data-type="elective" data-avail="all" data-status="active" data-credits="3">
               <td class="col-code"><span class="course-code">AI401</span></td>
@@ -548,11 +585,12 @@
               <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS311</span></div></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 12 ── -->
             <tr class="course-row" data-code="CS351" data-name="Computer Graphics I"
                 data-dept="cs" data-type="core" data-avail="both" data-status="active" data-credits="3">
               <td class="col-code"><span class="course-code">CS351</span></td>
@@ -563,11 +601,12 @@
               <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">MA113</span></div></td>
               <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
 
+            <!-- ── 13 ── -->
             <tr class="course-row course-row-archived" data-code="CS491" data-name="Senior Project I"
                 data-dept="cs" data-type="core" data-avail="both" data-status="archived" data-credits="3">
               <td class="col-code"><span class="course-code archived-text">CS491</span></td>
@@ -578,7 +617,7 @@
               <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS391</span><span class="prereq-more">+1</span></div></td>
               <td class="col-status"><span class="status-badge status-archived">Archived</span></td>
               <td class="col-actions"><div class="actions-cell">
-                <button class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></button>
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
                 <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
               </div></td>
             </tr>
@@ -627,15 +666,17 @@
         </nav>
       </div>
     </div>
+
   </div>
   </main>
+  <!-- ─── End Main ───────────────────────────────────────── -->
 
 
   <!-- ─── Footer ───────────────────────────────────────── -->
   <footer class="py-4" style="border-top:1px solid var(--c-border);">
     <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1280px;">
       <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
-      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8</p>
+      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
     </div>
   </footer>
 

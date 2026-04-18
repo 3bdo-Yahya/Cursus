@@ -55,45 +55,34 @@
             </div>
           </div>
         </div>
-        <div class="position-relative" id="user-menu-wrapper">
-          <button id="user-menu-btn" class="d-flex align-items-center gap-2 ms-1 btn p-0 border-0 bg-transparent" style="cursor:pointer;">
+        <!-- User dropdown -->
+        <div class="custom-select-wrap position-relative ms-1">
+          <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
             <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
-            style="width:36px;height:36px;background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.2);color:#dc2626;font-size:13px;">
-            MA
+                 style="width:36px;height:36px;background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.2);color:#dc2626;font-size:13px;">MA</div>
+            <div class="d-none d-md-block text-start">
+              <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">Dept. Admin</p>
             </div>
-            <div class="d-none d-md-flex align-items-center gap-1">
-              <div>
-                <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Dr. Mona Hassan</p>
-                <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">Dept. Admin</p>
-              </div>
-              <span class="material-symbols-outlined" id="user-menu-chevron" style="font-size:16px;color:var(--c-muted);transition:transform .2s ease;">expand_more</span>
-            </div>
+            <span class="material-symbols-outlined d-none d-md-block" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
           </button>
-          <!-- Dropdown panel -->
-          <div id="user-menu-panel" class="position-absolute end-0 mt-2 surface shadow-lg d-none" style="min-width:220px;border-radius:14px;z-index:1060;overflow:hidden;">
-            <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);background:var(--c-bg);">
-              <p class="mb-0 fw-700" style="font-size:13px;color:var(--c-text);">Dr. Mona Hassan</p>
-              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">mona.hassan@uni.edu</p>
+          <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:200px;z-index:1060;">
+            <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">mona.hassan@svu.edu</p>
             </div>
-            <div class="py-2">
-              <a href="#" class="user-menu-item d-flex align-items-center gap-3 px-4 py-2 text-decoration-none">
-                <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
-                <span style="font-size:13px;font-weight:500;color:var(--c-text);">My Profile</span>
-              </a>
-              <a href="#" class="user-menu-item d-flex align-items-center gap-3 px-4 py-2 text-decoration-none">
-                <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
-                <span style="font-size:13px;font-weight:500;color:var(--c-text);">Settings</span>
-              </a>
-              <a href="#" class="user-menu-item d-flex align-items-center gap-3 px-4 py-2 text-decoration-none">
-                <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">help</span>
-                <span style="font-size:13px;font-weight:500;color:var(--c-text);">Help & Support</span>
-              </a>
-            </div>
-            
-            <div style="border-top:1px solid var(--c-border);" class="py-2">
-              <a href="#" class="user-menu-item d-flex align-items-center gap-3 px-4 py-2 text-decoration-none">
-                <span class="material-symbols-outlined" style="font-size:17px;color:#ef4444;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
-                <span style="font-size:13px;font-weight:600;color:#ef4444;">Sign Out</span>
+            <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+              <span class="custom-dropdown-label">My Profile</span>
+            </a>
+            <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+              <span class="custom-dropdown-label">Settings</span>
+            </a>
+            <div style="border-top:1px solid var(--c-border);">
+              <a href="#" class="custom-dropdown-item text-decoration-none">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+                <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
               </a>
             </div>
           </div>
@@ -166,7 +155,6 @@
       </div>
     </div>
 
-
     <!-- ─── Basic Info ───────────────────────────────────────── -->
     <div id="step-1" class="step-panel anim-fade-up-2">
       <div class="surface p-4 p-md-5 mb-3">
@@ -232,10 +220,10 @@
                 </span>
                 <select id="course-dept" class="form-select fancy-input has-prefix">
                   <option value="">Select department…</option>
-                  <option value="cs">CS</option>
-                  <option value="is">IS</option>
-                  <option value="it">IT</option>
-                  <option value="ai">AI</option>
+                  <option value="cs">Computer Science</option>
+                  <option value="is">Information Systems</option>
+                  <option value="it">Information Technology</option>
+                  <option value="ai">Artificial Intelligence</option>
                 </select>
               </div>
               <p class="field-error" id="err-dept">Please select a department</p>
@@ -417,6 +405,7 @@
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -457,7 +446,9 @@
                    placeholder="Search courses to add as prerequisites…"
                    oninput="filterPrereqSearch(this.value)" autocomplete="off"/>
           </div>
+          <!-- Dropdown results -->
           <div id="prereq-dropdown" class="prereq-dropdown surface d-none">
+            <!-- populated by JS -->
           </div>
         </div>
 
@@ -637,7 +628,7 @@
   <footer class="py-4" style="border-top:1px solid var(--c-border);">
     <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:900px;">
       <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
-      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8</p>
+      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
     </div>
   </footer>
   <!-- ─── End Footer ───────────────────────────────────────── -->

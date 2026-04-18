@@ -18,7 +18,7 @@ const COURSE_CATALOG = [
   { code: 'BUS201', name: 'Accounting Principles',           dept: 'Business' },
 ];
 
-let selectedPrereqs = []; 
+let selectedPrereqs = [];
 let currentStep = 1;
 
 
@@ -33,12 +33,14 @@ function goToStep(targetStep) {
     return;
   }
 
+  // Mark current step as done
   const prevItem = document.querySelector(`.step-item[data-step="${currentStep}"]`);
   if (prevItem && targetStep > currentStep) {
     prevItem.classList.remove('step-active');
     prevItem.classList.add('step-done');
   }
 
+  // If going back, remove done from target
   if (targetStep < currentStep) {
     const futureItem = document.querySelector(`.step-item[data-step="${currentStep}"]`);
     if (futureItem) {
@@ -46,10 +48,12 @@ function goToStep(targetStep) {
     }
   }
 
+  // Hide current, show target
   document.getElementById(`step-${currentStep}`).classList.add('d-none');
   const nextPanel = document.getElementById(`step-${targetStep}`);
   nextPanel.classList.remove('d-none');
 
+  // Activate target step circle
   document.querySelectorAll('.step-item').forEach(item => {
     const s = parseInt(item.dataset.step);
     if (s === targetStep) {
@@ -79,6 +83,7 @@ function validateStep(step) {
     if (!validateSelect('course-dept', 'fg-dept', 'err-dept'))  ok = false;
     if (!validateSelect('course-type', 'fg-type', 'err-type'))  ok = false;
 
+    // Scroll to first error if any
     if (!ok) {
       const firstErr = document.querySelector('.form-group-fancy.is-error');
       if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -86,7 +91,7 @@ function validateStep(step) {
   }
 
   if (step === 2) {
-    
+
   }
 
   return ok;
@@ -120,7 +125,6 @@ function clearError(groupId) {
   }
 }
 
-// Clear errors on input/change
 document.querySelectorAll('.fancy-input').forEach(el => {
   const evt = (el.tagName === 'SELECT') ? 'change' : 'input';
   el.addEventListener(evt, () => {
@@ -222,6 +226,7 @@ function renderPrereqChips() {
   wrap.appendChild(empty);
 }
 
+// Close dropdown on outside click
 document.addEventListener('click', e => {
   if (!e.target.closest('.prereq-search-wrap')) {
     const dd = document.getElementById('prereq-dropdown');
@@ -326,3 +331,27 @@ function resetForm() {
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+
+/* ── User menu toggle ──────────────────────────────────── */
+function toggleDropdown(id) {
+  const dropdown = document.getElementById(`${id}-dropdown`);
+  const btn      = document.getElementById(`${id}-btn`);
+  if (!dropdown) return;
+
+  const isOpen = dropdown.classList.contains('open');
+  document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
+
+  if (!isOpen) {
+    dropdown.classList.add('open');
+    if (btn) btn.classList.add('open');
+  }
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.custom-select-wrap')) {
+    document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
+  }
+});

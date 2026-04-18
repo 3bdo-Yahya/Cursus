@@ -35,3 +35,10 @@ if (userMenuBtn && userMenuPanel) {
     if (userMenuChevron) userMenuChevron.style.transform = 'rotate(0deg)';
   });
 }
+/* ── Scroll reveal ────────────────────────────────── */
+const _vcObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in-view'); _vcObserver.unobserve(e.target); }    
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('[data-scroll],[data-scroll-group]').forEach(el => _vcObserver.observe(el));

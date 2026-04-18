@@ -1,17 +1,3 @@
-/* ── Scroll reveal ────────────────────────────────────── */
-const scrollObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('in-view');
-      scrollObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('[data-scroll], [data-scroll-group]')
-  .forEach(el => scrollObserver.observe(el));
-
-
 /* ── Notify Dept button feedback ────────────────────────── */
 document.querySelectorAll('.notify-btn').forEach(btn => {
   btn.addEventListener('click', function () {
@@ -59,7 +45,7 @@ let dashCurrentDept = 'cs';
 
 
 /* ── Toggle dropdown ──────────────────────────────────── */
-function toggleDashDropdown(id) {
+function toggleDropdown(id) {
   const dropdown = document.getElementById(`${id}-dropdown`);
   const btn      = document.getElementById(`${id}-btn`);
   if (!dropdown) return;
@@ -93,6 +79,7 @@ function selectDashUni(item) {
 
   document.getElementById('dash-uni-value').textContent = item.querySelector('.custom-dropdown-label').textContent;
 
+  // Rebuild dept dropdown for this uni
   rebuildDashDeptDropdown(value);
 
   document.getElementById('dash-uni-dropdown').classList.remove('open');
@@ -122,7 +109,6 @@ function rebuildDashDeptDropdown(uniValue) {
   selectDashDept(dropdown.querySelector('.custom-dropdown-item'));
 }
 
-
 /* ── Select department ─────────────────────────────────── */
 function selectDashDept(item) {
   dashCurrentDept = item.dataset.value;
@@ -134,9 +120,11 @@ function selectDashDept(item) {
   const gpa      = item.dataset.gpa;
   const alerts   = item.dataset.alerts;
 
+
   item.closest('.custom-dropdown').querySelectorAll('.custom-dropdown-item')
       .forEach(i => i.classList.remove('selected'));
   item.classList.add('selected');
+
 
   const iconEl = document.getElementById('dash-dept-icon');
   if (iconEl) {
@@ -147,7 +135,8 @@ function selectDashDept(item) {
 
   const deptName = document.getElementById('current-dept-name');
   if (deptName) deptName.textContent = label + ' Department';
-  
+
+
   animateMetric('metric-courses',  courses);
   animateMetric('metric-students', students);
   animateMetric('metric-gpa',      gpa);

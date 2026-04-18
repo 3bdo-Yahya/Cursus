@@ -580,6 +580,17 @@ html.dark .custom-dropdown {
   box-shadow: 0 8px 28px rgba(0,0,0,.4);
 }
 .custom-dropdown.open { display: block; }
+.user-avatar-btn {
+  background:    none;
+  border:        none;
+  cursor:        pointer;
+  padding:       4px 6px 4px 4px;
+  border-radius: 10px;
+  transition:    background-color 0.15s ease;
+  align-items:   center;
+}
+.user-avatar-btn:hover { background: rgba(79,70,229,.06); }
+html.dark .user-avatar-btn:hover { background: rgba(255,255,255,.05); }
 
 /* ── Dropdown items ──────────────────────────────────────*/
 .custom-dropdown-item {
@@ -594,7 +605,7 @@ html.dark .custom-dropdown {
   transition:  background-color 0.1s ease;
   border-bottom: 1px solid var(--c-border);
 }
-.custom-dropdown-item:last-child { border-bottom: none; }
+.custom-dropdown-item:last-child  { border-bottom: none; }
 .custom-dropdown-item:first-child { border-radius: 12px 12px 0 0; }
 .custom-dropdown-item:last-child  { border-radius: 0 0 12px 12px; }
 .custom-dropdown-item:only-child  { border-radius: 12px; }

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — Edit Student</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/admin/courses.css"/>
+  <link rel="stylesheet" href="../../css/pages/admin/students.css"/>
+  <link rel="stylesheet" href="../../css/pages/admin/add-course.css"/>
+  <link rel="stylesheet" href="../../css/pages/admin/add-student.css"/>
+  <link rel="stylesheet" href="../../css/pages/admin/edit-student.css"/>
+</head>
+<body>
+  <!-- ─── Navbar ───────────────────────────────────────── -->
+  <nav class="navbar-cursus fixed-top d-flex align-items-center">
+    <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+
+      <div class="d-flex align-items-center gap-3">
+        <a href="admin-dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+          <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+        </a>
+        <div class="d-none d-md-flex align-items-center gap-1">
+          <a href="admin-dashboard.html" class="nav-pill">Dashboard</a>
+          <a href="courses.html"         class="nav-pill active">Courses</a>
+          <a href="students.html"        class="nav-pill">Students</a>
+          <a href="reports.html"         class="nav-pill">Reports</a>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-1">
+        <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+          <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+        </button>
+        <div class="position-relative">
+          <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+            <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+            <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+          </button>
+          <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+            <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+              <span class="fw-700" style="font-size:13px;">Notifications</span>
+              <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+            </div>
+            <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:12px;">CS201 failure rate exceeded threshold</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Data Structures · 40% failure · 1h ago</p>
+            </div>
+            <div class="px-4 py-3" style="cursor:pointer;">
+              <p class="fw-700 mb-0" style="font-size:12px;">New student batch enrolled</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">14 students · CS Department · Yesterday</p>
+            </div>
+            <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+              <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+            </div>
+          </div>
+        </div>
+        <!-- User dropdown -->
+        <div class="custom-select-wrap position-relative ms-1">
+          <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+            <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+                 style="width:36px;height:36px;background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.2);color:#dc2626;font-size:13px;">MA</div>
+            <div class="d-none d-md-block text-start">
+              <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">Dept. Admin</p>
+            </div>
+            <span class="material-symbols-outlined d-none d-md-block" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
+          </button>
+          <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:200px;z-index:1060;">
+            <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">mona.hassan@svu.edu</p>
+            </div>
+            <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+              <span class="custom-dropdown-label">My Profile</span>
+            </a>
+            <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+              <span class="custom-dropdown-label">Settings</span>
+            </a>
+            <div style="border-top:1px solid var(--c-border);">
+              <a href="#" class="custom-dropdown-item text-decoration-none">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+                <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- ─── End Navbar ───────────────────────────────────────── -->
+
+
+  <!-- ─── Main ───────────────────────────────────────── -->
+  <main style="padding-top:80px;padding-bottom:80px;">
+    <div class="container-xl px-4" style="max-width:860px;">
+      <div class="mb-4 anim-fade-up">
+        <nav aria-label="breadcrumb" class="mb-2">
+          <ol class="breadcrumb mb-0" style="font-size:12px;">
+            <li class="breadcrumb-item"><a href="students.html" style="color:var(--c-muted);text-decoration:none;">Students</a></li>
+            <li class="breadcrumb-item active" style="color:var(--c-primary);font-weight:600;">Edit Student</li>
+          </ol>
+        </nav>
+        <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Edit Student</h1>
+        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Update profile and academic assignment for an existing student.</p>
+      </div>
+
+      <form id="edit-student-form" novalidate>
+        <div id="update-feedback" class="student-success-alert d-none anim-fade-up-1" role="status" aria-live="polite"></div>
+
+        <div class="surface p-4 p-md-5 mb-3 anim-fade-up-1">
+          <div class="row g-4">
+            <div class="col-12 col-md-6">
+              <div class="form-group-fancy" id="fg-fullname">
+                <label class="form-label-fancy" for="student-fullname">Full Name <span style="color:#dc2626;">*</span></label>
+                <div class="input-wrap">
+                  <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;">badge</span></span>
+                  <input type="text" id="student-fullname" class="form-control fancy-input has-prefix" value="Ahmed Kamal"/>
+                </div>
+                <p class="field-error" id="err-fullname">Full name is required</p>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="form-group-fancy" id="fg-email">
+                <label class="form-label-fancy" for="student-email">Email Address <span style="color:#dc2626;">*</span></label>
+                <div class="input-wrap">
+                  <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;">mail</span></span>
+                  <input type="email" id="student-email" class="form-control fancy-input has-prefix" value="ahmed.kamal@svu.edu.eg"/>
+                </div>
+                <p class="field-error" id="err-email">A valid email address is required</p>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="form-group-fancy" id="fg-password">
+                <label class="form-label-fancy" for="student-password">Temporary Password <span style="color:#dc2626;">*</span></label>
+                <div class="input-wrap">
+                  <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;">lock</span></span>
+                  <input type="password" id="student-password" class="form-control fancy-input has-prefix" value="TempPass#2026" style="padding-right:44px;"/>
+                  <button type="button" class="pass-toggle-btn" onclick="togglePassword()">
+                    <span class="material-symbols-outlined" id="pass-toggle-icon" style="font-size:18px;">visibility</span>
+                  </button>
+                </div>
+                <p class="field-error" id="err-password">Password must be at least 8 characters</p>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="form-group-fancy" id="fg-university">
+                <label class="form-label-fancy">University <span style="color:#dc2626;">*</span></label>
+                <div class="custom-select-wrap" id="stud-uni-wrap" style="display:block;">
+                  <button type="button" class="custom-select-btn fancy-input" id="stud-uni-btn" style="height:40px;" onclick="toggleDropdown('stud-uni')">
+                    <span class="custom-select-icon"><span class="material-symbols-outlined" style="font-size:16px;">account_balance</span></span>
+                    <span class="custom-select-value" id="stud-uni-value">South Valley University</span>
+                    <span class="material-symbols-outlined custom-select-arrow" style="font-size:16px;">expand_more</span>
+                  </button>
+                  <div class="custom-dropdown" id="stud-uni-dropdown">
+                    <div class="custom-dropdown-item selected" data-value="svu" onclick="selectStudentUni(this)"><span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;">check_circle</span><div><div class="custom-dropdown-label">South Valley University</div></div></div>
+                    <div class="custom-dropdown-item" data-value="auc" onclick="selectStudentUni(this)"><span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;">check_circle</span><div><div class="custom-dropdown-label">American University in Cairo</div></div></div>
+                    <div class="custom-dropdown-item" data-value="su" onclick="selectStudentUni(this)"><span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;">check_circle</span><div><div class="custom-dropdown-label">Sinai University</div></div></div>
+                  </div>
+                  <select id="student-university" class="d-none" aria-hidden="true" tabindex="-1">
+                    <option value="">Select university</option>
+                    <option value="svu" selected>South Valley University</option>
+                    <option value="auc">American University in Cairo</option>
+                    <option value="su">Sinai University</option>
+                  </select>
+                </div>
+                <p class="field-error" id="err-university">Please select a university</p>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="form-group-fancy" id="fg-department">
+                <label class="form-label-fancy">Department <span style="color:#dc2626;">*</span></label>
+                <div class="custom-select-wrap" id="stud-dept-wrap" style="display:block;">
+                  <button type="button" class="custom-select-btn fancy-input" id="stud-dept-btn" style="height:40px;" onclick="toggleDropdown('stud-dept')">
+                    <span class="custom-select-icon dept-icon-cs" id="stud-dept-icon-el"><span class="material-symbols-outlined" style="font-size:16px;">computer</span></span>
+                    <span class="custom-select-value" id="stud-dept-value">Computer Science</span>
+                    <span class="material-symbols-outlined custom-select-arrow" style="font-size:16px;">expand_more</span>
+                  </button>
+                  <div class="custom-dropdown" id="stud-dept-dropdown"></div>
+                </div>
+                <p class="field-error" id="err-department">Please select a department</p>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="form-group-fancy" id="fg-acyear">
+                <label class="form-label-fancy" for="student-acyear">Academic Year <span style="color:#dc2626;">*</span></label>
+                <div class="input-wrap">
+                  <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;">calendar_today</span></span>
+                  <input type="text" id="student-acyear" class="form-control fancy-input has-prefix" value="2025-2026"/>
+                </div>
+                <p class="field-error" id="err-acyear">Academic year is required</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between gap-3 anim-fade-up-2 student-edit-actions">
+          <a href="students.html" class="btn-step-back text-decoration-none"><span class="material-symbols-outlined" style="font-size:16px;">close</span>Cancel</a>
+          <button type="button" class="btn-submit" id="update-student-btn"><span class="material-symbols-outlined" style="font-size:18px;">save</span>Update Student</button>
+        </div>
+      </form>
+
+      <div id="update-success-state" class="d-none text-center anim-fade-up">
+        <div class="surface p-5">
+          <div class="success-ring mx-auto mb-4">
+            <span class="material-symbols-outlined" style="font-size:36px;color:#059669;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+          </div>
+          <h2 class="fw-900 mb-2" style="font-size:1.4rem;color:var(--c-text);">Student Updated!</h2>
+          <p class="mb-4" style="font-size:14px;color:var(--c-muted);">
+            <strong id="update-success-name" style="color:var(--c-primary);"></strong> has been updated in the system.
+          </p>
+          <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="students.html" class="btn btn-primary fw-700 d-flex align-items-center gap-2 text-decoration-none"
+               style="border-radius:12px;font-size:13px;padding:10px 20px;box-shadow:0 4px 14px rgba(79,70,229,.28);">
+              <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">group</span>
+              View All Students
+            </a>
+            <button onclick="resetEditStudentForm()" class="btn fw-600 d-flex align-items-center gap-2"
+                    style="border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);border-radius:12px;font-size:13px;padding:10px 20px;">
+              <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
+              Edit Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- ─── End Main ───────────────────────────────────────── -->
+  
+  <!-- ─── Footer ───────────────────────────────────────── -->
+  <footer class="py-4" style="border-top:1px solid var(--c-border);">
+    <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:900px;">
+      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
+    </div>
+  </footer>
+  <!-- ─── End Footer ───────────────────────────────────────── -->
+
+  <script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../lib/jquery/dist/jquery.min.js"></script>
+  <script src="../../lib/jquery-validation/dist/jquery.validate.min.js"></script>
+  <script src="../../js/site.js"></script>
+  <script src="../../js/pages/admin/courses.js"></script>
+  <script src="../../js/pages/admin/form-helpers.js"></script>
+  <script src="../../js/pages/admin/edit-student.js"></script>
+</body>
+</html>

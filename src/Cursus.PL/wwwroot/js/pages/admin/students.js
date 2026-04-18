@@ -1,59 +1,29 @@
-const filters = { type: '', avail: '', status: '', search: '' };
+/* ── Student page filter state ───────────────────────── */
+const studentFilters = { standing: '', year: '', search: '' };
 
-/* ── University data map ─────────────────────────────── */
-const UNI_DATA = {
-  svu: {
-    name: 'South Valley University',
-    depts: [
-      { value: 'cs', label: 'Computer Science',      sub: '66 courses',  icon: 'computer',   color: 'cs' },
-      { value: 'is', label: 'Information Systems',   sub: '63 courses',  icon: 'storage',    color: 'is' },
-      { value: 'ai', label: 'Artificial Intelligence',sub: '61 courses',  icon: 'psychology', color: 'ai' },
-      { value: 'it', label: 'Information Technology', sub: '68 courses',  icon: 'devices',    color: 'it' },
-    ]
-  },
-  auc: {
-    name: 'American University in Cairo',
-    depts: [
-      { value: 'cs', label: 'Computer Science', sub: '414 courses', icon: 'computer', color: 'cs' },
-    ]
-  },
-  su: {
-    name: 'Sinai University',
-    depts: [
-      { value: 'it',   label: 'Information Technology',      sub: 'IT track',   icon: 'devices',    color: 'it'   },
-      { value: 'csse', label: 'Computer Science & Soft. Eng.',sub: 'CSSE track', icon: 'code',       color: 'cs'   },
-      { value: 'idss', label: 'Intelligent & Data Systems',   sub: 'IDSS track', icon: 'psychology', color: 'ai'  },
-    ]
-  },
-};
+/* ── User menu toggle ────────────────────────────────── */
+function toggleUserMenu() {
+  const menu = document.getElementById('user-menu');
+  const btn  = document.getElementById('user-btn');
+  if (!menu) return;
+  const isOpen = !menu.classList.contains('d-none');
 
-let currentUni  = 'svu';
-let currentDept = 'cs';
-
-
-/* ── Toggle dropdown open/close ──────────────────────── */
-function toggleDropdown(id) {
-  const dropdown = document.getElementById(`${id}-dropdown`);
-  const btn      = document.getElementById(`${id}-btn`);
-  if (!dropdown) return;
-
-  const isOpen = dropdown.classList.contains('open');
   document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
   document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
 
-  if (!isOpen) {
-    dropdown.classList.add('open');
-    if (btn) btn.classList.add('open');
+  if (isOpen) {
+    menu.classList.add('d-none');
+  } else {
+    menu.classList.remove('d-none');
   }
 }
 
 document.addEventListener('click', e => {
-  if (!e.target.closest('.custom-select-wrap')) {
-    document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
-    document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
+  const menu = document.getElementById('user-menu');
+  if (menu && !e.target.closest('#user-btn') && !e.target.closest('#user-menu')) {
+    menu.classList.add('d-none');
   }
 });
-
 
 /* ── University selector ─────────────────────────────── */
 function selectUni(item) {
@@ -144,68 +114,23 @@ function updateHeaderSubtitle() {
 }
 
 
-/* ── Filter dropdowns ────────────────────────────────── */
-function selectFilter(filterKey, value, label, item) {
-  filters[filterKey] = value;
 
-  item.closest('.custom-dropdown').querySelectorAll('.custom-dropdown-item').forEach(i => i.classList.remove('selected'));
-  item.classList.add('selected');
-
-  document.getElementById(`${filterKey}-filter-value`).textContent = label;
-
-  document.getElementById(`${filterKey}-filter-dropdown`).classList.remove('open');
-  document.getElementById(`${filterKey}-filter-btn`).classList.remove('open');
-
-  updateClearBtn();
-  applyFilters();
-}
-
-function updateClearBtn() {
-  const hasFilter = filters.type || filters.avail || filters.status || filters.search;
-  const btn = document.getElementById('clear-filters-btn');
-  if (btn) btn.style.display = hasFilter ? 'flex' : 'none';
-}
-
-function clearAllFilters() {
-  filters.type = filters.avail = filters.status = filters.search = '';
-  document.getElementById('search-input').value = '';
-
-  ['type-filter','avail-filter','status-filter'].forEach(id => {
-    const dropdown = document.getElementById(`${id}-dropdown`);
-    if (!dropdown) return;
-    dropdown.querySelectorAll('.custom-dropdown-item').forEach((item, i) => {
-      item.classList.toggle('selected', i === 0);
-    });
-    const valueEl = document.getElementById(`${id}-value`);
-    const firstLabel = dropdown.querySelector('.custom-dropdown-label');
-    if (valueEl && firstLabel) valueEl.textContent = firstLabel.textContent;
-  });
-
-  updateClearBtn();
-  applyFilters();
-}
-
-
-/* ── Table filtering ─────────────────────────────────── */
-function applyFilters() {
-  const rows    = document.querySelectorAll('#courses-tbody .course-row');
-  const search  = filters.search.toLowerCase();
-  let   visible = 0;
+/* ── Student table filtering ─────────────────────────── */
+function applyStudentFilters() {
+  const rows   = document.querySelectorAll('#students-tbody .course-row');
+  const search = studentFilters.search.toLowerCase();
+  let visible  = 0;
 
   rows.forEach(row => {
-    const code   = (row.dataset.code   || '').toLowerCase();
-    const name   = (row.dataset.name   || '').toLowerCase();
-    const type   = (row.dataset.type   || '').toLowerCase();
-    const avail  = (row.dataset.avail  || '').toLowerCase();
-    const status = (row.dataset.status || '').toLowerCase();
-    const dept   = (row.dataset.dept   || '').toLowerCase();
+    const name     = (row.dataset.name     || '').toLowerCase();
+    const year     = (row.dataset.year     || '');
+    const standing = (row.dataset.standing || '').toLowerCase();
 
-    const matchSearch = !search  || code.includes(search) || name.includes(search);
-    const matchType   = !filters.type   || type === filters.type;
-    const matchAvail  = !filters.avail  || avail === filters.avail;
-    const matchStatus = !filters.status || status === filters.status;
+    const matchSearch   = !search                  || name.includes(search);
+    const matchStanding = !studentFilters.standing || standing === studentFilters.standing;
+    const matchYear     = !studentFilters.year     || year === studentFilters.year;
 
-    const show = matchSearch && matchType && matchAvail && matchStatus;
+    const show = matchSearch && matchStanding && matchYear;
     row.style.display = show ? '' : 'none';
     if (show) visible++;
   });
@@ -213,30 +138,76 @@ function applyFilters() {
   document.getElementById('empty-row').style.display = visible === 0 ? '' : 'none';
 }
 
+
+const _origSelectFilter = window.selectFilter;
+window.selectFilter = function(filterKey, value, label, item) {
+  if (['standing','year'].includes(filterKey)) {
+    studentFilters[filterKey] = value;
+
+    item.closest('.custom-dropdown').querySelectorAll('.custom-dropdown-item')
+        .forEach(i => i.classList.remove('selected'));
+    item.classList.add('selected');
+
+    document.getElementById(`${filterKey}-filter-value`).textContent = label;
+    document.getElementById(`${filterKey}-filter-dropdown`).classList.remove('open');
+    document.getElementById(`${filterKey}-filter-btn`).classList.remove('open');
+
+    updateStudentClearBtn();
+    applyStudentFilters();
+  } else {
+    _origSelectFilter(filterKey, value, label, item);
+  }
+};
+
+window.clearAllFilters = function() {
+  studentFilters.standing = studentFilters.year = studentFilters.search = '';
+  document.getElementById('search-input').value = '';
+
+  ['standing-filter','year-filter'].forEach(id => {
+    const dropdown = document.getElementById(`${id}-dropdown`);
+    if (!dropdown) return;
+    dropdown.querySelectorAll('.custom-dropdown-item').forEach((item, i) => {
+      item.classList.toggle('selected', i === 0);
+    });
+    const valueEl     = document.getElementById(`${id}-value`);
+    const firstLabel  = dropdown.querySelector('.custom-dropdown-label');
+    if (valueEl && firstLabel) valueEl.textContent = firstLabel.textContent;
+  });
+
+  updateStudentClearBtn();
+  applyStudentFilters();
+};
+
+function updateStudentClearBtn() {
+  const hasFilter = studentFilters.standing || studentFilters.year || studentFilters.search;
+  const btn = document.getElementById('clear-filters-btn');
+  if (btn) btn.style.display = hasFilter ? 'flex' : 'none';
+}
+
 document.getElementById('search-input').addEventListener('input', e => {
-  filters.search = e.target.value;
-  updateClearBtn();
-  applyFilters();
+  studentFilters.search = e.target.value;
+  updateStudentClearBtn();
+  applyStudentFilters();
 });
 
 
 /* ── Sort ────────────────────────────────────────────── */
 document.querySelectorAll('.sort-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    const col     = btn.dataset.col;
-    const isAsc   = btn.classList.contains('asc');
-    const newDir  = isAsc ? 'desc' : 'asc';
+    const col    = btn.dataset.col;
+    const isAsc  = btn.classList.contains('asc');
+    const newDir = isAsc ? 'desc' : 'asc';
 
     document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active','asc','desc'));
     btn.classList.add('active', newDir);
 
-    const tbody = document.getElementById('courses-tbody');
+    const tbody = document.getElementById('students-tbody');
     const rows  = Array.from(tbody.querySelectorAll('.course-row'));
 
     rows.sort((a, b) => {
       let av = (a.dataset[col] || '').toLowerCase();
       let bv = (b.dataset[col] || '').toLowerCase();
-      if (col === 'credits') { av = parseInt(av)||0; bv = parseInt(bv)||0; }
+      if (col === 'gpa' || col === 'year') { av = parseFloat(av)||0; bv = parseFloat(bv)||0; }
       if (av < bv) return newDir === 'asc' ? -1 :  1;
       if (av > bv) return newDir === 'asc' ?  1 : -1;
       return 0;

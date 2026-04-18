@@ -192,6 +192,7 @@ html.dark .dept-tab:hover {
   opacity:   0;
   transform: translateY(6px);
 }
+
 .custom-select-wrap {
   position: relative;
 }
@@ -247,6 +248,8 @@ html.dark .dept-tab:hover {
 .custom-select-btn.open .custom-select-arrow {
   transform: rotate(180deg);
 }
+
+/* Filter variant — same height as old filter-input */
 .filter-select-btn {
   height:      38px;
   padding:     0 10px 0 12px;
@@ -276,6 +279,10 @@ html.dark .dept-tab:hover {
   z-index:       600;
   display:       none;
   animation:     dropIn .18s ease both;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
 }
 html.dark .custom-dropdown {
   box-shadow: 0 8px 28px rgba(0,0,0,.4);
@@ -345,16 +352,10 @@ html.dark .custom-dropdown-item.selected {
   font-weight:   700;
   margin-left:   auto;
 }
-.badge-core-mini  { 
-  background: var(--badge-core-bg);  
-  color: var(--badge-core-text);  
-  border: 1px solid var(--badge-core-bd); 
-}
-.badge-elec-mini  { 
-  background: var(--badge-elec-bg);  
-  color: var(--badge-elec-text);  
-  border: 1px solid var(--badge-elec-bd); 
-}
+.badge-core-mini  { background: var(--badge-core-bg);  color: var(--badge-core-text);  border: 1px solid var(--badge-core-bd); }
+.badge-elec-mini  { background: var(--badge-elec-bg);  color: var(--badge-elec-text);  border: 1px solid var(--badge-elec-bd); }
+
+/* Dept colour dots */
 .dept-dot {
   width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-left: auto;
 }
@@ -371,7 +372,9 @@ html.dark .custom-dropdown-item.selected {
 .dept-icon-it { color: #0ea5e9; }
 
 
-/* ── university + dept selector ─────────────────────────────*/
+/* ══════════════════════════════════════════════════════════
+   CONTEXT BAR  (university + department selector)
+══════════════════════════════════════════════════════════ */
 .context-bar {
   padding: 0 !important;
   overflow: visible !important;
@@ -408,12 +411,9 @@ html.dark .custom-dropdown-item.selected {
   background: var(--c-border);
   flex-shrink: 0;
 }
-#uni-wrap .custom-select-btn { 
-  min-width: 230px;
-}
-#dept-ctx-wrap .custom-select-btn { 
-  min-width: 200px; 
-}
+
+#uni-wrap .custom-select-btn { min-width: 230px; }
+#dept-ctx-wrap .custom-select-btn { min-width: 200px; }
 
 .context-chips {
   display:     flex;
@@ -443,3 +443,24 @@ html.dark .context-chip-green {
   background:   rgba(5,150,105,.12);
   border-color: rgba(5,150,105,.25);
 }
+
+
+/* ── User avatar button & dropdown (shared) ──────────────*/
+.user-avatar-btn {
+  background:    none;
+  border:        none;
+  cursor:        pointer;
+  padding:       4px 6px 4px 4px;
+  border-radius: 10px;
+  transition:    background-color 0.15s ease;
+  align-items:   center;
+}
+.user-avatar-btn:hover { background: rgba(79,70,229,.06); }
+html.dark .user-avatar-btn:hover { background: rgba(255,255,255,.05); }
+
+.user-menu {
+  border-radius: 14px !important;
+  animation:     panelDrop .2s ease both;
+  overflow:      hidden;
+}
+.user-menu .custom-dropdown-item { gap: 10px; }
