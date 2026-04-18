@@ -1,41 +1,48 @@
 @model Department
 
 @{
-    ViewData["Title"] = "Department Details";
+    ViewData["Title"] = $"{Model.Name} Details";
 }
 
-<h1 class="h3 mb-3">Department Details</h1>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">@Model.Name</h1>
+        <p class="text-muted mb-0">@Model.University?.Name</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to departments</a>
+</div>
 
-<div class="card shadow-sm">
+<div class="card shadow-sm mb-4">
     <div class="card-body">
         <dl class="row mb-0">
-            <dt class="col-sm-4">Name</dt>
-            <dd class="col-sm-8">@Model.Name</dd>
-
-            <dt class="col-sm-4">University</dt>
-            <dd class="col-sm-8">@Model.University?.Name</dd>
-
-            <dt class="col-sm-4">Total Credits Required</dt>
-            <dd class="col-sm-8">@Model.TotalCreditsRequired</dd>
-
-            <dt class="col-sm-4">Minimum GPA For Graduation</dt>
-            <dd class="col-sm-8">@Model.MinGpaForGraduation</dd>
-
-            <dt class="col-sm-4">Status</dt>
-            <dd class="col-sm-8">
-                @if (Model.IsActive)
-                {
-                    <span class="badge text-bg-success">Active</span>
-                }
-                else
-                {
-                    <span class="badge text-bg-secondary">Inactive</span>
-                }
-            </dd>
+            <dt class="col-sm-3">University</dt>
+            <dd class="col-sm-9">@Model.University?.Name</dd>
+            <dt class="col-sm-3">Total Credits Required</dt>
+            <dd class="col-sm-9">@Model.TotalCreditsRequired</dd>
+            <dt class="col-sm-3">Minimum GPA</dt>
+            <dd class="col-sm-9">@Model.MinGpaForGraduation</dd>
         </dl>
     </div>
-    <div class="card-footer d-flex gap-2">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-        <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h2 class="h5 mb-0">Active Courses</h2>
+    </div>
+    <div class="list-group list-group-flush">
+        @if (Model.Courses.Any(course => course.IsActive))
+        {
+            foreach (var course in Model.Courses.Where(course => course.IsActive).OrderBy(course => course.Code))
+            {
+                <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <span>@course.Code - @course.Name</span>
+                    <span class="badge text-bg-secondary">@course.CreditHours credits</span>
+                </a>
+            }
+        }
+        else
+        {
+            <div class="list-group-item text-muted">No active courses are available for this department.</div>
+        }
     </div>
 </div>

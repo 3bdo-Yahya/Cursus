@@ -2,78 +2,83 @@
 
 @{
     ViewData["Title"] = "Courses";
-    var includeInactive = (bool?)ViewData["IncludeInactive"] ?? false;
+    var selectedDepartmentId = ViewData["SelectedDepartmentId"] as int?;
+    var searchTerm = ViewData["SearchTerm"] as string;
+    var departments = ViewData["Departments"] as IEnumerable<Department>;
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">Courses</h1>
-    <a asp-action="Create" class="btn btn-primary">Create Course</a>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Courses</h1>
+        <p class="text-muted mb-0">Browse the active course catalog by department or search term.</p>
+    </div>
 </div>
 
-@if (TempData["StatusMessage"] is string statusMessage)
-{
-    <div class="alert alert-success" role="alert">@statusMessage</div>
-}
+<form method="get" class="card shadow-sm mb-4">
+    <div class="card-body row g-3 align-items-end">
+        <div class="col-md-6">
+            <label class="form-label" for="searchTerm">Search</label>
+            <input id="searchTerm" name="searchTerm" value="@searchTerm" class="form-control" placeholder="Search by code or name" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="departmentId">Department</label>
+            <select id="departmentId" name="departmentId" class="form-select">
+                <option value="">All departments</option>
+                @if (departments is not null)
+                {
+                    foreach (var department in departments)
+                    {
+                        if (selectedDepartmentId == department.Id)
+                        {
+                            <option value="@department.Id" selected>@department.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@department.Id">@department.Name</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
+</form>
 
-<div class="mb-3">
-    @if (includeInactive)
+<div class="row g-4">
+    @if (Model.Any())
     {
-        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Show Active Only</a>
+        foreach (var course in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                            <div>
+                                <h2 class="h5 mb-1">@course.Code</h2>
+                                <p class="text-muted mb-0">@course.Name</p>
+                            </div>
+                            <span class="badge text-bg-secondary">@course.CourseType</span>
+                        </div>
+                        <dl class="row small mb-3">
+                            <dt class="col-5">Department</dt>
+                            <dd class="col-7">@course.Department?.Name</dd>
+                            <dt class="col-5">Credits</dt>
+                            <dd class="col-7">@course.CreditHours</dd>
+                            <dt class="col-5">Semester</dt>
+                            <dd class="col-7">@course.SemesterAvailability</dd>
+                        </dl>
+                        <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-outline-primary mt-auto">View details</a>
+                    </div>
+                </div>
+            </div>
+        }
     }
     else
     {
-        <a asp-action="Index" asp-route-includeInactive="true" class="btn btn-outline-secondary btn-sm">Show Including Inactive</a>
+        <div class="col-12">
+            <div class="alert alert-info mb-0">No active courses matched your search.</div>
+        </div>
     }
-</div>
-
-<div class="table-responsive">
-    <table class="table table-striped table-hover align-middle">
-        <thead>
-            <tr>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Credits</th>
-                <th>Type</th>
-                <th>Semester</th>
-                <th>Pass Threshold</th>
-                <th>Status</th>
-                <th class="text-end">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Code</td>
-                <td>@item.Name</td>
-                <td>@item.Department?.Name</td>
-                <td>@item.CreditHours</td>
-                <td>@item.CourseType</td>
-                <td>@item.SemesterAvailability</td>
-                <td>@item.PassingGradeThreshold</td>
-                <td>
-                    @if (item.IsActive)
-                    {
-                        <span class="badge text-bg-success">Active</span>
-                    }
-                    else
-                    {
-                        <span class="badge text-bg-secondary">Inactive</span>
-                    }
-                </td>
-                <td class="text-end">
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">Details</a>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                    @if (item.IsActive)
-                    {
-                        <form asp-action="Deactivate" asp-route-id="@item.Id" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deactivate this course?');">Deactivate</button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
 </div>

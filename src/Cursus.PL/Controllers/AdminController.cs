@@ -375,7 +375,7 @@ public class AdminController : Controller
         ViewData["UniversityId"] = new SelectList(universities, "Id", "Name", selectedUniversity);
     }
 
-    private async Task PopulateDepartmentsDropDownListAsync(object? selectedDepartment = null)
+    private async Task PopulateDepartmentsDropDownListAsync(int? selectedDepartment = null)
     {
         var departments = await _context.Departments
             .AsNoTracking()
@@ -383,10 +383,26 @@ public class AdminController : Controller
             .OrderBy(department => department.Name)
             .ToListAsync();
 
+        if (selectedDepartment.HasValue && selectedDepartment.Value > 0 &&
+            !departments.Any(department => department.Id == selectedDepartment.Value))
+        {
+            var selectedInactiveDepartment = await _context.Departments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(department => department.Id == selectedDepartment.Value);
+
+            if (selectedInactiveDepartment is not null)
+            {
+                departments.Add(selectedInactiveDepartment);
+                departments = departments
+                    .OrderBy(department => department.Name)
+                    .ToList();
+            }
+        }
+
         ViewData["DepartmentId"] = new SelectList(departments, "Id", "Name", selectedDepartment);
     }
 
-    private async Task PopulateDepartmentsFilterDropDownListAsync(object? selectedDepartment = null)
+    private async Task PopulateDepartmentsFilterDropDownListAsync(int? selectedDepartment = null)
     {
         var departments = await _context.Departments
             .AsNoTracking()
