@@ -94,7 +94,7 @@ dotnet run
 
 The app will be available at `https://localhost:5001` (or the port shown in the terminal).
 
-Startup seeding creates an initial admin account for testing with email/username `admin@cursus.local` and password `ChangeMe123!`.
+> **Development only:** If you enable identity seeding for local testing, do not use a shared default admin password. Provide any seed admin credentials through secure local configuration such as environment variables or .NET user-secrets, and do not enable or rely on seeded credentials in shared, staging, or production environments.
 
 ---
 
