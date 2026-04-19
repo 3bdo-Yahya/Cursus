@@ -1,0 +1,41 @@
+﻿@using Cursus.Models.ViewModels
+@model DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>Student Dashboard</h2>
+
+<hr />
+
+<!-- Basic Info -->
+<p><strong>Name:</strong> @Model.StudentName</p>
+<p><strong>Department:</strong> @Model.Department</p>
+<p><strong>CGPA:</strong> @Model.CGPA</p>
+
+<hr />
+
+<!-- Academic Standing Badge -->
+<h4>Academic Standing</h4>
+<partial name="partials/_AcademicStandingBadge" model="Model.AcademicStanding" />
+<hr />
+
+<!-- Progress Bar -->
+<h4>Credits Progress</h4>
+<partial name="partials/_ProgressBar" model="(Model.CreditsCompleted, Model.TotalCreditsRequired)" />
+<hr />
+
+<!-- Course Status Example -->
+<h4>Course Status Example</h4>
+<partial name="partials/_CourseStatusBadge" model="CourseStatus.Completed" />
+
+<hr />
+
+<h4>Navigation</h4>
+
+<ul>
+    <li><a href="/Student/CourseMap">Course Map</a></li>
+    <li><a href="/Student/Progress">Progress</a></li>
+    <li><a href="/Student/AiAdvisor">AI Advisor</a></li>
+</ul>
