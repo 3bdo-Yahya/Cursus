@@ -22,7 +22,8 @@
       <div class="d-none d-md-flex align-items-center gap-1">
         <a href="dashboard.html"  class="nav-pill active">Dashboard</a>
         <a href="course-map.html" class="nav-pill">Course Map</a>
-        <a href="planner.html"    class="nav-pill">Planner</a>
+        <a href="semester-planner.html" class="nav-pill">Planner</a>
+        <a href="progress-tracker.html"    class="nav-pill">Progress</a>
         <a href="ai-advisor.html" class="nav-pill">AI Advisor</a>
       </div>
     </div>
@@ -54,14 +55,37 @@
           </div>
         </div>
       </div>
-      <div class="d-flex align-items-center gap-2 ms-1" style="cursor:pointer;">
-        <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
-             style="width:36px;height:36px;background:var(--c-soft);border:2px solid rgba(79,70,229,.2);color:var(--c-primary);font-size:13px;">
-          AK
-        </div>
-        <div class="d-none d-md-block">
-          <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Ahmed Kamal</p>
-          <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">CS · Year 3</p>
+
+      <div class="custom-select-wrap position-relative ms-1">
+        <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+          <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+               style="width:36px;height:36px;background:var(--c-soft);border:2px solid rgba(79,70,229,.2);color:var(--c-primary);font-size:13px;">AK</div>
+          <div class="d-none d-md-block text-start">
+            <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">CS · Year 3</p>
+          </div>
+          <span class="material-symbols-outlined d-none d-md-block" id="user-menu-chevron"
+                style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;transition:transform 0.22s ease;">expand_more</span>
+        </button>
+        <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:210px;z-index:1060;">
+          <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">ahmed.kamal@svu.edu</p>
+          </div>
+          <a href="student-profile.html" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+            <span class="custom-dropdown-label">My Profile</span>
+          </a>
+          <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+            <span class="custom-dropdown-label">Settings</span>
+          </a>
+          <div style="border-top:1px solid var(--c-border);">
+            <a href="../auth/login.html" class="custom-dropdown-item text-decoration-none">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+              <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -107,7 +131,7 @@
     </button>
   </section>
 
-  <!-- Metric Cards — staggered scroll group -->
+  <!-- Metric Cards -->
   <section class="row g-3 anim-fade-up-1" data-scroll-group>
 
     <!-- CGPA -->
@@ -192,7 +216,7 @@
     </div>
   </section>
 
-  <!-- Feature Tiles — scroll with stagger -->
+  <!-- Feature Tiles -->
   <section class="row g-3" data-scroll-group>
     <div class="col-6 col-lg-3">
       <a href="course-map.html" class="surface feature-tile">
@@ -204,16 +228,7 @@
     </div>
 
     <div class="col-6 col-lg-3">
-      <a href="#" class="surface feature-tile">
-        <div class="tile-icon tile-red">
-          <span class="material-symbols-outlined text-danger" style="font-size:22px;font-variation-settings:'FILL' 0,'wght' 300">analytics</span>
-        </div>
-        <span class="fw-700" style="font-size:13px;">Impact Analyzer</span>
-      </a>
-    </div>
-
-    <div class="col-6 col-lg-3">
-      <a href="#" class="surface feature-tile">
+      <a href="semester-planner.html" class="surface feature-tile">
         <div class="tile-icon tile-green">
           <span class="material-symbols-outlined text-success" style="font-size:22px;font-variation-settings:'FILL' 0,'wght' 300">event_note</span>
         </div>
@@ -222,20 +237,28 @@
     </div>
 
     <div class="col-6 col-lg-3">
-      <a href="#" class="surface feature-tile">
+      <a href="progress-tracker.html" class="surface feature-tile">
+        <div class="tile-icon tile-red">
+          <span class="material-symbols-outlined text-danger" style="font-size:22px;font-variation-settings:'FILL' 0,'wght' 300">pending_actions</span>
+        </div>
+        <span class="fw-700" style="font-size:13px;">Progress Tracker</span>
+      </a>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <a href="ai-advisor.html" class="surface feature-tile">
         <div class="tile-icon tile-purple">
           <span class="material-symbols-outlined" style="font-size:22px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 300">psychology</span>
         </div>
         <span class="fw-700" style="font-size:13px;">AI Advisor</span>
       </a>
     </div>
-
   </section>
 
   <!-- Alerts + Schedule -->
   <div class="row g-4">
 
-    <!-- Alerts — scroll from left -->
+    <!-- Alerts -->
     <div class="col-12 col-lg-7" data-scroll="fade-right">
       <div class="d-flex align-items-center justify-content-between mb-3 px-1">
         <h3 class="fw-800 mb-0" style="font-size:15px;letter-spacing:-.2px;color:var(--c-text);">Alerts &amp; Updates</h3>
@@ -245,7 +268,7 @@
 
         <div class="alert-item alert-warn">
           <div class="alert-icon alert-icon-warn">
-            <span class="material-symbols-outlined" style="font-size:17px;color:#d97706;font-variation-settings:'FILL' 1,'wght' 400">warning</span>
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--alert-warn-title);font-variation-settings:'FILL' 1,'wght' 400">warning</span>
           </div>
           <div class="flex-fill min-w-0">
             <p class="fw-700 mb-1 alert-title-warn" style="font-size:13px;">Grade improvement available</p>
@@ -256,7 +279,7 @@
 
         <div class="alert-item alert-ok">
           <div class="alert-icon alert-icon-ok">
-            <span class="material-symbols-outlined" style="font-size:17px;color:#059669;font-variation-settings:'FILL' 1,'wght' 400">task_alt</span>
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--alert-ok-title);font-variation-settings:'FILL' 1,'wght' 400">task_alt</span>
           </div>
           <div class="flex-fill min-w-0">
             <p class="fw-700 mb-1 alert-title-ok" style="font-size:13px;">Credit overload eligible</p>
@@ -267,7 +290,7 @@
 
         <div class="alert-item alert-info">
           <div class="alert-icon alert-icon-info">
-            <span class="material-symbols-outlined" style="font-size:17px;color:#2563eb;font-variation-settings:'FILL' 1,'wght' 400">person</span>
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--alert-info-title);font-variation-settings:'FILL' 1,'wght' 400">person</span>
           </div>
           <div class="flex-fill min-w-0">
             <p class="fw-700 mb-1 alert-title-info" style="font-size:13px;">Note from Dr. Mona Hassan</p>
@@ -279,7 +302,7 @@
       </div>
     </div>
 
-    <!-- Schedule — scroll from right -->
+    <!-- Schedule -->
     <div class="col-12 col-lg-5" data-scroll="fade-left">
       <div class="surface d-flex flex-column h-100 overflow-hidden">
         <div class="d-flex align-items-center justify-content-between px-4 py-3" style="border-bottom:1px solid var(--c-border);">
@@ -329,7 +352,7 @@
 
   </div>
 
-  <!-- AI Advisor — zoom scroll -->
+  <!-- AI Advisor -->
   <section data-scroll="zoom">
     <div class="ai-banner p-4 p-sm-5">
       <div class="position-absolute w-100 h-100 top-0 start-0 pointer-events-none" style="opacity:.07;">
@@ -354,24 +377,23 @@
             "Can I still graduate on time?" &nbsp;·&nbsp; "What if I drop Calculus 2?" &nbsp;·&nbsp;
           </p>
         </div>
-        <button class="btn fw-800 flex-shrink-0 px-4 py-2"
-                style="background:white;color:var(--c-primary);border-radius:12px;font-size:13.5px;box-shadow:0 4px 16px rgba(0,0,0,.15);"
-                onmouseover="this.style.transform='translateY(-2px)'"
-                onmouseout="this.style.transform=''">
+        <a href="ai-advisor.html" class="btn fw-800 flex-shrink-0 px-4 py-2 text-decoration-none"
+                style="background:rgba(255,255,255,0.18);color:#fff;border-radius:12px;font-size:13.5px;box-shadow:0 4px 16px rgba(0,0,0,.15);border:1px solid rgba(255,255,255,0.25);backdrop-filter:blur(4px);transition:transform 0.15s ease,box-shadow 0.15s ease !important;"
+                onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.25)'"
+                onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,.15)'">
           Open Advisor
-        </button>
+        </a>
       </div>
     </div>
   </section>
-
 </div>
 </div>
 </main>
 <!-- ─── Footer ───────────────────────────────────────── -->
 <footer class="py-4" style="border-top:1px solid var(--c-border);">
-  <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1140px;">
+  <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1200px;">
     <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
-    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8</p>
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
   </div>
 </footer>
 

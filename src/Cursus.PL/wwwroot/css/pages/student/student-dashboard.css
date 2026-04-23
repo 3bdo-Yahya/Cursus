@@ -53,6 +53,7 @@
   cursor:        pointer;
 }
 .alert-item:hover { transform: translateX(3px); box-shadow: 0 4px 16px rgba(0,0,0,.07); }
+html.dark .alert-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,.3); }
 
 .alert-warn  { background: var(--alert-warn-bg);  border: 1px solid var(--alert-warn-bd); }
 .alert-ok    { background: var(--alert-ok-bg);    border: 1px solid var(--alert-ok-bd); }
@@ -80,10 +81,25 @@
 .alert-text-info  { color: var(--alert-info-text); }
 
 /* ── Badges ─────────────────────────────────────────────── */
-.badge-core     { background: var(--badge-core-bg); color: var(--badge-core-text); border: 1px solid var(--badge-core-bd); }
-.badge-elective { background: var(--badge-elec-bg); color: var(--badge-elec-text); border: 1px solid var(--badge-elec-bd); }
-.badge-standing { background: var(--standing-bg);   color: var(--standing-text);   border: 1px solid var(--standing-bd); }
-.badge-elec-cr  { background: var(--elective-bg);   color: var(--elective-text); }
+.badge-core     { 
+  background: var(--badge-core-bg); 
+  color: var(--badge-core-text); 
+  border: 1px solid var(--badge-core-bd); 
+}
+.badge-elective { 
+  background: var(--badge-elec-bg); 
+  color: var(--badge-elec-text); 
+  border: 1px solid var(--badge-elec-bd); 
+}
+.badge-standing { 
+  background: var(--standing-bg);   
+  color: var(--standing-text);   
+  border: 1px solid var(--standing-bd); 
+}
+.badge-elec-cr  { 
+  background: var(--elective-bg);   
+  color: var(--elective-text); 
+}
 
 /* ── Course Rows ────────────────────────────────────────── */
 .course-row { 
@@ -96,9 +112,14 @@
 }
 .course-row:hover { background: rgba(79,70,229,.04); }
 .course-row:hover .course-bar { background: var(--c-primary) !important; }
-.course-bar { width:3px; height:38px; border-radius:99px; flex-shrink:0; }
+.course-bar { 
+  width:3px; 
+  height:38px; 
+  border-radius:99px; 
+  flex-shrink:0; 
+}
 
-/* ── CREDITS BAR ────────────────────────────────────────── */
+/* ── Credits Bar ────────────────────────────────────────── */
 @keyframes slideRight { from{width:0} to{width:var(--target-w)} }
 .credits-bar {
   width:0; 
@@ -155,29 +176,6 @@ html.dark .status-dot { border-color: var(--c-surface); }
   background:radial-gradient(circle,rgba(255,255,255,.09) 0%,transparent 70%); 
   pointer-events:none; 
 }
-
-/* ── Notification Panel ─────────────────────────────────── */
-@keyframes panelDrop { 
-  from{opacity:0;transform:translateY(-8px) scale(.97)} 
-  to{opacity:1;transform:translateY(0) scale(1)} 
-}
-.notif-panel { animation:panelDrop .2s ease both; min-width:300px; }
-
-@keyframes badgePop { 
-  0%,100%{transform:scale(1)} 
-  50%{transform:scale(1.3)} 
-}
-.notif-dot { animation:badgePop 2s ease-in-out 2s 3; }
-
-/* ── Page Load Animations ───────────────────────────────── */
-@keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
-.anim-fade-up   { animation:fadeUp .55s ease both; }
-.anim-fade-up-1 { animation:fadeUp .55s .07s ease both; }
-.anim-fade-up-2 { animation:fadeUp .55s .14s ease both; }
-.anim-fade-up-3 { animation:fadeUp .55s .21s ease both; }
-.anim-fade-up-4 { animation:fadeUp .55s .28s ease both; }
-.anim-fade-up-5 { animation:fadeUp .55s .35s ease both; }
-
 /* ── Scroll Animations ──────────────────────────────────── */
 [data-scroll] {
   opacity: 0;

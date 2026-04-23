@@ -35,6 +35,30 @@ if (userMenuBtn && userMenuPanel) {
     if (userMenuChevron) userMenuChevron.style.transform = 'rotate(0deg)';
   });
 }
+/* ── User Menu Dropdown ───────────────────────── */
+function toggleDropdown(id) {
+  const dropdown = document.getElementById(`${id}-dropdown`);
+  const chevron  = document.getElementById('user-menu-chevron');
+  if (!dropdown) return;
+
+  const isOpen = dropdown.classList.contains('open');
+  document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+
+  if (!isOpen) {
+    dropdown.classList.add('open');
+    if (chevron) chevron.style.transform = 'rotate(180deg)';
+  } else {
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  }
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.custom-select-wrap')) {
+    document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+    const chevron = document.getElementById('user-menu-chevron');
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  }
+});
+
 /* ── Scroll reveal ────────────────────────────────── */
 const _vcObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {

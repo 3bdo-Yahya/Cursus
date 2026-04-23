@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — My Profile</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/student/student-profile.css"/>
+</head>
+<body>
+
+<!-- ─── Navbar ───────────────────────────────────────── -->
+<nav class="navbar-cursus fixed-top d-flex align-items-center">
+  <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+    <div class="d-flex align-items-center gap-3">
+      <a href="student-dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+        <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+      </a>
+      <div class="d-none d-md-flex align-items-center gap-1">
+        <a href="student-dashboard.html" class="nav-pill">Dashboard</a>
+        <a href="course-map.html"        class="nav-pill">Course Map</a>
+        <a href="progress-tracker.html"  class="nav-pill">Progress</a>
+        <a href="ai-advisor.html"        class="nav-pill">AI Advisor</a>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-1">
+      <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+        <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+      </button>
+      <div class="position-relative">
+        <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+          <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+          <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+        </button>
+        <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+          <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+            <span class="fw-700" style="font-size:13px;">Notifications</span>
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:12px;">Semester plan approved</p>
+            <p class="text-muted mb-0" style="font-size:11px;">Your advisor approved Spring 2026 · 2h ago</p>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;">
+            <p class="fw-700 mb-0" style="font-size:12px;">Grade posted — CS301</p>
+            <p class="text-muted mb-0" style="font-size:11px;">Midterm grade: B+ · Yesterday</p>
+          </div>
+          <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+          </div>
+        </div>
+      </div>
+      <div class="custom-select-wrap position-relative ms-1">
+        <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+          <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+               style="width:36px;height:36px;background:var(--c-soft);border:2px solid rgba(79,70,229,.2);color:var(--c-primary);font-size:13px;">AK</div>
+          <div class="d-none d-md-block text-start">
+            <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">CS · Year 3</p>
+          </div>
+          <span class="material-symbols-outlined d-none d-md-block" id="user-menu-chevron"
+                style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;transition:transform 0.22s ease;">expand_more</span>
+        </button>
+        <div id="user-dropdown" class="custom-dropdown position-absolute end-0 mt-2" style="min-width:210px;z-index:1060;">
+          <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">ahmed.kamal@svu.edu</p>
+          </div>
+          <a href="student-profile.html" class="custom-dropdown-item text-decoration-none">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+            <span class="custom-dropdown-label" style="color:var(--c-primary);">My Profile</span>
+          </a>
+          <a href="#" class="custom-dropdown-item text-decoration-none">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+            <span class="custom-dropdown-label">Settings</span>
+          </a>
+          <div style="border-top:1px solid var(--c-border);">
+            <a href="../auth/login.html" class="custom-dropdown-item text-decoration-none">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+              <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main style="padding-top:80px;padding-bottom:72px;">
+<div class="container-xl px-4" style="max-width:1100px;">
+
+  <!-- ── Profile Hero ──────────────────────────────────── -->
+  <section class="sp-hero anim-fade-up">
+    <div class="sp-hero-bg"></div>
+    <div class="sp-hero-content">
+      <div class="sp-avatar-wrap">
+        <div class="sp-avatar">AK</div>
+        <button class="sp-avatar-edit" title="Change photo">
+          <span class="material-symbols-outlined" style="font-size:15px;">photo_camera</span>
+        </button>
+      </div>
+      <div class="sp-hero-info">
+        <h1 class="fw-900 mb-1" style="font-size:1.6rem;letter-spacing:-.4px;color:var(--c-text);">Ahmed Kamal</h1>
+        <p style="font-size:13.5px;color:var(--c-muted);margin:0 0 12px;">ahmed.kamal@svu.edu · Student ID: 2022-CS-0847</p>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="sp-tag sp-tag-primary">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400">verified</span>
+            Good Standing
+          </span>
+          <span class="sp-tag">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">school</span>
+            Computer Science
+          </span>
+          <span class="sp-tag">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">calendar_today</span>
+            Year 3 · Spring 2026
+          </span>
+          <span class="sp-tag">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">auto_stories</span>
+            84 / 132 credits
+          </span>
+        </div>
+      </div>
+      <div class="sp-hero-actions">
+        <button class="sp-btn-primary" onclick="openEditModal()">
+          <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
+          Edit Profile
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Stats strip ────────────────────────────────────── -->
+  <section class="sp-stats anim-fade-up-1">
+    <div class="sp-stat">
+      <p class="sp-stat-val">3.24</p>
+      <p class="sp-stat-label">CGPA</p>
+    </div>
+    <div class="sp-stat-div"></div>
+    <div class="sp-stat">
+      <p class="sp-stat-val">84</p>
+      <p class="sp-stat-label">Credits Done</p>
+    </div>
+    <div class="sp-stat-div"></div>
+    <div class="sp-stat">
+      <p class="sp-stat-val">5</p>
+      <p class="sp-stat-label">In Progress</p>
+    </div>
+    <div class="sp-stat-div"></div>
+    <div class="sp-stat">
+      <p class="sp-stat-val">Spring '27</p>
+      <p class="sp-stat-label">Graduation</p>
+    </div>
+  </section>
+
+  <!-- ── Main grid ──────────────────────────────────────── -->
+  <div class="row g-4 anim-fade-up-2">
+
+    <!-- Left Column ─────────────────── -->
+    <div class="col-12 col-lg-7 d-flex flex-column gap-4">
+      <div class="sp-card">
+        <div class="sp-card-header">
+          <div class="d-flex align-items-center gap-2">
+            <div class="sp-card-icon" style="background:var(--icon-blue-bg);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">person</span>
+            </div>
+            <h3 class="sp-card-title">Personal Information</h3>
+          </div>
+          <button class="sp-edit-btn" onclick="openEditModal()">
+            <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
+            Edit
+          </button>
+        </div>
+        <div class="sp-field-grid">
+          <div class="sp-field">
+            <p class="sp-field-label">Full Name</p>
+            <p class="sp-field-value">Ahmed Kamal Mohamed</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Student ID</p>
+            <p class="sp-field-value">2022-CS-0847</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Email Address</p>
+            <p class="sp-field-value">ahmed.kamal@svu.edu</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Phone</p>
+            <p class="sp-field-value">+20 100 234 5678</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Date of Birth</p>
+            <p class="sp-field-value">15 March 2004</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">National ID</p>
+            <p class="sp-field-value">30403150XXXXXXX</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sp-card">
+        <div class="sp-card-header">
+          <div class="d-flex align-items-center gap-2">
+            <div class="sp-card-icon" style="background:var(--icon-purple-bg);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 300">school</span>
+            </div>
+            <h3 class="sp-card-title">Academic Information</h3>
+          </div>
+        </div>
+        <div class="sp-field-grid">
+          <div class="sp-field">
+            <p class="sp-field-label">University</p>
+            <p class="sp-field-value">South Valley University</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Department</p>
+            <p class="sp-field-value">Computer Science</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Academic Year</p>
+            <p class="sp-field-value">Year 3 (2024–2025)</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Current Semester</p>
+            <p class="sp-field-value">Spring 2026</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Enrollment Date</p>
+            <p class="sp-field-value">September 2022</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Expected Graduation</p>
+            <p class="sp-field-value">Spring 2027</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Academic Standing</p>
+            <p class="sp-field-value">
+              <span class="sp-standing-badge">
+                <span class="rounded-circle" style="width:6px;height:6px;background:#22c55e;display:inline-block;flex-shrink:0;"></span>
+                Good Standing
+              </span>
+            </p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Faculty Advisor</p>
+            <p class="sp-field-value">Dr. Mona Hassan</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sp-card">
+        <div class="sp-card-header">
+          <div class="d-flex align-items-center gap-2">
+            <div class="sp-card-icon" style="background:rgba(239,68,68,.1);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">lock</span>
+            </div>
+            <h3 class="sp-card-title">Security</h3>
+          </div>
+        </div>
+        <div class="d-flex flex-column gap-2">
+          <div class="sp-security-row">
+            <div class="d-flex align-items-center gap-3">
+              <div class="sp-security-icon">
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">password</span>
+              </div>
+              <div>
+                <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Password</p>
+                <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Last changed 3 months ago</p>
+              </div>
+            </div>
+            <button class="sp-edit-btn">Change</button>
+          </div>
+          <div class="sp-security-row">
+            <div class="d-flex align-items-center gap-3">
+              <div class="sp-security-icon">
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+              </div>
+              <div>
+                <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Email Notifications</p>
+                <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Grade updates, advisor messages</p>
+              </div>
+            </div>
+            <label class="sp-toggle">
+              <input type="checkbox" checked>
+              <span class="sp-toggle-track"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-12 col-lg-5">
+      <div style="position:sticky;top:84px;" class="d-flex flex-column gap-4">
+        <div class="sp-card">
+          <div class="sp-card-header">
+            <div class="d-flex align-items-center gap-2">
+              <div class="sp-card-icon" style="background:var(--icon-amber-bg);">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 300">trending_up</span>
+              </div>
+              <h3 class="sp-card-title">GPA History</h3>
+            </div>
+          </div>
+          <div class="sp-gpa-chart">
+            <div class="sp-gpa-bars" id="gpa-bars"></div>
+            <div class="sp-gpa-x-labels" id="gpa-x-labels"></div>
+          </div>
+          <div class="sp-gpa-summary">
+            <div class="sp-gpa-summary-item">
+              <p class="sp-field-label">Highest SGPA</p>
+              <p class="fw-800 mb-0" style="font-size:15px;color:#10b981;">3.58</p>
+            </div>
+            <div class="sp-gpa-summary-div"></div>
+            <div class="sp-gpa-summary-item">
+              <p class="sp-field-label">Current CGPA</p>
+              <p class="fw-800 mb-0" style="font-size:15px;color:var(--c-primary);">3.24</p>
+            </div>
+            <div class="sp-gpa-summary-div"></div>
+            <div class="sp-gpa-summary-item">
+              <p class="sp-field-label">Trend</p>
+              <p class="fw-800 mb-0" style="font-size:15px;color:#10b981;">↑ +0.12</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Access -->
+        <div class="sp-card">
+          <div class="sp-card-header">
+            <div class="d-flex align-items-center gap-2">
+              <div class="sp-card-icon" style="background:var(--tile-green-bg);">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 0,'wght' 300">grid_view</span>
+              </div>
+              <h3 class="sp-card-title">Quick Access</h3>
+            </div>
+          </div>
+          <div class="d-flex flex-column gap-2 mt-2">
+            <a href="course-map.html"       class="sp-quick-link">
+              <span class="material-symbols-outlined sp-ql-icon" style="color:var(--c-primary);">map</span>
+              <span>Course Map</span>
+              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+            </a>
+            <a href="impact-analyzer.html"  class="sp-quick-link">
+              <span class="material-symbols-outlined sp-ql-icon" style="color:#ef4444;">bolt</span>
+              <span>Impact Analyzer</span>
+              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+            </a>
+            <a href="progress-tracker.html" class="sp-quick-link">
+              <span class="material-symbols-outlined sp-ql-icon" style="color:#10b981;">bar_chart</span>
+              <span>Progress Tracker</span>
+              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+            </a>
+            <a href="gpa-simulator.html"    class="sp-quick-link">
+              <span class="material-symbols-outlined sp-ql-icon" style="color:#7c3aed;">calculate</span>
+              <span>GPA Simulator</span>
+              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+            </a>
+            <a href="ai-advisor.html"       class="sp-quick-link">
+              <span class="material-symbols-outlined sp-ql-icon" style="color:#d97706;">psychology</span>
+              <span>AI Advisor</span>
+              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+
+<!-- ── Edit Profile ──────────────────────────────── -->
+<div id="edit-modal" class="sp-modal-overlay" onclick="closeEditModal(event)">
+  <div class="sp-modal">
+    <div class="sp-modal-header">
+      <h3 class="fw-800 mb-0" style="font-size:15px;color:var(--c-text);">Edit Profile</h3>
+      <button class="sp-modal-close" onclick="closeEditModal()">
+        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+      </button>
+    </div>
+    <div class="sp-modal-body">
+      <div class="row g-3">
+        <div class="col-12 col-sm-6">
+          <label class="sp-label">Full Name</label>
+          <input type="text" class="sp-input" value="Ahmed Kamal Mohamed">
+        </div>
+        <div class="col-12 col-sm-6">
+          <label class="sp-label">Phone Number</label>
+          <input type="text" class="sp-input" value="+20 100 234 5678">
+        </div>
+        <div class="col-12">
+          <label class="sp-label">Email Address</label>
+          <input type="email" class="sp-input" value="ahmed.kamal@svu.edu">
+        </div>
+        <div class="col-12 col-sm-6">
+          <label class="sp-label">Date of Birth</label>
+          <input type="date" class="sp-input" value="2004-03-15">
+        </div>
+        <div class="col-12 col-sm-6">
+          <label class="sp-label">National ID</label>
+          <input type="text" class="sp-input" value="30403150XXXXXXX">
+        </div>
+      </div>
+    </div>
+    <div class="sp-modal-footer">
+      <button class="sp-btn-ghost" onclick="closeEditModal()">Cancel</button>
+      <button class="sp-btn-primary" onclick="saveProfile()">
+        <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">save</span>
+        Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Footer ───────────────────────────────────────── -->
+<footer class="py-4" style="border-top:1px solid var(--c-border);">
+  <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1200px;">
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
+  </div>
+</footer>
+
+<script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/site.js"></script>
+<script src="../../js/pages/student/student-profile.js"></script>
+</body>
+</html>

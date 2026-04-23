@@ -1,0 +1,638 @@
+/* ── Idle State
+ ──────────────────────────────────────────── */
+.ia-idle-wrapper {
+  min-height:    70vh;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+}
+.ia-idle-card {
+  text-align:    center;
+  padding:       48px 32px;
+  max-width:     560px;
+  width:         100%;
+}
+.ia-idle-graphic {
+  position:      relative;
+  width:         96px;
+  height:        96px;
+  margin:        0 auto 24px;
+}
+.ia-idle-icon-wrap {
+  position:      absolute;
+  inset:         0;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  background:    var(--c-soft);
+  border-radius: 50%;
+  border:        2px solid rgba(79,70,229,.2);
+}
+html.dark .ia-idle-icon-wrap { background: rgba(79,70,229,.15); }
+@keyframes ringPulse {
+  0%   { transform:scale(1);   opacity:0.4; }
+  70%  { transform:scale(1.6); opacity:0; }
+  100% { transform:scale(1.6); opacity:0; }
+}
+.ia-ring {
+  position:      absolute;
+  inset:         0;
+  border-radius: 50%;
+  border:        1.5px solid rgba(79,70,229,.25);
+  animation:     ringPulse 2.4s ease-out infinite;
+}
+.ia-ring-2 { animation-delay: .8s; }
+.ia-ring-3 { animation-delay: 1.6s; }
+
+.ia-feature-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   12px;
+  max-width:             360px;
+  margin:                28px auto 0;
+}
+.ia-feat-item {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 10px;
+  padding:       10px 12px;
+  font-size:     12.5px;
+  font-weight:   600;
+  color:         var(--c-text-sub);
+  text-align:    left;
+}
+
+/* ── Report Header ───────────────────────────────────────── */
+.ia-report-header {
+  display:         flex;
+  align-items:     flex-start;
+  justify-content: space-between;
+  flex-wrap:       wrap;
+  gap:             16px;
+  padding:         8px 0 24px;
+  border-bottom:   1px solid var(--c-border);
+  margin-bottom:   24px;
+}
+.ia-breadcrumb {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  margin-bottom: 8px;
+}
+.ia-breadcrumb-link {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+  font-size:   12px;
+  font-weight: 600;
+  color:       var(--c-muted);
+  text-decoration: none;
+  transition:  color 0.15s ease !important;
+}
+.ia-breadcrumb-link:hover { color: var(--c-primary); }
+.ia-breadcrumb-sep { font-size:12px; color:var(--c-muted); }
+
+.ia-severity-badge {
+  padding:       3px 9px;
+  border-radius: 6px;
+  font-size:     10.5px;
+  font-weight:   700;
+  letter-spacing: .06em;
+}
+.ia-sev-critical { 
+  background:#fef2f2; 
+  color:#dc2626; 
+  border:1px solid rgba(239,68,68,.25); 
+}
+.ia-sev-high { 
+  background:#fff7ed; 
+  color:#c2410c; 
+  border:1px solid rgba(234,88,12,.25); 
+}
+.ia-sev-low { 
+  background:#f0fdf4; 
+  color:#15803d; 
+  border:1px solid rgba(21,128,61,.25); 
+}
+html.dark .ia-sev-critical { 
+  background:rgba(239,68,68,.12); 
+  color:#fca5a5; 
+  border-color:rgba(239,68,68,.25); 
+}
+html.dark .ia-sev-high { 
+  background:rgba(234,88,12,.12);  
+  color:#fdba74; 
+  border-color:rgba(234,88,12,.25); 
+}
+html.dark .ia-sev-low { 
+  background:rgba(16,185,129,.1);  
+  color:#6ee7b7; 
+  border-color:rgba(16,185,129,.25); 
+}
+
+.ia-btn-outline {
+  border:        1px solid var(--c-border);
+  background:    var(--c-surface);
+  color:         var(--c-text);
+  font-size:     13px;
+  font-weight:   600;
+  border-radius: 10px;
+  padding:       8px 16px;
+  transition:    border-color 0.15s ease, background-color 0.15s ease !important;
+}
+.ia-btn-outline:hover { 
+  border-color: var(--c-primary); 
+  color: var(--c-primary);
+
+}
+
+/* ── KPI Strip ───────────────────────────────────────────── */
+.ia-kpi-strip {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   12px;
+  margin-bottom:         24px;
+}
+@media (max-width:768px) {
+  .ia-kpi-strip { grid-template-columns: 1fr 1fr; }
+}
+.ia-kpi-card {
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 16px;
+  padding:       16px;
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+}
+.ia-kpi-icon {
+  width:         42px;
+  height:        42px;
+  border-radius: 10px;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  flex-shrink:   0;
+}
+.ia-kpi-danger .ia-kpi-icon { 
+  background:rgba(239,68,68,.1); 
+  color:#ef4444; 
+}
+.ia-kpi-warn   .ia-kpi-icon { 
+  background:rgba(245,158,11,.1); 
+  color:#d97706; 
+}
+.ia-kpi-info   .ia-kpi-icon { 
+  background:rgba(79,70,229,.08); 
+  color:var(--c-primary); 
+}
+.ia-kpi-neutral .ia-kpi-icon { 
+  background:var(--c-soft); 
+  color:var(--c-primary); 
+}
+.ia-kpi-danger .ia-kpi-icon span { color:#ef4444; }
+.ia-kpi-warn   .ia-kpi-icon span { color:#d97706; }
+.ia-kpi-info   .ia-kpi-icon span { color:var(--c-primary); }
+.ia-kpi-neutral .ia-kpi-icon span { color:var(--c-primary); }
+
+.ia-kpi-val {
+  font-size:   1.5rem;
+  font-weight: 900;
+  letter-spacing: -.5px;
+  line-height: 1;
+  margin:      0 0 3px;
+  color:       var(--c-text);
+}
+.ia-kpi-danger .ia-kpi-val { color:#ef4444; }
+.ia-kpi-warn   .ia-kpi-val { color:#d97706; }
+.ia-kpi-info   .ia-kpi-val { color:var(--c-primary); }
+.ia-kpi-label {
+  font-size:   10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color:       var(--c-muted);
+  margin:      0;
+}
+
+/* ── Section Cards ───────────────────────────────────────── */
+.ia-section-card {
+  border-radius: 16px !important;
+  padding:       20px;
+}
+.ia-section-header-row {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+}
+.ia-count-pill {
+  padding:       3px 10px;
+  border-radius: 99px;
+  font-size:     11px;
+  font-weight:   700;
+  background:    rgba(239,68,68,.1);
+  color:         #dc2626;
+  border:        1px solid rgba(239,68,68,.2);
+}
+html.dark .ia-count-pill { 
+  background:rgba(239,68,68,.15); 
+  color:#fca5a5; 
+}
+
+/* ── Failed Course Card ──────────────────────────────────── */
+.ia-failed-course-card {
+  background:    var(--c-surface);
+  border:        1.5px solid rgba(239,68,68,.25);
+  border-radius: 16px;
+  padding:       20px;
+}
+html.dark .ia-failed-course-card { 
+  border-color:rgba(239,68,68,.2); 
+  background:rgba(239,68,68,.04); 
+}
+.ia-failed-label {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           5px;
+  font-size:     10.5px;
+  font-weight:   700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color:         #dc2626;
+  background:    rgba(239,68,68,.08);
+  border:        1px solid rgba(239,68,68,.2);
+  padding:       3px 9px;
+  border-radius: 6px;
+}
+html.dark .ia-failed-label { color:#fca5a5; }
+.ia-failed-icon-ring {
+  width:         44px;
+  height:        44px;
+  border-radius: 50%;
+  background:    rgba(239,68,68,.1);
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  flex-shrink:   0;
+}
+.ia-meta-chip {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           4px;
+  padding:       3px 8px;
+  border-radius: 7px;
+  font-size:     11.5px;
+  font-weight:   600;
+  background:    var(--c-bg);
+  border:        1px solid var(--c-border);
+  color:         var(--c-text-sub);
+}
+
+/* ── Blocked rows ────────────────────────────────────────── */
+@keyframes slideIn {
+  from { opacity:0; transform:translateX(10px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+.ia-blocked-row {
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  padding:       12px 14px;
+  background:    var(--c-bg);
+  border:        1px solid var(--c-border);
+  border-left:   3px solid #ef4444;
+  border-radius: 10px;
+  opacity:       0;
+  animation:     slideIn .35s ease forwards;
+}
+html.dark .ia-blocked-row { 
+  background:rgba(239,68,68,.04); 
+  border-color:rgba(239,68,68,.15); 
+}
+.ia-blocked-num {
+  width:         24px;
+  height:        24px;
+  border-radius: 50%;
+  background:    rgba(239,68,68,.12);
+  color:         #dc2626;
+  font-size:     11px;
+  font-weight:   800;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  flex-shrink:   0;
+}
+html.dark .ia-blocked-num { 
+  background:rgba(239,68,68,.2); 
+  color:#fca5a5; 
+}
+.ia-dep-tag {
+  padding:       2px 7px;
+  border-radius: 5px;
+  font-size:     10.5px;
+  font-weight:   700;
+  flex-shrink:   0;
+}
+.ia-dep-direct { 
+  background:rgba(239,68,68,.1);  
+  color:#dc2626; }
+.ia-dep-chain { 
+  background:rgba(245,158,11,.1); 
+  color:#b45309; 
+}
+html.dark .ia-dep-direct { 
+  background:rgba(239,68,68,.18); 
+  color:#fca5a5; 
+}
+html.dark .ia-dep-chain { 
+  background:rgba(245,158,11,.15); 
+  color:#fcd34d; 
+}
+
+/* ── Risk grid ───────────────────────────────────────────── */
+.ia-risk-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   1px;
+  background:            var(--c-border);
+  border-radius:         12px;
+  overflow:              hidden;
+}
+.ia-risk-item {
+  background: var(--c-surface);
+  padding:    14px 16px;
+}
+html.dark .ia-risk-item { background:var(--c-bg); }
+.ia-risk-label {
+  font-size:   10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color:       var(--c-muted);
+  margin:      0 0 4px;
+}
+.ia-risk-val {
+  font-size:   15px;
+  font-weight: 800;
+  color:       var(--c-text);
+  margin:      0;
+  letter-spacing: -.3px;
+}
+
+/* ── Recovery Timeline ───────────────────────────────────── */
+.ia-on-track-badge {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           4px;
+  padding:       3px 9px;
+  border-radius: 99px;
+  font-size:     11px;
+  font-weight:   700;
+  background:    rgba(16,185,129,.1);
+  color:         #047857;
+  border:        1px solid rgba(16,185,129,.2);
+}
+html.dark .ia-on-track-badge { 
+  background:rgba(16,185,129,.12); 
+  color:#6ee7b7; 
+}
+
+.ia-timeline { 
+  display:flex; 
+  flex-direction:column; 
+  gap:0; 
+}
+@keyframes tlIn {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.ia-tl-item {
+  display:    flex;
+  gap:        14px;
+  opacity:    0;
+  animation:  tlIn .35s ease forwards;
+}
+.ia-tl-marker {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  flex-shrink:    0;
+  width:          14px;
+  padding-top:    4px;
+}
+.ia-tl-dot {
+  width:         12px;
+  height:        12px;
+  border-radius: 50%;
+  border:        2.5px solid var(--c-surface);
+  flex-shrink:   0;
+  box-shadow:    0 0 0 2px rgba(0,0,0,.08);
+}
+.ia-tl-line {
+  width:      2px;
+  flex:       1;
+  background: var(--c-border);
+  margin:     4px 0;
+  min-height: 24px;
+}
+.ia-tl-content { padding: 2px 0 18px; }
+.ia-tl-sem {
+  font-size:     10.5px;
+  font-weight:   700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color:         var(--c-muted);
+  margin:        0 0 3px;
+}
+.ia-tl-action {
+  font-size:  13px;
+  color:      var(--c-text);
+  margin:     0;
+  line-height: 1.5;
+}
+.ia-tl-fail   .ia-tl-action { color: var(--c-text); }
+.ia-tl-retake .ia-tl-action { color: var(--c-text); }
+.ia-tl-unlock .ia-tl-action { color: var(--c-text); }
+.ia-tl-grad   .ia-tl-sem    { color: var(--c-primary); }
+.ia-tl-grad   .ia-tl-action { color: var(--c-primary); }
+
+/* ── Recommendations card ────────────────────────────────── */
+.ia-recommend-card {
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 16px;
+  padding:       20px;
+}
+.ia-rec-item {
+  display:     flex;
+  align-items: flex-start;
+  gap:         10px;
+  padding:     10px 0;
+  border-bottom: 1px solid var(--c-border);
+}
+.ia-rec-item:last-child { 
+  border-bottom: none; 
+  padding-bottom: 0; 
+}
+
+/* ── Action buttons ──────────────────────────────────────── */
+.ia-btn-ai-full {
+  width:         100%;
+  padding:       13px;
+  border:        none;
+  border-radius: 12px;
+  background:    linear-gradient(135deg, #4F46E5, #7c3aed);
+  color:         #fff;
+  font-size:     13.5px;
+  font-weight:   700;
+  cursor:        pointer;
+  box-shadow:    0 4px 16px rgba(79,70,229,.3);
+  transition:    transform 0.15s ease, box-shadow 0.15s ease !important;
+  font-family:   'Outfit', system-ui, sans-serif;
+}
+.ia-btn-ai-full:hover { 
+  transform:translateY(-2px); 
+  box-shadow:0 8px 24px rgba(79,70,229,.4); 
+  color:#fff; 
+}
+
+.ia-btn-outline-full {
+  width:         100%;
+  padding:       12px;
+  border:        1.5px solid var(--c-border);
+  border-radius: 12px;
+  background:    var(--c-surface);
+  color:         var(--c-text);
+  font-size:     13.5px;
+  font-weight:   700;
+  cursor:        pointer;
+  transition:    border-color 0.15s ease, color 0.15s ease !important;
+  font-family:   'Outfit', system-ui, sans-serif;
+}
+.ia-btn-outline-full:hover { 
+  border-color: var(--c-primary); 
+  color: var(--c-primary); 
+}
+
+/* ── KPI cards hover ─────────────────────────────── */
+.ia-kpi-card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease !important;
+}
+.ia-kpi-card:hover {
+  transform:    translateY(-3px);
+  box-shadow:   0 8px 24px rgba(0,0,0,.08);
+  border-color: rgba(79,70,229,.2);
+}
+html.dark .ia-kpi-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+
+.ia-kpi-danger:hover { border-color: rgba(239,68,68,.3) !important; }
+.ia-kpi-warn:hover   { border-color: rgba(245,158,11,.3) !important; }
+.ia-kpi-info:hover   { border-color: rgba(79,70,229,.3) !important; }
+
+/* ── Section cards subtle lift ───────────────────────────── */
+.ia-section-card {
+  transition: box-shadow 0.18s ease, border-color 0.18s ease !important;
+}
+.ia-section-card:hover {
+  box-shadow:   0 4px 20px rgba(0,0,0,.06);
+  border-color: rgba(79,70,229,.15);
+}
+html.dark .ia-section-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.25); }
+
+/* ── Failed course card ──────────────────────────────────── */
+.ia-failed-course-card {
+  transition: box-shadow 0.18s ease, border-color 0.18s ease !important;
+}
+.ia-failed-course-card:hover {
+  box-shadow:   0 4px 20px rgba(239,68,68,.12);
+  border-color: rgba(239,68,68,.45);
+}
+
+/* ── Blocked rows ────────────────────────────────────────── */
+.ia-blocked-row {
+  transition: transform 0.15s ease, background-color 0.15s ease, border-left-color 0.15s ease, box-shadow 0.15s ease !important;
+  cursor: default;
+}
+.ia-blocked-row:hover {
+  transform:            translateX(3px);
+  background-color:     rgba(239,68,68,.06);
+  border-left-color:    #dc2626;
+  box-shadow:           0 2px 10px rgba(239,68,68,.1);
+}
+html.dark .ia-blocked-row:hover { background-color: rgba(239,68,68,.1); }
+
+/* ── Risk grid items ─────────────────────────────────────── */
+.ia-risk-item {
+  transition: background-color 0.15s ease !important;
+  cursor: default;
+}
+.ia-risk-item:hover { background-color: rgba(79,70,229,.04); }
+html.dark .ia-risk-item:hover { background-color: rgba(79,70,229,.1); }
+
+/* ── Timeline items ──────────────────────────────────────── */
+.ia-tl-item {
+  transition: background-color 0.15s ease !important;
+  border-radius: 8px;
+  padding: 4px 8px 4px 4px;
+  margin-left: -8px;
+}
+.ia-tl-item:hover { background-color: rgba(79,70,229,.04); }
+html.dark .ia-tl-item:hover { background-color: rgba(255,255,255,.04); }
+.ia-tl-item .ia-tl-marker { padding-top: 4px; }
+
+/* ── Recommendations items ───────────────────────────────── */
+.ia-rec-item {
+  transition: background-color 0.15s ease, transform 0.15s ease !important;
+  border-radius: 8px;
+  padding: 10px 8px;
+  margin: 0 -8px;
+  border-bottom: 1px solid var(--c-border) !important;
+  cursor: default;
+}
+.ia-rec-item:last-child { border-bottom: none !important; }
+.ia-rec-item:hover {
+  background-color: rgba(79,70,229,.04);
+  transform:        translateX(3px);
+}
+html.dark .ia-rec-item:hover { background-color: rgba(79,70,229,.1); }
+
+/* ── Recommend card ──────────────────────────────────────── */
+.ia-recommend-card {
+  transition: box-shadow 0.18s ease, border-color 0.18s ease !important;
+}
+.ia-recommend-card:hover {
+  box-shadow:   0 4px 20px rgba(79,70,229,.1);
+  border-color: rgba(79,70,229,.2);
+}
+
+/* ── Feature items in idle state ─────────────────────────── */
+.ia-feat-item {
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease !important;
+  cursor: default;
+}
+.ia-feat-item:hover {
+  background-color: rgba(79,70,229,.05);
+  border-color:     rgba(79,70,229,.2);
+  transform:        translateY(-2px);
+}
+html.dark .ia-feat-item:hover { background-color: rgba(79,70,229,.12); }
+
+/* ── Meta chips on failed course card ────────────────────── */
+.ia-meta-chip {
+  transition: background-color 0.12s ease, border-color 0.12s ease !important;
+  cursor: default;
+}
+.ia-meta-chip:hover {
+  background-color: rgba(79,70,229,.06);
+  border-color:     rgba(79,70,229,.2);
+}
+
+/* ── Severity badge pulse on critical ────────────────────── */
+@keyframes severityPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+  50%       { box-shadow: 0 0 0 4px rgba(239,68,68,.15); }
+}
+.ia-sev-critical { animation: severityPulse 2.5s ease-in-out 1s 3; }
