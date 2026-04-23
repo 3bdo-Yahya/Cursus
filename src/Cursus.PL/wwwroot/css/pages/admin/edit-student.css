@@ -1,0 +1,18 @@
+#edit-student-form .surface {
+  position: relative;
+  z-index: 2;
+}
+
+#fg-department .custom-select-wrap {
+  position: relative;
+  z-index: 2200;
+}
+
+#fg-department .custom-dropdown {
+  z-index: 2300;
+}
+
+.student-edit-actions {
+  position: relative;
+  z-index: 1;
+}

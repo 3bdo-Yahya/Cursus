@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — Courses</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/admin/courses.css"/>
+</head>
+
+<body>
+
+  <!-- ─── Navbar ───────────────────────────────────────── -->
+  <nav class="navbar-cursus fixed-top d-flex align-items-center">
+    <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+      <div class="d-flex align-items-center gap-3">
+        <a href="admin-dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+          <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+        </a>
+        <div class="d-none d-md-flex align-items-center gap-1">
+          <a href="admin-dashboard.html" class="nav-pill">Dashboard</a>
+          <a href="courses.html"         class="nav-pill active">Courses</a>
+          <a href="students.html"        class="nav-pill">Students</a>
+          <!-- <a href="reports.html"         class="nav-pill">Reports</a> -->
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-1">
+        <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+          <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+        </button>
+        <div class="position-relative">
+          <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+            <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+            <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+          </button>
+          <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+            <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+              <span class="fw-700" style="font-size:13px;">Notifications</span>
+              <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+            </div>
+            <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:12px;">CS211 failure rate exceeded threshold</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Data Structures I · 38% failure · 1h ago</p>
+            </div>
+            <div class="px-4 py-3" style="cursor:pointer;">
+              <p class="fw-700 mb-0" style="font-size:12px;">New student batch enrolled</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">22 students · CS Department · Yesterday</p>
+            </div>
+            <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+              <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+            </div>
+          </div>
+        </div>
+        <!-- User dropdown -->
+        <div class="custom-select-wrap position-relative ms-1">
+          <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+            <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+                 style="width:36px;height:36px;background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.2);color:#dc2626;font-size:13px;">MA</div>
+            <div class="d-none d-md-block text-start">
+              <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">Dept. Admin</p>
+            </div>
+            <span class="material-symbols-outlined d-none d-md-block" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
+          </button>
+          <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:200px;z-index:1060;">
+            <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">mona.hassan@svu.edu</p>
+            </div>
+            <a href="admin-profile.html" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+              <span class="custom-dropdown-label">My Profile</span>
+            </a>
+            <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+              <span class="custom-dropdown-label">Settings</span>
+            </a>
+            <div style="border-top:1px solid var(--c-border);">
+              <a href="#" class="custom-dropdown-item text-decoration-none">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+                <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ─── Main ───────────────────────────────────────── -->
+  <main style="padding-top:80px;padding-bottom:72px;">
+  <div class="container-xl px-4" style="max-width:1280px;">
+
+
+    <!-- ── University / Department Bar ── -->
+    <div class="context-bar surface mb-4 anim-fade-up" style="position:relative;z-index:30;overflow:visible;">
+      <div class="context-bar-inner">
+
+        <!-- University picker -->
+        <div class="context-segment">
+          <span class="context-label">
+            <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 300">account_balance</span>
+            University
+          </span>
+          <div class="custom-select-wrap" id="uni-wrap">
+            <button class="custom-select-btn" id="uni-btn" onclick="toggleDropdown('uni')">
+              <span class="custom-select-icon">
+                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">school</span>
+              </span>
+              <span class="custom-select-value" id="uni-value">South Valley University</span>
+              <span class="material-symbols-outlined custom-select-arrow" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
+            </button>
+            <div class="custom-dropdown" id="uni-dropdown">
+              <div class="custom-dropdown-item selected" data-value="svu" onclick="selectUni(this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <div>
+                  <div class="custom-dropdown-label">South Valley University</div>
+                  <div class="custom-dropdown-sub">134 courses · CS, IS, AI, IT</div>
+                </div>
+              </div>
+              <div class="custom-dropdown-item" data-value="auc" onclick="selectUni(this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <div>
+                  <div class="custom-dropdown-label">American University in Cairo</div>
+                  <div class="custom-dropdown-sub">414 courses · CS</div>
+                </div>
+              </div>
+              <div class="custom-dropdown-item" data-value="su" onclick="selectUni(this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <div>
+                  <div class="custom-dropdown-label">Sinai University</div>
+                  <div class="custom-dropdown-sub">102 courses · IT, CSSE, IDSS</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="context-divider"></div>
+
+        <!-- Department picker -->
+        <div class="context-segment">
+          <span class="context-label">
+            <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 300">apartment</span>
+            Department
+          </span>
+          <div class="custom-select-wrap" id="dept-ctx-wrap">
+            <button class="custom-select-btn" id="dept-ctx-btn" onclick="toggleDropdown('dept-ctx')">
+              <span class="custom-select-icon dept-icon-cs">
+                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">computer</span>
+              </span>
+              <span class="custom-select-value" id="dept-ctx-value">Computer Science (CS)</span>
+              <span class="material-symbols-outlined custom-select-arrow" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
+            </button>
+            <div class="custom-dropdown" id="dept-ctx-dropdown">
+              <div class="custom-dropdown-item selected" data-value="cs" data-icon="computer" data-color="cs" onclick="selectDept(this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <div>
+                  <div class="custom-dropdown-label">Computer Science</div>
+                  <div class="custom-dropdown-sub">66 courses</div>
+                </div>
+                <span class="dept-dot dept-dot-cs"></span>
+              </div>
+              <div class="custom-dropdown-item" data-value="is" data-icon="storage" data-color="is" onclick="selectDept(this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <div>
+                  <div class="custom-dropdown-label">Information Systems</div>
+                  <div class="custom-dropdown-sub">63 courses</div>
+                </div>
+                <span class="dept-dot dept-dot-is"></span>
+              </div>
+              <div class="custom-dropdown-item" data-value="ai" data-icon="psychology" data-color="ai" onclick="selectDept(this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <div>
+                  <div class="custom-dropdown-label">Artificial Intelligence</div>
+                  <div class="custom-dropdown-sub">61 courses</div>
+                </div>
+                <span class="dept-dot dept-dot-ai"></span>
+              </div>
+              <div class="custom-dropdown-item" data-value="it" data-icon="devices" data-color="it" onclick="selectDept(this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <div>
+                  <div class="custom-dropdown-label">Information Technology</div>
+                  <div class="custom-dropdown-sub">68 courses</div>
+                </div>
+                <span class="dept-dot dept-dot-it"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="context-divider d-none d-md-block"></div>
+
+        <div class="context-chips d-none d-md-flex">
+          <span class="context-chip">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">menu_book</span>
+            <span id="ctx-course-count">66</span> courses
+          </span>
+          <span class="context-chip context-chip-green">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400">circle</span>
+            Spring 2026
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3 mb-4 anim-fade-up-1">
+      <div>
+        <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">
+          Courses
+        </h1>
+        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">
+          <span id="header-dept-name">Computer Science</span> · 
+          <span id="header-uni-name">South Valley University</span> · 
+          Spring 2026
+        </p>
+      </div>
+      <a href="add-course.html" class="btn btn-primary d-flex align-items-center gap-2 fw-700 flex-shrink-0 text-decoration-none"
+         style="border-radius:12px;font-size:13px;padding:9px 18px;box-shadow:0 4px 14px rgba(79,70,229,.28);"
+         onmouseover="this.style.transform='translateY(-1px)'"
+         onmouseout="this.style.transform=''">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">add</span>
+        Add Course
+      </a>
+    </div>
+
+
+    <!-- Stat Pills -->
+    <div class="d-flex flex-wrap gap-2 mb-4 anim-fade-up-2" id="stat-pills">
+      <div class="stat-pill d-flex align-items-center gap-2">
+        <span class="stat-pill-dot" style="background:#4F46E5;"></span>
+        <span class="fw-700" style="font-size:13px;color:var(--c-text);" id="stat-total">66</span>
+        <span style="font-size:12px;color:var(--c-muted);">Total</span>
+      </div>
+      <div class="stat-pill d-flex align-items-center gap-2">
+        <span class="stat-pill-dot" style="background:#10b981;"></span>
+        <span class="fw-700" style="font-size:13px;color:var(--c-text);" id="stat-active">62</span>
+        <span style="font-size:12px;color:var(--c-muted);">Active</span>
+      </div>
+      <div class="stat-pill d-flex align-items-center gap-2">
+        <span class="stat-pill-dot" style="background:var(--c-muted);"></span>
+        <span class="fw-700" style="font-size:13px;color:var(--c-text);" id="stat-archived">4</span>
+        <span style="font-size:12px;color:var(--c-muted);">Archived</span>
+      </div>
+      <div class="stat-pill d-flex align-items-center gap-2" style="border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.04);">
+        <span class="material-symbols-outlined" style="font-size:14px;color:#dc2626;font-variation-settings:'FILL' 1,'wght' 400">warning</span>
+        <span class="fw-700" style="font-size:13px;color:#dc2626;">2</span>
+        <span style="font-size:12px;color:var(--c-muted);">High failure rate</span>
+      </div>
+    </div>
+
+
+    <!-- Filters Bar -->
+    <div class="surface p-3 mb-4 anim-fade-up-2" style="position:relative;z-index:20;overflow:visible;">
+      <div class="row g-2 align-items-center">
+
+        <!-- Search -->
+        <div class="col-12 col-md-4">
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute top-50 translate-middle-y"
+                  style="left:12px;font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;pointer-events:none;">search</span>
+            <input id="search-input" type="text" class="form-control filter-input ps-5"
+                   placeholder="Search by name or code…"/>
+          </div>
+        </div>
+
+        <!-- Type filter -->
+        <div class="col-6 col-md-2">
+          <div class="custom-select-wrap filter-select-wrap" id="type-filter-wrap">
+            <button class="custom-select-btn filter-select-btn" id="type-filter-btn" onclick="toggleDropdown('type-filter')">
+              <span class="custom-select-value" id="type-filter-value">All Types</span>
+              <span class="material-symbols-outlined custom-select-arrow" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
+            </button>
+            <div class="custom-dropdown" id="type-filter-dropdown">
+              <div class="custom-dropdown-item selected" data-value="" onclick="selectFilter('type', '', 'All Types', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="custom-dropdown-label">All Types</span>
+              </div>
+              <div class="custom-dropdown-item" data-value="core" onclick="selectFilter('type', 'core', 'Core', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="custom-dropdown-label">Core</span>
+                <span class="dropdown-badge badge-core-mini">Core</span>
+              </div>
+              <div class="custom-dropdown-item" data-value="elective" onclick="selectFilter('type', 'elective', 'Elective', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="custom-dropdown-label">Elective</span>
+                <span class="dropdown-badge badge-elec-mini">Elective</span>
+              </div>
+              <div class="custom-dropdown-item" data-value="university-req" onclick="selectFilter('type', 'university-req', 'Univ. Req.', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="custom-dropdown-label">University Req.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Availability filter -->
+        <div class="col-6 col-md-2">
+          <div class="custom-select-wrap filter-select-wrap" id="avail-filter-wrap">
+            <button class="custom-select-btn filter-select-btn" id="avail-filter-btn" onclick="toggleDropdown('avail-filter')">
+              <span class="custom-select-value" id="avail-filter-value">Availability</span>
+              <span class="material-symbols-outlined custom-select-arrow" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
+            </button>
+            <div class="custom-dropdown" id="avail-filter-dropdown">
+              <div class="custom-dropdown-item selected" data-value="" onclick="selectFilter('avail', '', 'Availability', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="custom-dropdown-label">All Semesters</span>
+              </div>
+              <div class="custom-dropdown-item" data-value="fall" onclick="selectFilter('avail', 'fall', 'Fall', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="material-symbols-outlined" style="font-size:14px;color:#1d4ed8;font-variation-settings:'FILL' 0,'wght' 300">ac_unit</span>
+                <span class="custom-dropdown-label">Fall only</span>
+              </div>
+              <div class="custom-dropdown-item" data-value="spring" onclick="selectFilter('avail', 'spring', 'Spring', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="material-symbols-outlined" style="font-size:14px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 300">wb_sunny</span>
+                <span class="custom-dropdown-label">Spring only</span>
+              </div>
+              <div class="custom-dropdown-item" data-value="both" onclick="selectFilter('avail', 'both', 'Fall & Spring', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="material-symbols-outlined" style="font-size:14px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">event_repeat</span>
+                <span class="custom-dropdown-label">Fall & Spring</span>
+              </div>
+              <div class="custom-dropdown-item" data-value="all" onclick="selectFilter('avail', 'all', 'All Semesters', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="material-symbols-outlined" style="font-size:14px;color:#059669;font-variation-settings:'FILL' 0,'wght' 300">calendar_month</span>
+                <span class="custom-dropdown-label">All Semesters incl. Summer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status filter -->
+        <div class="col-6 col-md-2">
+          <div class="custom-select-wrap filter-select-wrap" id="status-filter-wrap">
+            <button class="custom-select-btn filter-select-btn" id="status-filter-btn" onclick="toggleDropdown('status-filter')">
+              <span class="custom-select-value" id="status-filter-value">All Status</span>
+              <span class="material-symbols-outlined custom-select-arrow" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
+            </button>
+            <div class="custom-dropdown" id="status-filter-dropdown">
+              <div class="custom-dropdown-item selected" data-value="" onclick="selectFilter('status', '', 'All Status', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="custom-dropdown-label">All Status</span>
+              </div>
+              <div class="custom-dropdown-item" data-value="active" onclick="selectFilter('status', 'active', 'Active', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="custom-dropdown-label" style="color:#059669;">● Active</span>
+              </div>
+              <div class="custom-dropdown-item" data-value="archived" onclick="selectFilter('status', 'archived', 'Archived', this)">
+                <span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                <span class="custom-dropdown-label">Archived</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clear filters -->
+        <div class="col-6 col-md-2">
+          <button id="clear-filters-btn" class="btn w-100 d-flex align-items-center justify-content-center gap-1 fw-600"
+                  style="border:1px solid var(--c-border);background:transparent;color:var(--c-muted);border-radius:10px;font-size:12px;height:38px;display:none!important;"
+                  onclick="clearAllFilters()">
+            <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">filter_alt_off</span>
+            Clear
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- Table -->
+    <div class="surface anim-fade-up-3" id="courses-table-wrap" style="overflow:visible;">
+      <div class="table-responsive">
+        <table class="table courses-table mb-0" id="courses-table">
+          <thead>
+            <tr>
+              <th class="col-code">
+                <button class="sort-btn active asc" data-col="code">Code
+                  <span class="material-symbols-outlined sort-icon">unfold_more</span>
+                </button>
+              </th>
+              <th class="col-name">
+                <button class="sort-btn" data-col="name">Name
+                  <span class="material-symbols-outlined sort-icon">unfold_more</span>
+                </button>
+              </th>
+              <th class="col-credits text-center">
+                <button class="sort-btn" data-col="credits">Cr.
+                  <span class="material-symbols-outlined sort-icon">unfold_more</span>
+                </button>
+              </th>
+              <th class="col-type">Type</th>
+              <th class="col-avail">Availability</th>
+              <th class="col-prereqs">Prerequisites</th>
+              <th class="col-status">Status</th>
+              <th class="col-actions text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="courses-tbody">
+
+            <!-- ── 1 ── -->
+            <tr class="course-row" data-code="CS121" data-name="Computer Science Fundamentals"
+                data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
+              <td class="col-code"><span class="course-code">CS121</span></td>
+              <td class="col-name"><span class="course-name">Computer Science Fundamentals</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-fall"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">ac_unit</span>Fall</span></td>
+              <td class="col-prereqs"><span class="prereq-none">None</span></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 2 ── -->
+            <tr class="course-row" data-code="CS141" data-name="Programming Fundamentals"
+                data-dept="cs" data-type="core" data-avail="spring" data-status="active" data-credits="3">
+              <td class="col-code"><span class="course-code">CS141</span></td>
+              <td class="col-name"><span class="course-name">Programming Fundamentals</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-spring"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">wb_sunny</span>Spring</span></td>
+              <td class="col-prereqs"><span class="prereq-none">None</span></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 3 ── -->
+            <tr class="course-row" data-code="CS241" data-name="Object Oriented Programming"
+                data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
+              <td class="col-code"><span class="course-code">CS241</span></td>
+              <td class="col-name"><span class="course-name">Object Oriented Programming</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-fall"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">ac_unit</span>Fall</span></td>
+              <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS141</span></div></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 4 ── -->
+            <tr class="course-row course-row-warn" data-code="CS211" data-name="Data Structures I"
+                data-dept="cs" data-type="core" data-avail="spring" data-status="active" data-credits="3">
+              <td class="col-code">
+                <div class="d-flex align-items-center gap-1">
+                  <span class="course-code">CS211</span>
+                  <span class="failure-badge" title="High failure rate: 38%"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400">warning</span>38%</span>
+                </div>
+              </td>
+              <td class="col-name"><span class="course-name">Data Structures I</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-spring"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">wb_sunny</span>Spring</span></td>
+              <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS241</span></div></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 5 ── -->
+            <tr class="course-row" data-code="CS311" data-name="Algorithms Analysis and Design"
+                data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
+              <td class="col-code"><span class="course-code">CS311</span></td>
+              <td class="col-name"><span class="course-name">Algorithms Analysis and Design</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-fall"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">ac_unit</span>Fall</span></td>
+              <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS211</span></div></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 6 ── -->
+            <tr class="course-row" data-code="CS312" data-name="Data Structures II"
+                data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
+              <td class="col-code"><span class="course-code">CS312</span></td>
+              <td class="col-name"><span class="course-name">Data Structures II</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-fall"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">ac_unit</span>Fall</span></td>
+              <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS211</span></div></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 7 ── -->
+            <tr class="course-row" data-code="CS321" data-name="Operating Systems I"
+                data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
+              <td class="col-code"><span class="course-code">CS321</span></td>
+              <td class="col-name"><span class="course-name">Operating Systems I</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-fall"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">ac_unit</span>Fall</span></td>
+              <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS121</span></div></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 8 ── -->
+            <tr class="course-row" data-code="CS391" data-name="Software Engineering"
+                data-dept="cs" data-type="core" data-avail="both" data-status="active" data-credits="3">
+              <td class="col-code"><span class="course-code">CS391</span></td>
+              <td class="col-name"><span class="course-name">Software Engineering</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-both"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">event_repeat</span>Fall & Spring</span></td>
+              <td class="col-prereqs"><span class="prereq-none">None</span></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 9 ── -->
+            <tr class="course-row course-row-warn" data-code="AI301" data-name="Artificial Intelligence"
+                data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
+              <td class="col-code">
+                <div class="d-flex align-items-center gap-1">
+                  <span class="course-code">AI301</span>
+                  <span class="failure-badge failure-badge-amber" title="High failure rate: 28%"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400">warning</span>28%</span>
+                </div>
+              </td>
+              <td class="col-name"><span class="course-name">Artificial Intelligence</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-fall"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">ac_unit</span>Fall</span></td>
+              <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS211</span></div></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 10 ── -->
+            <tr class="course-row" data-code="AI413" data-name="Machine Learning"
+                data-dept="cs" data-type="core" data-avail="fall" data-status="active" data-credits="3">
+              <td class="col-code"><span class="course-code">AI413</span></td>
+              <td class="col-name"><span class="course-name">Machine Learning</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-fall"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">ac_unit</span>Fall</span></td>
+              <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">MA113</span><span class="prereq-tag">MA222</span></div></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 11 ── -->
+            <tr class="course-row" data-code="AI401" data-name="Natural Language Processing"
+                data-dept="cs" data-type="elective" data-avail="all" data-status="active" data-credits="3">
+              <td class="col-code"><span class="course-code">AI401</span></td>
+              <td class="col-name"><span class="course-name">Natural Language Processing</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-elective">Elective</span></td>
+              <td class="col-avail"><span class="avail-badge avail-all"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">calendar_month</span>All</span></td>
+              <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS311</span></div></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 12 ── -->
+            <tr class="course-row" data-code="CS351" data-name="Computer Graphics I"
+                data-dept="cs" data-type="core" data-avail="both" data-status="active" data-credits="3">
+              <td class="col-code"><span class="course-code">CS351</span></td>
+              <td class="col-name"><span class="course-name">Computer Graphics I</span></td>
+              <td class="col-credits text-center"><span class="credits-badge">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-both"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">event_repeat</span>Fall & Spring</span></td>
+              <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">MA113</span></div></td>
+              <td class="col-status"><span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <!-- ── 13 ── -->
+            <tr class="course-row course-row-archived" data-code="CS491" data-name="Senior Project I"
+                data-dept="cs" data-type="core" data-avail="both" data-status="archived" data-credits="3">
+              <td class="col-code"><span class="course-code archived-text">CS491</span></td>
+              <td class="col-name"><span class="course-name archived-text">Senior Project I</span></td>
+              <td class="col-credits text-center"><span class="credits-badge archived-text">3</span></td>
+              <td class="col-type"><span class="type-badge type-core">Core</span></td>
+              <td class="col-avail"><span class="avail-badge avail-both"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">event_repeat</span>Fall & Spring</span></td>
+              <td class="col-prereqs"><div class="d-flex flex-wrap gap-1"><span class="prereq-tag">CS391</span><span class="prereq-more">+1</span></div></td>
+              <td class="col-status"><span class="status-badge status-archived">Archived</span></td>
+              <td class="col-actions"><div class="actions-cell">
+                <a href="view-course.html" class="action-btn action-view" title="View details"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                <a href="edit-course.html" class="action-btn action-edit" title="Edit course"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+              </div></td>
+            </tr>
+
+            <tr id="empty-row" style="display:none;">
+              <td colspan="8">
+                <div class="empty-state py-5 text-center">
+                  <div class="mb-3">
+                    <span class="material-symbols-outlined" style="font-size:40px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 200">search_off</span>
+                  </div>
+                  <p class="fw-700 mb-1" style="font-size:14px;color:var(--c-text);">No courses found</p>
+                  <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Try adjusting your filters</p>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 px-4 py-3"
+           style="border-top:1px solid var(--c-border);">
+        <p class="mb-0" style="font-size:12px;color:var(--c-muted);">
+          Showing <span class="fw-700" style="color:var(--c-primary);">1</span>–<span class="fw-700" style="color:var(--c-primary);">13</span> of
+          <span class="fw-700" style="color:var(--c-primary);">66</span> courses
+        </p>
+        <nav>
+          <ul class="pagination pagination-sm mb-0 gap-1">
+            <li class="page-item disabled">
+              <button class="page-btn" disabled>
+                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">chevron_left</span>
+              </button>
+            </li>
+            <li class="page-item"><button class="page-btn page-btn-active">1</button></li>
+            <li class="page-item"><button class="page-btn">2</button></li>
+            <li class="page-item"><button class="page-btn">3</button></li>
+            <li class="page-item"><span class="page-btn" style="cursor:default;">…</span></li>
+            <li class="page-item"><button class="page-btn">7</button></li>
+            <li class="page-item">
+              <button class="page-btn">
+                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+  </div>
+  </main>
+  <!-- ─── End Main ───────────────────────────────────────── -->
+
+
+  <!-- ─── Footer ───────────────────────────────────────── -->
+  <footer class="py-4" style="border-top:1px solid var(--c-border);">
+    <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1280px;">
+      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
+    </div>
+  </footer>
+
+  <script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/site.js"></script>
+  <script src="../../js/pages/admin/courses.js"></script>
+
+</body>
+</html>
