@@ -182,6 +182,19 @@ function escapeHTML(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+/** Local demo only — replace with `fetch('/api/ai-advisor/chat', …)` once the backend exists. */
+async function mockAdvisorReply(userText) {
+  await new Promise((r) => setTimeout(r, 600 + Math.random() * 400));
+  const lower = userText.toLowerCase();
+  if (/fail|drop|withdraw/i.test(lower)) {
+    return 'If you are considering a withdrawal, open the **Impact Analyzer** to see which downstream courses become blocked and whether your graduation term shifts. I can also walk through recovery options once you share the course code.';
+  }
+  if (/gpa|grade|standing/i.test(lower)) {
+    return `Your current CGPA is **${STUDENT_CONTEXT.cgpa}** (${STUDENT_CONTEXT.standing}). Check the **GPA Simulator** to model "what-if" grades for this semester.`;
+  }
+  return `Thanks for your question. With your **${STUDENT_CONTEXT.completed}** of **${STUDENT_CONTEXT.total}** credits completed, focus on clearing prerequisites for **${STUDENT_CONTEXT.in_progress.split(',')[0].trim() || 'your in-progress courses'}**. For anything that depends on failing a course, use the **Course Map** cascade view.`;
+}
+
 /* ── Build system prompt with student context ───────────── */
 function buildSystemPrompt() {
   return `You are a friendly and supportive academic advisor at a credit-hour university using the Cursus platform.
@@ -229,21 +242,9 @@ async function sendMessage() {
   appendTyping();
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model:      'claude-sonnet-4-20250514',
-        max_tokens: 600,
-        system:     buildSystemPrompt(),
-        messages:   chatHistory,
-      }),
-    });
-
-    if (!response.ok) throw new Error(`API error ${response.status}`);
-
-    const data  = await response.json();
-    const reply = data?.content?.[0]?.text ?? 'Sorry, I couldn\'t generate a response. Please try again.';
+    // Do not call third-party LLM APIs from the browser (keys would be exposed). Production will use a
+    // server endpoint, e.g. POST /api/ai-advisor/chat, with the key stored only on the server.
+    const reply = await mockAdvisorReply(text);
 
     removeTyping();
     appendMessage('ai', reply);
