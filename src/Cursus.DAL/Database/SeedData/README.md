@@ -13,7 +13,7 @@ SeedData/
 |   |-- normalization-notes.json
 |   |-- seed_graduation_reqs.json
 |   `-- seed_prereqs.json
-|-- sinia-university/
+|-- sinai-university/
 |   |-- curriculum-courses.json
 |   |-- graduation-requirements.json
 |   |-- normalization-notes.json
@@ -33,7 +33,7 @@ SeedData/
 | --- | --- | ---: |
 | `south-valley-university` | South Valley University | 134 |
 | `american-university-in-cairo` | The American University in Cairo | 414 |
-| `sinia-university` | Sinai University | 102 |
+| `sinai-university` | Sinai University | 102 |
 
 
 ## What Each File Does
@@ -159,7 +159,7 @@ Major found in the data:
 
 ### Sinai University
 
-- Stored under `sinia-university`.
+- Stored under `sinai-university`.
 - Multiple majors exist in the same folder.
 - Graduation requirements are major-specific.
 
