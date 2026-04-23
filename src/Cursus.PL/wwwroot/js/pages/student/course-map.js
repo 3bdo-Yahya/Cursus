@@ -1,4 +1,5 @@
-  
+(function () {
+
 const COURSES = [
   // Year 1
   { id:'CS121', name:'Computer Science Fundamentals', credits:3, type:'Core',        avail:'Fall',        dept:'CS', passing:'D', status:'passed',      grade:'A',  prereqs:[], year:1 },
@@ -61,9 +62,14 @@ COURSES.forEach(c => {
   });
 });
 
+  const cyContainer = document.getElementById('cy');
+  if (!cyContainer || typeof cytoscape === 'undefined') {
+    return;
+  }
+
 /* Init Cytoscape */
 const cy = cytoscape({
-  container: document.getElementById('cy'),
+  container: cyContainer,
   elements,
   style: [
     {
@@ -475,3 +481,5 @@ function closeImpactDrawer() {
   document.getElementById('btn-simulate').addEventListener('click', startSim);
   document.getElementById('btn-clear-panel').addEventListener('click', clearSim);
 }
+
+})();
