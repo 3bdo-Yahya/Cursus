@@ -333,25 +333,4 @@ function resetForm() {
 }
 
 
-/* ── User menu toggle ──────────────────────────────────── */
-function toggleDropdown(id) {
-  const dropdown = document.getElementById(`${id}-dropdown`);
-  const btn      = document.getElementById(`${id}-btn`);
-  if (!dropdown) return;
-
-  const isOpen = dropdown.classList.contains('open');
-  document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
-  document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
-
-  if (!isOpen) {
-    dropdown.classList.add('open');
-    if (btn) btn.classList.add('open');
-  }
-}
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('.custom-select-wrap')) {
-    document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
-    document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
-  }
-});
+/* User menu: CursusUI.toggleDropdown in site.js */
