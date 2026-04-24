@@ -2,4 +2,4 @@
 // GPA Simulator Placeholder
 // =========================================
 
-console.log("GPA Simulator coming soon");
+// Placeholder intentionally left without runtime logging.
