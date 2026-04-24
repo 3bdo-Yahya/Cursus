@@ -43,7 +43,10 @@
         /// <summary>
         /// Gets or sets the projected graduation date.
         /// </summary>
-        public string ProjectedGraduation { get; set; }
+        public DateOnly? ProjectedGraduationDate { get; set; }
+
+        public string ProjectedGraduationDisplay =>
+            ProjectedGraduationDate?.ToString("yyyy") ?? "TBD";
 
     }
 }
