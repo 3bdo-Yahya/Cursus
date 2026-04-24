@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — Semester Planner</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/student/semester-planner.css"/>
+</head>
+<body>
+
+<!-- ─── Navbar ──────────────────────────────────────────── -->
+<nav class="navbar-cursus fixed-top d-flex align-items-center">
+  <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+    <div class="d-flex align-items-center gap-3">
+      <a href="student-dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+        <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+      </a>
+      <div class="d-none d-md-flex align-items-center gap-1">
+        <a href="student-dashboard.html" class="nav-pill">Dashboard</a>
+        <a href="course-map.html"        class="nav-pill">Course Map</a>
+        <a href="semester-planner.html" class="nav-pill active">Planner</a>
+        <a href="progress-tracker.html"  class="nav-pill">Progress</a>
+        <a href="ai-advisor.html"        class="nav-pill">AI Advisor</a>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-1">
+      <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+        <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+      </button>
+      <div class="position-relative">
+        <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+          <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+          <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+        </button>
+        <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+          <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+            <span class="fw-700" style="font-size:13px;">Notifications</span>
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:12px;">Semester plan approved</p>
+            <p class="text-muted mb-0" style="font-size:11px;">Your advisor approved Spring 2026 · 2h ago</p>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;">
+            <p class="fw-700 mb-0" style="font-size:12px;">Grade posted — CS301</p>
+            <p class="text-muted mb-0" style="font-size:11px;">Midterm grade: B+ · Yesterday</p>
+          </div>
+          <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+          </div>
+        </div>
+      </div>
+      <div class="custom-select-wrap position-relative ms-1">
+        <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+          <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+               style="width:36px;height:36px;background:var(--c-soft);border:2px solid rgba(79,70,229,.2);color:var(--c-primary);font-size:13px;">AK</div>
+          <div class="d-none d-md-block text-start">
+            <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">CS · Year 3</p>
+          </div>
+          <span class="material-symbols-outlined d-none d-md-block" id="user-menu-chevron"
+                style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;transition:transform 0.22s ease;">expand_more</span>
+        </button>
+        <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:210px;z-index:1060;">
+          <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">ahmed.kamal@svu.edu</p>
+          </div>
+          <a href="student-profile.html" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+            <span class="custom-dropdown-label">My Profile</span>
+          </a>
+          <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+            <span class="custom-dropdown-label">Settings</span>
+          </a>
+          <div style="border-top:1px solid var(--c-border);">
+            <a href="../auth/login.html" class="custom-dropdown-item text-decoration-none">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+              <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- ─── End Navbar ───────────────────────────────────────── -->
+
+
+<!-- ─── Main ─────────────────────────────────────────────── -->
+<main style="padding-top:80px;padding-bottom:72px;">
+<div class="container-xl px-4" style="max-width:1140px;">
+<div class="d-flex flex-column gap-4">
+
+  <!-- Page Header -->
+  <section class="anim-fade-up">
+    <div class="d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
+      <div>
+        <h1 class="fw-900 mb-1" style="font-size:1.55rem;letter-spacing:-.4px;color:var(--c-text);">Semester Planner</h1>
+        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Plan your upcoming semester — drag &amp; drop courses, check prerequisites, and stay within your credit limits.</p>
+      </div>
+      <!-- Semester selector -->
+      <div class="semester-tabs flex-shrink-0">
+        <button class="sem-tab" onclick="switchSemester(this,'fall-2026')">Fall 2026</button>
+        <button class="sem-tab active" onclick="switchSemester(this,'spring-2027')">Spring 2027</button>
+        <button class="sem-tab" onclick="switchSemester(this,'fall-2027')">Fall 2027</button>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="planner-layout">
+
+    <!-- ── Left ─────────────────────────────── -->
+    <div class="d-flex flex-column gap-3">
+      <div class="plan-card anim-fade-up-1" id="plan-card-main">
+        <div class="plan-card-header">
+          <div>
+            <div class="plan-card-title">Spring 2027</div>
+            <div class="plan-card-subtitle">Planned semester · 18 credit limit (Good Standing)</div>
+          </div>
+          <span class="credit-chip credit-chip-ok" id="credit-chip">14 / 18 cr</span>
+        </div>
+
+        <!-- Planned courses list -->
+        <div id="planned-courses-list">
+
+          <div class="planned-row" data-course-id="CS401">
+            <span class="planned-code">CS401</span>
+            <span class="planned-name">Compiler Design</span>
+            <span class="planned-type-badge type-core">Core</span>
+            <span class="planned-credits">3 cr</span>
+            <button class="remove-course-btn" onclick="removeCourse('CS401',event)" title="Remove course">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <div class="planned-row" data-course-id="DS305">
+            <span class="planned-code">DS305</span>
+            <span class="planned-name">Database Systems</span>
+            <span class="planned-type-badge type-elec">Dept. Elective</span>
+            <span class="planned-credits">3 cr</span>
+            <button class="remove-course-btn" onclick="removeCourse('DS305',event)" title="Remove course">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <div class="planned-row" data-course-id="NET410">
+            <span class="planned-code">NET410</span>
+            <span class="planned-name">Cloud Computing</span>
+            <span class="planned-type-badge type-elec">Dept. Elective</span>
+            <span class="planned-credits">3 cr</span>
+            <button class="remove-course-btn" onclick="removeCourse('NET410',event)" title="Remove course">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <div class="planned-row" data-course-id="PSYC101">
+            <span class="planned-code">PSYC101</span>
+            <span class="planned-name">Intro to Psychology</span>
+            <span class="planned-type-badge type-free">Free Elective</span>
+            <span class="planned-credits">3 cr</span>
+            <button class="remove-course-btn" onclick="removeCourse('PSYC101',event)" title="Remove course">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <div class="planned-row" data-course-id="PHIL105">
+            <span class="planned-code">PHIL105</span>
+            <span class="planned-name">Ethics in Tech</span>
+            <span class="planned-type-badge type-univ">University Req.</span>
+            <span class="planned-credits">2 cr</span>
+            <button class="remove-course-btn" onclick="removeCourse('PHIL105',event)" title="Remove course">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Add course row -->
+        <div class="add-dropdown-wrap">
+          <div class="add-course-row" onclick="toggleAddDropdown()">
+            <span class="material-symbols-outlined" style="font-size:17px !important;font-variation-settings:'FILL' 0,'wght' 400">add_circle</span>
+            <span class="add-course-label">Add a course</span>
+          </div>
+          <div class="add-dropdown" id="add-dropdown">
+            <div class="add-search-wrap position-relative">
+              <span class="material-symbols-outlined add-search-icon" style="font-variation-settings:'FILL' 0,'wght' 300">search</span>
+              <input type="text" class="add-search-input" id="add-search-input"
+                     placeholder="Search available courses…"
+                     oninput="filterAddList(this.value)"/>
+            </div>
+            <div class="add-dropdown-list" id="add-dropdown-list">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Previously planned -->
+      <div class="anim-fade-up-2" data-scroll="fade-up">
+        <p class="section-heading mb-2" style="font-size:13px;color:var(--c-muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase;">Previous Semesters · Reference Only</p>
+        <div class="d-flex flex-column gap-2">
+
+          <div class="plan-card" style="opacity:.75;">
+            <div class="plan-card-header">
+              <div>
+                <div class="plan-card-title" style="font-size:13.5px;">Fall 2026 <span style="font-size:11px;font-weight:600;color:var(--c-muted);">· In Progress</span></div>
+                <div class="plan-card-subtitle">Currently enrolled</div>
+              </div>
+              <span class="credit-chip credit-chip-ok">14 cr</span>
+            </div>
+            <div style="padding:10px 0 6px;">
+              <div class="planned-row" style="cursor:default;">
+                <span class="planned-code">CS301</span>
+                <span class="planned-name">Operating Systems</span>
+                <span class="planned-type-badge type-core">Core</span>
+                <span class="planned-credits">3 cr</span>
+                <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
+              </div>
+              <div class="planned-row" style="cursor:default;">
+                <span class="planned-code">CS303</span>
+                <span class="planned-name">Computer Networks</span>
+                <span class="planned-type-badge type-core">Core</span>
+                <span class="planned-credits">3 cr</span>
+                <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
+              </div>
+              <div class="planned-row" style="cursor:default;">
+                <span class="planned-code">MTH201</span>
+                <span class="planned-name">Linear Algebra</span>
+                <span class="planned-type-badge type-core">Core</span>
+                <span class="planned-credits">3 cr</span>
+                <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
+              </div>
+              <div class="planned-row" style="cursor:default;">
+                <span class="planned-code">ENG201</span>
+                <span class="planned-name">Technical Writing</span>
+                <span class="planned-type-badge type-univ">University Req.</span>
+                <span class="planned-credits">2 cr</span>
+                <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
+              </div>
+              <div class="planned-row" style="cursor:default;">
+                <span class="planned-code">CS202</span>
+                <span class="planned-name">Discrete Mathematics</span>
+                <span class="planned-type-badge type-core">Core</span>
+                <span class="planned-credits">3 cr</span>
+                <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── Right: Sticky ─────────────────────────── -->
+    <div class="plan-sidebar anim-fade-up-3">
+
+      <!-- Plan Summary -->
+      <div class="summary-card">
+        <div class="summary-card-header">
+          <span class="material-symbols-outlined">event_note</span>
+          <p class="fw-800 mb-0" style="font-size:13.5px;color:var(--c-text);">Plan Summary</p>
+        </div>
+        <div class="summary-stat-row">
+          <span class="summary-stat-label">Planned credits</span>
+          <span class="summary-stat-value ok" id="stat-planned-cr">14</span>
+        </div>
+        <div class="summary-stat-row">
+          <span class="summary-stat-label">Credit limit</span>
+          <span class="summary-stat-value" id="stat-cr-limit">18 (Good Standing)</span>
+        </div>
+        <div class="summary-stat-row">
+          <span class="summary-stat-label">Credits after semester</span>
+          <span class="summary-stat-value" id="stat-total-after">98 / 132</span>
+        </div>
+        <div class="summary-stat-row">
+          <span class="summary-stat-label">Courses planned</span>
+          <span class="summary-stat-value" id="stat-course-count">5</span>
+        </div>
+        <div class="summary-stat-row">
+          <span class="summary-stat-label">Prerequisite conflicts</span>
+          <span class="summary-stat-value ok" id="stat-conflicts">None ✓</span>
+        </div>
+        <div class="mini-bar-track">
+          <div class="mini-bar-fill" id="plan-bar" style="--bar-w:74.2%;"></div>
+        </div>
+        <div style="padding:0 20px 12px;display:flex;justify-content:space-between;">
+          <span style="font-size:11px;color:var(--c-muted);">84 completed</span>
+          <span style="font-size:11px;color:var(--c-muted);font-weight:700;">74.2% → 74.2%</span>
+          <span style="font-size:11px;color:var(--c-muted);">132 total</span>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div id="sidebar-alerts">
+
+        <div class="sidebar-alert alert-ok">
+          <div class="sidebar-alert-icon" style="background:var(--alert-ok-icon);">
+            <span class="material-symbols-outlined" style="color:var(--alert-ok-title);">verified</span>
+          </div>
+          <div>
+            <p class="fw-800 mb-0" style="font-size:12.5px;color:var(--alert-ok-title);">No prerequisite conflicts</p>
+            <p class="mb-0" style="font-size:11.5px;color:var(--alert-ok-text);line-height:1.5;">All planned courses have their prerequisites satisfied.</p>
+          </div>
+        </div>
+
+        <div class="sidebar-alert alert-info">
+          <div class="sidebar-alert-icon" style="background:var(--alert-info-icon);">
+            <span class="material-symbols-outlined" style="color:var(--alert-info-title);">bolt</span>
+          </div>
+          <div>
+            <p class="fw-800 mb-0" style="font-size:12.5px;color:var(--alert-info-title);">Overload available</p>
+            <p class="mb-0" style="font-size:11.5px;color:var(--alert-info-text);line-height:1.5;">Your GPA (3.24) qualifies you for overload — up to 21 credits.</p>
+          </div>
+        </div>
+
+        <div class="sidebar-alert alert-warn" id="alert-grad" style="display:none;">
+          <div class="sidebar-alert-icon" style="background:var(--alert-warn-icon);">
+            <span class="material-symbols-outlined" style="color:var(--alert-warn-title);">warning</span>
+          </div>
+          <div>
+            <p class="fw-800 mb-0" style="font-size:12.5px;color:var(--alert-warn-title);">Over credit limit!</p>
+            <p class="mb-0 warn-text" style="font-size:11.5px;color:var(--alert-warn-text);line-height:1.5;">This plan exceeds your 18-credit limit.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Save Button -->
+      <button class="save-plan-btn mt-2" onclick="savePlan()">
+        <span class="material-symbols-outlined">save</span>
+        Save Semester Plan
+      </button>
+
+      <!-- Projected graduation -->
+      <div class="surface p-3 mt-3 d-flex align-items-center gap-3" style="border-radius:14px;">
+        <span class="material-symbols-outlined" style="font-size:20px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 500">school</span>
+        <div>
+          <p class="fw-800 mb-0" style="font-size:13px;color:var(--c-text);">Projected Graduation</p>
+          <p class="mb-0" style="font-size:12px;color:var(--c-muted);" id="proj-grad-text">Spring 2027 → <strong style="color:var(--c-primary)">Fall 2027</strong> with this plan</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</main>
+
+<!-- ─── Footer ───────────────────────────────────────── -->
+<footer class="py-4" style="border-top:1px solid var(--c-border);">
+  <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1200px;">
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
+  </div>
+</footer>
+
+<script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/site.js"></script>
+<script src="../../js/pages/student/semester-planner.js"></script>
+</body>
+</html>
