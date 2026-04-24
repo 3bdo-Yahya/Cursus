@@ -1,0 +1,57 @@
+﻿@model (int completed, int total)
+
+@*
+    ============================================
+    ProgressBar Partial View
+    ============================================
+
+    Purpose:
+    --------
+    Displays a Bootstrap progress bar based on
+    completed vs total values.
+
+    Input:
+    ------
+    - completed (int): completed units
+    - total (int): total required units
+
+    Output:
+    -------
+    Progress bar with percentage label
+
+    Usage:
+    ------
+    <partial name="partials/_ProgressBar"
+             model="(Model.CreditsCompleted, Model.TotalCreditsRequired)" />
+*@
+
+@{
+    // Handle invalid totals and clamp value to keep the progress width valid.
+    var percentage = Model.total <= 0
+        ? 0
+        : System.Math.Clamp((Model.completed * 100) / Model.total, 0, 100);
+
+    // Determine bar color based on progress
+    var barClass = percentage >= 70 ? "bg-success"
+                  : percentage >= 40 ? "bg-warning"
+                  : "bg-danger";
+}
+
+<!-- Progress info -->
+<div>
+    <div class="d-flex justify-content-between">
+        <span>@Model.completed / @Model.total</span>
+        <span>@percentage%</span>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress" style="height:10px;">
+        <div class="progress-bar @barClass"
+             role="progressbar"
+             aria-valuenow="@percentage"
+             aria-valuemin="0"
+             aria-valuemax="100"
+             style="width:@percentage%">
+        </div>
+    </div>
+</div>

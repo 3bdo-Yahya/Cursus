@@ -1,0 +1,47 @@
+﻿@using Cursus.Models.ViewModels
+@model AcademicStanding
+
+@*
+    ============================================
+    AcademicStandingBadge Partial View
+    ============================================
+
+    Purpose:
+    --------
+    Renders a Bootstrap badge that represents
+    the student's academic standing.
+
+    Input:
+    ------
+    AcademicStanding enum:
+        - Good
+        - Warning
+        - Probation
+        - Dismissed
+
+    Output:
+    -------
+    Colored badge with status text
+
+    Usage:
+    ------
+    <partial name="partials/_AcademicStandingBadge"
+             model="Model.AcademicStanding" />
+*@
+
+@{
+    // Map each academic state to a Bootstrap color class
+    var cssClass = Model switch
+    {
+        AcademicStanding.Good => "bg-success",
+        AcademicStanding.Warning => "bg-warning text-dark",
+        AcademicStanding.Probation => "bg-warning text-dark",
+        AcademicStanding.Dismissed => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
+
+<!-- Render badge -->
+<span class="badge @cssClass">
+    @Model
+</span>
