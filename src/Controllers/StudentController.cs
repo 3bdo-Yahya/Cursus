@@ -18,7 +18,7 @@ namespace Cursus.Controllers
                 TotalCreditsRequired = 120,  
                 CoursesRemaining = 10,  
                 AcademicStanding = AcademicStanding.Good,  
-                ProjectedGraduation = "2027"  
+                ProjectedGraduationDate = new DateOnly(2027, 1, 1)  
             };  
 
             return View(model);  
