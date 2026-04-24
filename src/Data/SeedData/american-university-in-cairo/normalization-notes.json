@@ -1,0 +1,803 @@
+[
+  {
+    "type": "code_normalization",
+    "note": "AUC course labels often use dual numbering like SUBJECT old/new. The seed stores the current code on the right side of the slash as the canonical course code."
+  },
+  {
+    "type": "free_elective_inference",
+    "note": "The catalog program page lists General Electives as 3-15 credits without enumerating eligible courses. The seed sets requiredCredits to 9 by balancing the published 132-credit degree total."
+  },
+  {
+    "type": "category_overlap_priority",
+    "note": "If a course appears in both the university core page and a program-specific requirement section, the course row is classified by the program-specific section while graduation requirement eligibility keeps the source overlap."
+  },
+  {
+    "type": "variable_credit_normalization",
+    "code": "CSCE3101",
+    "note": "Variable-credit course listed as 1-2 credit hours; seed uses the maximum value because the schema requires one integer."
+  },
+  {
+    "type": "variable_credit_normalization",
+    "code": "CSCE4930",
+    "note": "Variable-credit course listed as 1-3 credit hours; seed uses the maximum value because the schema requires one integer."
+  },
+  {
+    "type": "variable_credit_normalization",
+    "code": "CSCE4910",
+    "note": "Variable-credit course listed as 1-3 credit hours; seed uses the maximum value because the schema requires one integer."
+  },
+  {
+    "type": "description_absent",
+    "codes": [
+      "EGPT5199",
+      "HIST4188",
+      "HIST4288",
+      "HIST4488",
+      "HIST4588",
+      "SEMR1099",
+      "SEMR2010",
+      "SEMR2099",
+      "SEMR3099"
+    ],
+    "note": "These catalog pages do not provide a description section, so the seed leaves description as an empty string per the normalization schema."
+  },
+  {
+    "type": "semester_availability_fallback",
+    "codes": [
+      "AMST1090",
+      "AMST1099",
+      "AMST2096",
+      "AMST3100",
+      "ANTH1099",
+      "ANTH2005",
+      "ANTH2099",
+      "ANTH3015",
+      "ANTH3040",
+      "ANTH3075",
+      "ANTH3080",
+      "ANTH3090",
+      "ANTH3202",
+      "ANTH3301",
+      "ANTH3302",
+      "ANTH3305",
+      "ANTH4025",
+      "ANTH4107",
+      "ANTH4203",
+      "ANTH4560",
+      "ARCH4980",
+      "ARCH4981",
+      "ARIC1099",
+      "ARIC1102",
+      "ARIC1300",
+      "ARIC2096",
+      "ARIC2097",
+      "ARIC2099",
+      "ARIC2206",
+      "ARIC2346",
+      "ARIC3020",
+      "ARIC3097",
+      "ARIC3268",
+      "ARIC3269",
+      "ARIC3270",
+      "ARIC3319",
+      "ARIC3321",
+      "ARIC3322",
+      "ARIC3323",
+      "ARIC3324",
+      "ARIC3336",
+      "ARIC3337",
+      "ARIC3343",
+      "ARIC3344",
+      "ARIC3345",
+      "ARIC3355",
+      "ARIC3397",
+      "ARIC3405",
+      "ARIC5102",
+      "ARIC5137",
+      "ARTV1099",
+      "ARTV2113",
+      "ARTV2200",
+      "ARTV3115",
+      "BIOL1410",
+      "BIOL1930",
+      "CHEM4981",
+      "CORE1099",
+      "CORE1130",
+      "CORE1140",
+      "CORE2096",
+      "CORE2099",
+      "CORE2142",
+      "CORE4198",
+      "CREL2096",
+      "CREL2097",
+      "CREL2099",
+      "CREL2601",
+      "CREL2603",
+      "CREL2606",
+      "CREL2607",
+      "CREL3608",
+      "CSCE2303",
+      "CSCE3101",
+      "CSCE3102",
+      "CSCE3103",
+      "CSCE3301",
+      "CSCE3302",
+      "CSCE4421",
+      "CSCE4501",
+      "CSCE4602",
+      "CSCE4603",
+      "CSCE4621",
+      "CSCE4701",
+      "DSGN2210",
+      "DSGN4270",
+      "ECLT1023",
+      "ECLT1099",
+      "ECLT2010",
+      "ECLT2011",
+      "ECLT2012",
+      "ECLT2019",
+      "ECLT2096",
+      "ECLT2099",
+      "ECLT3001",
+      "ECLT3002",
+      "ECLT3003",
+      "ECLT3004",
+      "ECLT3005",
+      "ECLT3006",
+      "ECLT3008",
+      "ECLT3010",
+      "ECLT3011",
+      "ECLT3014",
+      "ECLT3030",
+      "ECLT3032",
+      "ECLT3033",
+      "ECLT3045",
+      "ECLT3046",
+      "ECLT3048",
+      "ECLT3052",
+      "ECLT3053",
+      "ECLT3060",
+      "ECLT3070",
+      "ECLT3099",
+      "ECLT4009",
+      "ECLT4010",
+      "ECLT4011",
+      "ECLT4012",
+      "ECLT4099",
+      "ECON4051",
+      "ECON4099",
+      "EDUC1099",
+      "EDUC2099",
+      "EDUC4098",
+      "EGPT1099",
+      "EGPT2020",
+      "EGPT2099",
+      "EGPT4040",
+      "EGPT5199",
+      "ENGR4990",
+      "ENGR5101",
+      "ENTR4102",
+      "FILM1099",
+      "FILM2099",
+      "FILM3070",
+      "FILM3115",
+      "FILM3117",
+      "FILM3120",
+      "FILM3150",
+      "FILM4370",
+      "HIST1099",
+      "HIST1101",
+      "HIST1102",
+      "HIST1103",
+      "HIST1201",
+      "HIST2096",
+      "HIST2097",
+      "HIST2099",
+      "HIST2104",
+      "HIST2202",
+      "HIST2204",
+      "HIST2301",
+      "HIST2401",
+      "HIST2402",
+      "HIST2403",
+      "HIST2404",
+      "HIST2501",
+      "HIST2502",
+      "HIST2604",
+      "HIST3105",
+      "HIST3206",
+      "HIST3207",
+      "HIST3208",
+      "HIST3288",
+      "HIST3405",
+      "HIST3406",
+      "HIST4188",
+      "HIST4215",
+      "HIST4216",
+      "HIST4219",
+      "HIST4288",
+      "HIST4290",
+      "HIST4303",
+      "HIST4488",
+      "HIST4588",
+      "JRMC4420",
+      "JRMC4425",
+      "JRMC4480",
+      "JRMC4482",
+      "LALT1020",
+      "LING2200",
+      "LING2201",
+      "LING2210",
+      "LING3075",
+      "MACT3133",
+      "MACT3143",
+      "MACT3145",
+      "MACT4134",
+      "MACT4135",
+      "MACT4212",
+      "MACT4980",
+      "MACT4990",
+      "MEST4301",
+      "MGMT4402",
+      "MUSC1010",
+      "MUSC1099",
+      "MUSC2000",
+      "MUSC2099",
+      "MUSC2450",
+      "MUSC3099",
+      "MUSC3200",
+      "MUSC3250",
+      "MUSC4980",
+      "PHIL1010",
+      "PHIL1099",
+      "PHIL2010",
+      "PHIL2099",
+      "PHIL2111",
+      "PHIL2112",
+      "PHIL2113",
+      "PHIL2115",
+      "PHIL2116",
+      "PHIL2117",
+      "PHIL3013",
+      "PHIL3014",
+      "PHIL3016",
+      "PHIL458",
+      "PHIL5112",
+      "PHIL5114",
+      "PHIL5115",
+      "PHYS1012",
+      "PHYS1022",
+      "PHYS1930",
+      "POLS1001",
+      "POLS2096",
+      "POLS4000",
+      "PPAD2099",
+      "PPAD5161",
+      "PPAD5198",
+      "PSYC2099",
+      "PSYC3202",
+      "PSYC4203",
+      "RHET1099",
+      "RHET2099",
+      "RHET3099",
+      "RHET3110",
+      "RHET3120",
+      "RHET3130",
+      "RHET3140",
+      "RHET3150",
+      "RHET3210",
+      "RHET3220",
+      "RHET3230",
+      "RHET3240",
+      "RHET3250",
+      "RHET3310",
+      "RHET3320",
+      "RHET3330",
+      "RHET3340",
+      "RHET3350",
+      "RHET4160",
+      "RHET4260",
+      "RHET4270",
+      "RHET4280",
+      "RHET4360",
+      "SCI1015",
+      "SCI1930",
+      "SCI2015",
+      "SEMR1023",
+      "SEMR1099",
+      "SEMR1110",
+      "SEMR2010",
+      "SEMR2099",
+      "SEMR3099",
+      "SEMR4018",
+      "SEMR4028",
+      "SEMR4038",
+      "SOC1099",
+      "SOC2099",
+      "SOC2201",
+      "SOC3025",
+      "SOC3030",
+      "SOC3045",
+      "SOC3050",
+      "SOC3055",
+      "SOC3060",
+      "SOC3085",
+      "SOC3202",
+      "SOC3303",
+      "SOC4203",
+      "SOC4560",
+      "THTR1099",
+      "THTR1101",
+      "THTR2099",
+      "THTR3103",
+      "THTR4703"
+    ],
+    "note": "These catalog pages do not specify concrete offering terms, so semesterAvailability defaults to ['Fall', 'Spring'] per the normalization schema."
+  },
+  {
+    "type": "semester_availability_all_terms",
+    "codes": [
+      "ALNG101",
+      "ALNG201",
+      "CHEM1005"
+    ],
+    "note": "These catalog pages explicitly mention fall, winter, spring and summer offerings. Because the schema has no Winter term, semesterAvailability is normalized to ['All']."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "AMST2096",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ANTH4107",
+    "omittedPrerequisiteCodes": [
+      "SOC3105",
+      "ANTH3105"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ARCH4980",
+    "omittedPrerequisiteCodes": [
+      "ARCH4557"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ARCH4981",
+    "omittedPrerequisiteCodes": [
+      "ARCH4541"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ARIC2096",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ARIC2097",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ARIC2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ARTV4270",
+    "omittedPrerequisiteCodes": [
+      "ARTV4269"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "CENG4981",
+    "omittedPrerequisiteCodes": [
+      "CENG4410",
+      "CENG4420",
+      "CENG4440",
+      "CENG4460"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "CORE2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "CORE4198",
+    "omittedPrerequisiteCodes": [
+      "RHET2010"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "CREL2096",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "CREL2097",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "CREL2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "CSCE1001",
+    "omittedPrerequisiteCodes": [
+      "MACT1111"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "CSCE2303",
+    "omittedPrerequisiteCodes": [
+      "ECNG2101"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "DSGN2210",
+    "omittedPrerequisiteCodes": [
+      "DSGN2200",
+      "DSGN2113"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "DSGN4270",
+    "omittedPrerequisiteCodes": [
+      "DSGN4269"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ECLT2096",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ECLT2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ECON1099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ECON4051",
+    "omittedPrerequisiteCodes": [
+      "ECON3021"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "EGPT2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "ENTR4102",
+    "omittedPrerequisiteCodes": [
+      "MGMT3201",
+      "BADM2001"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "FILM2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "FILM4250",
+    "omittedPrerequisiteCodes": [
+      "FILM3251",
+      "FILM3253",
+      "MUSC3306"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "HIST2096",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "HIST2097",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "HIST2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "HIST4219",
+    "omittedPrerequisiteCodes": [
+      "HIST3213",
+      "HIST3214"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "JRMC4425",
+    "omittedPrerequisiteCodes": [
+      "JRMC3315",
+      "JRMC3320",
+      "JRMC4415"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "JRMC4480",
+    "omittedPrerequisiteCodes": [
+      "JRMC3333",
+      "JRMC3339",
+      "JRMC4460"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "JRMC4482",
+    "omittedPrerequisiteCodes": [
+      "JRMC3320",
+      "JRMC4444"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "LING2210",
+    "omittedPrerequisiteCodes": [
+      "RHET2010"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "MACT1122",
+    "omittedPrerequisiteCodes": [
+      "MACT1121"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "MACT4135",
+    "omittedPrerequisiteCodes": [
+      "MACT3211"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "MACT4212",
+    "omittedPrerequisiteCodes": [
+      "MACT3211"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "MGMT4402",
+    "omittedPrerequisiteCodes": [
+      "BADM2001"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "MKTG4602",
+    "omittedPrerequisiteCodes": [
+      "MKTG3201",
+      "MKTG3202",
+      "FINC2101"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "MUSC2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "MUSC2400",
+    "omittedPrerequisiteCodes": [
+      "MUSC1805"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "MUSC2450",
+    "omittedPrerequisiteCodes": [
+      "MUSC1805"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "PHIL5112",
+    "omittedPrerequisiteCodes": [
+      "PHIL3010"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "PHYS1011",
+    "omittedPrerequisiteCodes": [
+      "MACT1111"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "POLS1001",
+    "omittedPrerequisiteCodes": [
+      "RHET1100",
+      "RHET2010",
+      "RHET1000",
+      "ENGL0210"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "POLS2096",
+    "omittedPrerequisiteCodes": [
+      "RHET1100",
+      "RHET2010",
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "POLS4000",
+    "omittedPrerequisiteCodes": [
+      "POLS3201"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "POLS4030",
+    "omittedPrerequisiteCodes": [
+      "RHET2010"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "PPAD2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "PSYC4062",
+    "omittedPrerequisiteCodes": [
+      "PSYC3270",
+      "PSYC3420",
+      "PSYC3800"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "RHET3210",
+    "omittedPrerequisiteCodes": [
+      "RHET2010"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "SOC2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "THTR2099",
+    "omittedPrerequisiteCodes": [
+      "RHET1000"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  },
+  {
+    "type": "external_prerequisite_omission",
+    "code": "THTR4703",
+    "omittedPrerequisiteCodes": [
+      "THTR3401",
+      "THTR3301",
+      "THTR4103"
+    ],
+    "note": "These prerequisite courses are linked from the catalog page but are outside the scraped curriculum categories, so they are retained only in prerequisiteText."
+  }
+]

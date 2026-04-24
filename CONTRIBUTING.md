@@ -10,7 +10,7 @@ Welcome to the Cursus project! This guide will help you get started as a contrib
 
 Make sure you have the following installed:
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (LocalDB is fine for development)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) (recommended) or VS Code with C# extension
 - [Git](https://git-scm.com/)
@@ -34,47 +34,48 @@ dotnet run
 
 ---
 
-## Git Workflow
+## Implementation Workflow (Gitflow Lite)
 
-We use a **branch-per-feature** workflow with `main` and `develop` branches:
+We use a customized **Gitflow Lite** workflow adapted for our sprint structure, consisting of three main branch types: `master`, `develop`, and sprint-specific `release/` branches.
 
+### Branch Flow
+
+1. **Feature to Develop:** Developers create `feature/*` or `fix/*` branches dynamically from `develop`. When finished, they open a Pull Request (PR) to merge back into `develop`.
+2. **Develop to Sprint:** At the end of the sprint, we create a `release/sprint-X` branch from `develop`. We perform final integration testing and bug fixes exclusively here to keep `develop` unblocked for the next sprint.
+3. **Sprint to Master:** Once the sprint release is stable, we merge `release/sprint-X` into `master` (and back into `develop` if any bug fixes were made during the release phase).
+
+```text
+master (production-ready demos)
+  └── release/sprint-1 (sprint finalization)
+        └── develop (active integration branch)
+              ├── feature/auth-system
+              ├── feature/course-crud
+              └── fix/gpa-calculation-bug
 ```
-main (production-ready)
-  └── develop (integration branch)
-        ├── feature/auth-system
-        ├── feature/course-crud
-        ├── feature/impact-analyzer
-        └── fix/gpa-calculation-bug
-```
 
-### Rules
+---
 
-1. **Never push directly to `main` or `develop`.** Always create a feature branch and open a Pull Request.
-2. **Branch naming convention:**
-   - New features: `feature/short-description` (e.g., `feature/course-map`)
-   - Bug fixes: `fix/short-description` (e.g., `fix/gpa-rounding`)
-   - Refactors: `refactor/short-description`
-3. **Keep branches short-lived.** Aim to merge within 2–3 days. Don't let branches go stale.
-4. **Pull from `develop` before starting new work:**
+## Best Practices & Pull Requests
+
+To keep our codebase healthy and prevent "broken" code from blocking teammates, follow these best practices:
+
+1. **Protection Rules for `develop`:** 
+   We enforce strict branch protection on `develop`. You cannot merge a PR unless it has:
+   - At least one **approved peer review**.
+   - A passing build (CI check). Our CI pipeline ([`.github/workflows/dotnet-ci.yml`](.github/workflows/dotnet-ci.yml)) automatically builds the code to catch errors.
+   - *Never push directly to `master` or `develop`.*
+2. **Small PRs:** 
+   Encourage the team to keep feature branches small. This makes code reviews faster, reduces cognitive load, and minimizes painful merge conflicts in the Cursus project.
+3. **Squash Merges:** 
+   When merging `feature/*` branches into `develop`, always use **Squash and Merge**. This keeps the `develop` history clean by combining many small, noisy commits into one descriptive, atomic commit.
+4. **Delete Branches:** 
+   Delete your `feature/*` branches immediately after they are merged. This keeps the repository tidy and prevents confusion.
+5. **Always pull before starting:**
    ```bash
    git checkout develop
    git pull origin develop
    git checkout -b feature/your-feature-name
    ```
-
----
-
-## Pull Request Process
-
-1. **Create a PR** from your feature branch to `develop`.
-2. **Write a clear PR title** that describes what changed (e.g., "Add course CRUD admin panel").
-3. **Describe what you did** in the PR description:
-   - What feature/fix does this PR implement?
-   - What files were changed and why?
-   - Any known issues or things to watch out for?
-4. **Request at least 1 reviewer** from the team.
-5. **Wait for approval** before merging. Do not merge your own PR without a review.
-6. **Use "Squash and Merge"** when merging to keep `develop` history clean.
 
 ### PR Checklist
 
@@ -233,8 +234,8 @@ A feature is ready for PR when:
 
 | Channel | Purpose |
 |---|---|
-| **Jira** | Sprint tracking, ticket management, SDLC documents |
-| **WhatsApp / Discord** | Daily async standups, quick questions |
+| **ClickUp** | Sprint tracking, ticket management, SDLC documents |
+| **WhatsApp** | Daily async standups, quick questions |
 | **GitHub PRs** | Code reviews, technical discussions |
 | **Weekly sync** | Sprint planning every 2 weeks |
 
