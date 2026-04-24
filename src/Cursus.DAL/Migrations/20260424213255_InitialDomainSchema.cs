@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIsActiveToDepartment : Migration
+    public partial class InitialDomainSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

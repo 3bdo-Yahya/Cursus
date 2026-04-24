@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260424201517_AddIsActiveToDepartment")]
-    partial class AddIsActiveToDepartment
+    [Migration("20260424213255_InitialDomainSchema")]
+    partial class InitialDomainSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
