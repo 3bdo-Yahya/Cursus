@@ -2,9 +2,9 @@
    Cursus Custom Styles (Sprint 1)
    ========================================= */
 
-/* Page spacing */
-body {
-    padding: 20px;
+/* Page spacing (scoped to main content area, not the entire document) */
+main {
+    padding-top: 20px;
 }
 
 /* Headings */
