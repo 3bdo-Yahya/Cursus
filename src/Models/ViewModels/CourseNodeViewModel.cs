@@ -8,12 +8,12 @@
         /// <summary>
         /// Gets or sets the course code.
         /// </summary>
-        public string Code { get; set; }
+        public required string Code { get; set; }
 
         /// <summary>
         /// Gets or sets the course name.
         /// </summary>
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the number of credit hours for the course.
@@ -28,6 +28,6 @@
         /// <summary>
         /// Gets or sets the grade achieved in the course.
         /// </summary>
-        public string Grade { get; set; }
+        public required string Grade { get; set; }
     }
 }
