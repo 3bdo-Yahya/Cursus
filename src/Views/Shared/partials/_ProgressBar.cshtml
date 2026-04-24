@@ -26,11 +26,10 @@
 *@
 
 @{
-    // Prevent division by zero
-    var safeTotal = Model.total == 0 ? 1 : Model.total;
-
-    // Calculate completion percentage
-    var percentage = (Model.completed * 100) / safeTotal;
+    // Handle invalid totals and clamp value to keep the progress width valid.
+    var percentage = Model.total <= 0
+        ? 0
+        : System.Math.Clamp((Model.completed * 100) / Model.total, 0, 100);
 
     // Determine bar color based on progress
     var barClass = percentage >= 70 ? "bg-success"
@@ -48,6 +47,10 @@
     <!-- Progress bar -->
     <div class="progress" style="height:10px;">
         <div class="progress-bar @barClass"
+             role="progressbar"
+             aria-valuenow="@percentage"
+             aria-valuemin="0"
+             aria-valuemax="100"
              style="width:@percentage%">
         </div>
     </div>
