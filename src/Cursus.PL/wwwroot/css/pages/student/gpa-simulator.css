@@ -1,0 +1,536 @@
+/* ── Page Tabs
+ ───────────── */
+.page-tabs {
+  display:     flex;
+  gap:         0;
+  border-bottom: 1px solid var(--c-border);
+}
+.page-tab {
+  padding:       10px 20px;
+  font-size:     13.5px;
+  font-weight:   600;
+  color:         var(--c-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition:    color 0.18s ease, border-color 0.18s ease !important;
+  white-space:   nowrap;
+}
+.page-tab:hover  { color: var(--c-primary); }
+.page-tab.active { 
+  color: var(--c-primary); 
+  border-color: var(--c-primary); 
+}
+
+/* ── Current Status Bar ─────────────────────────────────── */
+.status-bar-card {
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 18px;
+  overflow:      hidden;
+}
+.status-bar-item {
+  flex:           1;
+  text-align:     center;
+  padding:        16px 12px;
+  position:       relative;
+  transition:     background-color 0.15s ease !important;
+}
+.status-bar-item:not(:last-child)::after {
+  content:  '';
+  position: absolute;
+  right:    0; top: 25%; bottom: 25%;
+  width:    1px;
+  background: var(--c-border);
+}
+.status-bar-item:hover { background: rgba(79,70,229,.03); }
+.status-bar-value {
+  font-size:   1.7rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color:       var(--c-text);
+  line-height: 1;
+}
+.status-bar-label {
+  font-size:    10px;
+  font-weight:  700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color:        var(--c-muted);
+  margin-top:   4px;
+}
+
+/* ── Grade Prediction Table ─────────────────────────────── */
+.grade-table-card {
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 18px;
+}
+.grade-table-head {
+  background:    var(--c-bg);
+  border-bottom: 1px solid var(--c-border);
+  padding:       12px 20px;
+}
+.grade-table-row {
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  padding:       11px 20px;
+  border-bottom: 1px solid var(--c-border);
+  transition:    background-color 0.15s ease !important;
+}
+.grade-table-row:last-child { border-bottom: none; }
+.grade-table-row:hover { background: rgba(79,70,229,.028); }
+html.dark .grade-table-row:hover { background: rgba(255,255,255,.028); }
+
+.grade-row-code {
+  font-size:   11px;
+  font-weight: 700;
+  padding:     2px 8px;
+  border-radius: 6px;
+  background:  var(--c-bg);
+  border:      1px solid var(--c-border);
+  color:       var(--c-text-sub);
+  flex-shrink: 0;
+  min-width:   52px;
+  text-align:  center;
+}
+.grade-row-name {
+  flex:        1;
+  font-size:   13px;
+  font-weight: 600;
+  color:       var(--c-text);
+}
+.grade-row-credits {
+  font-size:   12px;
+  font-weight: 600;
+  color:       var(--c-muted);
+  flex-shrink: 0;
+  width:       38px;
+  text-align:  center;
+}
+
+/* ── Grade Select Dropdown ──────────────────────────────── */
+.grade-select-wrap {
+  position:   relative;
+  flex-shrink: 0;
+  width:       110px;
+}
+.grade-select {
+  width:         100%;
+  padding:       7px 30px 7px 11px;
+  border-radius: 10px;
+  border:        1.5px solid var(--c-border);
+  background:    var(--c-surface);
+  color:         var(--c-text);
+  font-size:     13px;
+  font-weight:   700;
+  font-family:   'Outfit', sans-serif;
+  cursor:        pointer;
+  appearance:    none;
+  -webkit-appearance: none;
+  /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238492A6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); */
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+.grade-select:focus {
+  outline:    none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(79,70,229,.12);
+}
+
+.grade-select.grade-a {
+  border-color: rgba(16,185,129,.5);
+  background-color: rgba(16,185,129,.05);
+  color: #047857;
+}
+html.dark .grade-select.grade-a { color: #34d399; background-color: rgba(16,185,129,.08); }
+.grade-select.grade-b {
+  border-color: rgba(79,70,229,.4);
+  background-color: rgba(79,70,229,.04);
+  color: var(--c-primary);
+}
+.grade-select.grade-c {
+  border-color: rgba(245,158,11,.4);
+  background-color: rgba(245,158,11,.04);
+  color: #b45309;
+}
+html.dark .grade-select.grade-c { color: #fcd34d; }
+.grade-select.grade-d {
+  border-color: rgba(239,68,68,.4);
+  background-color: rgba(239,68,68,.04);
+  color: #b91c1c;
+}
+html.dark .grade-select.grade-d { color: #fca5a5; }
+.grade-select.grade-f {
+  border-color: rgba(239,68,68,.6);
+  background-color: rgba(239,68,68,.08);
+  color: #dc2626;
+}
+
+/* ── Grade Improvement Section ──────────────────────────── */
+.improvement-card {
+  background:    var(--c-surface);
+  border:        1.5px solid rgba(245,158,11,.3);
+  border-radius: 18px;
+}
+html.dark .improvement-card { border-color: rgba(245,158,11,.2); }
+.improvement-header {
+  background:    rgba(245,158,11,.07);
+  border-bottom: 1px solid rgba(245,158,11,.15);
+  padding:       12px 20px;
+  display:       flex;
+  align-items:   center;
+  gap:           10px;
+}
+html.dark .improvement-header { background: rgba(245,158,11,.06); }
+
+.original-grade-chip {
+  font-size:    10.5px;
+  font-weight:  700;
+  padding:      3px 8px;
+  border-radius: 6px;
+  background:   rgba(239,68,68,.12);
+  color:        #b91c1c;
+  flex-shrink:  0;
+}
+html.dark .original-grade-chip { 
+  background: rgba(239,68,68,.18); 
+  color: #fca5a5; 
+}
+
+/* ── Results Sidebar ────────────────────────────────────── */
+.results-hero {
+  border-radius: 20px;
+  background:    linear-gradient(135deg, #2d2a8c 0%, #4F46E5 50%, #7c3aed 100%);
+  padding:       28px 24px;
+  color:         white;
+  position:      relative;
+  overflow:      hidden;
+  box-shadow:    0 16px 48px rgba(79,70,229,.28);
+}
+.results-hero::before {
+  content:     '';
+  position:    absolute;
+  top:         -50px; right: -30px;
+  width:       200px; height: 200px;
+  border-radius: 50%;
+  background:  radial-gradient(circle, rgba(255,255,255,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+@keyframes numPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.gpa-pop { animation: numPop 0.28s ease-out; }
+
+.predicted-gpa-label {
+  font-size:    9.5px;
+  font-weight:  700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity:      0.65;
+  margin-bottom: 6px;
+}
+.predicted-gpa-value {
+  font-size:    2.6rem;
+  font-weight:  900;
+  letter-spacing: -2px;
+  line-height:  1;
+}
+.predicted-gpa-sublabel {
+  font-size:   10.5px;
+  font-weight: 600;
+  opacity:     0.65;
+  margin-top:  4px;
+}
+
+.standing-pill {
+  margin-top:    16px;
+  padding:       8px 14px;
+  border-radius: 10px;
+  font-size:     12px;
+  font-weight:   700;
+  text-align:    center;
+  background:    rgba(255,255,255,.12);
+  transition:    background-color 0.25s ease !important;
+}
+.standing-pill.good     { background: rgba(16,185,129,.25); }
+.standing-pill.warning  { background: rgba(245,158,11,.3);  }
+.standing-pill.danger   { background: rgba(239,68,68,.3);   }
+
+/* ── Honor Badge ────────────────────────────────────────── */
+@keyframes honorShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.honor-badge-wrap {
+  margin-top:    12px;
+  padding:       8px 14px;
+  border-radius: 10px;
+  text-align:    center;
+  font-size:     12px;
+  font-weight:   700;
+  display:       none;
+}
+.honor-badge-wrap.visible { display: block; }
+.honor-president {
+  background:    linear-gradient(90deg, rgba(251,191,36,.2), rgba(251,191,36,.35), rgba(251,191,36,.2));
+  background-size: 200% 100%;
+  animation:     honorShimmer 2.5s linear infinite;
+  color:         #fde68a;
+}
+.honor-dean {
+  background:  rgba(165,180,252,.2);
+  color:       #c7d2fe;
+}
+.honor-list {
+  background:  rgba(255,255,255,.1);
+  color:       rgba(255,255,255,.8);
+}
+
+/* ── Target GPA Card ────────────────────────────────────── */
+.target-card {
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 18px;
+  padding:       20px;
+}
+
+/* Range slider */
+input[type="range"].gpa-slider {
+  -webkit-appearance: none;
+  appearance:    none;
+  width:         100%;
+  height:        5px;
+  border-radius: 99px;
+  background:    var(--c-border);
+  outline:       none;
+  cursor:        pointer;
+  transition:    none !important;
+}
+input[type="range"].gpa-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width:         18px;
+  height:        18px;
+  border-radius: 50%;
+  background:    var(--c-primary);
+  box-shadow:    0 2px 8px rgba(79,70,229,.4);
+  cursor:        pointer;
+  transition:    transform 0.15s ease, box-shadow 0.15s ease;
+}
+input[type="range"].gpa-slider:hover::-webkit-slider-thumb {
+  transform:  scale(1.15);
+  box-shadow: 0 3px 12px rgba(79,70,229,.55);
+}
+input[type="range"].gpa-slider::-moz-range-thumb {
+  width:        18px;
+  height:       18px;
+  border-radius: 50%;
+  background:   var(--c-primary);
+  border:       none;
+  cursor:       pointer;
+}
+
+.target-result {
+  margin-top:    12px;
+  border-radius: 10px;
+  padding:       10px 12px;
+  font-size:     12px;
+  line-height:   1.6;
+  min-height:    48px;
+}
+.target-result.reachable {
+  background:    rgba(79,70,229,.07);
+  border:        1px solid rgba(79,70,229,.2);
+  color:         var(--c-primary);
+}
+html.dark .target-result.reachable {
+  background: rgba(79,70,229,.12);
+  color: #a5b4fc;
+}
+.target-result.achieved {
+  background:    rgba(16,185,129,.07);
+  border:        1px solid rgba(16,185,129,.2);
+  color:         #047857;
+}
+html.dark .target-result.achieved { 
+  color: #34d399; 
+  background: rgba(16,185,129,.1); 
+}
+.target-result.unreachable {
+  background:    rgba(239,68,68,.06);
+  border:        1px solid rgba(239,68,68,.2);
+  color:         #b91c1c;
+}
+html.dark .target-result.unreachable { 
+  color: #fca5a5; 
+  background: rgba(239,68,68,.1); 
+}
+
+/* ── Stats Card ───────────────────────────────────── */
+.stats-card {
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 18px;
+  padding:       20px;
+}
+.stats-row {
+  display:       flex;
+  align-items:   center;
+  justify-content: space-between;
+  padding:       7px 0;
+  border-bottom: 1px solid var(--c-border);
+  font-size:     13px;
+}
+.stats-row:last-child { border-bottom: none; }
+.stats-label { color: var(--c-muted); }
+.stats-value { 
+  font-weight: 700; 
+  color: var(--c-text); 
+}
+
+/* ── CGPA ───────────────────────────── */
+.change-positive { color: #6ee7b7; }
+.change-negative { color: #fca5a5; }
+.change-neutral  { opacity: .6; }
+
+/* ── Custom Grade Dropdown ───────────────────────────────── */
+.custom-grade-select {
+  position:    relative;
+  flex-shrink: 0;
+  width:       110px;
+  user-select: none;
+}
+.cg-trigger {
+  display:       flex;
+  align-items:   center;
+  justify-content: space-between;
+  padding:       7px 10px;
+  border-radius: 10px;
+  border:        1.5px solid var(--c-border);
+  background:    var(--c-surface);
+  cursor:        pointer;
+  transition:    border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+.cg-trigger:hover {
+  border-color: var(--c-primary);
+  box-shadow:   0 0 0 3px rgba(79,70,229,.08);
+}
+.custom-grade-select.open .cg-trigger {
+  border-color: var(--c-primary);
+  box-shadow:   0 0 0 3px rgba(79,70,229,.12);
+}
+.cg-value {
+  font-size:   13px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  color:       var(--c-text);
+}
+.cg-arrow {
+  color:       var(--c-muted);
+  transition:  transform 0.18s ease !important;
+  flex-shrink: 0;
+}
+.cg-dropdown {
+  display:       none;
+  position:      absolute;
+  top:           calc(100% + 4px);
+  left:          0;
+  z-index:       9999;
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 12px;
+  box-shadow:    0 8px 24px rgba(0,0,0,.12);
+  overflow-y:    auto;
+  max-height:    320px;
+  min-width:     110px;
+  animation:     dropIn .15s ease both;
+}
+html.dark .cg-dropdown { box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+.custom-grade-select.open .cg-dropdown { display: block; }
+
+.cg-option {
+  padding:     6px 12px;
+  font-size:   13px;
+  font-weight: 600;
+  color:       var(--c-text);
+  cursor:      pointer;
+  transition:  background-color 0.1s ease !important;
+  font-family: 'Outfit', sans-serif;
+}
+.cg-option:hover   { background: rgba(79,70,229,.06); }
+.cg-option.active  { background: rgba(79,70,229,.08); color: var(--c-primary); }
+html.dark .cg-option:hover  { background: rgba(255,255,255,.05); }
+html.dark .cg-option.active { background: rgba(79,70,229,.15); }
+
+
+.cg-trigger.grade-a { 
+  border-color:rgba(16,185,129,.5);  
+  background:rgba(16,185,129,.05); 
+}
+.cg-trigger.grade-a .cg-value { 
+  color: #047857; 
+}
+html.dark .cg-trigger.grade-a .cg-value { 
+  color: #34d399; 
+}
+.cg-trigger.grade-b { 
+  border-color:rgba(79,70,229,.4);   
+  background:rgba(79,70,229,.04); 
+}
+.cg-trigger.grade-b .cg-value { 
+  color: var(--c-primary); 
+}
+.cg-trigger.grade-c { 
+  border-color:rgba(245,158,11,.4);  
+  background:rgba(245,158,11,.04); 
+}
+.cg-trigger.grade-c .cg-value { 
+  color: #b45309; 
+}
+html.dark .cg-trigger.grade-c .cg-value { 
+  color: #fcd34d; 
+}
+.cg-trigger.grade-d { 
+  border-color:rgba(239,68,68,.4);   
+  background:rgba(239,68,68,.04); 
+}
+.cg-trigger.grade-d .cg-value { 
+  color: #b91c1c; 
+}
+html.dark .cg-trigger.grade-d .cg-value { 
+  color: #fca5a5; 
+}
+.cg-trigger.grade-f { 
+  border-color:rgba(239,68,68,.6);   
+  background:rgba(239,68,68,.08); 
+}
+.cg-trigger.grade-f .cg-value { 
+  color: #dc2626; 
+}
+
+/* Grade colors for dropdown options */
+.cg-option.grade-a { color: #047857; }
+.cg-option.grade-b { color: var(--c-primary); }
+.cg-option.grade-c { color: #b45309; }
+.cg-option.grade-d { color: #b91c1c; }
+.cg-option.grade-f { color: #dc2626; }
+html.dark .cg-option.grade-a { color: #34d399; }
+html.dark .cg-option.grade-c { color: #fcd34d; }
+html.dark .cg-option.grade-d, html.dark .cg-option.grade-f { color: #fca5a5; }
+
+.standing-pill { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 6px; 
+}
+.honor-badge-wrap.visible { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 6px; 
+}

@@ -1,0 +1,106 @@
+@model IEnumerable<Course>
+
+@{
+    ViewData["Title"] = "Courses";
+    var selectedUniversityId = ViewData["SelectedUniversityId"] as int?;
+    var selectedDepartmentId = ViewData["SelectedDepartmentId"] as int?;
+    var searchTerm = ViewData["SearchTerm"] as string;
+    var universities = ViewData["Universities"] as IEnumerable<University>;
+    var departments = ViewData["Departments"] as IEnumerable<Department>;
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Courses</h1>
+        <p class="text-muted mb-0">Browse the active course catalog by department or search term.</p>
+    </div>
+</div>
+
+<form method="get" class="card shadow-sm mb-4">
+    <div class="card-body row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label" for="searchTerm">Search</label>
+            <input id="searchTerm" name="searchTerm" value="@searchTerm" class="form-control" placeholder="Search by code or name" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" for="universityId">University</label>
+            <select id="universityId" name="universityId" class="form-select">
+                <option value="">All universities</option>
+                @if (universities is not null)
+                {
+                    foreach (var university in universities)
+                    {
+                        if (selectedUniversityId == university.Id)
+                        {
+                            <option value="@university.Id" selected>@university.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@university.Id">@university.Name</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" for="departmentId">Department</label>
+            <select id="departmentId" name="departmentId" class="form-select">
+                <option value="">All departments</option>
+                @if (departments is not null)
+                {
+                    foreach (var department in departments)
+                    {
+                        if (selectedDepartmentId == department.Id)
+                        {
+                            <option value="@department.Id" selected>@department.Name (@department.University?.Name)</option>
+                        }
+                        else
+                        {
+                            <option value="@department.Id">@department.Name (@department.University?.Name)</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
+</form>
+
+<div class="row g-4">
+    @if (Model.Any())
+    {
+        foreach (var course in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                            <div>
+                                <h2 class="h5 mb-1">@course.Code</h2>
+                                <p class="text-muted mb-0">@course.Name</p>
+                            </div>
+                            <span class="badge text-bg-secondary">@course.CourseType</span>
+                        </div>
+                        <dl class="row small mb-3">
+                            <dt class="col-5">Department</dt>
+                            <dd class="col-7">@course.Department?.Name</dd>
+                            <dt class="col-5">Credits</dt>
+                            <dd class="col-7">@course.CreditHours</dd>
+                            <dt class="col-5">Semester</dt>
+                            <dd class="col-7">@course.SemesterAvailability</dd>
+                        </dl>
+                        <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-outline-primary mt-auto">View details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="alert alert-info mb-0">No active courses matched your search.</div>
+        </div>
+    }
+</div>

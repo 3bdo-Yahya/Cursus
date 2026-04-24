@@ -39,7 +39,7 @@ Models standard credit-hour system rules: academic standing (Good â†’ Warning â†
 
 | Layer          | Technology                                  |
 |----------------|---------------------------------------------|
-| Application    | ASP.NET Core 8 MVC, C#, Razor Views        |
+| Application    | ASP.NET Core 10 MVC, C#, Razor Views       |
 | Styling        | Bootstrap 5 + custom CSS                    |
 | Graph Viz      | Cytoscape.js (interactive prerequisite map) |
 | Database       | SQL Server + Entity Framework Core          |
@@ -71,7 +71,7 @@ Cursus/
 
 ### Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (LocalDB or Express)
 - A code editor (Visual Studio 2022 or VS Code)
 
@@ -93,6 +93,8 @@ dotnet run
 ```
 
 The app will be available at `https://localhost:5001` (or the port shown in the terminal).
+
+> **Development only:** If you enable identity seeding for local testing, do not use a shared default admin password. Provide any seed admin credentials through secure local configuration such as environment variables or .NET user-secrets, and do not enable or rely on seeded credentials in shared, staging, or production environments.
 
 ---
 

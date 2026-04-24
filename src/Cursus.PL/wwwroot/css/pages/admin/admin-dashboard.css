@@ -1,0 +1,466 @@
+/* ── Page load stagger ─────────────────────────────────── */
+.anim-fade-up   { animation: fadeUp .55s ease both; }
+.anim-fade-up-1 { animation: fadeUp .55s .07s ease both; }
+.anim-fade-up-2 { animation: fadeUp .55s .14s ease both; }
+.anim-fade-up-3 { animation: fadeUp .55s .21s ease both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ── Metric cards ──────────────────────────────────────── */
+.metric-card {
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.metric-card:hover {
+  transform:    translateY(-4px);
+  box-shadow:   0 12px 32px rgba(79,70,229,.11);
+  border-color: rgba(79,70,229,.25);
+}
+
+.failure-alert-card {
+  border-left: 3px solid #f59e0b !important;
+}
+.failure-alert-card:hover {
+  border-color: #f59e0b !important;
+  box-shadow: 0 12px 32px rgba(245,158,11,.12);
+}
+
+
+/* ── Quick action cards ──────────────────────────────────*/
+.action-card {
+  text-decoration: none;
+  border-radius:   14px;
+  padding:         14px !important;
+  transition:      transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.action-card:hover {
+  transform:    translateY(-3px);
+  box-shadow:   0 8px 24px rgba(79,70,229,.10);
+  border-color: rgba(79,70,229,.25);
+}
+.action-card:hover .action-icon {
+  transform: scale(1.08);
+}
+.action-icon {
+  transition: transform 0.2s ease, background-color 0.35s ease;
+}
+
+
+/* ── Activity feed rows ──────────────────────────────────*/
+.activity-row {
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+}
+.activity-row:hover {
+  background: rgba(79,70,229,.03);
+}
+html.dark .activity-row:hover {
+  background: rgba(255,255,255,.025);
+}
+
+
+/* ── Failure rate table rows ─────────────────────────────*/
+.failure-row {
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+}
+.failure-row:hover {
+  background: rgba(79,70,229,.03);
+}
+html.dark .failure-row:hover {
+  background: rgba(255,255,255,.025);
+}
+
+/* Failure bar */
+@keyframes fillBar {
+  from { width: 0; }
+  to   { width: var(--bar-w); }
+}
+.failure-bar {
+  width: 0;
+  height: 100%;
+  border-radius: 99px;
+  animation: fillBar 1s 0.4s cubic-bezier(.4,0,.2,1) forwards;
+}
+.failure-table-header {
+  background: rgba(0,0,0,.018);
+}
+html.dark .failure-table-header {
+  background: rgba(255,255,255,.025);
+}
+
+
+/* ── Scroll animations ─────────────────────────────────── */
+[data-scroll] {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition:
+    opacity   0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+[data-scroll="fade-up"]    { transform: translateY(32px); }
+[data-scroll="fade-left"]  { transform: translateX(32px); }
+[data-scroll="fade-right"] { transform: translateX(-32px); }
+[data-scroll="zoom"]       { transform: scale(0.94); }
+[data-scroll].in-view { opacity: 1; transform: none; }
+
+[data-scroll-group] > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity   0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+[data-scroll-group].in-view > *:nth-child(1) { transition-delay: 0s !important; }
+[data-scroll-group].in-view > *:nth-child(2) { transition-delay: 0.08s !important; }
+[data-scroll-group].in-view > *:nth-child(3) { transition-delay: 0.16s !important; }
+[data-scroll-group].in-view > *:nth-child(4) { transition-delay: 0.24s !important; }
+[data-scroll-group].in-view > * { opacity: 1; transform: none; }
+
+/* ── Notification Panel ──────────────────────────────────*/
+@keyframes panelDrop {
+  from { opacity: 0; transform: translateY(-8px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
+}
+.notif-panel { animation: panelDrop .2s ease both; min-width: 320px; }
+
+@keyframes badgePop {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.3); }
+}
+.notif-dot { animation: badgePop 2s ease-in-out 2s 3; }
+
+
+/* ── Icon Boxes ──────────────────────────────────────────*/
+.icon-box-blue   { background: var(--icon-blue-bg); }
+.icon-box-purple { background: var(--icon-purple-bg); }
+.icon-box-amber  { background: var(--icon-amber-bg); }
+
+
+/* ── Department Switcher ─────────────────────────────────*/
+.dept-switcher-bar {
+  padding:       10px 14px;
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 14px;
+}
+
+.dept-tab {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             6px;
+  padding:         6px 14px;
+  border-radius:   99px;
+  border:          1px solid var(--c-border);
+  background:      transparent;
+  color:           var(--c-muted);
+  font-size:       13px;
+  font-weight:     500;
+  cursor:          pointer;
+  transition:      background-color 0.18s ease, color 0.18s ease,
+                   border-color 0.18s ease, transform 0.15s ease;
+  font-family:     'Outfit', system-ui, sans-serif;
+}
+.dept-tab:hover {
+  background:   rgba(79,70,229,.06);
+  color:        var(--c-primary);
+  border-color: rgba(79,70,229,.25);
+  transform:    translateY(-1px);
+}
+.dept-tab-active {
+  background:   var(--c-soft) !important;
+  color:        var(--c-primary) !important;
+  border-color: rgba(79,70,229,.3) !important;
+  font-weight:  700 !important;
+}
+html.dark .dept-tab-active {
+  background:   rgba(79,70,229,.2) !important;
+  border-color: rgba(79,70,229,.4) !important;
+}
+html.dark .dept-tab:hover {
+  background:   rgba(79,70,229,.14);
+}
+
+/* Smooth metric value updates */
+.metric-value {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.metric-value.updating {
+  opacity:   0;
+  transform: translateY(6px);
+}
+
+.custom-select-wrap {
+  position: relative;
+}
+
+/* ── Trigger button ──────────────────────────────────────*/
+.custom-select-btn {
+  display:         flex;
+  align-items:     center;
+  gap:             8px;
+  width:           100%;
+  padding:         7px 10px 7px 12px;
+  background:      var(--c-surface);
+  border:          1px solid var(--c-border);
+  border-radius:   10px;
+  font-size:       13px;
+  font-weight:     500;
+  color:           var(--c-text);
+  cursor:          pointer;
+  text-align:      left;
+  transition:      border-color 0.15s ease, box-shadow 0.15s ease,
+                   background-color 0.35s ease;
+  font-family:     'Outfit', system-ui, sans-serif;
+  white-space:     nowrap;
+  overflow:        hidden;
+}
+.custom-select-btn:hover {
+  border-color: rgba(79,70,229,.35);
+}
+.custom-select-btn:focus,
+.custom-select-btn.open {
+  border-color: var(--c-primary);
+  box-shadow:   0 0 0 3px rgba(79,70,229,.12);
+  outline:      none;
+}
+
+.custom-select-icon {
+  display:     flex;
+  align-items: center;
+  color:       var(--c-muted);
+  flex-shrink: 0;
+}
+.custom-select-value {
+  flex:         1;
+  overflow:     hidden;
+  text-overflow: ellipsis;
+  font-size:    13px;
+}
+.custom-select-arrow {
+  color:      var(--c-muted);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.custom-select-btn.open .custom-select-arrow {
+  transform: rotate(180deg);
+}
+
+/* Filter variant — same height as old filter-input */
+.filter-select-btn {
+  height:      38px;
+  padding:     0 10px 0 12px;
+}
+.filter-select-btn .custom-select-value {
+  font-size: 13px;
+  color:     var(--c-text);
+}
+
+
+/* ── Dropdown panel ──────────────────────────────────────*/
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.custom-dropdown {
+  position:      absolute;
+  top:           calc(100% + 5px);
+  left:          0;
+  min-width:     100%;
+  max-height:    260px;
+  overflow-y:    auto;
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 12px;
+  box-shadow:    0 8px 28px rgba(0,0,0,.12);
+  z-index:       600;
+  display:       none;
+  animation:     dropIn .18s ease both;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
+}
+html.dark .custom-dropdown {
+  box-shadow: 0 8px 28px rgba(0,0,0,.4);
+}
+.custom-dropdown.open { display: block; }
+
+/* ── Dropdown items ──────────────────────────────────────*/
+.custom-dropdown-item {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  padding:     9px 12px;
+  cursor:      pointer;
+  font-size:   13px;
+  color:       var(--c-text);
+  border-radius: 0;
+  transition:  background-color 0.1s ease;
+  border-bottom: 1px solid var(--c-border);
+}
+.custom-dropdown-item:last-child { border-bottom: none; }
+.custom-dropdown-item:first-child { border-radius: 12px 12px 0 0; }
+.custom-dropdown-item:last-child  { border-radius: 0 0 12px 12px; }
+.custom-dropdown-item:only-child  { border-radius: 12px; }
+
+.custom-dropdown-item:hover {
+  background: rgba(79,70,229,.05);
+}
+html.dark .custom-dropdown-item:hover {
+  background: rgba(255,255,255,.04);
+}
+.custom-dropdown-item.selected {
+  background: var(--c-soft);
+}
+html.dark .custom-dropdown-item.selected {
+  background: rgba(79,70,229,.15);
+}
+
+.custom-dropdown-check {
+  color:      var(--c-primary);
+  flex-shrink: 0;
+  opacity:    0;
+  font-size:  15px !important;
+}
+.custom-dropdown-item.selected .custom-dropdown-check { opacity: 1; }
+
+.custom-dropdown-label {
+  flex:      1;
+  font-size: 13px;
+  font-weight: 500;
+}
+.custom-dropdown-item.selected .custom-dropdown-label {
+  color:       var(--c-primary);
+  font-weight: 700;
+}
+.custom-dropdown-sub {
+  font-size: 11px;
+  color:     var(--c-muted);
+  margin-top: 1px;
+}
+
+/* Mini badges inside dropdown */
+.dropdown-badge {
+  display:       inline-flex;
+  padding:       2px 6px;
+  border-radius: 5px;
+  font-size:     10px;
+  font-weight:   700;
+  margin-left:   auto;
+}
+.badge-core-mini  { background: var(--badge-core-bg);  color: var(--badge-core-text);  border: 1px solid var(--badge-core-bd); }
+.badge-elec-mini  { background: var(--badge-elec-bg);  color: var(--badge-elec-text);  border: 1px solid var(--badge-elec-bd); }
+
+/* Dept colour dots */
+.dept-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-left: auto;
+}
+.dept-dot-cs { background: #4F46E5; }
+.dept-dot-is { background: #059669; }
+.dept-dot-ai { background: #7c3aed; }
+.dept-dot-it { background: #0ea5e9; }
+
+
+/* ── Department icon colours ─────────────────────────────*/
+.dept-icon-cs { color: #4F46E5; }
+.dept-icon-is { color: #059669; }
+.dept-icon-ai { color: #7c3aed; }
+.dept-icon-it { color: #0ea5e9; }
+
+
+/* ══════════════════════════════════════════════════════════
+   CONTEXT BAR  (university + department selector)
+══════════════════════════════════════════════════════════ */
+.context-bar {
+  padding: 0 !important;
+  overflow: visible !important;
+}
+.context-bar-inner {
+  display:     flex;
+  align-items: center;
+  gap:         0;
+  flex-wrap:   wrap;
+  padding:     12px 16px;
+  gap:         12px;
+}
+.context-segment {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  flex-shrink: 0;
+}
+.context-label {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+  font-size:   11px;
+  font-weight: 700;
+  color:       var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.context-divider {
+  width:      1px;
+  height:     28px;
+  background: var(--c-border);
+  flex-shrink: 0;
+}
+
+#uni-wrap .custom-select-btn { min-width: 230px; }
+#dept-ctx-wrap .custom-select-btn { min-width: 200px; }
+
+.context-chips {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  flex-wrap:   wrap;
+}
+.context-chip {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           4px;
+  padding:       4px 10px;
+  border-radius: 99px;
+  font-size:     11px;
+  font-weight:   600;
+  color:         var(--c-muted);
+  background:    var(--c-bg);
+  border:        1px solid var(--c-border);
+}
+.context-chip-green {
+  color:        #059669;
+  background:   rgba(5,150,105,.07);
+  border-color: rgba(5,150,105,.2);
+}
+html.dark .context-chip-green {
+  color:        #6ee7b7;
+  background:   rgba(5,150,105,.12);
+  border-color: rgba(5,150,105,.25);
+}
+
+
+/* ── User avatar button & dropdown (shared) ──────────────*/
+.user-avatar-btn {
+  background:    none;
+  border:        none;
+  cursor:        pointer;
+  padding:       4px 6px 4px 4px;
+  border-radius: 10px;
+  transition:    background-color 0.15s ease;
+  align-items:   center;
+}
+.user-avatar-btn:hover { background: rgba(79,70,229,.06); }
+html.dark .user-avatar-btn:hover { background: rgba(255,255,255,.05); }
+
+.user-menu {
+  border-radius: 14px !important;
+  animation:     panelDrop .2s ease both;
+  overflow:      hidden;
+}
+.user-menu .custom-dropdown-item { gap: 10px; }

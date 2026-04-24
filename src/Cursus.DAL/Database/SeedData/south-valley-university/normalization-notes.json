@@ -1,0 +1,148 @@
+[
+  {
+    "code": "CS322",
+    "type": "contact_hours_conflict",
+    "contactHoursByMajor": {
+      "CS": {
+        "lecture": 2,
+        "lab": null,
+        "tutorial": 2
+      },
+      "IT": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "note": "The regulation prints different practical/tutorial hour splits for this same course across major-specific tables. The normalized course row preserves the shared lecture hours and leaves the secondary contact-hour fields null."
+  },
+  {
+    "code": "CS351",
+    "type": "contact_hours_conflict",
+    "contactHoursByMajor": {
+      "CS": {
+        "lecture": 2,
+        "lab": null,
+        "tutorial": 2
+      },
+      "IT": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "note": "The regulation prints different practical/tutorial hour splits for this same course across major-specific tables. The normalized course row preserves the shared lecture hours and leaves the secondary contact-hour fields null."
+  },
+  {
+    "code": "AI301",
+    "type": "contact_hours_conflict",
+    "contactHoursByMajor": {
+      "AI": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      },
+      "CS": {
+        "lecture": 2,
+        "lab": null,
+        "tutorial": 2
+      },
+      "IS": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "note": "The regulation prints different practical/tutorial hour splits for this same course across major-specific tables. The normalized course row preserves the shared lecture hours and leaves the secondary contact-hour fields null."
+  },
+  {
+    "code": "AI413",
+    "type": "contact_hours_conflict",
+    "contactHoursByMajor": {
+      "AI": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      },
+      "CS": {
+        "lecture": 2,
+        "lab": null,
+        "tutorial": 2
+      },
+      "IS": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "note": "The regulation prints different practical/tutorial hour splits for this same course across major-specific tables. The normalized course row preserves the shared lecture hours and leaves the secondary contact-hour fields null."
+  },
+  {
+    "code": "CS453",
+    "type": "contact_hours_conflict",
+    "contactHoursByMajor": {
+      "CS": {
+        "lecture": 2,
+        "lab": null,
+        "tutorial": 2
+      },
+      "IT": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "note": "The regulation prints different practical/tutorial hour splits for this same course across major-specific tables. The normalized course row preserves the shared lecture hours and leaves the secondary contact-hour fields null."
+  },
+  {
+    "code": "CS431",
+    "type": "contact_hours_conflict",
+    "contactHoursByMajor": {
+      "AI": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      },
+      "CS": {
+        "lecture": 2,
+        "lab": null,
+        "tutorial": 2
+      }
+    },
+    "note": "The regulation prints different practical/tutorial hour splits for this same course across major-specific tables. The normalized course row preserves the shared lecture hours and leaves the secondary contact-hour fields null."
+  },
+  {
+    "code": "AI435",
+    "type": "contact_hours_conflict",
+    "contactHoursByMajor": {
+      "AI": {
+        "lecture": 2,
+        "lab": null,
+        "tutorial": 2
+      },
+      "CS": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "note": "The regulation prints different practical/tutorial hour splits for this same course across major-specific tables. The normalized course row preserves the shared lecture hours and leaves the secondary contact-hour fields null."
+  },
+  {
+    "code": "IT442",
+    "type": "contact_hours_conflict",
+    "contactHoursByMajor": {
+      "AI": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      },
+      "IT": {
+        "lecture": 3,
+        "lab": null,
+        "tutorial": null
+      }
+    },
+    "note": "The regulation prints different practical/tutorial hour splits for this same course across major-specific tables. The normalized course row preserves the shared lecture hours and leaves the secondary contact-hour fields null."
+  }
+]
