@@ -13,7 +13,7 @@ SeedData/
 |   |-- normalization-notes.json
 |   |-- seed_graduation_reqs.json
 |   `-- seed_prereqs.json
-|-- sinia-university/
+|-- sinai-university/
 |   |-- curriculum-courses.json
 |   |-- graduation-requirements.json
 |   |-- normalization-notes.json

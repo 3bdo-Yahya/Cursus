@@ -10,7 +10,7 @@ Welcome to the Cursus project! This guide will help you get started as a contrib
 
 Make sure you have the following installed:
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (LocalDB is fine for development)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) (recommended) or VS Code with C# extension
 - [Git](https://git-scm.com/)
