@@ -8,12 +8,12 @@
         /// <summary>
         /// Gets or sets the student's full name.
         /// </summary>
-        public string StudentName { get; set; }
+        public required string StudentName { get; set; }
 
         /// <summary>
         /// Gets or sets the student's department.
         /// </summary>
-        public string Department { get; set; }
+        public required string Department { get; set; }
 
         /// <summary>
         /// Gets or sets the student's cumulative GPA.
