@@ -6,22 +6,17 @@ namespace Cursus.DAL.Database
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
-
-        public DbSet<University> Universities => Set<University>();
-        public DbSet<Department> Departments => Set<Department>();
-        public DbSet<Course> Courses => Set<Course>();
-        public DbSet<CoursePrerequisite> CoursePrerequisites => Set<CoursePrerequisite>();
-        public DbSet<GraduationRequirement> GraduationRequirements => Set<GraduationRequirement>();
-        public DbSet<GraduationRequirementCourse> GraduationRequirementCourses => Set<GraduationRequirementCourse>();
-        public DbSet<GradeScale> GradeScales => Set<GradeScale>();
-        public DbSet<CreditHourRule> CreditHourRules => Set<CreditHourRule>();
-        public DbSet<StudentCourse> StudentCourses => Set<StudentCourse>();
-        public DbSet<StandingHistory> StandingHistories => Set<StandingHistory>();
-
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        public DbSet<University> Universities { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<CoursePrerequisite> CoursePrerequisites { get; set; }
+        public DbSet<GraduationRequirement> GraduationRequirements { get; set; }
+        public DbSet<GraduationRequirementCourse> GraduationRequirementCourses { get; set; }
+        public DbSet<GradeScale> GradeScales { get; set; }
+        public DbSet<CreditHourRule> CreditHourRules { get; set; }
+        public DbSet<StudentCourse> StudentCourses { get; set; }
+        public DbSet<StandingHistory> StandingHistories { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
