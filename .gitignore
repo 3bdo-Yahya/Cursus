@@ -40,3 +40,8 @@ Thumbs.db
 # =========================
 *.log
 *.tmp
+
+Cursus.PL.csproj.lscache
+Cursus.Bll.csproj.lscache
+Cursus.DAL.csproj.lscache
+Cursus.Domain.csproj.lscache

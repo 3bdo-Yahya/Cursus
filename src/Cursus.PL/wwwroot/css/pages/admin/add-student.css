@@ -1,0 +1,48 @@
+/* ── Password toggle button ──────────────────────────── */
+.pass-toggle-btn {
+  position:    absolute;
+  right:       10px;
+  top:         50%;
+  transform:   translateY(-50%);
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  color:       var(--c-muted);
+  padding:     2px;
+  display:     flex;
+  align-items: center;
+  transition:  color 0.15s ease;
+}
+.pass-toggle-btn:hover { color: var(--c-text); }
+
+.student-success-alert {
+  margin-bottom: 14px;
+  border: 1px solid rgba(5, 150, 105, 0.35);
+  background: rgba(5, 150, 105, 0.12);
+  color: #047857;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ── University/dept select inside form (full width) ── */
+#stud-uni-wrap .custom-select-btn,
+#stud-dept-wrap .custom-select-btn {
+  width: 100%;
+}
+#stud-uni-wrap .custom-dropdown,
+#stud-dept-wrap .custom-dropdown,
+#stud-sem-wrap .custom-dropdown {
+  width: 100%;
+}
+
+/* Disabled state for dept button before uni selected */
+#stud-dept-btn:disabled {
+  opacity: 0.5;
+  cursor:  not-allowed;
+}
+#stud-dept-btn:disabled:hover {
+  border-color: var(--c-border) !important;
+  box-shadow:   none !important;
+}

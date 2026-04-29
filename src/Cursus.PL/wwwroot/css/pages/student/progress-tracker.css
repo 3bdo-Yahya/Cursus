@@ -1,0 +1,406 @@
+/* ── Page Tabs ──────────────────────────────────────────── */
+.page-tabs {
+  display:         flex;
+  gap:             0;
+  border-bottom:   1px solid var(--c-border);
+  margin-bottom:   0;
+}
+.page-tab {
+  padding:         10px 20px;
+  font-size:       13.5px;
+  font-weight:     600;
+  color:           var(--c-muted);
+  text-decoration: none;
+  border-bottom:   2px solid transparent;
+  transition:      color 0.18s ease, border-color 0.18s ease !important;
+  white-space:     nowrap;
+}
+.page-tab:hover  { color: var(--c-primary); }
+.page-tab.active {
+  color:        var(--c-primary);
+  border-color: var(--c-primary);
+}
+
+/* ── Hero Progress Card ─────────────────────────────────── */
+.hero-progress-card {
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 20px;
+  padding:       32px 36px;
+  position:      relative;
+  overflow:      hidden;
+}
+.hero-progress-card::before {
+  content:         '';
+  position:        absolute;
+  top:             -40px;
+  right:           -40px;
+  width:           220px;
+  height:          220px;
+  border-radius:   50%;
+  background:      radial-gradient(circle, rgba(79,70,229,.07) 0%, transparent 70%);
+  pointer-events:  none;
+}
+
+.hero-percentage {
+  font-size:   3.2rem;
+  font-weight: 900;
+  line-height: 1;
+  color:       var(--c-primary);
+  letter-spacing: -2px;
+}
+.hero-credits-text {
+  font-size:   1.35rem;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  color:       var(--c-text);
+}
+.hero-sub-text {
+  font-size: 13px;
+  color:     var(--c-muted);
+  margin-top: 2px;
+}
+/* ── Hero Progress Bar ──────────────────────────────────── */
+.hero-bar-track {
+  height:        10px;
+  background:    var(--c-border);
+  border-radius: 99px;
+  overflow:      hidden;
+  margin-top:    18px;
+}
+@keyframes heroBarGrow {
+  from { width: 0; }
+  to   { width: var(--bar-w); }
+}
+.hero-bar-fill {
+  height:        100%;
+  border-radius: 99px;
+  background:    linear-gradient(90deg, #4F46E5, #818cf8);
+  width:         0;
+  animation:     heroBarGrow 1.3s 0.4s cubic-bezier(.4,0,.2,1) forwards;
+  box-shadow:    0 0 14px rgba(79,70,229,.35);
+}
+
+/* ── Projection Badges row ──────────────────────────────── */
+.proj-badge {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           6px;
+  padding:       5px 12px;
+  border-radius: 99px;
+  font-size:     12px;
+  font-weight:   700;
+  border:        1px solid var(--c-border);
+  background:    var(--c-surface);
+  color:         var(--c-text);
+  transition:    transform 0.18s ease, box-shadow 0.18s ease !important;
+}
+.proj-badge:hover {
+  transform:  translateY(-2px);
+  box-shadow: 0 4px 14px rgba(79,70,229,.13);
+}
+.proj-badge-primary {
+  background:   var(--c-soft);
+  border-color: rgba(79,70,229,.25);
+  color:        var(--c-primary);
+}
+
+/* ── Category Cards ─────────────────────────────────────── */
+.category-card {
+  background:    var(--c-surface);
+  border:        1px solid var(--c-border);
+  border-radius: 18px;
+  overflow:      hidden;
+  transition:    transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
+}
+.category-card:hover {
+  transform:    translateY(-4px);
+  box-shadow:   0 14px 36px rgba(79,70,229,.1);
+  border-color: rgba(79,70,229,.22);
+}
+.category-card-header {
+  padding:        18px 20px 14px;
+  border-bottom:  1px solid var(--c-border);
+  display:        flex;
+  align-items:    center;
+  justify-content: space-between;
+  gap:            10px;
+}
+.category-icon-box {
+  width:          38px;
+  height:         38px;
+  border-radius:  11px;
+  display:        flex;
+  align-items:    center;
+  justify-content: center;
+  flex-shrink:    0;
+}
+.category-title {
+  font-size:   14px;
+  font-weight: 800;
+  color:       var(--c-text);
+  line-height: 1.2;
+}
+.category-sub {
+  font-size: 11px;
+  color:     var(--c-muted);
+  margin-top: 1px;
+}
+
+/* ── Mini Progress Bar ──────────────────────── */
+.cat-bar-track {
+  height:        5px;
+  background:    var(--c-border);
+  border-radius: 99px;
+  overflow:      hidden;
+  margin-top:    10px;
+}
+@keyframes catBarGrow {
+  from { width: 0; }
+  to   { width: var(--bar-w); }
+}
+.cat-bar-fill {
+  height:        100%;
+  border-radius: 99px;
+  width:         0;
+  animation:     catBarGrow 1s var(--bar-delay, 0.5s) cubic-bezier(.4,0,.2,1) forwards;
+}
+.cat-bar-blue   { background: linear-gradient(90deg, #4F46E5, #818cf8); }
+.cat-bar-purple { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+.cat-bar-amber  { background: linear-gradient(90deg, #f59e0b, #fcd34d); }
+.cat-bar-green  { background: linear-gradient(90deg, #10b981, #34d399); }
+
+/* ── Credits Badge (card top-right) ────────────────────── */
+.cr-badge {
+  font-size:     11.5px;
+  font-weight:   700;
+  padding:       4px 10px;
+  border-radius: 99px;
+}
+.cr-badge-blue   { background: var(--icon-blue-bg);   color: var(--c-primary); }
+.cr-badge-purple { background: var(--icon-purple-bg); color: #7c3aed; }
+.cr-badge-amber  { background: var(--icon-amber-bg);  color: #b45309; }
+.cr-badge-green  { background: rgba(16,185,129,.12);  color: #047857; }
+
+html.dark .cr-badge-green  { background: rgba(16,185,129,.18); color: #34d399; }
+html.dark .cr-badge-amber  { background: rgba(245,158,11,.18); color: #fcd34d; }
+
+/* ── Course List Items ──────────────────────────────────── */
+.cat-course-list {
+  padding:        6px 8px;
+}
+.cat-course-item {
+  display:        flex;
+  align-items:    center;
+  gap:            10px;
+  padding:        9px 10px;
+  border-radius:  10px;
+  cursor:         pointer;
+  transition:     background-color 0.15s ease !important;
+  position:       relative;
+}
+.cat-course-item:hover {
+  background: rgba(79,70,229,.04);
+}
+html.dark .cat-course-item:hover {
+  background: rgba(255,255,255,.04);
+}
+.cat-course-item:hover .course-code-badge {
+  border-color: rgba(79,70,229,.35);
+}
+
+.course-status-icon {
+  width:         22px;
+  height:        22px;
+  border-radius: 50%;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  flex-shrink:   0;
+}
+.status-done     { background: rgba(16,185,129,.15); }
+.status-progress { background: rgba(79,70,229,.13); }
+.status-open     { background: var(--c-border); }
+.status-locked   { background: rgba(156,163,175,.15); }
+.status-failed   { background: rgba(239,68,68,.13); }
+
+.course-code-badge {
+  font-size:    10.5px;
+  font-weight:  700;
+  padding:      2px 7px;
+  border-radius: 6px;
+  background:   var(--c-bg);
+  border:       1px solid var(--c-border);
+  color:        var(--c-text-sub);
+  flex-shrink:  0;
+  transition:   border-color 0.15s ease !important;
+}
+.course-name-text {
+  font-size:   12.5px;
+  font-weight: 600;
+  color:       var(--c-text);
+  flex:        1;
+  line-height: 1.3;
+}
+.course-name-locked {
+  color:          var(--c-muted);
+  font-style:     italic;
+}
+.course-credits-pill {
+  font-size:    11px;
+  font-weight:  600;
+  color:        var(--c-muted);
+  flex-shrink:  0;
+}
+.course-grade-pill {
+  font-size:    10.5px;
+  font-weight:  700;
+  padding:      2px 7px;
+  border-radius: 6px;
+  flex-shrink:  0;
+}
+.grade-a     { background: rgba(16,185,129,.12); color: #047857; }
+.grade-b     { background: rgba(79,70,229,.12);  color: var(--c-primary); }
+.grade-c     { background: rgba(245,158,11,.12); color: #b45309; }
+.grade-d     { background: rgba(239,68,68,.12);  color: #b91c1c; }
+.grade-f     { background: rgba(239,68,68,.18);  color: #dc2626; }
+
+html.dark .grade-a { background: rgba(16,185,129,.18);  color: #34d399; }
+html.dark .grade-b { background: rgba(79,70,229,.2);    color: #a5b4fc; }
+html.dark .grade-c { background: rgba(245,158,11,.18);  color: #fcd34d; }
+html.dark .grade-d { background: rgba(239,68,68,.18);   color: #fca5a5; }
+html.dark .grade-f { background: rgba(239,68,68,.22);   color: #f87171; }
+
+/* ── "Show more" toggle ─────────────────────────────────── */
+.show-more-btn {
+  width:          100%;
+  background:     none;
+  border:         none;
+  border-top:     1px solid var(--c-border);
+  padding:        9px 12px;
+  font-size:      12px;
+  font-weight:    700;
+  color:          var(--c-primary);
+  cursor:         pointer;
+  display:        flex;
+  align-items:    center;
+  justify-content: center;
+  gap:            4px;
+  transition:     background-color 0.15s ease !important;
+}
+.show-more-btn:hover { background: rgba(79,70,229,.04); }
+.show-more-btn .chevron {
+  font-size:  15px !important;
+  transition: transform 0.22s ease !important;
+}
+.show-more-btn.expanded .chevron { transform: rotate(180deg); }
+
+/* ── Bottom Status Card ─────────────────────────────────── */
+.status-banner {
+  border-radius: 16px;
+  padding:       16px 20px;
+  display:       flex;
+  align-items:   center;
+  gap:           14px;
+  border:        1px solid;
+  transition:    transform 0.18s ease, box-shadow 0.18s ease !important;
+}
+.status-banner:hover {
+  transform:  translateX(4px);
+  box-shadow: 0 4px 18px rgba(0,0,0,.07);
+}
+.status-banner-ok {
+  background:   var(--alert-ok-bg);
+  border-color: var(--alert-ok-bd);
+}
+.status-banner-warn {
+  background:   var(--alert-warn-bg);
+  border-color: var(--alert-warn-bd);
+}
+.status-banner-danger {
+  background:   var(--tile-red-bg);
+  border-color: rgba(239,68,68,.3);
+}
+.status-banner-icon {
+  width:         40px;
+  height:        40px;
+  border-radius: 12px;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  flex-shrink:   0;
+}
+
+/* ── Overload badge ─────────────────────────────────────── */
+.overload-badge {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             6px;
+  padding:         5px 13px;
+  border-radius:   99px;
+  font-size:       12px;
+  font-weight:     700;
+  background-size: 200% 100%;
+  border:          1px solid rgba(79,70,229,.25);
+  color:           var(--c-primary);
+  transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+}
+.overload-badge:hover {
+  transform:  translateY(-4px);
+  box-shadow: 0 4px 18px rgba(0,0,0,.07);
+  -webkit-transform:  translateY(-4px);
+  -moz-transform:  translateY(-4px);
+  -ms-transform:  translateY(-4px);
+  -o-transform:  translateY(-4px);
+}
+
+/* ── Page Load Animations ───────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(22px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.anim-fade-up   { animation: fadeUp .55s ease both; }
+.anim-fade-up-1 { animation: fadeUp .55s .07s  ease both; }
+.anim-fade-up-2 { animation: fadeUp .55s .14s  ease both; }
+.anim-fade-up-3 { animation: fadeUp .55s .21s  ease both; }
+.anim-fade-up-4 { animation: fadeUp .55s .28s  ease both; }
+.anim-fade-up-5 { animation: fadeUp .55s .35s  ease both; }
+
+/* ── Scroll Animations ──────────────────────────────────── */
+[data-scroll] {
+  opacity:    0;
+  will-change: opacity, transform;
+  transition:
+    opacity    0.6s cubic-bezier(0.4,0,0.2,1),
+    transform  0.6s cubic-bezier(0.4,0,0.2,1) !important;
+}
+[data-scroll="fade-up"]    { transform: translateY(32px); }
+[data-scroll="fade-left"]  { transform: translateX(32px); }
+[data-scroll="fade-right"] { transform: translateX(-32px); }
+[data-scroll="zoom"]       { transform: scale(0.94); }
+[data-scroll].in-view { opacity:1; transform: none; }
+
+[data-scroll-group] > * {
+  opacity:    0;
+  transform:  translateY(24px);
+  transition:
+    opacity   0.5s cubic-bezier(0.4,0,0.2,1),
+    transform 0.5s cubic-bezier(0.4,0,0.2,1) !important;
+}
+[data-scroll-group].in-view > *:nth-child(1) { transition-delay: 0s !important; }
+[data-scroll-group].in-view > *:nth-child(2) { transition-delay: 0.08s !important; }
+[data-scroll-group].in-view > *:nth-child(3) { transition-delay: 0.16s !important; }
+[data-scroll-group].in-view > *:nth-child(4) { transition-delay: 0.24s !important; }
+[data-scroll-group].in-view > * { opacity:1; transform: none; }
+
+/* ── Misc Utilities ─────────────────────────────────────── */
+.text-body      { color: var(--c-text) !important; }
+.text-sub       { color: var(--c-text-sub) !important; }
+.border-token   { border-color: var(--c-border) !important; }
+.bg-token       { background: rgba(0,0,0,.02); }
+html.dark .bg-token    { background: rgba(255,255,255,.025); }
+html.dark .text-muted  { color: var(--c-muted) !important; }

@@ -1,0 +1,55 @@
+@model Course
+
+@{
+    ViewData["Title"] = $"{Model.Code} Details";
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">@Model.Code</h1>
+        <p class="text-muted mb-0">@Model.Name</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to courses</a>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Department</dt>
+            <dd class="col-sm-9">@Model.Department?.Name</dd>
+            <dt class="col-sm-3">University</dt>
+            <dd class="col-sm-9">@Model.Department?.University?.Name</dd>
+            <dt class="col-sm-3">Credit Hours</dt>
+            <dd class="col-sm-9">@Model.CreditHours</dd>
+            <dt class="col-sm-3">Course Type</dt>
+            <dd class="col-sm-9">@Model.CourseType</dd>
+            <dt class="col-sm-3">Semester Availability</dt>
+            <dd class="col-sm-9">@Model.SemesterAvailability</dd>
+            <dt class="col-sm-3">Passing Grade</dt>
+            <dd class="col-sm-9">@Model.PassingGradeThreshold</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h2 class="h5 mb-0">Prerequisites</h2>
+    </div>
+    <div class="card-body">
+        @if (Model.Prerequisites.Any())
+        {
+            <ul class="list-group list-group-flush">
+                @foreach (var prerequisite in Model.Prerequisites)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>@prerequisite.Prerequisite?.Code - @prerequisite.Prerequisite?.Name</span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p class="text-muted mb-0">This course has no prerequisites.</p>
+        }
+    </div>
+</div>
