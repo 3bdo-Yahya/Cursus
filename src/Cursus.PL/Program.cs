@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Cursus.PL.Seeding;
 using Microsoft.Extensions.Options;
+using System;
 
 namespace Cursus.PL;
 
@@ -131,8 +132,21 @@ public class Program
             var createResult = await userManager.CreateAsync(adminUser, options.AdminPassword);
             if (!createResult.Succeeded)
             {
-                throw new InvalidOperationException(
-                    $"Unable to create default admin user: {string.Join(", ", createResult.Errors.Select(error => error.Description))}");
+                var isDuplicateUserFailure = createResult.Errors.Any(error =>
+                    string.Equals(error.Code, nameof(IdentityErrorDescriber.DuplicateUserName), StringComparison.Ordinal) ||
+                    string.Equals(error.Code, nameof(IdentityErrorDescriber.DuplicateEmail), StringComparison.Ordinal));
+
+                if (isDuplicateUserFailure)
+                {
+                    adminUser = await userManager.FindByEmailAsync(adminEmail)
+                        ?? await userManager.FindByNameAsync(adminEmail);
+                }
+
+                if (adminUser is null)
+                {
+                    throw new InvalidOperationException(
+                        $"Unable to create default admin user: {string.Join(", ", createResult.Errors.Select(error => error.Description))}");
+                }
             }
         }
 
