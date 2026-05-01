@@ -83,6 +83,16 @@ public class Program
             }
 
             var createRoleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+            if (createRoleResult.Succeeded)
+            {
+                continue;
+            }
+
+            if (await roleManager.RoleExistsAsync(roleName))
+            {
+                continue;
+            }
+
             if (!createRoleResult.Succeeded)
             {
                 throw new InvalidOperationException(
