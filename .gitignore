@@ -1,7 +1,7 @@
 # =========================
 # Internal / Private Docs
 # =========================
-# SDLC documents are managed in Jira.
+# SDLC documents are managed in ClickUp.
 docs/
 
 # =========================
@@ -22,6 +22,7 @@ build/
 *.snupkg
 project.lock.json
 appsettings.Development.json
+.env
 Cursus.PL.csproj.lscache
 Cursus.BLL.csproj.lscache
 Cursus.DAL.csproj.lscache

@@ -27,23 +27,30 @@ Windows natively supports SQL Server.
 #### 🐧 Linux
 SQL Server does not run natively on Linux, so you **must use Docker** to run the database.
 1. Install **Docker** and **Docker Compose** on your distro.
-2. Run the SQL Server 2022 Docker container:
+2. Use the repository Docker Compose setup (recommended):
    ```bash
-   sudo docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Cursus_DB_Passw0rd!" \
-      -p 1433:1433 --name cursus-sql \
-      -d mcr.microsoft.com/mssql/server:2022-latest
+   cd Cursus
+   cp .env.example .env
+   # Edit .env and set SQL_SA_PASSWORD to a strong local password.
+   docker compose up -d
    ```
-3. **Important:** You will need to override the connection string in the codebase so EF Core points to your Docker container instead of Windows LocalDB. 
-   - Create a file named `appsettings.Development.json` in `src/` (if it doesn't exist).
+3. **Important:** Override the connection string in the web project so EF Core points to your Docker SQL Server instead of Windows LocalDB.
+   - Create a file named `appsettings.Development.json` in `src/Cursus.PL/` (if it doesn't exist).
    - Add the following connection string:
      ```json
      {
        "ConnectionStrings": {
-         "DefaultConnection": "Server=localhost,1433;Database=CursusDb;User Id=sa;Password=Cursus_DB_Passw0rd!;TrustServerCertificate=True;"
+         "DefaultConnection": "Server=localhost,1433;Database=CursusDb;User Id=sa;Password=<same SQL_SA_PASSWORD from .env>;TrustServerCertificate=True;"
        }
      }
      ```
    *(Note: Never commit your personal password/connection string to Git. `appsettings.Development.json` is usually ignored or safe for local overrides).*
+
+4. Optional checks:
+   ```bash
+   docker compose ps
+   docker compose logs -f sqlserver
+   ```
 
 ---
 
@@ -54,13 +61,13 @@ Once your database engine is running, set up the project:
 ```bash
 # 1. Clone the repository
 git clone https://github.com/3bdo-Yahya/Cursus.git
-cd Cursus/src
+cd Cursus
 
 # 2. Add the EF Core global tool (if you don't have it yet)
 dotnet tool install --global dotnet-ef
 
 # 3. Restore all NuGet packages
-dotnet restore
+dotnet restore src/Cursus.PL/Cursus.PL.csproj
 ```
 
 ---
@@ -70,7 +77,7 @@ dotnet restore
 You need to apply the database schema so your local SQL Server knows what tables to create.
 
 ```bash
-cd Cursus/src
+cd Cursus/src/Cursus.PL
 
 # Apply migrations to create the database and schema
 dotnet ef database update
@@ -82,7 +89,7 @@ dotnet ef database update
 ## 4. Running the Application
 
 ```bash
-cd Cursus/src
+cd Cursus/src/Cursus.PL
 
 # Build the project to ensure there are no compilation errors
 dotnet build
