@@ -83,7 +83,19 @@ public class RegisterModel : PageModel
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
 
-                await _userManager.DeleteAsync(user);
+                var deleteResult = await _userManager.DeleteAsync(user);
+                if (!deleteResult.Succeeded)
+                {
+                    _logger.LogError("User role assignment failed and cleanup deletion also failed for user {Email}.", Input.Email);
+
+                    foreach (var error in deleteResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    ModelState.AddModelError(string.Empty, "Account creation could not be completed and cleanup failed. Please contact support.");
+                }
+
                 return Page();
             }
 
