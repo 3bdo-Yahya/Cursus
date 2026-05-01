@@ -1,5 +1,6 @@
 using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
+using Cursus.PL.Models.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Cursus.PL.Seeding;
@@ -160,10 +161,4 @@ public class Program
             }
         }
     }
-}
-
-public sealed class IdentitySeedOptions
-{
-    public string AdminEmail { get; set; } = "admin@cursus.com";
-    public string AdminPassword { get; set; } = string.Empty;
 }
