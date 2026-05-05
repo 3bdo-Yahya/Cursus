@@ -29,7 +29,7 @@
           <a asp-controller="Admin" asp-action="Index"
              class="nav-pill @(currentController == "Admin" && currentAction == "Index" ? "active" : "")">Dashboard</a>
           <a asp-controller="Admin" asp-action="Courses"
-             class="nav-pill @(currentController == "Admin" && currentAction == "Courses" ? "active" : "")">Courses</a>
+             class="nav-pill @(currentController == "Admin" && (currentAction == "Courses" || currentAction == "CourseCreate" || currentAction == "CourseEdit") ? "active" : "")">Courses</a>
           <a asp-controller="Admin" asp-action="Students"
              class="nav-pill @(currentController == "Admin" && currentAction == "Students" ? "active" : "")">Students</a>
         </div>
