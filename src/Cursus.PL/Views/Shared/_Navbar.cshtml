@@ -1,0 +1,128 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+@{
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var isAdmin = isAuthenticated && User.IsInRole("Admin");
+    var isStudent = isAuthenticated && User.IsInRole("Student");
+
+    var currentUser = isAuthenticated ? await UserManager.GetUserAsync(User) : null;
+    var displayName = currentUser?.UserName?.Split('@').FirstOrDefault() ?? "User";
+    var initials = string.Concat(displayName.Where(char.IsUpper));
+    if (initials.Length < 2) initials = displayName.Length >= 2 ? displayName[..2].ToUpper() : displayName.ToUpper();
+
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+}
+
+<nav class="navbar-cursus fixed-top d-flex align-items-center">
+  <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+
+    <div class="d-flex align-items-center gap-3">
+      @if (isAdmin)
+      {
+        <a asp-controller="Admin" asp-action="Index" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+          <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+        </a>
+        <div class="d-none d-md-flex align-items-center gap-1">
+          <a asp-controller="Admin" asp-action="Index"
+             class="nav-pill @(currentController == "Admin" && currentAction == "Index" ? "active" : "")">Dashboard</a>
+          <a asp-controller="Admin" asp-action="CourseIndex"
+             class="nav-pill @(currentController == "Admin" && currentAction == "CourseIndex" ? "active" : "")">Courses</a>
+          <a asp-controller="Admin" asp-action="DepartmentIndex"
+             class="nav-pill @(currentController == "Admin" && currentAction == "DepartmentIndex" ? "active" : "")">Departments</a>
+          <a asp-controller="Admin" asp-action="UniversityIndex"
+             class="nav-pill @(currentController == "Admin" && currentAction == "UniversityIndex" ? "active" : "")">Universities</a>
+        </div>
+      }
+      else if (isStudent)
+      {
+        <a asp-controller="Student" asp-action="Dashboard" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+          <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+        </a>
+        <div class="d-none d-md-flex align-items-center gap-1">
+          <a asp-controller="Student" asp-action="Dashboard"
+             class="nav-pill @(currentController == "Student" && currentAction == "Dashboard" ? "active" : "")">Dashboard</a>
+          <a asp-controller="Student" asp-action="CourseMap"
+             class="nav-pill @(currentController == "Student" && currentAction == "CourseMap" ? "active" : "")">Course Map</a>
+          <a asp-controller="Student" asp-action="Planner"
+             class="nav-pill @(currentController == "Student" && currentAction == "Planner" ? "active" : "")">Planner</a>
+          <a asp-controller="Student" asp-action="Progress"
+             class="nav-pill @(currentController == "Student" && currentAction == "Progress" ? "active" : "")">Progress</a>
+        </div>
+      }
+      else
+      {
+        <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+          <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+        </a>
+        <div class="d-none d-md-flex align-items-center gap-1">
+          <a asp-controller="Home" asp-action="Index"
+             class="nav-pill @(currentController == "Home" && currentAction == "Index" ? "active" : "")">Home</a>
+        </div>
+      }
+    </div>
+
+    <div class="d-flex align-items-center gap-1">
+      <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+        <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+      </button>
+
+      @if (isAuthenticated)
+      {
+        <div class="position-relative">
+          <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+            <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+            <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+          </button>
+          <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+            <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+              <span class="fw-700" style="font-size:13px;">Notifications</span>
+              <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+            </div>
+            <div class="px-4 py-3 text-center">
+              <p class="mb-0" style="font-size:12px;color:var(--c-muted);">No new notifications</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="custom-select-wrap position-relative ms-1">
+          <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+            <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+                 style="width:36px;height:36px;background:@(isAdmin ? "rgba(239,68,68,0.1)" : "var(--c-soft)");border:2px solid @(isAdmin ? "rgba(239,68,68,0.2)" : "rgba(79,70,229,.2)");color:@(isAdmin ? "#dc2626" : "var(--c-primary)");font-size:13px;">@initials</div>
+            <div class="d-none d-md-block text-start">
+              <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">@displayName</p>
+              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">@(isAdmin ? "Administrator" : "Student")</p>
+            </div>
+            <span class="material-symbols-outlined d-none d-md-block" id="user-menu-chevron"
+                  style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;transition:transform 0.22s ease;">expand_more</span>
+          </button>
+          <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:210px;z-index:1060;">
+            <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">@displayName</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">@currentUser?.Email</p>
+            </div>
+            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+              <span class="custom-dropdown-label">My Profile</span>
+            </a>
+            <div style="border-top:1px solid var(--c-border);">
+              <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                <button type="submit" class="custom-dropdown-item text-decoration-none w-100 border-0 bg-transparent text-start">
+                  <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+                  <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      }
+      else
+      {
+        <a asp-area="Identity" asp-page="/Account/Login" class="nav-pill fw-600">Sign In</a>
+        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary fw-700 px-3 py-2" style="border-radius:10px;font-size:13px;">Register</a>
+      }
+    </div>
+  </div>
+</nav>

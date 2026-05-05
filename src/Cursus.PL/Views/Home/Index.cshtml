@@ -1,8 +1,28 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height:60vh;">
+  <div class="anim-fade-up" style="max-width:540px;">
+    <div class="d-flex align-items-center justify-content-center rounded-3 mx-auto mb-4"
+         style="width:72px;height:72px;background:linear-gradient(135deg,#4F46E5,#7c3aed);box-shadow:0 12px 32px rgba(79,70,229,.3);">
+      <span class="material-symbols-outlined text-white" style="font-size:36px;font-variation-settings:'FILL' 1,'wght' 400">school</span>
+    </div>
+    <h1 class="fw-900 mb-3" style="font-size:2.2rem;letter-spacing:-.5px;color:var(--c-text);">Welcome to Cursus</h1>
+    <p class="mb-4" style="font-size:15px;color:var(--c-muted);line-height:1.7;">
+      Your academic journey, intelligently managed. Track your progress, plan semesters, and get AI-powered guidance — all in one place.
+    </p>
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <a asp-area="Identity" asp-page="/Account/Login"
+         class="btn btn-primary fw-700 px-4 py-2"
+         style="border-radius:12px;font-size:14px;box-shadow:0 4px 14px rgba(79,70,229,.3);">
+        Sign In
+      </a>
+      <a asp-area="Identity" asp-page="/Account/Register"
+         class="btn fw-700 px-4 py-2"
+         style="border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);border-radius:12px;font-size:14px;">
+        Create Account
+      </a>
+    </div>
+  </div>
 </div>
