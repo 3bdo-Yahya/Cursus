@@ -79,6 +79,14 @@ public class LoginModel : PageModel
         {
             _logger.LogInformation("User logged in.");
 
+            var rootUrl = Url.Content("~/");
+            if (!string.IsNullOrEmpty(returnUrl)
+                && Url.IsLocalUrl(returnUrl)
+                && !PathsEquivalent(returnUrl, rootUrl))
+            {
+                return LocalRedirect(returnUrl);
+            }
+
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user is not null)
             {
@@ -100,5 +108,16 @@ public class LoginModel : PageModel
 
         ModelState.AddModelError(string.Empty, "Invalid email or password.");
         return Page();
+    }
+
+    private static bool PathsEquivalent(string returnUrl, string rootUrl)
+    {
+        var destPath = returnUrl.Split('?', 2)[0].TrimEnd('/');
+        var rootPath = rootUrl.TrimEnd('/');
+        if (string.IsNullOrEmpty(destPath))
+            destPath = "/";
+        if (string.IsNullOrEmpty(rootPath))
+            rootPath = "/";
+        return string.Equals(destPath, rootPath, StringComparison.OrdinalIgnoreCase);
     }
 }
