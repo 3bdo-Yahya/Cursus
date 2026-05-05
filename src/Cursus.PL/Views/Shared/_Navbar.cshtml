@@ -1,14 +1,17 @@
+@using System.Security.Claims
 @using Microsoft.AspNetCore.Identity
-@inject SignInManager<AppUser> SignInManager
-@inject UserManager<AppUser> UserManager
 
 @{
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
     var isAdmin = isAuthenticated && User.IsInRole("Admin");
     var isStudent = isAuthenticated && User.IsInRole("Student");
 
-    var currentUser = isAuthenticated ? await UserManager.GetUserAsync(User) : null;
-    var displayName = currentUser?.UserName?.Split('@').FirstOrDefault() ?? "User";
+    var accountEmail = isAuthenticated
+        ? (User.FindFirstValue(ClaimTypes.Email) ?? User.Identity?.Name ?? string.Empty)
+        : string.Empty;
+    var displayName = string.IsNullOrEmpty(accountEmail)
+        ? "User"
+        : (accountEmail.Contains('@') ? accountEmail.Split('@')[0] : accountEmail);
     var initials = string.Concat(displayName.Where(char.IsUpper));
     if (initials.Length < 2) initials = displayName.Length >= 2 ? displayName[..2].ToUpper() : displayName.ToUpper();
 
@@ -101,7 +104,10 @@
           <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:210px;z-index:1060;">
             <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
               <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">@displayName</p>
-              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">@currentUser?.Email</p>
+              @if (!string.IsNullOrEmpty(accountEmail))
+              {
+                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">@accountEmail</p>
+              }
             </div>
             @if (isAdmin)
             {
