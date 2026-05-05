@@ -1,8 +1,8 @@
 @page
-@model Cursus.PL.Areas.Identity.Pages.Account.RegisterModel
+@model LoginModel
 
 @{
-    ViewData["Title"] = "Create Account";
+    ViewData["Title"] = "Sign In";
     Layout = "/Views/Shared/_AuthLayout.cshtml";
 }
 
@@ -10,16 +10,19 @@
 
   <!-- Left panel -->
   <div class="login-panel-left d-none d-lg-flex">
-    <svg class="login-graph-svg" viewBox="0 0 700 800"
+    <svg id="graph-svg" class="login-graph-svg" viewBox="0 0 700 800"
          xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-      <g opacity="0.15" stroke="white" stroke-width="1" fill="none">
-        <line x1="140" y1="180" x2="300" y2="120"/>
-        <line x1="300" y1="120" x2="480" y2="220"/>
-        <line x1="300" y1="120" x2="240" y2="380"/>
-        <line x1="480" y1="220" x2="560" y2="460"/>
-        <line x1="240" y1="380" x2="400" y2="560"/>
-        <line x1="560" y1="460" x2="400" y2="560"/>
-        <line x1="140" y1="180" x2="240" y2="380"/>
+      <g id="connectors" opacity="0.15" stroke="white" stroke-width="1" fill="none">
+        <line id="c1"  x1="140" y1="180" x2="300" y2="120"/>
+        <line id="c2"  x1="300" y1="120" x2="480" y2="220"/>
+        <line id="c3"  x1="300" y1="120" x2="240" y2="380"/>
+        <line id="c4"  x1="480" y1="220" x2="560" y2="460"/>
+        <line id="c5"  x1="240" y1="380" x2="400" y2="560"/>
+        <line id="c6"  x1="560" y1="460" x2="400" y2="560"/>
+        <line id="c7"  x1="140" y1="180" x2="240" y2="380"/>
+        <line id="c8"  x1="400" y1="560" x2="300" y2="680"/>
+        <line id="c9"  x1="80"  y1="500" x2="240" y2="380"/>
+        <line id="c10" x1="620" y1="150" x2="480" y2="220"/>
       </g>
       <g class="node-1" style="transform-origin:140px 180px">
         <circle cx="140" cy="180" r="10" fill="white" opacity="0.08"/>
@@ -44,6 +47,18 @@
       <g class="node-6" style="transform-origin:400px 560px">
         <circle cx="400" cy="560" r="13" fill="white" opacity="0.1"/>
         <circle cx="400" cy="560" r="5"  fill="white" opacity="0.9"/>
+      </g>
+      <g class="node-7" style="transform-origin:300px 680px">
+        <circle cx="300" cy="680" r="10" fill="white" opacity="0.08"/>
+        <circle cx="300" cy="680" r="4"  fill="white" opacity="0.75"/>
+      </g>
+      <g style="transform-origin:80px 500px; animation: drift3 14s ease-in-out infinite;">
+        <circle cx="80"  cy="500" r="8" fill="white" opacity="0.07"/>
+        <circle cx="80"  cy="500" r="3" fill="white" opacity="0.6"/>
+      </g>
+      <g style="transform-origin:620px 150px; animation: drift5 10s ease-in-out infinite;">
+        <circle cx="620" cy="150" r="8" fill="white" opacity="0.07"/>
+        <circle cx="620" cy="150" r="3" fill="white" opacity="0.65"/>
       </g>
     </svg>
 
@@ -76,25 +91,27 @@
 
     <div class="login-form-wrap">
       <div class="login-heading anim-fade-up-1">
-        <h2>Create your account</h2>
-        <p>Join Cursus to start planning your academic journey</p>
+        <h2>Welcome back</h2>
+        <p>Sign in to continue to your dashboard</p>
       </div>
 
-      <form asp-route-returnUrl="@Model.ReturnUrl" method="post" novalidate>
+      <form id="login-form" method="post" novalidate>
         <div asp-validation-summary="ModelOnly" class="mb-3" style="color:#dc3545;font-size:0.8rem;"></div>
 
         <!-- Email -->
         <div class="mb-4 anim-fade-up-2">
           <label asp-for="Input.Email" class="login-label">Email address</label>
-          <input asp-for="Input.Email" class="login-input" placeholder="you@university.edu" autocomplete="username"/>
+          <input asp-for="Input.Email" class="login-input" placeholder="you@university.edu" autocomplete="email"/>
           <span asp-validation-for="Input.Email" class="login-field-error"></span>
         </div>
 
         <!-- Password -->
         <div class="mb-4 anim-fade-up-3">
-          <label asp-for="Input.Password" class="login-label">Password</label>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label asp-for="Input.Password" class="login-label mb-0">Password</label>
+          </div>
           <div class="position-relative">
-            <input asp-for="Input.Password" class="login-input" placeholder="At least 6 characters" autocomplete="new-password" style="padding-right:3rem;"/>
+            <input asp-for="Input.Password" class="login-input" placeholder="Enter your password" autocomplete="current-password" style="padding-right:3rem;"/>
             <button type="button" id="toggle-pw" class="eye-btn" aria-label="Toggle password visibility">
               <span class="material-symbols-outlined">visibility</span>
             </button>
@@ -102,21 +119,24 @@
           <span asp-validation-for="Input.Password" class="login-field-error"></span>
         </div>
 
-        <!-- Confirm Password -->
+        <!-- Remember me -->
         <div class="mb-4 anim-fade-up-4">
-          <label asp-for="Input.ConfirmPassword" class="login-label">Confirm password</label>
-          <input asp-for="Input.ConfirmPassword" class="login-input" placeholder="Re-enter your password" autocomplete="new-password"/>
-          <span asp-validation-for="Input.ConfirmPassword" class="login-field-error"></span>
+          <div class="form-check login-check">
+            <input asp-for="Input.RememberMe" class="form-check-input"/>
+            <label asp-for="Input.RememberMe" class="form-check-label">Keep me signed in</label>
+          </div>
         </div>
 
         <!-- Submit -->
         <div class="anim-fade-up-5">
-          <button type="submit" class="login-btn-primary w-100">Create Account</button>
+          <button type="submit" id="signin-btn" class="login-btn-primary w-100">
+            <span id="btn-label">Sign In</span>
+          </button>
         </div>
       </form>
 
       <div class="login-footer-note anim-fade-up-5">
-        <p>Already have an account? <a asp-page="./Login" style="color:var(--c-primary);font-weight:600;text-decoration:none;">Sign in</a></p>
+        <p>Don't have an account? <a asp-page="./Register" style="color:var(--c-primary);font-weight:600;text-decoration:none;">Register here</a></p>
       </div>
     </div>
   </div>
@@ -124,16 +144,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>
-    <script>
-    const pwInput = document.getElementById('toggle-pw');
-    if (pwInput) {
-      const field = pwInput.closest('.position-relative').querySelector('input');
-      const icon = pwInput.querySelector('span');
-      pwInput.addEventListener('click', () => {
-        const hidden = field.type === 'password';
-        field.type = hidden ? 'text' : 'password';
-        icon.textContent = hidden ? 'visibility_off' : 'visibility';
-      });
-    }
-    </script>
+    <script src="~/js/pages/auth/login.js" asp-append-version="true"></script>
 }
