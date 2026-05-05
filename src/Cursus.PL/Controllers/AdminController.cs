@@ -18,6 +18,16 @@ public class AdminController : Controller
         _context = context;
     }
 
+    public IActionResult Courses() => View();
+    public IActionResult Students() => View();
+    public IActionResult AddCourse() => View();
+    public IActionResult EditCourse() => View();
+    public IActionResult ViewCourse() => View();
+    public IActionResult AddStudent() => View();
+    public IActionResult EditStudent() => View();
+    public IActionResult ViewStudent() => View();
+    public IActionResult Profile() => View();
+
     public async Task<IActionResult> Index()
     {
         var dashboard = new AdminDashboardViewModel

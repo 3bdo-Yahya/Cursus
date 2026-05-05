@@ -59,6 +59,19 @@ public class StudentController : Controller
     public IActionResult CourseMap() => View();
     public IActionResult Planner() => View();
     public IActionResult Progress() => View();
+    public IActionResult AiAdvisor() => View();
+    public IActionResult GpaSimulator() => View();
+    public IActionResult ImpactAnalyzer() => View();
+
+    public async Task<IActionResult> Profile()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var username = user?.UserName?.Split('@').FirstOrDefault() ?? "Student";
+        ViewData["StudentName"] = username;
+        ViewData["StudentEmail"] = user?.Email ?? "";
+        ViewData["Initials"] = GetInitials(username);
+        return View();
+    }
 
     private static string GetInitials(string name)
     {

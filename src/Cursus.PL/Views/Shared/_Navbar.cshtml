@@ -28,12 +28,10 @@
         <div class="d-none d-md-flex align-items-center gap-1">
           <a asp-controller="Admin" asp-action="Index"
              class="nav-pill @(currentController == "Admin" && currentAction == "Index" ? "active" : "")">Dashboard</a>
-          <a asp-controller="Admin" asp-action="CourseIndex"
-             class="nav-pill @(currentController == "Admin" && currentAction == "CourseIndex" ? "active" : "")">Courses</a>
-          <a asp-controller="Admin" asp-action="DepartmentIndex"
-             class="nav-pill @(currentController == "Admin" && currentAction == "DepartmentIndex" ? "active" : "")">Departments</a>
-          <a asp-controller="Admin" asp-action="UniversityIndex"
-             class="nav-pill @(currentController == "Admin" && currentAction == "UniversityIndex" ? "active" : "")">Universities</a>
+          <a asp-controller="Admin" asp-action="Courses"
+             class="nav-pill @(currentController == "Admin" && currentAction == "Courses" ? "active" : "")">Courses</a>
+          <a asp-controller="Admin" asp-action="Students"
+             class="nav-pill @(currentController == "Admin" && currentAction == "Students" ? "active" : "")">Students</a>
         </div>
       }
       else if (isStudent)
@@ -50,6 +48,8 @@
              class="nav-pill @(currentController == "Student" && currentAction == "Planner" ? "active" : "")">Planner</a>
           <a asp-controller="Student" asp-action="Progress"
              class="nav-pill @(currentController == "Student" && currentAction == "Progress" ? "active" : "")">Progress</a>
+          <a asp-controller="Student" asp-action="AiAdvisor"
+             class="nav-pill @(currentController == "Student" && currentAction == "AiAdvisor" ? "active" : "")">AI Advisor</a>
         </div>
       }
       else
@@ -103,10 +103,20 @@
               <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">@displayName</p>
               <p class="mb-0" style="font-size:11px;color:var(--c-muted);">@currentUser?.Email</p>
             </div>
-            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
-              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
-              <span class="custom-dropdown-label">My Profile</span>
-            </a>
+            @if (isAdmin)
+            {
+              <a asp-controller="Admin" asp-action="Profile" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+                <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+                <span class="custom-dropdown-label">My Profile</span>
+              </a>
+            }
+            else if (isStudent)
+            {
+              <a asp-controller="Student" asp-action="Profile" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+                <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+                <span class="custom-dropdown-label">My Profile</span>
+              </a>
+            }
             <div style="border-top:1px solid var(--c-border);">
               <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
                 <button type="submit" class="custom-dropdown-item text-decoration-none w-100 border-0 bg-transparent text-start">

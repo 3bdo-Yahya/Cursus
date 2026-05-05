@@ -1,0 +1,237 @@
+@{
+    ViewData["Title"] = "Impact Analyzer";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/student/impact-analyzer.css" asp-append-version="true"/>
+}
+
+<!-- ─── End Nav ───────────────────────────────────────── -->
+
+<!-- ── Idle State ────────────── -->
+  <div id="ia-idle" class="ia-idle-wrapper anim-fade-up">
+    <div class="ia-idle-card">
+      <div class="ia-idle-graphic">
+        <div class="ia-idle-rings">
+          <div class="ia-ring ia-ring-1"></div>
+          <div class="ia-ring ia-ring-2"></div>
+          <div class="ia-ring ia-ring-3"></div>
+        </div>
+        <div class="ia-idle-icon-wrap">
+          <span class="material-symbols-outlined" style="font-size:36px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">account_tree</span>
+        </div>
+      </div>
+      <h1 class="fw-900 mb-2" style="font-size:1.5rem;letter-spacing:-.4px;color:var(--c-text);">Impact Report</h1>
+      <p style="font-size:14px;color:var(--c-text-sub);line-height:1.7;max-width:480px;margin:0 auto 28px;">
+        Run a failure simulation from the <strong>Course Map</strong> to generate a full impact report — showing every blocked course, graduation delay, and your recovery path.
+      </p>
+      <a href="/Student/CourseMap" class="btn btn-primary d-inline-flex align-items-center gap-2 fw-700 px-5 py-3"
+         style="border-radius:14px;font-size:14px;box-shadow:0 6px 20px rgba(79,70,229,.3);">
+        <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 300">map</span>
+        Open Course Map
+      </a>
+      <div class="ia-feature-grid">
+        <div class="ia-feat-item">
+          <span class="material-symbols-outlined" style="font-size:20px;color:#ef4444;font-variation-settings:'FILL' 0,'wght' 400">bolt</span>
+          <span>Live cascade on graph</span>
+        </div>
+        <div class="ia-feat-item">
+          <span class="material-symbols-outlined" style="font-size:20px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 400">school</span>
+          <span>Graduation delay</span>
+        </div>
+        <div class="ia-feat-item">
+          <span class="material-symbols-outlined" style="font-size:20px;color:#10b981;font-variation-settings:'FILL' 0,'wght' 400">route</span>
+          <span>Recovery timeline</span>
+        </div>
+        <div class="ia-feat-item">
+          <span class="material-symbols-outlined" style="font-size:20px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">auto_awesome</span>
+          <span>AI advisor ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Report State ─────────── -->
+  <div id="ia-report" class="d-none">
+
+    <section class="ia-report-header anim-fade-up">
+      <div class="ia-report-header-left">
+        <div class="ia-breadcrumb">
+          <a href="/Student/CourseMap" class="ia-breadcrumb-link">
+            <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 300">arrow_back</span>
+            Course Map
+          </a>
+          <span class="ia-breadcrumb-sep">/</span>
+          <span style="font-size:12px;color:var(--c-muted);">Impact Report</span>
+        </div>
+        <h1 class="fw-900 mb-1" style="font-size:1.55rem;letter-spacing:-.4px;color:var(--c-text);">Impact Report</h1>
+        <div class="d-flex align-items-center gap-2">
+          <span class="ia-severity-badge" id="report-severity">CRITICAL</span>
+          <span style="font-size:12px;color:var(--c-muted);" id="report-subtitle">Simulating failure of CS311</span>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <button id="btn-new-sim" class="btn ia-btn-outline d-flex align-items-center gap-2">
+          <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">refresh</span>
+          New Simulation
+        </button>
+        <a href="/Student/AiAdvisor" class="btn btn-primary d-flex align-items-center gap-2 fw-700"
+           style="border-radius:10px;font-size:13px;">
+          <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
+          Ask AI Advisor
+        </a>
+      </div>
+    </section>
+
+    <section class="ia-kpi-strip anim-fade-up-1">
+      <div class="ia-kpi-card ia-kpi-danger">
+        <div class="ia-kpi-icon">
+          <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400">error</span>
+        </div>
+        <div>
+          <p class="ia-kpi-val" id="kpi-blocked">4</p>
+          <p class="ia-kpi-label">Courses Blocked</p>
+        </div>
+      </div>
+      <div class="ia-kpi-card ia-kpi-warn">
+        <div class="ia-kpi-icon">
+          <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400">calendar_month</span>
+        </div>
+        <div>
+          <p class="ia-kpi-val" id="kpi-semesters">3</p>
+          <p class="ia-kpi-label">Semesters Affected</p>
+        </div>
+      </div>
+      <div class="ia-kpi-card ia-kpi-info">
+        <div class="ia-kpi-icon">
+          <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400">schedule</span>
+        </div>
+        <div>
+          <p class="ia-kpi-val" id="kpi-delay">+1 sem</p>
+          <p class="ia-kpi-label">Graduation Delay</p>
+        </div>
+      </div>
+      <div class="ia-kpi-card ia-kpi-neutral">
+        <div class="ia-kpi-icon">
+          <span class="material-symbols-outlined" style="font-size:22px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 400">school</span>
+        </div>
+        <div>
+          <p class="ia-kpi-val" id="kpi-new-grad" style="color:var(--c-primary);">Fall 2027</p>
+          <p class="ia-kpi-label">New Graduation</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="row g-4 anim-fade-up-2">
+
+      <div class="col-12 col-lg-7 d-flex flex-column gap-4">
+
+        <div class="ia-failed-course-card">
+          <div class="ia-failed-label">
+            <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">bolt</span>
+            Simulated Failure
+          </div>
+          <div class="d-flex align-items-start gap-3 mt-3">
+            <div class="ia-failed-icon-ring">
+              <span class="material-symbols-outlined" style="font-size:22px;color:#ef4444;font-variation-settings:'FILL' 0,'wght' 300">cancel</span>
+            </div>
+            <div class="flex-fill">
+              <h3 id="fc-code" class="fw-900 mb-1" style="font-size:1.2rem;letter-spacing:-.3px;color:var(--c-text);">CS311</h3>
+              <p id="fc-name" style="font-size:13.5px;color:var(--c-text-sub);margin:0 0 8px;">Algorithms Analysis & Design</p>
+              <div class="d-flex flex-wrap gap-2">
+                <span class="ia-meta-chip"><span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 0,'wght' 300">book</span> <span id="fc-credits">3 credit hours</span></span>
+                <span class="ia-meta-chip"><span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 0,'wght' 300">calendar_today</span> <span id="fc-avail">Fall only</span></span>
+                <span class="ia-meta-chip"><span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 0,'wght' 300">category</span> <span id="fc-type">Core</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Blocked courses -->
+        <div class="surface ia-section-card">
+          <div class="ia-section-header-row">
+            <div class="d-flex align-items-center gap-2">
+              <span class="material-symbols-outlined" style="font-size:18px;color:#ef4444;font-variation-settings:'FILL' 1,'wght' 400">block</span>
+              <h3 class="fw-800 mb-0" style="font-size:14px;color:var(--c-text);">Blocked Courses</h3>
+            </div>
+            <span id="blocked-count-badge" class="ia-count-pill">4 courses</span>
+          </div>
+          <div id="blocked-list" class="d-flex flex-column gap-2 mt-3"></div>
+        </div>
+
+        <!-- GPA impact -->
+        <div class="surface ia-section-card">
+          <div class="ia-section-header-row">
+            <div class="d-flex align-items-center gap-2">
+              <span class="material-symbols-outlined" style="font-size:18px;color:#d97706;font-variation-settings:'FILL' 1,'wght' 400">trending_down</span>
+              <h3 class="fw-800 mb-0" style="font-size:14px;color:var(--c-text);">Academic Risk Analysis</h3>
+            </div>
+          </div>
+          <div class="ia-risk-grid mt-3">
+            <div class="ia-risk-item">
+              <p class="ia-risk-label">Retake Availability</p>
+              <p id="risk-avail" class="ia-risk-val">Next Fall 2026</p>
+            </div>
+            <div class="ia-risk-item">
+              <p class="ia-risk-label">Credits at Risk</p>
+              <p id="risk-credits" class="ia-risk-val" style="color:#ef4444;">12 cr</p>
+            </div>
+            <div class="ia-risk-item">
+              <p class="ia-risk-label">Expected CGPA Impact</p>
+              <p id="risk-cgpa" class="ia-risk-val" style="color:#d97706;">−0.18</p>
+            </div>
+            <div class="ia-risk-item">
+              <p class="ia-risk-label">Standing Risk</p>
+              <p id="risk-standing" class="ia-risk-val" style="color:#10b981;">Good Standing</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column -->
+      <div class="col-12 col-lg-5">
+        <div style="position:sticky;top:84px;" class="d-flex flex-column gap-4">
+
+          <!-- Recovery timeline -->
+          <div class="surface ia-section-card">
+            <div class="ia-section-header-row">
+              <div class="d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined" style="font-size:18px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">route</span>
+                <h3 class="fw-800 mb-0" style="font-size:14px;color:var(--c-text);">Recovery Plan</h3>
+              </div>
+              <span class="ia-on-track-badge">
+                <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                Recoverable
+              </span>
+            </div>
+            <div id="ia-timeline" class="ia-timeline mt-3"></div>
+          </div>
+
+          <!-- Recommendations -->
+          <div class="ia-recommend-card">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">tips_and_updates</span>
+              <p class="fw-800 mb-0" style="font-size:13.5px;color:var(--c-text);">Recommendations</p>
+            </div>
+            <div id="ia-recommendations" class="d-flex flex-column gap-2"></div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="d-flex flex-column gap-2">
+            <a href="/Student/AiAdvisor" class="ia-btn-ai-full d-flex align-items-center justify-content-center gap-2 text-decoration-none">
+              <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
+              Get AI-Powered Recovery Plan
+            </a>
+            <button id="btn-new-sim-2" class="ia-btn-outline-full d-flex align-items-center justify-content-center gap-2">
+              <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 0,'wght' 300">map</span>
+              Run Another Simulation
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+@section Scripts {
+    <script src="~/js/pages/student/impact-analyzer.js" asp-append-version="true"></script>
+}

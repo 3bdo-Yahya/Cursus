@@ -2,18 +2,134 @@
     ViewData["Title"] = "Course Map";
 }
 
-<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height:40vh;">
-  <div class="surface p-5" style="max-width:420px;">
-    <div class="d-flex align-items-center justify-content-center rounded-3 mx-auto mb-3"
-         style="width:56px;height:56px;background:var(--tile-blue-bg);">
-      <span class="material-symbols-outlined" style="font-size:28px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">map</span>
-    </div>
-    <h2 class="fw-800 mb-2" style="font-size:1.3rem;color:var(--c-text);">Course Map</h2>
-    <p style="font-size:13px;color:var(--c-muted);line-height:1.6;">
-      Visualize your degree plan, prerequisite chains, and remaining courses. Coming in Sprint 2.
-    </p>
-    <a asp-action="Dashboard" class="btn btn-primary fw-700 px-4 py-2 mt-2" style="border-radius:10px;font-size:13px;">
-      ← Back to Dashboard
-    </a>
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/student/course-map.css" asp-append-version="true"/>
+}
+
+<!-- ─── Map Layout ──────────────────────────── -->
+<div class="cm-layout">
+
+  <div id="cy" class="cm-canvas"></div>
+
+  <!-- ── Toolbar ── -->
+  <div class="cm-toolbar surface anim-fade-up">
+    <button id="btn-zoom-in"  class="cm-tool-btn" title="Zoom in">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">add</span>
+    </button>
+    <button id="btn-zoom-out" class="cm-tool-btn" title="Zoom out">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">remove</span>
+    </button>
+    <div class="cm-tool-divider"></div>
+    <button id="btn-fit"      class="cm-tool-btn" title="Fit to screen">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">filter_center_focus</span>
+    </button>
+    <button id="btn-impact-toggle" class="cm-tool-btn cm-impact-tool" title="Impact Analyzer" style="display:none;">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1,'wght' 400">bolt</span>
+    </button>
   </div>
+
+  <!-- ── Legend ── -->
+  <div class="cm-legend surface anim-fade-up">
+    <p class="cm-legend-title">Legend</p>
+    <div class="cm-legend-items">
+      <div class="cm-legend-item"><span class="cm-dot" style="background:#10b981;"></span>Passed</div>
+      <div class="cm-legend-item"><span class="cm-dot" style="background:#3b82f6;"></span>In Progress</div>
+      <div class="cm-legend-item"><span class="cm-dot" style="background:#8492A6;"></span>Remaining</div>
+      <div class="cm-legend-item"><span class="cm-dot" style="background:#334155;"></span>Blocked</div>
+      <div class="cm-legend-item"><span class="cm-dot" style="background:#ef4444;"></span>Failed / Cascade</div>
+    </div>
+  </div>
+
+  <div id="sim-banner" class="cm-sim-banner">
+    <div class="d-flex align-items-center gap-2">
+      <span class="material-symbols-outlined" style="font-size:18px;color:#d97706;font-variation-settings:'FILL' 1,'wght' 400">bolt</span>
+      <span class="fw-700" style="font-size:13px;color:#92400e;">Simulation Mode</span>
+      <span style="font-size:13px;color:#92400e;">— Impact of failing <strong id="sim-course-label"></strong></span>
+    </div>
+    <button id="btn-clear-banner" class="cm-sim-clear-btn">
+      <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+      Clear
+    </button>
+  </div>
+
+  <!-- ── Node Panel ── -->
+  <aside id="node-panel" class="cm-panel surface">
+
+    <div class="cm-panel-header">
+      <span id="panel-status-pill" class="cm-status-pill"></span>
+      <button id="btn-close-panel" class="cm-panel-close">
+        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+      </button>
+    </div>
+
+    <div class="cm-panel-identity">
+      <h2 id="panel-code" class="fw-900" style="font-size:1.3rem;letter-spacing:-.3px;color:var(--c-text);margin:0;"></h2>
+      <p id="panel-name" style="font-size:13px;color:var(--c-text-sub);margin:3px 0 0;"></p>
+      <p id="panel-credits" style="font-size:11px;color:var(--c-muted);margin:2px 0 0;"></p>
+    </div>
+
+    <!-- Status row -->
+    <div id="panel-status-box" class="cm-panel-status-box">
+      <span class="material-symbols-outlined cm-panel-status-icon" id="panel-status-icon" style="font-size:18px;"></span>
+      <div>
+        <p id="panel-status-text" class="fw-700 mb-0" style="font-size:13px;"></p>
+        <p id="panel-grade-text"  style="font-size:11px;color:var(--c-muted);margin:0;"></p>
+      </div>
+    </div>
+
+    <div class="cm-panel-grid">
+      <div class="cm-panel-meta-item">
+        <span class="cm-panel-meta-label">Type</span>
+        <span id="panel-type" class="cm-panel-meta-value"></span>
+      </div>
+      <div class="cm-panel-meta-item">
+        <span class="cm-panel-meta-label">Availability</span>
+        <span id="panel-avail" class="cm-panel-meta-value"></span>
+      </div>
+      <div class="cm-panel-meta-item">
+        <span class="cm-panel-meta-label">Pass Grade</span>
+        <span id="panel-pass" class="cm-panel-meta-value"></span>
+      </div>
+      <div class="cm-panel-meta-item">
+        <span class="cm-panel-meta-label">Department</span>
+        <span id="panel-dept" class="cm-panel-meta-value"></span>
+      </div>
+    </div>
+
+    <!-- Prerequisites -->
+    <div class="cm-panel-section">
+      <p class="cm-panel-section-title">Prerequisites</p>
+      <div id="panel-prereqs"></div>
+    </div>
+
+    <!-- Unlocks -->
+    <div class="cm-panel-section">
+      <p class="cm-panel-section-title">Unlocks</p>
+      <div id="panel-unlocks" class="d-flex flex-wrap gap-1"></div>
+    </div>
+
+    <!-- Simulate button -->
+    <div id="panel-simulate-wrap" class="cm-panel-action">
+      <button id="btn-simulate" class="cm-btn-simulate">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">bolt</span>
+        Simulate Failure
+      </button>
+    </div>
+    <div id="panel-clear-wrap" class="cm-panel-action" style="display:none;">
+      <button id="btn-clear-panel" class="cm-btn-clear">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 0,'wght' 300">refresh</span>
+        Clear Simulation
+      </button>
+    </div>
+    <div class="cm-panel-ask-ai">
+      <a href="/Student/AiAdvisor" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
+        <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
+        Ask AI Advisor about this course
+      </a>
+    </div>
+  </aside>
 </div>
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+    <script src="~/js/pages/student/course-map.js" asp-append-version="true"></script>
+}
