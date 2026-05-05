@@ -22,7 +22,6 @@ build/
 *.snupkg
 project.lock.json
 appsettings.Development.json
-.env
 Cursus.PL.csproj.lscache
 Cursus.BLL.csproj.lscache
 Cursus.DAL.csproj.lscache
@@ -37,6 +36,16 @@ Cursus.DAL.csproj.lscache
 *~
 Thumbs.db
 .DS_Store
+.cursor/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # =========================
 # Misc

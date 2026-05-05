@@ -8,7 +8,16 @@ public class HomeController : Controller
 {
     public IActionResult Index()
     {
-        return View();
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            if (User.IsInRole("Admin"))
+                return RedirectToAction("Index", "Admin");
+
+            if (User.IsInRole("Student"))
+                return RedirectToAction("Dashboard", "Student");
+        }
+
+        return Redirect("/Identity/Account/Login");
     }
 
     public IActionResult Privacy()

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="light">
 <head>
     <meta charset="utf-8"/>
@@ -10,21 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    @await RenderSectionAsync("Styles", required: false)
+    <link rel="stylesheet" href="~/css/pages/auth/login.css" asp-append-version="true"/>
 </head>
-<body>
-
-    <partial name="_Navbar"/>
-
-    <main style="padding-top:80px;padding-bottom:72px;">
-        <div class="container-xl px-4" style="max-width:1200px;">
-            @RenderBody()
-        </div>
-    </main>
-
-    <partial name="_Footer"/>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<body style="margin:0;padding:0;overflow-x:hidden;">
+    @RenderBody()
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

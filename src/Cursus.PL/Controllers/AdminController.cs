@@ -18,6 +18,79 @@ public class AdminController : Controller
         _context = context;
     }
 
+    public async Task<IActionResult> Courses(string? searchTerm, int? departmentId, bool includeInactive = false)
+    {
+        ViewData["SearchTerm"] = searchTerm;
+        ViewData["SelectedDepartmentId"] = departmentId;
+        ViewData["IncludeInactive"] = includeInactive;
+
+        var coursesQuery = _context.Courses
+            .Include(course => course.Department)
+            .Include(course => course.Prerequisites)
+                .ThenInclude(prereq => prereq.Prerequisite)
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (!includeInactive)
+        {
+            coursesQuery = coursesQuery.Where(course => course.IsActive);
+        }
+
+        if (departmentId.HasValue)
+        {
+            coursesQuery = coursesQuery.Where(course => course.DepartmentId == departmentId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var normalizedSearchTerm = searchTerm.Trim();
+            coursesQuery = coursesQuery.Where(course =>
+                course.Code.Contains(normalizedSearchTerm) ||
+                course.Name.Contains(normalizedSearchTerm));
+        }
+
+        await PopulateDepartmentsFilterDropDownListAsync(departmentId);
+
+        var courses = await coursesQuery
+            .OrderBy(course => course.Code)
+            .ToListAsync();
+
+        return View("CourseIndex", courses);
+    }
+
+    /// <summary>Legacy route — redirects to <see cref="Courses"/>.</summary>
+    public IActionResult CourseIndex(string? searchTerm, int? departmentId, bool includeInactive = false)
+        => RedirectToAction(nameof(Courses), new { searchTerm, departmentId, includeInactive });
+
+    public IActionResult Students() => View();
+
+    public IActionResult AddCourse() => RedirectToAction(nameof(CourseCreate));
+
+    public IActionResult EditCourse(int? id)
+    {
+        if (id is null)
+        {
+            return RedirectToAction(nameof(Courses));
+        }
+
+        return RedirectToAction(nameof(CourseEdit), new { id = id.Value });
+    }
+
+    public IActionResult ViewCourse(int? id)
+    {
+        if (id is null)
+        {
+            return RedirectToAction(nameof(Courses));
+        }
+
+        return RedirectToAction(nameof(CourseEdit), new { id = id.Value });
+    }
+
+    public IActionResult AddStudent() => View();
+    public IActionResult EditStudent() => View();
+    public IActionResult ViewStudent() => View();
+    public IActionResult Profile() => View();
+
     public async Task<IActionResult> Index()
     {
         var dashboard = new AdminDashboardViewModel
@@ -236,44 +309,6 @@ public class AdminController : Controller
         return RedirectToAction(nameof(DepartmentIndex));
     }
 
-    public async Task<IActionResult> CourseIndex(string? searchTerm, int? departmentId, bool includeInactive = false)
-    {
-        ViewData["SearchTerm"] = searchTerm;
-        ViewData["SelectedDepartmentId"] = departmentId;
-        ViewData["IncludeInactive"] = includeInactive;
-
-        var coursesQuery = _context.Courses
-            .Include(course => course.Department)
-            .AsNoTracking()
-            .AsQueryable();
-
-        if (!includeInactive)
-        {
-            coursesQuery = coursesQuery.Where(course => course.IsActive);
-        }
-
-        if (departmentId.HasValue)
-        {
-            coursesQuery = coursesQuery.Where(course => course.DepartmentId == departmentId.Value);
-        }
-
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            var normalizedSearchTerm = searchTerm.Trim();
-            coursesQuery = coursesQuery.Where(course =>
-                course.Code.Contains(normalizedSearchTerm) ||
-                course.Name.Contains(normalizedSearchTerm));
-        }
-
-        await PopulateDepartmentsFilterDropDownListAsync(departmentId);
-
-        var courses = await coursesQuery
-            .OrderBy(course => course.Code)
-            .ToListAsync();
-
-        return View(courses);
-    }
-
     [HttpGet]
     public async Task<IActionResult> CourseCreate()
     {
@@ -310,7 +345,7 @@ public class AdminController : Controller
         {
             await _context.SaveChangesAsync();
             TempData["StatusMessage"] = "Course created successfully.";
-            return RedirectToAction(nameof(CourseIndex));
+            return RedirectToAction(nameof(Courses));
         }
         catch (DbUpdateException)
         {
@@ -372,7 +407,7 @@ public class AdminController : Controller
             _context.Courses.Update(course);
             await _context.SaveChangesAsync();
             TempData["StatusMessage"] = "Course updated successfully.";
-            return RedirectToAction(nameof(CourseIndex));
+            return RedirectToAction(nameof(Courses));
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -411,7 +446,7 @@ public class AdminController : Controller
             ? "Course reactivated successfully."
             : "Course deactivated successfully.";
 
-        return RedirectToAction(nameof(CourseIndex), new { searchTerm, departmentId, includeInactive });
+        return RedirectToAction(nameof(Courses), new { searchTerm, departmentId, includeInactive });
     }
 
     private async Task PopulateUniversitiesDropDownListAsync(object? selectedUniversity = null)
