@@ -15,8 +15,8 @@ window.addEventListener('DOMContentLoaded', () => {
     loadReport(DEMO_SRC, DEMO_BLOCKED);
   }
 
-  document.getElementById('btn-new-sim')?.addEventListener('click', () => location.href='course-map.html');
-  document.getElementById('btn-new-sim-2')?.addEventListener('click', () => location.href='course-map.html');
+  document.getElementById('btn-new-sim')?.addEventListener('click', () => { location.href = '/Student/CourseMap'; });
+  document.getElementById('btn-new-sim-2')?.addEventListener('click', () => { location.href = '/Student/CourseMap'; });
 });
 
 function loadReport(src, blocked) {
