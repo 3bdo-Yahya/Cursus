@@ -1,5 +1,8 @@
 @{
     ViewData["Title"] = "My Profile";
+    var studentName = ViewData["StudentName"]?.ToString() ?? "Student";
+    var studentEmail = ViewData["StudentEmail"]?.ToString() ?? "";
+    var initials = ViewData["Initials"]?.ToString() ?? "?";
 }
 
 @section Styles {
@@ -11,14 +14,14 @@
     <div class="sp-hero-bg"></div>
     <div class="sp-hero-content">
       <div class="sp-avatar-wrap">
-        <div class="sp-avatar">AK</div>
+        <div class="sp-avatar">@initials</div>
         <button class="sp-avatar-edit" title="Change photo">
           <span class="material-symbols-outlined" style="font-size:15px;">photo_camera</span>
         </button>
       </div>
       <div class="sp-hero-info">
-        <h1 class="fw-900 mb-1" style="font-size:1.6rem;letter-spacing:-.4px;color:var(--c-text);">Ahmed Kamal</h1>
-        <p style="font-size:13.5px;color:var(--c-muted);margin:0 0 12px;">ahmed.kamal@svu.edu · Student ID: 2022-CS-0847</p>
+        <h1 class="fw-900 mb-1" style="font-size:1.6rem;letter-spacing:-.4px;color:var(--c-text);">@studentName</h1>
+        <p style="font-size:13.5px;color:var(--c-muted);margin:0 0 12px;">@(string.IsNullOrEmpty(studentEmail) ? "—" : studentEmail)</p>
         <div class="d-flex flex-wrap gap-2">
           <span class="sp-tag sp-tag-primary">
             <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400">verified</span>
@@ -90,15 +93,15 @@
         <div class="sp-field-grid">
           <div class="sp-field">
             <p class="sp-field-label">Full Name</p>
-            <p class="sp-field-value">Ahmed Kamal Mohamed</p>
+            <p class="sp-field-value">@studentName</p>
           </div>
           <div class="sp-field">
             <p class="sp-field-label">Student ID</p>
-            <p class="sp-field-value">2022-CS-0847</p>
+            <p class="sp-field-value">—</p>
           </div>
           <div class="sp-field">
             <p class="sp-field-label">Email Address</p>
-            <p class="sp-field-value">ahmed.kamal@svu.edu</p>
+            <p class="sp-field-value">@(string.IsNullOrEmpty(studentEmail) ? "—" : studentEmail)</p>
           </div>
           <div class="sp-field">
             <p class="sp-field-label">Phone</p>
@@ -296,23 +299,23 @@
       <div class="row g-3">
         <div class="col-12 col-sm-6">
           <label class="sp-label">Full Name</label>
-          <input type="text" class="sp-input" value="Ahmed Kamal Mohamed">
+          <input type="text" class="sp-input" value="@studentName">
         </div>
         <div class="col-12 col-sm-6">
           <label class="sp-label">Phone Number</label>
-          <input type="text" class="sp-input" value="+20 100 234 5678">
+          <input type="text" class="sp-input" value="">
         </div>
         <div class="col-12">
           <label class="sp-label">Email Address</label>
-          <input type="email" class="sp-input" value="ahmed.kamal@svu.edu">
+          <input type="email" class="sp-input" value="@studentEmail">
         </div>
         <div class="col-12 col-sm-6">
           <label class="sp-label">Date of Birth</label>
-          <input type="date" class="sp-input" value="2004-03-15">
+          <input type="date" class="sp-input" value="">
         </div>
         <div class="col-12 col-sm-6">
           <label class="sp-label">National ID</label>
-          <input type="text" class="sp-input" value="30403150XXXXXXX">
+          <input type="text" class="sp-input" value="">
         </div>
       </div>
     </div>
