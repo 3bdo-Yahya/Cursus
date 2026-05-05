@@ -317,17 +317,17 @@
             </div>
           </div>
           <div class="d-flex flex-column gap-2 mt-2">
-            <a href="/Admin/Courses"   class="sp-quick-link">
+            <a asp-controller="Admin" asp-action="Courses" class="sp-quick-link">
               <span class="material-symbols-outlined sp-ql-icon" style="color:var(--c-primary);">menu_book</span>
               <span>Manage Courses</span>
               <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
             </a>
-            <a href="/Admin/Students"  class="sp-quick-link">
+            <a asp-controller="Admin" asp-action="Students" class="sp-quick-link">
               <span class="material-symbols-outlined sp-ql-icon" style="color:#10b981;">group</span>
               <span>Manage Students</span>
               <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
             </a>
-            <a href="/Admin/AddCourse" class="sp-quick-link">
+            <a asp-controller="Admin" asp-action="CourseCreate" class="sp-quick-link">
               <span class="material-symbols-outlined sp-ql-icon" style="color:#7c3aed;">add_circle</span>
               <span>Add New Course</span>
               <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
