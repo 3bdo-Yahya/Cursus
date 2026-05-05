@@ -17,7 +17,7 @@ public class HomeController : Controller
                 return RedirectToAction("Dashboard", "Student");
         }
 
-        return View();
+        return Redirect("/Identity/Account/Login");
     }
 
     public IActionResult Privacy()

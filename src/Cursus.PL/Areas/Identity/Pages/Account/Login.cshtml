@@ -144,5 +144,17 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>
-    <script src="~/js/pages/auth/login.js" asp-append-version="true"></script>
+    <script>
+    // Password visibility toggle (login.js is not included — it blocks form submit with preventDefault)
+    const pwInput = document.getElementById('toggle-pw');
+    if (pwInput) {
+      const field = document.querySelector('input[type="password"]');
+      const icon = pwInput.querySelector('span');
+      pwInput.addEventListener('click', () => {
+        const hidden = field.type === 'password';
+        field.type = hidden ? 'text' : 'password';
+        icon.textContent = hidden ? 'visibility_off' : 'visibility';
+      });
+    }
+    </script>
 }
