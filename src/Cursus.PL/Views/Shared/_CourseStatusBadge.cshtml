@@ -1,5 +1,5 @@
-﻿@using Cursus.Models.ViewModels
-@model CourseStatus
+@using Cursus.Domain.Enums
+@model StudentCourseStatus?
 
 @*
     ============================================
@@ -13,8 +13,8 @@
 
     Input:
     ------
-    CourseStatus enum:
-        - NotStarted
+    StudentCourseStatus? enum:
+        - null (Not Started)
         - InProgress
         - Completed
         - Failed
@@ -26,17 +26,17 @@
     Usage:
     ------
     <partial name="partials/_CourseStatusBadge"
-             model="CourseStatus.Completed" />
+             model="StudentCourseStatus.Completed" />
 *@
 
 @{
     // Map course status to Bootstrap style + label
     var (cssClass, label) = Model switch
     {
-        CourseStatus.Completed => ("bg-success", "Completed"),
-        CourseStatus.InProgress => ("bg-primary", "In Progress"),
-        CourseStatus.Failed => ("bg-danger", "Failed"),
-        CourseStatus.NotStarted => ("bg-secondary", "Not Started"),
+        StudentCourseStatus.Completed => ("bg-success", "Completed"),
+        StudentCourseStatus.InProgress => ("bg-primary", "In Progress"),
+        StudentCourseStatus.Failed => ("bg-danger", "Failed"),
+        null => ("bg-secondary", "Not Started"),
         _ => ("bg-secondary", "Unknown")
     };
 }
