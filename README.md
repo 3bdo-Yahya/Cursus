@@ -14,37 +14,52 @@ Cursus is a web platform that helps university students **see, understand, and p
 
 ---
 
-## Key Features
-
-### 🗺️ Interactive Course Map
-A visual, interactive graph of every course in the student's department. Courses are connected by prerequisite relationships and color-coded by status (completed, in-progress, remaining, blocked). Built with Cytoscape.js for smooth, zoomable graph interactions.
-
-### ⚡ Impact Analyzer
-The core differentiator. When a student fails or drops a course, the system performs a **forward cascade analysis**: it instantly identifies every downstream course that is now blocked, calculates the graduation delay, and suggests a recovery path with animated visualizations.
-
-### 📊 Progress & Planning
-A graduation audit tracking progress by course category (core, elective, free, university requirements), with GPA simulation — predict grades, set targets, and see exactly what you need to hit your goals. Includes grade improvement tracking and academic standing alerts.
-
-### 🤖 AI Advisor
-A chat interface powered by OpenAI's GPT where students ask natural-language questions about their academic situation. The AI uses the student's real data as context, so responses are personalized and data-driven.
-
-> **Design principle:** AI is the *voice*, not the brain. All core logic (prerequisite resolution, GPA calculation, graduation audit) is handled by deterministic algorithms. AI translates the results into supportive, human-readable guidance.
-
-### 🎓 Academic Rules Engine
-Models standard credit-hour system rules: academic standing (Good → Warning → Probation → Dismissal), credit hour limits by GPA, grade improvement eligibility, and honor recognition (Honor / Dean's / President's List).
-
----
-
 ## Tech Stack
 
 | Layer          | Technology                                  |
 |----------------|---------------------------------------------|
 | Application    | ASP.NET Core 10 MVC, C#, Razor Views       |
-| Styling        | Bootstrap 5 + custom CSS                    |
+| Styling        | Bootstrap 5 + custom CSS design system      |
 | Graph Viz      | Cytoscape.js (interactive prerequisite map) |
 | Database       | SQL Server + Entity Framework Core          |
-| Auth           | ASP.NET Identity (cookie-based)             |
+| Auth           | ASP.NET Identity (cookie-based, role-based) |
 | AI             | OpenAI API (GPT-3.5-turbo)                  |
+| CI/CD          | GitHub Actions (`dotnet-ci.yml`)            |
+
+---
+
+## Architecture
+
+Cursus uses a **4-layer N-tier** architecture, with each layer isolated in its own .NET project:
+
+```mermaid
+graph LR
+    PL["🖥️ Cursus.PL<br/><i>Presentation Layer</i><br/>Controllers · Views · wwwroot"]
+    BLL["⚙️ Cursus.BLL<br/><i>Business Logic</i><br/>Services · Interfaces"]
+    DAL["🗄️ Cursus.DAL<br/><i>Data Access</i><br/>DbContext · Configurations · Migrations"]
+    Domain["📦 Cursus.Domain<br/><i>Domain Model</i><br/>Entities · Enums"]
+
+    PL --> BLL
+    BLL --> DAL
+    DAL --> Domain
+    BLL --> Domain
+    PL --> Domain
+```
+
+| Layer | Project | Responsibility |
+|-------|---------|----------------|
+| **Presentation** | `Cursus.PL` | ASP.NET MVC controllers, Razor views, static assets, Identity UI, seeding |
+| **Business Logic** | `Cursus.BLL` | Service interfaces & implementations, business rules, validation |
+| **Data Access** | `Cursus.DAL` | EF Core `ApplicationDbContext`, entity configurations, migrations, seed data |
+| **Domain** | `Cursus.Domain` | Pure C# entities and enums — zero infrastructure dependencies |
+
+### Key Principle
+
+```
+Controller → Service (BLL) → DbContext (DAL) → Domain Entities
+```
+
+Controllers stay thin. Business logic lives in services. Domain entities have no knowledge of EF Core or HTTP.
 
 ---
 
@@ -52,17 +67,45 @@ Models standard credit-hour system rules: academic standing (Good → Warning �
 
 ```
 Cursus/
-├── src/                # ASP.NET Core MVC application
-│   ├── Controllers/    # MVC controllers
-│   ├── Services/       # Business logic layer
-│   ├── Models/         # Entities + View Models
-│   ├── Data/           # EF Core DbContext + migrations
-│   ├── Views/          # Razor views
-│   └── wwwroot/        # Static files (CSS, JS, Cytoscape.js)
-├── .gitignore
+├── src/
+│   ├── Cursus.sln                    # Solution file
+│   │
+│   ├── Cursus.Domain/                # Domain layer (entities & enums)
+│   │   ├── Entities/                 #   AppUser, Course, Department, University, ...
+│   │   └── Enums/                    #   AcademicStanding, CourseType, StudentCourseStatus, ...
+│   │
+│   ├── Cursus.DAL/                   # Data Access layer
+│   │   ├── Database/
+│   │   │   ├── ApplicationDbContext.cs
+│   │   │   └── SeedData/             #   JSON seed files per university
+│   │   ├── Configurations/           #   EF Core Fluent API configs
+│   │   └── Migrations/
+│   │
+│   ├── Cursus.BLL/                   # Business Logic layer
+│   │   └── (services added per feature in Sprint 2+)
+│   │
+│   └── Cursus.PL/                    # Presentation layer (startup project)
+│       ├── Controllers/              #   AdminController, StudentController, HomeController, ...
+│       ├── Models/                   #   ViewModels (AdminDashboardVM, CourseNodeVM, ...)
+│       ├── Views/                    #   Razor views organized by controller
+│       │   ├── Shared/               #     _Layout, _Navbar, _AuthLayout, partials
+│       │   ├── Admin/
+│       │   ├── Student/
+│       │   └── Home/
+│       ├── Areas/Identity/           #   Scaffolded Identity pages (Login, Register, ...)
+│       ├── Seeding/                  #   StartupSeeder for catalog data
+│       ├── wwwroot/                  #   Static assets
+│       │   ├── css/pages/            #     Per-page stylesheets
+│       │   ├── js/pages/             #     Per-page scripts
+│       │   └── lib/                  #     Bootstrap, jQuery
+│       ├── Program.cs
+│       └── appsettings.json
+│
+├── .github/workflows/dotnet-ci.yml   # CI pipeline
 ├── CONTRIBUTING.md
-├── LICENSE.txt
-└── README.md
+├── SETUP.md
+├── README.md
+└── docs/                             # Internal documentation
 ```
 
 ---
@@ -72,10 +115,10 @@ Cursus/
 ### Prerequisites
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (LocalDB or Express)
-- A code editor (Visual Studio 2022 or VS Code)
+- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (LocalDB, Express, or Docker)
+- A code editor (Visual Studio 2022, Rider, or VS Code)
 
-### Run Locally
+### Quick Start
 
 ```bash
 # Clone the repository
@@ -86,34 +129,23 @@ cd Cursus/src
 dotnet restore
 
 # Apply database migrations
-dotnet ef database update
+dotnet ef database update --project Cursus.DAL --startup-project Cursus.PL
 
 # Run the application
-dotnet run
+dotnet run --project Cursus.PL
 ```
 
 The app will be available at `https://localhost:5001` (or the port shown in the terminal).
 
-> **Development only:** If you enable identity seeding for local testing, do not use a shared default admin password. Provide any seed admin credentials through secure local configuration such as environment variables or .NET user-secrets, and do not enable or rely on seeded credentials in shared, staging, or production environments.
+> **Note:** For detailed OS-specific setup instructions (Windows vs Linux/Docker), see [SETUP.md](SETUP.md).
 
----
-
-## Team
-
-| Role                       | Responsibilities                                        |
-|----------------------------|---------------------------------------------------------|
-| Team Lead + Architecture   | Architecture, prerequisite engine, impact analyzer      |
-| Backend Developer          | Auth, admin module, GPA calculation services            |
-| Full-Stack Developer       | Dashboard, course map (Cytoscape.js), impact animation  |
-| Full-Stack Developer       | Progress tracker, GPA simulator, admin panel, chat UI   |
-| Data & AI Integration      | Data seeding, OpenAI integration, prompt engineering    |
-| QA & DevOps                | Testing, deployment, documentation, demo preparation    |
+> **Security:** If you enable identity seeding for local testing, provide seed admin credentials through secure local configuration such as environment variables or .NET user-secrets. Do not rely on seeded credentials in shared or production environments.
 
 ---
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for our development workflow, branching strategy, and coding conventions.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for our development workflow, branching strategy, architecture rules, and coding conventions.
 
 ---
 

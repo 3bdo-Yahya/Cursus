@@ -1,4 +1,6 @@
-﻿namespace Cursus.Models.ViewModels
+using Cursus.Domain.Enums;
+
+namespace Cursus.PL.Models
 {
     /// <summary>
     /// Represents a course node in the course map.
@@ -23,7 +25,7 @@
         /// <summary>
         /// Gets or sets the course status.
         /// </summary>
-        public CourseStatus Status { get; set; }
+        public StudentCourseStatus? Status { get; set; }
 
         /// <summary>
         /// Gets or sets the grade achieved in the course.
