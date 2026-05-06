@@ -1,0 +1,4303 @@
+[
+  {
+    "code": "CSW110",
+    "name": "Introduction to Computer & Internet Technology",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW121",
+    "name": "Logic Design",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Electronics",
+      "prerequisites": [
+        [
+          "INT110"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW221",
+    "name": "Data Structure",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Programming (1)",
+      "prerequisites": [
+        [
+          "CSW232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW225",
+    "name": "Computer Architecture",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Computer & Internet Technology + Logic Design",
+      "prerequisites": [
+        [
+          "CSW110"
+        ],
+        [
+          "CSW121"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW232",
+    "name": "Computer Programming (1)",
+    "description": "",
+    "credits": {
+      "creditHours": 4,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Computer & Internet Technology",
+      "prerequisites": [
+        [
+          "CSW110"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW234",
+    "name": "Computer Programming (2)",
+    "description": "",
+    "credits": {
+      "creditHours": 4,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Programming (1)",
+      "prerequisites": [
+        [
+          "CSW232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW241",
+    "name": "File Organization & Processing",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Data Structure",
+      "prerequisites": [
+        [
+          "CSW221"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW242",
+    "name": "Operating Systems (1)",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "File Organization & Processing",
+      "prerequisites": [
+        [
+          "CSW241"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW263",
+    "name": "Software Engineering",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Programming (1)",
+      "prerequisites": [
+        [
+          "CSW232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW323",
+    "name": "Operating Systems (2)",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Operating Systems (1)",
+      "prerequisites": [
+        [
+          "CSW242"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW325",
+    "name": "Parallel Processing",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Architecture",
+      "prerequisites": [
+        [
+          "CSW225"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW326",
+    "name": "Compiler",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Data Structure",
+      "prerequisites": [
+        [
+          "CSW221"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "CSW337",
+    "name": "Web Client Side Programming",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Programming (2)",
+      "prerequisites": [
+        [
+          "CSW234"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW338",
+    "name": "Programming for WWW",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Programming (2)",
+      "prerequisites": [
+        [
+          "CSW234"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW339",
+    "name": "Programming for Digital Media",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Programming (2)",
+      "prerequisites": [
+        [
+          "CSW234"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW351",
+    "name": "Artificial Intelligence",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Programming (1)",
+      "prerequisites": [
+        [
+          "CSW232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW362",
+    "name": "Software Construction",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Architecture",
+      "prerequisites": [
+        [
+          "CSW225"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW367",
+    "name": "Software Methods for Remote Databases",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Programming (2) + Database System",
+      "prerequisites": [
+        [
+          "CSW234"
+        ],
+        [
+          "ISD242"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW433",
+    "name": "Concept of Computer Programming",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "File Organization & Processing",
+      "prerequisites": [
+        [
+          "CSW241"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW461",
+    "name": "Software Eng. Approach to Human Interaction",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Software Construction",
+      "prerequisites": [
+        [
+          "CSW362"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW462",
+    "name": "Software Design & Architecture",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Architecture",
+      "prerequisites": [
+        [
+          "CSW225"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW463",
+    "name": "Software Process & Management",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Software Eng. (2)",
+      "prerequisites": [
+        [
+          "CSW464"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW464",
+    "name": "Software Eng. (2)",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Software Construction",
+      "prerequisites": [
+        [
+          "CSW362"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW465",
+    "name": "Software Quality Assurance & Testing",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Software Eng. (2)",
+      "prerequisites": [
+        [
+          "CSW464"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW466",
+    "name": "Formal Methods in Software Eng.",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Software Design & Architecture",
+      "prerequisites": [
+        [
+          "CSW462"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW467",
+    "name": "Design Architecture of large SW Systems",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Programming (2) + Computer Network",
+      "prerequisites": [
+        [
+          "CSW234"
+        ],
+        [
+          "INT232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW468",
+    "name": "Software Requirement Analysis",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Software Design & Architecture",
+      "prerequisites": [
+        [
+          "CSW462"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW469",
+    "name": "Selected Topics in SW Eng",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "CSW498",
+    "name": "SW/ENG Project (1)",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 0,
+        "lab": 6,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "CSW499",
+    "name": "SW/ENG Proj (2)",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "HU100",
+    "name": "Sinai History",
+    "description": "",
+    "credits": {
+      "creditHours": 0,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IDSS": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IT": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          1
+        ]
+      }
+    }
+  },
+  {
+    "code": "HU110",
+    "name": "English Language",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IDSS": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IT": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          1
+        ]
+      }
+    }
+  },
+  {
+    "code": "HU111",
+    "name": "Composition + Technical Writing",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 0,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IDSS": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IT": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          2
+        ]
+      }
+    }
+  },
+  {
+    "code": "HU120",
+    "name": "Ethical + Professional Issues",
+    "description": "",
+    "credits": {
+      "creditHours": 1,
+      "contactHours": {
+        "lecture": 1,
+        "lab": 0,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": []
+      },
+      "IDSS": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": []
+      },
+      "IT": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "HU212",
+    "name": "Reading & Presentation Skills",
+    "description": "",
+    "credits": {
+      "creditHours": 2,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IDSS": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IT": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          4
+        ]
+      }
+    }
+  },
+  {
+    "code": "HU213",
+    "name": "Creative Thinking",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 0,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IDSS": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IT": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          3
+        ]
+      }
+    }
+  },
+  {
+    "code": "HU230",
+    "name": "Communication Skills",
+    "description": "",
+    "credits": {
+      "creditHours": 1,
+      "contactHours": {
+        "lecture": 1,
+        "lab": 0,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IDSS": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IT": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": [
+          2
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT110",
+    "name": "Introduction to Electronics",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT232",
+    "name": "Computer Network",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Linear Algebra",
+      "prerequisites": [
+        [
+          "MA110"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT326",
+    "name": "Digital Image Development",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Data Communication",
+      "prerequisites": [
+        [
+          "INT330"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT327",
+    "name": "Digital Audio Development",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Data Communication",
+      "prerequisites": [
+        [
+          "INT330"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT328",
+    "name": "Digital Video Development",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Data Communication",
+      "prerequisites": [
+        [
+          "INT330"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT329M",
+    "name": "DM Project",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT330",
+    "name": "Data Communication",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Linear Algebra + Calculus",
+      "prerequisites": [
+        [
+          "MA110"
+        ],
+        [
+          "MA111"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT338",
+    "name": "Network - Based Multimedia",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Multimedia + Computer Network",
+      "prerequisites": [
+        [
+          "INT353"
+        ],
+        [
+          "INT232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT339E",
+    "name": "DE Project",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT341",
+    "name": "Web Technology",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Computer & Internet Technology",
+      "prerequisites": [
+        [
+          "CSW110"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT342",
+    "name": "Web Design for E-Commerce",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Web Technology",
+      "prerequisites": [
+        [
+          "INT341"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT343-EL",
+    "name": "Web Environments for Learning & Information",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Web Technology",
+      "prerequisites": [
+        [
+          "INT341"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT343-WDT",
+    "name": "Website Design & Implementation",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Web Technology + Programming for WWW",
+      "prerequisites": [
+        [
+          "INT341"
+        ],
+        [
+          "CSW338"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT349W",
+    "name": "WDT Project",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT351",
+    "name": "Computer Graphics",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Programming (2)",
+      "prerequisites": [
+        [
+          "CSW234"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IT": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": [
+          5
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT353",
+    "name": "Multimedia",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Architecture",
+      "prerequisites": [
+        [
+          "CSW225"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          5
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT355",
+    "name": "Introduction to Computer Vision",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Linear Algebra + Calculus",
+      "prerequisites": [
+        [
+          "MA110"
+        ],
+        [
+          "MA111"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT356",
+    "name": "Computer Graphics: Geometric Modeling",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Graphics",
+      "prerequisites": [
+        [
+          "INT351"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT357",
+    "name": "Computer Graphics: Image Synthesis",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Graphics",
+      "prerequisites": [
+        [
+          "INT351"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT358",
+    "name": "Geometric Algorithms",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Graphics",
+      "prerequisites": [
+        [
+          "INT351"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT359G",
+    "name": "CG Project",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT372",
+    "name": "Multimedia Applications",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Multimedia",
+      "prerequisites": [
+        [
+          "INT353"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT373",
+    "name": "Distance Educational Technology Support System",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Web Technology",
+      "prerequisites": [
+        [
+          "INT341"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT374",
+    "name": "Education & Training Tech. Support System",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Web Technology",
+      "prerequisites": [
+        [
+          "INT341"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT379L",
+    "name": "EL Project",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT421",
+    "name": "Digital Signal Processing",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Linear Algebra + Calculus",
+      "prerequisites": [
+        [
+          "MA110"
+        ],
+        [
+          "MA111"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT422",
+    "name": "Pattern Recognition",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Linear Algebra + Calculus",
+      "prerequisites": [
+        [
+          "MA110"
+        ],
+        [
+          "MA111"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT423",
+    "name": "Image Processing",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Linear Algebra",
+      "prerequisites": [
+        [
+          "MA110"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT433",
+    "name": "Broadband Network & Communication",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Data Communication",
+      "prerequisites": [
+        [
+          "INT330"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT434",
+    "name": "Network Operations & Administration",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Network",
+      "prerequisites": [
+        [
+          "INT232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT435",
+    "name": "Information & Networks Security",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Network",
+      "prerequisites": [
+        [
+          "INT232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": [
+          8
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT437",
+    "name": "Wireless & Mobile Network",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Network",
+      "prerequisites": [
+        [
+          "INT232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT453",
+    "name": "Digital Multimedia",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Multimedia",
+      "prerequisites": [
+        [
+          "INT353"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT461",
+    "name": "Information Engineering",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Computer Network",
+      "prerequisites": [
+        [
+          "INT232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT489",
+    "name": "Selected Topics in IT",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT498",
+    "name": "IT Project (1)",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "INT499",
+    "name": "IT Project (2)",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD100",
+    "name": "Introduction to Systems & Informatics",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD110",
+    "name": "Introduction to Management",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 0,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": []
+      },
+      "IDSS": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": []
+      },
+      "IT": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "ISD111",
+    "name": "Introduction to Economics",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 0,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": []
+      },
+      "IDSS": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": []
+      },
+      "IT": {
+        "courseType": "UniversityReq",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "ISD220",
+    "name": "Introduction to Operations Research",
+    "description": "",
+    "credits": {
+      "creditHours": 4,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Linear Algebra + Statistics & Probability",
+      "prerequisites": [
+        [
+          "MA110"
+        ],
+        [
+          "ST120"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD242",
+    "name": "Database System",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Data Structure",
+      "prerequisites": [
+        [
+          "CSW221"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          4
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD321",
+    "name": "Modeling & Simulation",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Operations Research",
+      "prerequisites": [
+        [
+          "ISD220"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      },
+      "IT": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "ISD330",
+    "name": "Project Management",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Systems & Informatics / Introduction to Operations Research",
+      "prerequisites": [
+        [
+          "ISD100"
+        ],
+        [
+          "ISD220"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "ISD331",
+    "name": "Queuing Theory",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Operations Research",
+      "prerequisites": [
+        [
+          "ISD220"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      },
+      "IT": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "ISD340",
+    "name": "Data Mining",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Database System",
+      "prerequisites": [
+        [
+          "ISD242"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "ISD342",
+    "name": "Database System (2)",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Database System",
+      "prerequisites": [
+        [
+          "ISD242"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": []
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD351",
+    "name": "Information System Fundamentals",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Database System",
+      "prerequisites": [
+        [
+          "ISD242"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "ISD352",
+    "name": "Information System Analysis & Design",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Software Engineering + Introduction to Systems & Informatics",
+      "prerequisites": [
+        [
+          "CSW263"
+        ],
+        [
+          "ISD100"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "ISD358",
+    "name": "e-Business System Fundamentals",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Web Technology",
+      "prerequisites": [
+        [
+          "INT341"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IDSS": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      },
+      "IT": {
+        "courseType": "FreeElective",
+        "recommendedSemesters": [
+          6
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD421",
+    "name": "Modeling & Simulation",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Operations Research",
+      "prerequisites": [
+        [
+          "ISD220"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD423",
+    "name": "Selected Topic in ISD",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD425",
+    "name": "Network Optimization",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Operations Research / Computer Network",
+      "prerequisites": [
+        [
+          "ISD220"
+        ],
+        [
+          "INT232"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      },
+      "IT": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": []
+      }
+    }
+  },
+  {
+    "code": "ISD431",
+    "name": "Queuing Theory",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Operations Research",
+      "prerequisites": [
+        [
+          "ISD220"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD440",
+    "name": "Data Mining",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD442",
+    "name": "Database Design",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "All"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Database System",
+      "prerequisites": [
+        [
+          "ISD242"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "DeptElective",
+        "recommendedSemesters": []
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD448",
+    "name": "ISD Project (1)",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          7
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD449",
+    "name": "ISD Project (2)",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD451",
+    "name": "Information System Fundamentals",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Database System",
+      "prerequisites": [
+        [
+          "ISD242"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD452",
+    "name": "Information System Analysis & Design",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Systems & Informatics",
+      "prerequisites": [
+        [
+          "ISD100"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "ISD458",
+    "name": "e-Business System Fundamentals",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 0,
+        "tutorial": 2
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Introduction to Operations Research",
+      "prerequisites": [
+        [
+          "ISD220"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          8
+        ]
+      }
+    }
+  },
+  {
+    "code": "MA110",
+    "name": "Linear Algebra",
+    "description": "",
+    "credits": {
+      "creditHours": 3,
+      "contactHours": {
+        "lecture": 2,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Spring"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          2
+        ]
+      }
+    }
+  },
+  {
+    "code": "MA111",
+    "name": "Calculus",
+    "description": "",
+    "credits": {
+      "creditHours": 4,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      }
+    }
+  },
+  {
+    "code": "MA212",
+    "name": "Discrete Mathematics",
+    "description": "",
+    "credits": {
+      "creditHours": 4,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "Linear Algebra",
+      "prerequisites": [
+        [
+          "MA110"
+        ]
+      ],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          3
+        ]
+      }
+    }
+  },
+  {
+    "code": "ST120",
+    "name": "Statistics & Probability",
+    "description": "",
+    "credits": {
+      "creditHours": 4,
+      "contactHours": {
+        "lecture": 3,
+        "lab": 2,
+        "tutorial": null
+      }
+    },
+    "semesterAvailability": [
+      "Fall"
+    ],
+    "gatingRequirements": {
+      "passingGradeThreshold": "D",
+      "minimumPassedCreditHours": null,
+      "prerequisiteText": "No Prerequisite",
+      "prerequisites": [],
+      "corequisites": [],
+      "equivalencies": []
+    },
+    "programRules": {
+      "CSSE": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IDSS": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      },
+      "IT": {
+        "courseType": "Core",
+        "recommendedSemesters": [
+          1
+        ]
+      }
+    }
+  }
+]

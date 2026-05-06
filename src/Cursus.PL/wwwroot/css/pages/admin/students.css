@@ -1,0 +1,134 @@
+/* ── Page load stagger ──────────────────────────────────── */
+.anim-fade-up   { animation: fadeUp .55s ease both; }
+.anim-fade-up-1 { animation: fadeUp .55s .07s ease both; }
+.anim-fade-up-2 { animation: fadeUp .55s .14s ease both; }
+.anim-fade-up-3 { animation: fadeUp .55s .21s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+
+
+/* ── User avatar button ───────────────────────────────── */
+.user-avatar-btn {
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  padding:     4px 6px 4px 4px;
+  border-radius: 10px;
+  transition:  background-color 0.15s ease;
+  align-items: center;
+}
+.user-avatar-btn:hover { background: rgba(79,70,229,.06); }
+html.dark .user-avatar-btn:hover { background: rgba(255,255,255,.05); }
+
+/* User dropdown panel */
+.user-menu {
+  border-radius: 14px !important;
+  animation:     panelDrop .2s ease both;
+  overflow:      hidden;
+}
+.user-menu .custom-dropdown-item {
+  gap: 10px;
+}
+.user-menu .custom-dropdown-item:hover { color: var(--c-primary); }
+.user-menu .custom-dropdown-item:hover .material-symbols-outlined { color: var(--c-primary); }
+
+
+/* ── Student table column widths ──────────────────────── */
+.col-student-name    { min-width: 200px; }
+.col-student-email   { min-width: 180px; font-size: 12px; }
+.col-student-year    { width:  90px; }
+.col-student-credits { width: 100px; }
+.col-student-gpa     { width:  80px; }
+.col-student-standing{ width: 120px; }
+
+
+/* ── Student avatar ───────────────────────────────────── */
+.student-avatar {
+  width:           36px;
+  height:          36px;
+  border-radius:   10px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       12px;
+  font-weight:     800;
+  flex-shrink:     0;
+  letter-spacing:  .3px;
+}
+
+
+/* ── Year badge ───────────────────────────────────────── */
+.year-badge {
+  display:       inline-flex;
+  align-items:   center;
+  padding:       3px 8px;
+  border-radius: 6px;
+  font-size:     11px;
+  font-weight:   600;
+  background:    var(--c-bg);
+  border:        1px solid var(--c-border);
+  color:         var(--c-text-sub);
+  white-space:   nowrap;
+}
+
+
+/* ── GPA values ───────────────────────────────────────── */
+.gpa-value {
+  font-size:   14px;
+  font-weight: 800;
+  letter-spacing: -.3px;
+}
+.gpa-good   { color: #059669; }
+.gpa-warn   { color: #d97706; }
+.gpa-danger { color: #dc2626; }
+html.dark .gpa-good   { color: #34d399; }
+html.dark .gpa-warn   { color: #fbbf24; }
+html.dark .gpa-danger { color: #fca5a5; }
+
+
+/* ── Standing badges ──────────────────────────────────── */
+.standing-badge {
+  display:     inline-flex;
+  align-items: center;
+  gap:         5px;
+  padding:     3px 10px;
+  border-radius: 99px;
+  font-size:   11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.standing-good {
+  background: rgba(16,185,129,.1);
+  color:      #065f46;
+}
+html.dark .standing-good {
+  background: rgba(16,185,129,.14);
+  color:      #6ee7b7;
+}
+.standing-warning {
+  background: rgba(245,158,11,.1);
+  color:      #92400e;
+}
+html.dark .standing-warning {
+  background: rgba(245,158,11,.12);
+  color:      #fcd34d;
+}
+.standing-probation {
+  background: rgba(239,68,68,.1);
+  color:      #991b1b;
+}
+html.dark .standing-probation {
+  background: rgba(239,68,68,.13);
+  color:      #fca5a5;
+}
+.standing-dismissed {
+  background: var(--c-bg);
+  color:      var(--c-muted);
+}
+
+.standing-dot {
+  width:         6px;
+  height:        6px;
+  border-radius: 50%;
+  background:    #10b981;
+  flex-shrink:   0;
+}

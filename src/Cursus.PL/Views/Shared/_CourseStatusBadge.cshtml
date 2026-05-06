@@ -1,0 +1,47 @@
+@using Cursus.Domain.Enums
+@model StudentCourseStatus?
+
+@*
+    ============================================
+    CourseStatusBadge Partial View
+    ============================================
+
+    Purpose:
+    --------
+    Displays a Bootstrap badge representing
+    the status of a course.
+
+    Input:
+    ------
+    StudentCourseStatus? enum:
+        - null (Not Started)
+        - InProgress
+        - Completed
+        - Failed
+
+    Output:
+    -------
+    Colored status badge
+
+    Usage:
+    ------
+    <partial name="partials/_CourseStatusBadge"
+             model="StudentCourseStatus.Completed" />
+*@
+
+@{
+    // Map course status to Bootstrap style + label
+    var (cssClass, label) = Model switch
+    {
+        StudentCourseStatus.Completed => ("bg-success", "Completed"),
+        StudentCourseStatus.InProgress => ("bg-primary", "In Progress"),
+        StudentCourseStatus.Failed => ("bg-danger", "Failed"),
+        null => ("bg-secondary", "Not Started"),
+        _ => ("bg-secondary", "Unknown")
+    };
+}
+
+<!-- Render status badge -->
+<span class="badge @cssClass">
+    @label
+</span>

@@ -1,0 +1,25 @@
+{
+  "source": "AUC 2017-2018 academic catalog program page and linked core curriculum page",
+  "totalCreditsRequired": 132,
+  "minimumGraduationGPA": null,
+  "categories": {
+    "UniversityReq": {
+      "totalCredits": 33
+    },
+    "Core": {
+      "totalCredits": 69
+    },
+    "DeptElective": {
+      "totalCredits": 21
+    },
+    "FreeElective": {
+      "totalCredits": 9
+    }
+  },
+  "notes": [
+    "Course codes are normalized to the current catalog code shown to the right of the slash in dual-code labels such as CSCE 106/1001 -> CSCE1001.",
+    "Semester placement by numbered term is not published on the AUC program page, so semester is left empty and semesterAvailability is derived from each course's When Offered field.",
+    "General Electives are listed as 3-15 credits on the program page, but the seed uses 9 credits because 132 total degree credits minus 33 core curriculum credits, 60 computer science requirement credits, and 30 collateral credits leaves 9 credits.",
+    "Only curriculum-listed courses are emitted in the seed. Prerequisite links that point to external or preparatory courses outside the curriculum are preserved in prerequisiteText but omitted from prerequisite mappings."
+  ]
+}

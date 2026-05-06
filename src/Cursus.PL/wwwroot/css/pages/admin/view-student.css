@@ -1,0 +1,246 @@
+/* ── Page stagger animations ────────────────────────────── */
+.anim-fade-up   { animation: fadeUp .55s ease both; }
+.anim-fade-up-1 { animation: fadeUp .55s .07s ease both; }
+.anim-fade-up-2 { animation: fadeUp .55s .14s ease both; }
+.anim-fade-up-3 { animation: fadeUp .55s .21s ease both; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+[data-scroll] {
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1) !important;
+}
+[data-scroll="fade-up"]    { transform: translateY(32px); }
+[data-scroll="fade-left"]  { transform: translateX(28px); }
+[data-scroll="fade-right"] { transform: translateX(-28px); }
+[data-scroll].in-view      { opacity: 1; transform: none; }
+
+[data-scroll-group] > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1) !important;
+}
+[data-scroll-group].in-view > *:nth-child(1) { transition-delay: 0s !important; }
+[data-scroll-group].in-view > *:nth-child(2) { transition-delay: .07s !important; }
+[data-scroll-group].in-view > *:nth-child(3) { transition-delay: .14s !important; }
+[data-scroll-group].in-view > * { opacity: 1; transform: none; }
+
+
+/* ── Student avatar (hero size) ──────────────────────────── */
+.vs-avatar-lg {
+  width:           76px;
+  height:          76px;
+  border-radius:   20px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       1.35rem;
+  font-weight:     900;
+  flex-shrink:     0;
+  letter-spacing:  .5px;
+  transition:      transform 0.22s ease, box-shadow 0.22s ease;
+}
+.vs-avatar-lg:hover {
+  transform:  scale(1.05);
+  box-shadow: 0 8px 24px rgba(79,70,229,.18);
+}
+
+
+/* ── Info chips ───────────────────────────────────────────── */
+.vs-chip {
+  display:     inline-flex;
+  align-items: center;
+  gap:         5px;
+  font-size:   12px;
+  color:       var(--c-text-sub);
+  background:  var(--c-bg);
+  border:      1px solid var(--c-border);
+  border-radius: 99px;
+  padding:     5px 11px;
+  transition:  border-color 0.15s ease;
+}
+.vs-chip:hover   { border-color: rgba(79,70,229,.3); }
+.vs-chip .material-symbols-outlined { font-size: 14px; font-variation-settings: 'FILL' 0,'wght' 300; }
+
+
+/* ── KPI strip ────────────────────────────────────────────── */
+.vs-kpi-strip {
+  display:               grid;
+  grid-template-columns: repeat(3, minmax(110px, 140px));
+  gap:                   12px;
+  flex-shrink:           0;
+}
+
+.vs-kpi {
+  padding:    16px;
+  text-align: center;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
+  cursor:     default;
+}
+.vs-kpi:hover {
+  transform:    translateY(-4px);
+  box-shadow:   0 10px 24px rgba(79,70,229,.1);
+  border-color: rgba(79,70,229,.22);
+}
+.vs-kpi-icon {
+  width:         36px;
+  height:        36px;
+  border-radius: 10px;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  margin:        0 auto 8px;
+}
+.vs-kpi-label {
+  margin:      0 0 4px;
+  font-size:   10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color:       var(--c-muted);
+}
+.vs-kpi-value {
+  margin:      0;
+  font-size:   18px;
+  font-weight: 900;
+  color:       var(--c-text);
+  letter-spacing: -.4px;
+}
+
+.gpa-good           { color: #059669; }
+.gpa-warn           { color: #d97706; }
+.gpa-danger         { color: #dc2626; }
+html.dark .gpa-good   { color: #34d399; }
+html.dark .gpa-warn   { color: #fbbf24; }
+html.dark .gpa-danger { color: #fca5a5; }
+
+@media (max-width: 767px) {
+  .vs-kpi-strip { grid-template-columns: 1fr 1fr 1fr; max-width: none; }
+}
+
+
+/* ── Progress bar ─────────────────────────────────────────── */
+.vs-progress-track {
+  height:        8px;
+  border-radius: 99px;
+  background:    var(--c-border);
+  overflow:      hidden;
+}
+@keyframes vsFillBar {
+  from { width: 0; }
+  to   { width: var(--prog-w); }
+}
+.vs-progress-bar {
+  height:        100%;
+  border-radius: 99px;
+  background:    linear-gradient(90deg, var(--c-primary), #818cf8);
+  width:         0;
+  animation:     vsFillBar 1.2s .4s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+
+/* ── Section icon (reused from view-course) ──────────────── */
+.vc-section-icon {
+  width:         36px;
+  height:        36px;
+  border-radius: 10px;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  flex-shrink:   0;
+}
+
+
+/* ── Academic detail list ─────────────────────────────────── */
+.vs-detail-list {
+  list-style: none;
+  padding:    0;
+  margin:     0;
+}
+.vs-detail-list li {
+  display:       flex;
+  align-items:   center;
+  gap:           10px;
+  padding:       10px 0;
+  border-bottom: 1px solid var(--c-border);
+  font-size:     13px;
+}
+.vs-detail-list li:last-child { border-bottom: none; }
+.vs-detail-icon { font-size: 16px !important; flex-shrink: 0; }
+.vs-detail-key  { color: var(--c-muted); font-weight: 500; flex: 1; min-width: 120px; }
+.vs-detail-list strong { color: var(--c-text); font-weight: 700; }
+
+
+/* ── Advisor notes ────────────────────────────────────────── */
+.vs-note {
+  background:    var(--c-bg);
+  border:        1px solid var(--c-border);
+  border-radius: 12px;
+  padding:       14px;
+  transition:    border-color 0.18s ease, box-shadow 0.18s ease;
+  cursor:        default;
+}
+.vs-note:hover {
+  border-color: rgba(79,70,229,.22);
+  box-shadow:   0 4px 14px rgba(79,70,229,.06);
+}
+
+
+/* ── Grade badges ─────────────────────────────────────────── */
+.vs-grade {
+  display:       inline-flex;
+  align-items:   center;
+  justify-content: center;
+  min-width:     34px;
+  padding:       3px 8px;
+  border-radius: 7px;
+  font-size:     12px;
+  font-weight:   800;
+  letter-spacing: .3px;
+}
+.vs-grade-good {
+  background: rgba(16,185,129,.1);
+  color:      #065f46;
+}
+html.dark .vs-grade-good {
+  background: rgba(16,185,129,.14);
+  color:      #6ee7b7;
+}
+.vs-grade-warn {
+  background: rgba(245,158,11,.1);
+  color:      #92400e;
+}
+html.dark .vs-grade-warn {
+  background: rgba(245,158,11,.12);
+  color:      #fcd34d;
+}
+
+
+/* ── Standing badges ──────────────────────────────────────── */
+.standing-badge {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           5px;
+  padding:       4px 11px;
+  border-radius: 99px;
+  font-size:     11px;
+  font-weight:   600;
+  white-space:   nowrap;
+}
+.standing-good     { background: rgba(16,185,129,.1);  color: #065f46; }
+.standing-warning  { background: rgba(245,158,11,.1);  color: #92400e; }
+.standing-probation{ background: rgba(239,68,68,.1);   color: #991b1b; }
+html.dark .standing-good      { background: rgba(16,185,129,.14); color: #6ee7b7; }
+html.dark .standing-warning   { background: rgba(245,158,11,.12); color: #fcd34d; }
+html.dark .standing-probation { background: rgba(239,68,68,.13);  color: #fca5a5; }
+.standing-dot { width:6px; height:6px; border-radius:50%; background:#10b981; flex-shrink:0; }
+
+
+/* ── Notification panel ──────────────────────────────────── */
+@keyframes panelDrop {
+  from { opacity: 0; transform: translateY(-8px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.notif-panel { animation: panelDrop .2s ease both; min-width: 320px; }

@@ -1,0 +1,59 @@
+@model Department
+
+@{
+    ViewData["Title"] = "Create Department";
+}
+
+<h1 class="h3 mb-3">Create Department</h1>
+
+<partial name="_AdminAlerts" />
+
+<div class="row">
+    <div class="col-lg-8">
+        <form asp-action="DepartmentCreate" method="post" class="card shadow-sm">
+            <div class="card-body row g-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="col-md-8">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="UniversityId" class="form-label">University</label>
+                    <select asp-for="UniversityId" class="form-select" asp-items="ViewBag.UniversityId">
+                        <option value="">Select university...</option>
+                    </select>
+                    <span asp-validation-for="UniversityId" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="TotalCreditsRequired" class="form-label"></label>
+                    <input asp-for="TotalCreditsRequired" class="form-control" />
+                    <span asp-validation-for="TotalCreditsRequired" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="MinGpaForGraduation" class="form-label"></label>
+                    <input asp-for="MinGpaForGraduation" class="form-control" />
+                    <span asp-validation-for="MinGpaForGraduation" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 form-check ms-1">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                    <span asp-validation-for="IsActive" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="card-footer d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="DepartmentIndex" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

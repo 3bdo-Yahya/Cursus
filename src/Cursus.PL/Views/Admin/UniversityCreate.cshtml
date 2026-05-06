@@ -1,0 +1,33 @@
+@model University
+
+@{
+    ViewData["Title"] = "Create University";
+}
+
+<h1 class="h3 mb-3">Create University</h1>
+
+<partial name="_AdminAlerts" />
+
+<div class="row">
+    <div class="col-lg-8">
+        <form asp-action="UniversityCreate" method="post" class="card shadow-sm">
+            <div class="card-body row g-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="col-12">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="card-footer d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="UniversityIndex" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
