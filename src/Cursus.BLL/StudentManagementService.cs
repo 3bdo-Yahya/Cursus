@@ -7,8 +7,6 @@ namespace Cursus.BLL;
 
 public class StudentManagementService : IStudentManagementService
 {
-    private const string StudentRoleName = "Student";
-
     private readonly ApplicationDbContext _context;
 
     public StudentManagementService(ApplicationDbContext context)
