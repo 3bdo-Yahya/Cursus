@@ -9,7 +9,7 @@ namespace Cursus.PL.Models
         public string? FullName { get; set; }
 
         [EmailAddress]
-        public string? Email { get; set; }
+        public string? Email { get; set; } // Optional: readonly/disabled in view, not posted from client
 
         [Phone]
         [Display(Name = "Phone Number")]

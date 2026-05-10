@@ -31,7 +31,7 @@ public class StudentsController : Controller
     {
         await PopulateDepartmentsFilterDropDownListAsync(departmentId);
 
-        var students = await _studentManagementService.GetAllStudentsAsync(departmentId?.ToString());
+        var students = await _studentManagementService.GetAllStudentsAsync(departmentId);
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {

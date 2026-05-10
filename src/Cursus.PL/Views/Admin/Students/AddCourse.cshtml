@@ -38,9 +38,7 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="Grade" class="form-label">Grade</label>
-                    <select asp-for="Grade" class="form-select" asp-items="Model.GradeOptions">
-                        <option value="">In Progress</option>
-                    </select>
+                    <select asp-for="Grade" class="form-select" asp-items="Model.GradeOptions"></select>
                     <span asp-validation-for="Grade" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-4">

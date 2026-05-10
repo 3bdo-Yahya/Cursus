@@ -8,13 +8,14 @@ namespace Cursus.BLL;
 public class StudentManagementService : IStudentManagementService
 {
     private readonly ApplicationDbContext _context;
+    private const string StudentRoleName = "Student";
 
     public StudentManagementService(ApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<IReadOnlyList<StudentListItemDto>> GetAllStudentsAsync(string? departmentFilter)
+    public async Task<IReadOnlyList<StudentListItemDto>> GetAllStudentsAsync(int? departmentId)
     {
         var studentRoleId = await GetStudentRoleIdAsync();
         if (studentRoleId is null)
@@ -24,7 +25,7 @@ public class StudentManagementService : IStudentManagementService
 
         var studentsQuery = GetStudentQuery(studentRoleId);
 
-        if (int.TryParse(departmentFilter, out var departmentId) && departmentId > 0)
+        if (departmentId.HasValue && departmentId > 0)
         {
             studentsQuery = studentsQuery.Where(user => user.DepartmentId == departmentId);
         }

@@ -59,6 +59,8 @@ function saveProfile() {
   const formData = new FormData(form);
   formData.set('FullName', fullName);
   formData.set('PhoneNumber', phone);
+    const email = document.getElementById('profile-email')?.value?.trim() || '';
+    formData.set('Email', email);
 
   fetch('/Student/UpdateProfile', {
     method: 'POST',
