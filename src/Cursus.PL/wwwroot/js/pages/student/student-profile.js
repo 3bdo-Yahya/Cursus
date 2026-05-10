@@ -57,20 +57,38 @@ function saveProfile() {
   }
 
   const formData = new FormData(form);
-  formData.set('fullName', fullName);
-  formData.set('phoneNumber', phone);
+  formData.set('FullName', fullName);
+  formData.set('PhoneNumber', phone);
 
   fetch('/Student/UpdateProfile', {
     method: 'POST',
     headers: { 'X-Requested-With': 'XMLHttpRequest' },
     body: formData
   })
-    .then(res => {
-      if (!res.ok) return res.json().then(err => Promise.reject(err));
-      return res.json();
+    .then(async res => {
+      const responseText = await res.text();
+      let data = {};
+
+      if (responseText) {
+        try {
+          data = JSON.parse(responseText);
+        } catch {
+          data = { message: responseText };
+        }
+      }
+
+      if (!res.ok) {
+        return Promise.reject(
+          data && typeof data === 'object'
+            ? { status: res.status, ...data }
+            : { status: res.status, message: 'Request failed.' }
+        );
+      }
+
+      return data;
     })
     .then(data => {
-      if (data.success) {
+      if (data && data.success) {
         closeEditModal();
         // Reload to show updated name/email in page
         setTimeout(() => location.reload(), 300);
