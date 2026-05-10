@@ -295,30 +295,33 @@
         <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
       </button>
     </div>
-    <div class="sp-modal-body">
-      <div class="row g-3">
-        <div class="col-12 col-sm-6">
-          <label class="sp-label">Full Name</label>
-          <input type="text" class="sp-input" value="@studentName">
-        </div>
-        <div class="col-12 col-sm-6">
-          <label class="sp-label">Phone Number</label>
-          <input type="text" class="sp-input" value="">
-        </div>
-        <div class="col-12">
-          <label class="sp-label">Email Address</label>
-          <input type="email" class="sp-input" value="@studentEmail">
-        </div>
-        <div class="col-12 col-sm-6">
-          <label class="sp-label">Date of Birth</label>
-          <input type="date" class="sp-input" value="">
-        </div>
-        <div class="col-12 col-sm-6">
-          <label class="sp-label">National ID</label>
-          <input type="text" class="sp-input" value="">
+    <form id="edit-profile-form">
+      @Html.AntiForgeryToken()
+      <div class="sp-modal-body">
+        <div class="row g-3">
+          <div class="col-12 col-sm-6">
+            <label class="sp-label">Full Name</label>
+            <input name="FullName" id="profile-fullname" type="text" class="sp-input" value="@studentName">
+          </div>
+          <div class="col-12 col-sm-6">
+            <label class="sp-label">Phone Number</label>
+            <input name="PhoneNumber" id="profile-phone" type="text" class="sp-input" value="">
+          </div>
+          <div class="col-12">
+            <label class="sp-label">Email Address</label>
+            <input name="Email" id="profile-email" type="email" class="sp-input" value="@studentEmail">
+          </div>
+          <div class="col-12 col-sm-6">
+            <label class="sp-label">Date of Birth</label>
+            <input type="date" class="sp-input" value="">
+          </div>
+          <div class="col-12 col-sm-6">
+            <label class="sp-label">National ID</label>
+            <input type="text" class="sp-input" value="">
+          </div>
         </div>
       </div>
-    </div>
+    </form>
     <div class="sp-modal-footer">
       <button class="sp-btn-ghost" onclick="closeEditModal()">Cancel</button>
       <button class="sp-btn-primary" onclick="saveProfile()">

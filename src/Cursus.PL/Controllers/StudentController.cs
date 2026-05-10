@@ -67,11 +67,71 @@ public class StudentController : Controller
     public async Task<IActionResult> Profile()
     {
         var user = await _userManager.GetUserAsync(User);
-        var username = user?.UserName?.Split('@').FirstOrDefault() ?? "Student";
+        if (user == null)
+            return Unauthorized();
+
+        var username = user.UserName?.Split('@').FirstOrDefault() ?? "Student";
+        var claims = await _userManager.GetClaimsAsync(user);
+        var fullNameClaim = claims.FirstOrDefault(c => c.Type == "FullName")?.Value;
+        if (!string.IsNullOrWhiteSpace(fullNameClaim))
+        {
+            username = fullNameClaim;
+        }
+
         ViewData["StudentName"] = username;
-        ViewData["StudentEmail"] = user?.Email ?? "";
+        ViewData["StudentEmail"] = user.Email ?? "";
         ViewData["Initials"] = GetInitials(username);
         return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateProfile(UpdateProfileViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return Unauthorized();
+
+        // Update email and phone
+        if (!string.Equals(user.Email, model.Email, StringComparison.OrdinalIgnoreCase))
+        {
+            var setEmail = await _userManager.SetEmailAsync(user, model.Email);
+            if (!setEmail.Succeeded)
+            {
+                return BadRequest(setEmail.Errors);
+            }
+            // Also set UserName to the email for consistency
+            await _userManager.SetUserNameAsync(user, model.Email);
+        }
+
+        if (!string.Equals(user.PhoneNumber ?? string.Empty, model.PhoneNumber ?? string.Empty, StringComparison.Ordinal))
+        {
+            var setPhone = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
+            if (!setPhone.Succeeded)
+                return BadRequest(setPhone.Errors);
+        }
+
+        // Store a display name in a claim so we don't change login behavior
+        var claims = await _userManager.GetClaimsAsync(user);
+        var existing = claims.FirstOrDefault(c => c.Type == "FullName");
+        if (existing != null)
+        {
+            await _userManager.RemoveClaimAsync(user, existing);
+        }
+        if (!string.IsNullOrWhiteSpace(model.FullName))
+        {
+            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("FullName", model.FullName));
+        }
+
+        // Persist any remaining changes (some methods already updated store)
+        var updateResult = await _userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+            return BadRequest(updateResult.Errors);
+
+        return Json(new { success = true });
     }
 
     private static string GetInitials(string name)

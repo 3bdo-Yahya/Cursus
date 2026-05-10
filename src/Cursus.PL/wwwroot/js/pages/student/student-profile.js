@@ -42,5 +42,44 @@ function closeEditModal(e) {
   document.body.style.overflow = '';
 }
 function saveProfile() {
-  closeEditModal();
+  const form = document.getElementById('edit-profile-form');
+  if (!form) {
+    closeEditModal();
+    return;
+  }
+
+  const fullName = document.getElementById('profile-fullname')?.value?.trim() || '';
+  const email = document.getElementById('profile-email')?.value?.trim() || '';
+  const phone = document.getElementById('profile-phone')?.value?.trim() || '';
+
+  if (!fullName || !email) {
+    alert('Full Name and Email are required.');
+    return;
+  }
+
+  const formData = new FormData(form);
+  formData.set('fullName', fullName);
+  formData.set('email', email);
+  formData.set('phoneNumber', phone);
+
+  fetch('/Student/UpdateProfile', {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    body: formData
+  })
+    .then(res => {
+      if (!res.ok) return res.json().then(err => Promise.reject(err));
+      return res.json();
+    })
+    .then(data => {
+      if (data.success) {
+        closeEditModal();
+        // Reload to show updated name/email in page
+        setTimeout(() => location.reload(), 300);
+      }
+    })
+    .catch(err => {
+      console.error('Save error:', err);
+      alert('Error saving profile. Please try again.');
+    });
 }
