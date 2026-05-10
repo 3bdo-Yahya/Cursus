@@ -1,0 +1,115 @@
+@model StudentListIndexViewModel
+
+@{
+    ViewData["Title"] = "Students";
+    var departmentOptions = ViewData["DepartmentOptions"] as SelectList;
+}
+
+<div class="d-flex flex-column gap-4">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 anim-fade-up">
+        <div>
+            <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Students</h1>
+            <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Browse student accounts and open their course records.</p>
+        </div>
+        <a asp-action="Index" asp-controller="Students" class="btn btn-primary d-flex align-items-center gap-2 fw-700"
+           style="border-radius:12px;font-size:13px;padding:8px 16px;box-shadow:0 4px 14px rgba(79,70,229,.28);">
+            <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">group</span>
+            Refresh
+        </a>
+    </div>
+
+    <partial name="_AdminAlerts" />
+
+    <form method="get" asp-action="Index" asp-controller="Students" class="surface p-3 p-md-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-12 col-md-6">
+                <label class="form-label fw-600" for="searchTerm">Search</label>
+                <input id="searchTerm" name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search by name or email" />
+            </div>
+            <div class="col-12 col-md-4">
+                <label class="form-label fw-600" for="departmentId">Department</label>
+                <select id="departmentId" name="departmentId" class="form-select" asp-items="departmentOptions">
+                    <option value="">All departments</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+                <a asp-action="Index" asp-controller="Students" class="btn btn-outline-secondary w-100">Reset</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="surface" style="overflow:hidden;">
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Academic Year</th>
+                        <th>Semester</th>
+                        <th>Standing</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Students.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">No students found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var student in Model.Students)
+                        {
+                            <tr>
+                                <td><span class="fw-700">@student.FullName</span></td>
+                                <td>@student.Email</td>
+                                <td>@(student.DepartmentName ?? "-")</td>
+                                <td>@(student.AcademicYear ?? "-")</td>
+                                <td>@student.CurrentSemester</td>
+                                <td><span class="badge bg-light text-dark border">@student.CurrentStanding</span></td>
+                                <td class="text-end">
+                                    <a asp-action="Details" asp-controller="Students" asp-route-studentId="@student.StudentId" class="btn btn-sm btn-outline-primary">View</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav aria-label="Students pagination" class="d-flex justify-content-center">
+            <ul class="pagination mb-0">
+                <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-controller="Students"
+                      asp-route-pageNumber="@(Model.CurrentPage - 1)"
+                       asp-route-searchTerm="@Model.SearchTerm"
+                       asp-route-departmentId="@Model.SelectedDepartmentId">Previous</a>
+                </li>
+
+                @for (var pageIndex = 1; pageIndex <= Model.TotalPages; pageIndex++)
+                {
+                    <li class="page-item @(pageIndex == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-controller="Students"
+                           asp-route-pageNumber="@pageIndex"
+                           asp-route-searchTerm="@Model.SearchTerm"
+                           asp-route-departmentId="@Model.SelectedDepartmentId">@pageIndex</a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-controller="Students"
+                       asp-route-pageNumber="@(Model.CurrentPage + 1)"
+                       asp-route-searchTerm="@Model.SearchTerm"
+                       asp-route-departmentId="@Model.SelectedDepartmentId">Next</a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>

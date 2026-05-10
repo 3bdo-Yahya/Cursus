@@ -1,5 +1,7 @@
 using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
+using Cursus.BLL;
+using Cursus.PL.Constants;
 using Cursus.PL.Models.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +40,7 @@ public class Program
             options.AccessDeniedPath = "/Identity/Account/AccessDenied";
         });
         builder.Services.Configure<IdentitySeedOptions>(builder.Configuration.GetSection("IdentitySeed"));
+        builder.Services.AddScoped<IStudentManagementService, StudentManagementService>();
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
@@ -80,7 +83,7 @@ public class Program
         using var scope = services.CreateScope();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        foreach (var roleName in new[] { "Admin", "Student" })
+        foreach (var roleName in new[] { Roles.Admin, Roles.Student })
         {
             if (await roleManager.RoleExistsAsync(roleName))
             {
@@ -154,13 +157,13 @@ public class Program
             }
         }
 
-        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+        if (!await userManager.IsInRoleAsync(adminUser, Roles.Admin))
         {
-            var addRoleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
+            var addRoleResult = await userManager.AddToRoleAsync(adminUser, Roles.Admin);
             if (!addRoleResult.Succeeded)
             {
                 throw new InvalidOperationException(
-                    $"Unable to assign 'Admin' role to seeded admin user: {string.Join(", ", addRoleResult.Errors.Select(error => error.Description))}");
+                    $"Unable to assign '{Roles.Admin}' role to seeded admin user: {string.Join(", ", addRoleResult.Errors.Select(error => error.Description))}");
             }
         }
     }

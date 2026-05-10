@@ -1,5 +1,6 @@
 using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
+using Cursus.PL.Constants;
 using Cursus.PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.PL.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = Roles.Admin)]
 public class AdminController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -62,8 +63,6 @@ public class AdminController : Controller
     public IActionResult CourseIndex(string? searchTerm, int? departmentId, bool includeInactive = false)
         => RedirectToAction(nameof(Courses), new { searchTerm, departmentId, includeInactive });
 
-    public IActionResult Students() => View();
-
     public IActionResult AddCourse() => RedirectToAction(nameof(CourseCreate));
 
     public IActionResult EditCourse(int? id)
@@ -86,9 +85,6 @@ public class AdminController : Controller
         return RedirectToAction(nameof(CourseEdit), new { id = id.Value });
     }
 
-    public IActionResult AddStudent() => View();
-    public IActionResult EditStudent() => View();
-    public IActionResult ViewStudent() => View();
     public IActionResult Profile() => View();
 
     public async Task<IActionResult> Index()

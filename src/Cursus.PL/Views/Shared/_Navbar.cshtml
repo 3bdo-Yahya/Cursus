@@ -1,10 +1,11 @@
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Identity
+@using Cursus.PL.Constants
 
 @{
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
-    var isAdmin = isAuthenticated && User.IsInRole("Admin");
-    var isStudent = isAuthenticated && User.IsInRole("Student");
+    var isAdmin = isAuthenticated && User.IsInRole(Roles.Admin);
+    var isStudent = isAuthenticated && User.IsInRole(Roles.Student);
 
     var accountEmail = isAuthenticated
         ? (User.FindFirstValue(ClaimTypes.Email) ?? User.Identity?.Name ?? string.Empty)
@@ -33,8 +34,8 @@
              class="nav-pill @(currentController == "Admin" && currentAction == "Index" ? "active" : "")">Dashboard</a>
           <a asp-controller="Admin" asp-action="Courses"
              class="nav-pill @(currentController == "Admin" && (currentAction == "Courses" || currentAction == "CourseCreate" || currentAction == "CourseEdit") ? "active" : "")">Courses</a>
-          <a asp-controller="Admin" asp-action="Students"
-             class="nav-pill @(currentController == "Admin" && currentAction == "Students" ? "active" : "")">Students</a>
+           <a asp-controller="Students" asp-action="Index"
+             class="nav-pill @(currentController == "Students" ? "active" : "")">Students</a>
         </div>
       }
       else if (isStudent)

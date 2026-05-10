@@ -25,6 +25,11 @@
         <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">add</span>
         Add Course
       </a>
+      <a asp-controller="Students" asp-action="Index" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-700"
+         style="border-radius:12px;font-size:13px;padding:8px 16px;">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 0,'wght' 400">group</span>
+        Students
+      </a>
     </div>
   </div>
 
@@ -176,6 +181,20 @@
             <div class="flex-fill min-w-0">
               <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Course Catalog</p>
               <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Edit & deactivate</p>
+            </div>
+            <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+          </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+          <a asp-controller="Students" asp-action="Index" class="surface action-card d-flex align-items-center gap-3 p-3 text-decoration-none h-100">
+            <div class="action-icon d-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
+                 style="width:44px;height:44px;background:var(--tile-blue-bg);">
+              <span class="material-symbols-outlined" style="font-size:22px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">group</span>
+            </div>
+            <div class="flex-fill min-w-0">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Students</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Review profiles and records</p>
             </div>
             <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
           </a>

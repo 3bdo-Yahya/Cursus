@@ -1,6 +1,7 @@
 using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
+using Cursus.PL.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -32,7 +33,7 @@ public static class StartupSeeder
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
-        const string adminRoleName = "Admin";
+        const string adminRoleName = Roles.Admin;
         const string seededAdminEmail = "admin@cursus.local";
         const string seededAdminUserName = "admin@cursus.local";
         const string seededAdminPassword = "ChangeMe123!";
