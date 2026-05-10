@@ -49,17 +49,15 @@ function saveProfile() {
   }
 
   const fullName = document.getElementById('profile-fullname')?.value?.trim() || '';
-  const email = document.getElementById('profile-email')?.value?.trim() || '';
   const phone = document.getElementById('profile-phone')?.value?.trim() || '';
 
-  if (!fullName || !email) {
-    alert('Full Name and Email are required.');
+  if (!fullName) {
+    alert('Full Name is required.');
     return;
   }
 
   const formData = new FormData(form);
   formData.set('fullName', fullName);
-  formData.set('email', email);
   formData.set('phoneNumber', phone);
 
   fetch('/Student/UpdateProfile', {
