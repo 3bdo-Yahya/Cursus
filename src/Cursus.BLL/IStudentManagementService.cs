@@ -4,7 +4,7 @@ namespace Cursus.BLL;
 
 public interface IStudentManagementService
 {
-    Task<IReadOnlyList<StudentListItemDto>> GetAllStudentsAsync(string? departmentFilter);
+    Task<IReadOnlyList<StudentListItemDto>> GetAllStudentsAsync(int? departmentId);
 
     Task<StudentDetailDto?> GetStudentDetailAsync(string studentId);
 
