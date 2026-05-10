@@ -108,11 +108,15 @@ public class StudentController : Controller
         var existing = claims.FirstOrDefault(c => c.Type == "FullName");
         if (existing != null)
         {
-            await _userManager.RemoveClaimAsync(user, existing);
+            var removeClaimResult = await _userManager.RemoveClaimAsync(user, existing);
+            if (!removeClaimResult.Succeeded)
+                return BadRequest(removeClaimResult.Errors);
         }
         if (!string.IsNullOrWhiteSpace(model.FullName))
         {
-            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("FullName", model.FullName));
+            var addClaimResult = await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("FullName", model.FullName));
+            if (!addClaimResult.Succeeded)
+                return BadRequest(addClaimResult.Errors);
         }
 
         // Persist any remaining changes (some methods already updated store)
