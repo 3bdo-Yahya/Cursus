@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Cursus.PL.Seeding;
 using Microsoft.Extensions.Options;
 using System;
+using Cursus.Domain.Constants;
 
 namespace Cursus.PL;
 
@@ -80,7 +81,7 @@ public class Program
         using var scope = services.CreateScope();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        foreach (var roleName in new[] { "Admin", "Student" })
+        foreach (var roleName in new[] { Roles.Admin, Roles.Student })
         {
             if (await roleManager.RoleExistsAsync(roleName))
             {
@@ -154,9 +155,9 @@ public class Program
             }
         }
 
-        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+        if (!await userManager.IsInRoleAsync(adminUser, Roles.Admin))
         {
-            var addRoleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
+            var addRoleResult = await userManager.AddToRoleAsync(adminUser, Roles.Admin);
             if (!addRoleResult.Succeeded)
             {
                 throw new InvalidOperationException(

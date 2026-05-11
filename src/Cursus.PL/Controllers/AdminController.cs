@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Cursus.Domain.Constants;
 
 namespace Cursus.PL.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = Roles.Admin)]
 public class AdminController : Controller
 {
     private readonly ApplicationDbContext _context;
