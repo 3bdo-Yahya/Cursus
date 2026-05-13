@@ -4,6 +4,8 @@ using Cursus.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
+using Cursus.PL.Models.Options;
 
 namespace Cursus.PL.Seeding;
 
@@ -25,7 +27,7 @@ public static class StartupSeeder
         await context.Database.EnsureCreatedAsync();
     }
 
-    public static async Task SeedIdentityAsync(IServiceProvider serviceProvider)
+    public static async Task SeedIdentityAsync(IServiceProvider serviceProvider,IdentitySeedOptions options)
     {
         using var scope = serviceProvider.CreateScope();
 
@@ -35,7 +37,7 @@ public static class StartupSeeder
         const string adminRoleName = "Admin";
         const string seededAdminEmail = "admin@cursus.local";
         const string seededAdminUserName = "admin@cursus.local";
-        const string seededAdminPassword = "ChangeMe123!";
+        
 
         if (!await roleManager.RoleExistsAsync(adminRoleName))
         {
@@ -59,7 +61,7 @@ public static class StartupSeeder
                 EmailConfirmed = true
             };
 
-            var createUserResult = await userManager.CreateAsync(adminUser, seededAdminPassword);
+            var createUserResult = await userManager.CreateAsync(adminUser, options.AdminPassword);
             if (!createUserResult.Succeeded)
             {
                 throw new InvalidOperationException(
