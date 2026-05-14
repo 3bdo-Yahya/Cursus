@@ -1,7 +1,7 @@
 # =========================
 # Internal / Private Docs
 # =========================
-# SDLC documents are managed in Jira.
+# SDLC documents are managed in ClickUp.
 docs/
 
 # =========================
@@ -36,6 +36,16 @@ Cursus.DAL.csproj.lscache
 *~
 Thumbs.db
 .DS_Store
+.cursor/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # =========================
 # Misc

@@ -406,7 +406,7 @@ function openImpactDrawer(blocked, src) {
 
     <!-- Action buttons -->
     <div class="cm-panel-action d-flex flex-column gap-2">
-      <a href="impact-analyzer.html" class="cm-btn-view-report text-decoration-none d-flex align-items-center justify-content-center gap-2">
+      <a href="/Student/ImpactAnalyzer" class="cm-btn-view-report text-decoration-none d-flex align-items-center justify-content-center gap-2">
         <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">open_in_new</span>
         View Full Impact Report
       </a>
@@ -416,7 +416,7 @@ function openImpactDrawer(blocked, src) {
       </button>
     </div>
     <div class="cm-panel-ask-ai">
-      <a href="ai-advisor.html" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
+      <a href="/Student/AiAdvisor" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
         <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
         Ask AI Advisor for recovery plan
       </a>
@@ -470,7 +470,7 @@ function closeImpactDrawer() {
       </button>
     </div>
     <div class="cm-panel-ask-ai">
-      <a href="ai-advisor.html" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
+      <a href="/Student/AiAdvisor" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
         <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
         Ask AI Advisor about this course
       </a>

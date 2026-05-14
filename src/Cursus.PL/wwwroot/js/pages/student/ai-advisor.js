@@ -162,9 +162,9 @@ function appendErrorBanner() {
       <p class="fw-800 mb-1" style="font-size:13px;color:var(--alert-warn-title);">AI Advisor is temporarily unavailable</p>
       <p class="mb-0" style="font-size:12.5px;color:var(--alert-warn-text);line-height:1.6;">
         Please try again in a moment. While we reconnect, you can review your
-        <a href="progress-tracker.html" style="color:var(--c-primary);font-weight:700;">Progress Tracker</a>
+        <a href="/Student/Progress" style="color:var(--c-primary);font-weight:700;">Progress Tracker</a>
         or use the
-        <a href="gpa-simulator.html" style="color:var(--c-primary);font-weight:700;">GPA Simulator</a>
+        <a href="/Student/GpaSimulator" style="color:var(--c-primary);font-weight:700;">GPA Simulator</a>
         for detailed insights.
       </p>
     </div>`;

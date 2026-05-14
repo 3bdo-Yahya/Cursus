@@ -183,7 +183,7 @@ function closeArchiveModal() {
 
 function archiveCourse() {
   closeArchiveModal();
-  window.location.href = 'courses.html';
+  window.location.href = '/Admin/Courses';
 }
 
 function initEditCoursePage() {
