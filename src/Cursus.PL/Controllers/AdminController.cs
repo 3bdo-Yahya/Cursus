@@ -2,6 +2,7 @@ using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
 using Cursus.PL.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,12 @@ namespace Cursus.PL.Controllers;
 public class AdminController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserManager<AppUser> _userManager;
 
-    public AdminController(ApplicationDbContext context)
+    public AdminController(ApplicationDbContext context, UserManager<AppUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<IActionResult> Courses(string? searchTerm, int? departmentId, bool includeInactive = false)
@@ -93,8 +96,11 @@ public class AdminController : Controller
 
     public async Task<IActionResult> Index()
     {
+        var students = await _userManager.GetUsersInRoleAsync("Student");
+
         var dashboard = new AdminDashboardViewModel
         {
+            TotalStudents = students.Count,
             TotalUniversities = await _context.Universities.CountAsync(),
             TotalGraduationRequirements = await _context.GraduationRequirements.CountAsync(),
             TotalDepartments = await _context.Departments.CountAsync(),

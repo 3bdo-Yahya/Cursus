@@ -2,6 +2,8 @@ namespace Cursus.PL.Models;
 
 public class AdminDashboardViewModel
 {
+    public int TotalStudents { get; set; }
+
     public int TotalUniversities { get; set; }
 
     public int TotalGraduationRequirements { get; set; }
