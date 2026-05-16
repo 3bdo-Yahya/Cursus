@@ -360,6 +360,9 @@ public class StudentsController : Controller
             case StudentCourseMutationError.RecordNotFound:
                 ModelState.AddModelError(string.Empty, result.Message ?? "The requested record was not found.");
                 break;
+            case StudentCourseMutationError.PersistenceFailure:
+                ModelState.AddModelError(string.Empty, result.Message ?? "Unable to save the course record.");
+                break;
         }
     }
 }

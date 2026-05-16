@@ -72,7 +72,8 @@ public enum StudentCourseMutationError
     DuplicateRecord = 4,
     InvalidGrade = 5,
     InvalidAcademicYear = 6,
-    CourseNotInStudentDepartment = 7
+    CourseNotInStudentDepartment = 7,
+    PersistenceFailure = 8
 }
 
 public sealed class StudentCourseMutationResult

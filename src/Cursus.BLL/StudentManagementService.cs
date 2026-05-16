@@ -149,7 +149,7 @@ public class StudentManagementService : IStudentManagementService
         }
 
         var resolvedStatus = normalizedGrade is null
-            ? StudentCourseStatus.InProgress
+            ? status
             : GradeScaleCatalog.DetermineStatus(normalizedGrade, course.PassingGradeThreshold);
 
         var newRecord = new StudentCourse
@@ -210,9 +210,19 @@ public class StudentManagementService : IStudentManagementService
                 Message = "Course record updated successfully."
             };
         }
+        catch (DbUpdateConcurrencyException)
+        {
+            var recordStillExists = await _context.StudentCourses.AnyAsync(studentCourse => studentCourse.Id == recordId);
+            if (!recordStillExists)
+            {
+                return Failure(StudentCourseMutationError.RecordNotFound, "Course record not found.", record.StudentId, record.Id);
+            }
+
+            throw;
+        }
         catch (DbUpdateException)
         {
-            return Failure(StudentCourseMutationError.RecordNotFound, "Unable to update the course record.", record.StudentId, record.Id);
+            return Failure(StudentCourseMutationError.PersistenceFailure, "Unable to update the course record.", record.StudentId, record.Id);
         }
     }
 

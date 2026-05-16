@@ -95,18 +95,8 @@ public class StudentController : Controller
         if (user == null)
             return Unauthorized();
 
-        // Update phone only (email is readonly)
+        // Update phone only; email is displayed read-only on this screen.
         if (!string.Equals(user.PhoneNumber ?? string.Empty, model.PhoneNumber ?? string.Empty, StringComparison.Ordinal))
-            // Update email if changed
-            if (!string.Equals(user.Email ?? string.Empty, model.Email ?? string.Empty, StringComparison.OrdinalIgnoreCase))
-            {
-                user.Email = model.Email;
-                user.NormalizedEmail = model.Email?.ToUpper();
-                user.UserName = model.Email; // Keep username in sync with email
-            }
-
-            // Update phone if changed
-            if (!string.Equals(user.PhoneNumber ?? string.Empty, model.PhoneNumber ?? string.Empty, StringComparison.Ordinal))
         {
             var setPhone = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
             if (!setPhone.Succeeded)
