@@ -1,4 +1,5 @@
-@model IEnumerable<University>
+@using Cursus.Domain.DTOs
+@model IEnumerable<UniversityDto>
 
 @{
     ViewData["Title"] = "University Management";
@@ -24,7 +25,7 @@
             {
                 <tr>
                     <td>@item.Name</td>
-                    <td>@item.Departments.Count</td>
+                    <td>@item.Departments</td>
                 </tr>
             }
         </tbody>
