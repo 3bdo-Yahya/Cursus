@@ -6,6 +6,8 @@ namespace Cursus.Domain.Entities
 {
     public class AppUser : IdentityUser
     {
+        public int? UniversityId { get; set; }
+
         public int? DepartmentId { get; set; }
 
         [StringLength(10)]
@@ -15,6 +17,7 @@ namespace Cursus.Domain.Entities
 
         public AcademicStanding CurrentStanding { get; set; }
 
+        public University? University { get; set; }
         public Department? Department { get; set; }
 
         public ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();

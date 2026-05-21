@@ -124,9 +124,16 @@ public class Program
             ? "admin@cursus.com"
             : options.AdminEmail.Trim();
 
+        // Resolve admin university
+        var adminUniversity = await ResolveAdminUniversityAsync(context, options.AdminUniversityName);
+        if (adminUniversity is null)
+        {
+            throw new InvalidOperationException(
+                $"Unable to find admin university: {options.AdminUniversityName}");
+        }
+
         var adminUser = await userManager.FindByEmailAsync(adminEmail)
             ?? await userManager.FindByNameAsync(adminEmail);
-        var adminUniversity = await ResolveAdminUniversityAsync(context, options.AdminUniversityName);
 
         if (adminUser is null)
         {
@@ -135,7 +142,7 @@ public class Program
                 UserName = adminEmail,
                 Email = adminEmail,
                 EmailConfirmed = true,
-                UniversityId = adminUniversity?.Id
+                UniversityId = adminUniversity.Id  // Admin linked to specific university
             };
 
             var createResult = await userManager.CreateAsync(adminUser, options.AdminPassword);
@@ -158,14 +165,16 @@ public class Program
                 }
             }
         }
-        if (adminUniversity is not null && adminUser.UniversityId != adminUniversity.Id)
+        
+        // Ensure admin UniversityId is set to the configured university
+        if (adminUser.UniversityId != adminUniversity.Id)
         {
             adminUser.UniversityId = adminUniversity.Id;
             var updateResult = await userManager.UpdateAsync(adminUser);
             if (!updateResult.Succeeded)
             {
                 throw new InvalidOperationException(
-                    $"Unable to assign seeded admin user to university '{adminUniversity.Name}': {string.Join(", ", updateResult.Errors.Select(error => error.Description))}");
+                    $"Unable to update seeded admin user (set university link): {string.Join(", ", updateResult.Errors.Select(error => error.Description))}");
             }
         }
 
@@ -178,24 +187,18 @@ public class Program
                     $"Unable to assign 'Admin' role to seeded admin user: {string.Join(", ", addRoleResult.Errors.Select(error => error.Description))}");
             }
         }
+        
+        Console.WriteLine($"[Seeding] Admin user seeded and linked to {adminUniversity.Name} university");
     }
 
-    private static async Task<University?> ResolveAdminUniversityAsync(ApplicationDbContext context, string? configuredUniversityName)
+    private static async Task<University?> ResolveAdminUniversityAsync(ApplicationDbContext context, string? universityName)
     {
-        if (!string.IsNullOrWhiteSpace(configuredUniversityName))
+        if (string.IsNullOrWhiteSpace(universityName))
         {
-            var normalizedName = configuredUniversityName.Trim().ToUpper();
-            var configuredUniversity = await context.Universities
-                .FirstOrDefaultAsync(university => university.Name.ToUpper() == normalizedName);
-
-            if (configuredUniversity is not null)
-            {
-                return configuredUniversity;
-            }
+            return null;
         }
 
         return await context.Universities
-            .OrderBy(university => university.Name)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(u => u.Name == universityName.Trim());
     }
 }
