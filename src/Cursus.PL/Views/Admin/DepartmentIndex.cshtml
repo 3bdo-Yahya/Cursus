@@ -1,4 +1,4 @@
-@model IEnumerable<Department>
+@model Cursus.PL.Models.PaginatedList<Department>
 
 @{
     ViewData["Title"] = "Department Management";
@@ -24,7 +24,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Items)
             {
                 <tr>
                     <td>@item.Name</td>
@@ -55,3 +55,4 @@
         </tbody>
     </table>
 </div>
+<partial name="_Pagination" />

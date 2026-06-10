@@ -23,11 +23,14 @@ public class AdminController : Controller
         _studentManagementService = studentManagementService;
     }
 
-    public async Task<IActionResult> Courses(string? searchTerm, int? departmentId, bool includeInactive = false)
+    public async Task<IActionResult> Courses(
+        string? searchTerm, int? departmentId, bool includeInactive = false, int page = 1)
     {
-        ViewData["SearchTerm"] = searchTerm;
+        const int pageSize = 15;
+
+        ViewData["SearchTerm"]           = searchTerm;
         ViewData["SelectedDepartmentId"] = departmentId;
-        ViewData["IncludeInactive"] = includeInactive;
+        ViewData["IncludeInactive"]      = includeInactive;
 
         var coursesQuery = _context.Courses
             .Include(course => course.Department)
@@ -37,30 +40,37 @@ public class AdminController : Controller
             .AsQueryable();
 
         if (!includeInactive)
-        {
             coursesQuery = coursesQuery.Where(course => course.IsActive);
-        }
 
         if (departmentId.HasValue)
-        {
             coursesQuery = coursesQuery.Where(course => course.DepartmentId == departmentId.Value);
-        }
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var normalizedSearchTerm = searchTerm.Trim();
+            var t = searchTerm.Trim();
             coursesQuery = coursesQuery.Where(course =>
-                course.Code.Contains(normalizedSearchTerm) ||
-                course.Name.Contains(normalizedSearchTerm));
+                course.Code.Contains(t) || course.Name.Contains(t));
         }
+
+        coursesQuery = coursesQuery.OrderBy(course => course.Code);
 
         await PopulateDepartmentsFilterDropDownListAsync(departmentId);
 
-        var courses = await coursesQuery
-            .OrderBy(course => course.Code)
-            .ToListAsync();
+        var paged = await PaginatedList<Course>.CreateAsync(coursesQuery, page, pageSize);
 
-        return View("CourseIndex", courses);
+        ViewData["PageIndex"]        = paged.PageIndex;
+        ViewData["TotalPages"]       = paged.TotalPages;
+        ViewData["TotalCount"]       = paged.TotalCount;
+        ViewData["PageSize"]         = paged.PageSize;
+        ViewData["PagingAction"]     = nameof(Courses);
+        ViewData["PagingRouteValues"] = new Dictionary<string, string?>
+        {
+            ["searchTerm"]     = searchTerm,
+            ["departmentId"]   = departmentId?.ToString(),
+            ["includeInactive"] = includeInactive ? "true" : null
+        };
+
+        return View("CourseIndex", paged);
     }
 
     /// <summary>Legacy route — redirects to <see cref="Courses"/>.</summary>
@@ -399,15 +409,26 @@ public class AdminController : Controller
         }
     }
 
-    public async Task<IActionResult> DepartmentIndex()
+    public async Task<IActionResult> DepartmentIndex(int page = 1)
     {
-        var departments = await _context.Departments
+        const int pageSize = 10;
+
+        var query = _context.Departments
             .Include(department => department.University)
             .AsNoTracking()
             .OrderBy(department => department.Name)
-            .ToListAsync();
+            .AsQueryable();
 
-        return View(departments);
+        var paged = await PaginatedList<Department>.CreateAsync(query, page, pageSize);
+
+        ViewData["PageIndex"]        = paged.PageIndex;
+        ViewData["TotalPages"]       = paged.TotalPages;
+        ViewData["TotalCount"]       = paged.TotalCount;
+        ViewData["PageSize"]         = paged.PageSize;
+        ViewData["PagingAction"]     = nameof(DepartmentIndex);
+        ViewData["PagingRouteValues"] = new Dictionary<string, string?>();
+
+        return View(paged);
     }
 
     [HttpGet]
