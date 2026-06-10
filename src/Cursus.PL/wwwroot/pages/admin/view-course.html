@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — Course Details</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/admin/courses.css"/>
+  <link rel="stylesheet" href="../../css/pages/admin/view-course.css"/>
+</head>
+
+<body>
+
+  <!-- ─── Navbar ───────────────────────────────────────── -->
+  <nav class="navbar-cursus fixed-top d-flex align-items-center">
+    <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+      <div class="d-flex align-items-center gap-3">
+        <a href="admin-dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+          <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+        </a>
+        <div class="d-none d-md-flex align-items-center gap-1">
+          <a href="admin-dashboard.html" class="nav-pill">Dashboard</a>
+          <a href="courses.html"         class="nav-pill active">Courses</a>
+          <a href="students.html"        class="nav-pill">Students</a>
+          <!-- <a href="reports.html"         class="nav-pill">Reports</a> -->
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-1">
+        <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+          <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+        </button>
+        <div class="position-relative">
+          <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+            <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+            <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+          </button>
+          <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+            <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+              <span class="fw-700" style="font-size:13px;">Notifications</span>
+              <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+            </div>
+            <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:12px;">CS211 failure rate exceeded threshold</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Data Structures I · 38% failure · 1h ago</p>
+            </div>
+            <div class="px-4 py-3" style="cursor:pointer;">
+              <p class="fw-700 mb-0" style="font-size:12px;">New student batch enrolled</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">22 students · CS Department · Yesterday</p>
+            </div>
+            <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+              <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+            </div>
+          </div>
+        </div>
+        <!-- User dropdown -->
+        <div class="custom-select-wrap position-relative ms-1">
+          <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+            <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+                 style="width:36px;height:36px;background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.2);color:#dc2626;font-size:13px;">MA</div>
+            <div class="d-none d-md-block text-start">
+              <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">Dept. Admin</p>
+            </div>
+            <span class="material-symbols-outlined d-none d-md-block" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
+          </button>
+          <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:200px;z-index:1060;">
+            <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">mona.hassan@svu.edu</p>
+            </div>
+            <a href="admin-profile.html" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+              <span class="custom-dropdown-label">My Profile</span>
+            </a>
+            <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+              <span class="custom-dropdown-label">Settings</span>
+            </a>
+            <div style="border-top:1px solid var(--c-border);">
+              <a href="#" class="custom-dropdown-item text-decoration-none">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+                <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- ─── End Navbar ───────────────────────────────────────── -->
+
+
+  <!-- ─── Main ───────────────────────────────────────── -->
+  <main style="padding-top:80px;padding-bottom:80px;">
+  <div class="container-xl px-4" style="max-width:1100px;">
+
+    <!-- Header -->
+    <div class="mb-5 anim-fade-up">
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0" style="font-size:12px;">
+          <li class="breadcrumb-item"><a href="courses.html" style="color:var(--c-muted);text-decoration:none;">Courses</a></li>
+          <li class="breadcrumb-item active" style="color:var(--c-primary);font-weight:600;">CS311</li>
+        </ol>
+      </nav>
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+        <div>
+          <div class="d-flex align-items-center gap-3 mb-2 flex-wrap">
+            <h1 class="fw-900 mb-0" style="font-size:1.75rem;letter-spacing:-.5px;color:var(--c-text);">Algorithms Analysis and Design</h1>
+            <span class="vc-course-code-badge">CS311</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="type-badge type-core">Core</span>
+            <span class="avail-badge avail-fall">
+              <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">ac_unit</span>Fall
+            </span>
+            <span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span>
+            <span style="font-size:12px;color:var(--c-muted);">Computer Science · South Valley University</span>
+          </div>
+        </div>
+        <div class="d-flex gap-2 flex-shrink-0">
+          <a href="edit-course.html" class="btn btn-primary d-flex align-items-center gap-2 fw-700 text-decoration-none"
+             style="border-radius:12px;font-size:13px;padding:9px 16px;box-shadow:0 4px 14px rgba(79,70,229,.25);"
+             onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''">
+            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 400">edit</span>
+            Edit Course
+          </a>
+          <a href="courses.html" class="btn d-flex align-items-center gap-2 fw-600 text-decoration-none"
+             style="border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);border-radius:12px;font-size:13px;padding:9px 16px;">
+            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">arrow_back</span>
+            Back
+          </a>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── Metric Cards ── -->
+    <div class="row g-3 mb-4" data-scroll-group>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="vc-metric-card surface h-100">
+          <div class="vc-metric-icon" style="background:var(--icon-blue-bg);">
+            <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">credit_score</span>
+          </div>
+          <p class="vc-metric-label">Credit Hours</p>
+          <p class="vc-metric-value">3</p>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="vc-metric-card surface h-100">
+          <div class="vc-metric-icon" style="background:var(--badge-core-bg);">
+            <span class="material-symbols-outlined" style="font-size:18px;color:var(--badge-core-text);font-variation-settings:'FILL' 0,'wght' 400">category</span>
+          </div>
+          <p class="vc-metric-label">Type</p>
+          <p class="vc-metric-value" style="color:var(--badge-core-text);">Core</p>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="vc-metric-card surface h-100">
+          <div class="vc-metric-icon" style="background:rgba(59,130,246,.08);">
+            <span class="material-symbols-outlined" style="font-size:18px;color:#1d4ed8;font-variation-settings:'FILL' 0,'wght' 400">ac_unit</span>
+          </div>
+          <p class="vc-metric-label">Availability</p>
+          <p class="vc-metric-value" style="color:#1d4ed8;">Fall</p>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="vc-metric-card surface h-100">
+          <div class="vc-metric-icon" style="background:var(--icon-purple-bg);">
+            <span class="material-symbols-outlined" style="font-size:18px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 400">apartment</span>
+          </div>
+          <p class="vc-metric-label">Department</p>
+          <p class="vc-metric-value" style="font-size:13px;color:#7c3aed;">CS</p>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="vc-metric-card surface h-100">
+          <div class="vc-metric-icon" style="background:rgba(245,158,11,.08);">
+            <span class="material-symbols-outlined" style="font-size:18px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 400">bar_chart</span>
+          </div>
+          <p class="vc-metric-label">Failure Rate</p>
+          <p class="vc-metric-value" style="color:#d97706;">18%</p>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="vc-metric-card surface h-100">
+          <div class="vc-metric-icon" style="background:rgba(16,185,129,.08);">
+            <span class="material-symbols-outlined" style="font-size:18px;color:#059669;font-variation-settings:'FILL' 0,'wght' 400">check_circle</span>
+          </div>
+          <p class="vc-metric-label">Status</p>
+          <p class="vc-metric-value" style="color:#059669;">Active</p>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ── Prerequisites + Dependents ── -->
+    <div class="row g-4 mb-4">
+
+      <!-- Prerequisites -->
+      <div class="col-12 col-lg-6" data-scroll="fade-right">
+        <div class="surface p-4 h-100">
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex align-items-center gap-2">
+              <div class="vc-section-icon" style="background:var(--c-soft);">
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">account_tree</span>
+              </div>
+              <h3 class="fw-800 mb-0" style="font-size:1rem;color:var(--c-text);">Prerequisites</h3>
+            </div>
+            <span class="vc-count-badge">3 courses</span>
+          </div>
+
+          <ul class="list-unstyled mb-0 vc-course-list">
+            <li class="vc-course-row">
+              <div class="d-flex align-items-center gap-3">
+                <div class="vc-course-icon" style="background:var(--c-soft);">
+                  <span class="material-symbols-outlined" style="font-size:16px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">menu_book</span>
+                </div>
+                <div>
+                  <p class="mb-0 fw-700" style="font-size:13px;color:var(--c-text);">Data Structures I</p>
+                  <p class="mb-0" style="font-size:11px;color:var(--c-muted);">3 credits · Core</p>
+                </div>
+              </div>
+              <span class="prereq-tag">CS211</span>
+            </li>
+            <li class="vc-course-row">
+              <div class="d-flex align-items-center gap-3">
+                <div class="vc-course-icon" style="background:var(--c-soft);">
+                  <span class="material-symbols-outlined" style="font-size:16px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">menu_book</span>
+                </div>
+                <div>
+                  <p class="mb-0 fw-700" style="font-size:13px;color:var(--c-text);">Object Oriented Programming</p>
+                  <p class="mb-0" style="font-size:11px;color:var(--c-muted);">3 credits · Core</p>
+                </div>
+              </div>
+              <span class="prereq-tag">CS241</span>
+            </li>
+            <li class="vc-course-row" style="border-bottom:none;">
+              <div class="d-flex align-items-center gap-3">
+                <div class="vc-course-icon" style="background:rgba(245,158,11,.08);">
+                  <span class="material-symbols-outlined" style="font-size:16px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 300">calculate</span>
+                </div>
+                <div>
+                  <p class="mb-0 fw-700" style="font-size:13px;color:var(--c-text);">Probability & Statistics</p>
+                  <p class="mb-0" style="font-size:11px;color:var(--c-muted);">3 credits · Core</p>
+                </div>
+              </div>
+              <span class="prereq-tag">MA113</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Dependent Courses -->
+      <div class="col-12 col-lg-6" data-scroll="fade-left">
+        <div class="surface p-4 h-100">
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex align-items-center gap-2">
+              <div class="vc-section-icon" style="background:rgba(124,58,237,.08);">
+                <span class="material-symbols-outlined" style="font-size:18px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 400">alt_route</span>
+              </div>
+              <h3 class="fw-800 mb-0" style="font-size:1rem;color:var(--c-text);">Unlocks These Courses</h3>
+            </div>
+            <span class="vc-count-badge">2 courses</span>
+          </div>
+
+          <ul class="list-unstyled mb-0 vc-course-list">
+            <li class="vc-course-row">
+              <div class="d-flex align-items-center gap-3">
+                <div class="vc-course-icon" style="background:rgba(124,58,237,.08);">
+                  <span class="material-symbols-outlined" style="font-size:16px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 300">psychology</span>
+                </div>
+                <div>
+                  <p class="mb-0 fw-700" style="font-size:13px;color:var(--c-text);">Natural Language Processing</p>
+                  <p class="mb-0" style="font-size:11px;color:var(--c-muted);">3 credits · Elective</p>
+                </div>
+              </div>
+              <span class="prereq-tag" style="background:rgba(124,58,237,.1);color:#7c3aed;border-color:rgba(124,58,237,.25);">AI401</span>
+            </li>
+            <li class="vc-course-row" style="border-bottom:none;">
+              <div class="d-flex align-items-center gap-3">
+                <div class="vc-course-icon" style="background:rgba(16,185,129,.08);">
+                  <span class="material-symbols-outlined" style="font-size:16px;color:#059669;font-variation-settings:'FILL' 0,'wght' 300">engineering</span>
+                </div>
+                <div>
+                  <p class="mb-0 fw-700" style="font-size:13px;color:var(--c-text);">Senior Project I</p>
+                  <p class="mb-0" style="font-size:11px;color:var(--c-muted);">3 credits · Core</p>
+                </div>
+              </div>
+              <span class="prereq-tag" style="background:rgba(16,185,129,.08);color:#059669;border-color:rgba(16,185,129,.25);">CS491</span>
+            </li>
+          </ul>
+
+          <!-- Impact note -->
+          <div class="vc-impact-note mt-4">
+            <span class="material-symbols-outlined" style="font-size:15px;color:#d97706;font-variation-settings:'FILL' 1,'wght' 400">warning</span>
+            <span style="font-size:12px;color:#92400e;">Failing CS311 blocks <strong>2 downstream courses</strong> and may delay graduation by 1 semester.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ── Description + Metadata ── -->
+    <div class="surface p-4 p-md-5 mb-4" data-scroll="fade-up">
+      <div class="d-flex align-items-center gap-2 mb-4">
+        <div class="vc-section-icon" style="background:var(--c-bg);">
+          <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 400">description</span>
+        </div>
+        <h3 class="fw-800 mb-0" style="font-size:1rem;color:var(--c-text);">Course Description</h3>
+      </div>
+
+      <p style="font-size:13.5px;color:var(--c-text-sub);line-height:1.75;max-width:720px;" class="mb-4">
+        This course covers algorithm design paradigms and asymptotic analysis, with practical
+        implementation patterns for sorting, searching, dynamic programming, greedy methods,
+        and graph algorithms. Students will learn to reason about correctness and efficiency.
+      </p>
+
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <div class="vc-detail-box">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span class="material-symbols-outlined" style="font-size:16px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">emoji_objects</span>
+              <h4 class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Learning Outcomes</h4>
+            </div>
+            <ul class="vc-outcome-list mb-0">
+              <li>Analyze time and space complexity using Big-O notation.</li>
+              <li>Design solutions using dynamic programming and greedy strategies.</li>
+              <li>Implement graph traversal, MST, and shortest-path algorithms.</li>
+              <li>Apply divide-and-conquer to classic algorithmic problems.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="vc-detail-box">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span class="material-symbols-outlined" style="font-size:16px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 400">tune</span>
+              <h4 class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Course Metadata</h4>
+            </div>
+            <ul class="vc-meta-list mb-0">
+              <li>
+                <span>Passing Threshold</span>
+                <strong>D (1.0)</strong>
+              </li>
+              <li>
+                <span>Contact Hours</span>
+                <strong>2 Lecture · 1 Tutorial</strong>
+              </li>
+              <li>
+                <span>Recommended Semester</span>
+                <strong>5th</strong>
+              </li>
+              <li>
+                <span>Min. Credits to Unlock</span>
+                <strong>—</strong>
+              </li>
+              <li style="border-bottom:none;">
+                <span>Program Rules</span>
+                <strong>CS · IS</strong>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── Enrollment This Semester ── -->
+    <div class="surface" data-scroll="fade-up" style="overflow:hidden;">
+      <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+        <div class="d-flex align-items-center gap-2">
+          <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">groups</span>
+          <h3 class="fw-800 mb-0" style="font-size:1rem;color:var(--c-text);">Enrolled This Semester</h3>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <div class="vc-enroll-bar-wrap">
+            <div class="vc-enroll-bar" style="--bar-pct:62%;"></div>
+          </div>
+          <span style="font-size:12px;color:var(--c-muted);white-space:nowrap;"><strong style="color:var(--c-text);">31</strong> / 50 students</span>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table courses-table mb-0">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th class="text-center">Year</th>
+              <th class="text-center">CGPA</th>
+              <th>Standing</th>
+              <th class="text-end">Profile</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="course-row">
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="vc-student-avatar" style="background:rgba(79,70,229,.1);color:var(--c-primary);">AK</div>
+                  <div>
+                    <p class="mb-0 fw-600" style="font-size:13px;">Ahmed Kamal</p>
+                    <p class="mb-0" style="font-size:11px;color:var(--c-muted);">a.kamal@svu.edu.eg</p>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center"><span class="year-badge">Year 3</span></td>
+              <td class="text-center"><span class="gpa-value gpa-good">3.85</span></td>
+              <td><span class="standing-badge standing-good"><span class="standing-dot"></span>Good</span></td>
+              <td class="text-end"><a href="view-student.html" class="btn-inline-link">View →</a></td>
+            </tr>
+            <tr class="course-row">
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="vc-student-avatar" style="background:rgba(245,158,11,.1);color:#d97706;">YF</div>
+                  <div>
+                    <p class="mb-0 fw-600" style="font-size:13px;">Yasmine Farouk</p>
+                    <p class="mb-0" style="font-size:11px;color:var(--c-muted);">y.farouk@svu.edu.eg</p>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center"><span class="year-badge">Year 3</span></td>
+              <td class="text-center"><span class="gpa-value gpa-good">3.10</span></td>
+              <td><span class="standing-badge standing-good"><span class="standing-dot"></span>Good</span></td>
+              <td class="text-end"><a href="view-student.html" class="btn-inline-link">View →</a></td>
+            </tr>
+            <tr class="course-row">
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="vc-student-avatar" style="background:rgba(245,158,11,.1);color:#d97706;">SM</div>
+                  <div>
+                    <p class="mb-0 fw-600" style="font-size:13px;">Sara Mohamed</p>
+                    <p class="mb-0" style="font-size:11px;color:var(--c-muted);">s.mohamed@svu.edu.eg</p>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center"><span class="year-badge">Year 2</span></td>
+              <td class="text-center"><span class="gpa-value gpa-warn">2.40</span></td>
+              <td><span class="standing-badge standing-warning"><span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400">warning</span>Warning</span></td>
+              <td class="text-end"><a href="view-student.html" class="btn-inline-link">View →</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="px-4 py-3 d-flex justify-content-center" style="border-top:1px solid var(--c-border);">
+        <a href="students.html" class="btn fw-600 d-flex align-items-center gap-2 text-decoration-none"
+           style="font-size:12px;color:var(--c-primary);background:var(--c-soft);border:1px solid rgba(79,70,229,.2);border-radius:10px;padding:6px 16px;">
+          <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">group</span>
+          View All Enrolled Students
+        </a>
+      </div>
+    </div>
+  </div>
+  </main>
+  <!-- ─── End Main ───────────────────────────────────────── -->
+
+
+  <!-- ─── Footer ───────────────────────────────────────── -->
+  <footer class="py-4" style="border-top:1px solid var(--c-border);">
+    <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1100px;">
+      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
+    </div>
+  </footer>
+  <!-- ─── End Footer ───────────────────────────────────────── -->
+
+  <script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/site.js"></script>
+  <script src="../../js/pages/admin/courses.js"></script>
+
+</body>
+</html>

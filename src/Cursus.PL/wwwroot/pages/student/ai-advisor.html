@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — AI Advisor</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/student/ai-advisor.css"/>
+</head>
+<body>
+
+<!-- ─── Navbar ──────────────────────────────────────────── -->
+<nav class="navbar-cursus fixed-top d-flex align-items-center">
+  <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+    <div class="d-flex align-items-center gap-3">
+      <a href="student-dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+        <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+      </a>
+      <div class="d-none d-md-flex align-items-center gap-1">
+        <a href="student-dashboard.html" class="nav-pill">Dashboard</a>
+        <a href="course-map.html"        class="nav-pill">Course Map</a>
+        <a href="semester-planner.html" class="nav-pill">Planner</a>
+        <a href="progress-tracker.html"  class="nav-pill">Progress</a>
+        <a href="ai-advisor.html"        class="nav-pill active">AI Advisor</a>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-1">
+      <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+        <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+      </button>
+      <div class="position-relative">
+        <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+          <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+          <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+        </button>
+        <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+          <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+            <span class="fw-700" style="font-size:13px;">Notifications</span>
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:12px;">Semester plan approved</p>
+            <p class="text-muted mb-0" style="font-size:11px;">Your advisor approved Spring 2026 · 2h ago</p>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;">
+            <p class="fw-700 mb-0" style="font-size:12px;">Grade posted — CS301</p>
+            <p class="text-muted mb-0" style="font-size:11px;">Midterm grade: B+ · Yesterday</p>
+          </div>
+          <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+          </div>
+        </div>
+      </div>
+      <div class="custom-select-wrap position-relative ms-1">
+        <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+          <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+               style="width:36px;height:36px;background:var(--c-soft);border:2px solid rgba(79,70,229,.2);color:var(--c-primary);font-size:13px;">AK</div>
+          <div class="d-none d-md-block text-start">
+            <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">CS · Year 3</p>
+          </div>
+          <span class="material-symbols-outlined d-none d-md-block" id="user-menu-chevron"
+                style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;transition:transform 0.22s ease;">expand_more</span>
+        </button>
+        <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:210px;z-index:1060;">
+          <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">ahmed.kamal@svu.edu</p>
+          </div>
+          <a href="student-profile.html" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+            <span class="custom-dropdown-label">My Profile</span>
+          </a>
+          <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+            <span class="custom-dropdown-label">Settings</span>
+          </a>
+          <div style="border-top:1px solid var(--c-border);">
+            <a href="../auth/login.html" class="custom-dropdown-item text-decoration-none">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+              <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- ─── End Navbar ───────────────────────────────────────── -->
+
+
+<!-- ─── Advisor Shell ────────────────────────────────────── -->
+<div class="advisor-shell">
+  <div class="chat-wrap">
+
+    <!-- Chat Header -->
+    <div class="chat-header anim-fade-up">
+      <div class="d-flex align-items-center gap-3">
+        <div class="advisor-avatar">
+          <span class="material-symbols-outlined">smart_toy</span>
+          <div class="advisor-online-dot"></div>
+        </div>
+        <div>
+          <p class="fw-800 mb-0 lh-1" style="font-size:15px;color:var(--c-text);">AI Advisor</p>
+          <p class="mb-0 lh-1" style="font-size:11.5px;color:var(--c-muted);margin-top:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:5px;vertical-align:middle;"></span>
+            Online · Powered by GPT-3.5
+          </p>
+        </div>
+      </div>
+      <button class="clear-chat-btn" id="clear-btn" onclick="clearChat()">
+        <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">delete_sweep</span>
+        Clear Chat
+      </button>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages-area" id="messages-area">
+
+      <!-- Empty state -->
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon-ring">
+          <span class="material-symbols-outlined">auto_awesome</span>
+        </div>
+        <div>
+          <p class="fw-800 mb-1" style="font-size:1.05rem;color:var(--c-text);">Ask me anything about your academic journey</p>
+          <p class="mb-0" style="font-size:13px;color:var(--c-muted);max-width:340px;margin:0 auto;line-height:1.6;">
+            I can help you plan courses, understand prerequisite chains, simulate GPA scenarios, and navigate academic standing rules.
+          </p>
+        </div>
+        <!-- Context pills -->
+        <div class="d-flex flex-wrap gap-2 justify-content-center" style="margin-top:4px;">
+          <span style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:var(--c-soft);color:var(--c-primary);border:1px solid rgba(79,70,229,.2);">
+            <span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">person</span>
+            Ahmed Kamal
+          </span>
+          <span style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:var(--c-soft);color:var(--c-primary);border:1px solid rgba(79,70,229,.2);">
+            <span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">school</span>
+            CS · Year 3 · CGPA 3.24
+          </span>
+          <span style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:rgba(16,185,129,.1);color:#047857;border:1px solid rgba(16,185,129,.2);">
+            <span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">verified</span>
+            Good Standing
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggestion Chips -->
+    <div class="chips-row" id="chips-row">
+      <button class="suggestion-chip" onclick="sendSuggestion(this)">What should I take next semester?</button>
+      <button class="suggestion-chip" onclick="sendSuggestion(this)">Am I on track to graduate?</button>
+      <button class="suggestion-chip" onclick="sendSuggestion(this)">How can I improve my GPA?</button>
+      <button class="suggestion-chip" onclick="sendSuggestion(this)">What happens if I fail CS301?</button>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area anim-fade-up-1">
+      <div class="input-shell">
+        <textarea
+          id="chat-input"
+          class="chat-input"
+          rows="1"
+          placeholder="Ask about your courses, GPA, graduation plan…"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>
+          <span class="material-symbols-outlined">send</span>
+        </button>
+      </div>
+      <p class="input-footer">AI Advisor can make mistakes. Verify important requirements with your faculty advisor.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Footer ───────────────────────────────────────── -->
+<footer class="py-4" style="border-top:1px solid var(--c-border);">
+  <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1200px;">
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
+  </div>
+</footer>
+
+
+<script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/site.js"></script>
+<script src="../../js/pages/student/ai-advisor.js"></script>
+</body>
+</html>

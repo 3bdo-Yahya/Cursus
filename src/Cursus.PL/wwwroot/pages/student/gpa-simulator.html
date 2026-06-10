@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — GPA Simulator</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/student/gpa-simulator.css"/>
+</head>
+<body>
+
+<!-- ─── Navbar ──────────────────────────────────────────── -->
+<nav class="navbar-cursus fixed-top d-flex align-items-center">
+  <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+
+    <div class="d-flex align-items-center gap-3">
+      <a href="student-dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+        <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+      </a>
+      <div class="d-none d-md-flex align-items-center gap-1">
+        <a href="student-dashboard.html" class="nav-pill">Dashboard</a>
+        <a href="course-map.html"        class="nav-pill">Course Map</a>
+        <a href="semester-planner.html"  class="nav-pill">Planner</a>
+        <a href="progress-tracker.html"  class="nav-pill">Progress</a>
+        <a href="ai-advisor.html"        class="nav-pill">AI Advisor</a>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-1">
+      <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+        <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+      </button>
+
+      <div class="position-relative">
+        <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+          <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+          <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+        </button>
+        <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+          <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+            <span class="fw-700" style="font-size:13px;">Notifications</span>
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:12px;">Semester plan approved</p>
+            <p class="text-muted mb-0" style="font-size:11px;">Your advisor approved Spring 2026 · 2h ago</p>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;">
+            <p class="fw-700 mb-0" style="font-size:12px;">Grade posted — CS301</p>
+            <p class="text-muted mb-0" style="font-size:11px;">Midterm grade: B+ · Yesterday</p>
+          </div>
+          <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-select-wrap position-relative ms-1">
+        <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+          <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+               style="width:36px;height:36px;background:var(--c-soft);border:2px solid rgba(79,70,229,.2);color:var(--c-primary);font-size:13px;">AK</div>
+          <div class="d-none d-md-block text-start">
+            <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">CS · Year 3</p>
+          </div>
+          <span class="material-symbols-outlined d-none d-md-block" id="user-menu-chevron"
+                style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;transition:transform 0.22s ease;">expand_more</span>
+        </button>
+        <div id="user-dropdown" class="custom-dropdown position-absolute end-0 mt-2" style="min-width:210px;z-index:1060;">
+          <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">ahmed.kamal@svu.edu</p>
+          </div>
+          <a href="student-profile.html" class="custom-dropdown-item text-decoration-none">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+            <span>My Profile</span>
+          </a>
+          <a href="#" class="custom-dropdown-item text-decoration-none">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+            <span>Settings</span>
+          </a>
+          <div style="border-top:1px solid var(--c-border);">
+            <a href="../auth/login.html" class="custom-dropdown-item text-decoration-none">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+              <span style="color:#dc2626;">Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- ─── End Navbar ───────────────────────────────────────── -->
+
+
+<!-- ─── Main ─────────────────────────────────────────────── -->
+<main style="padding-top:80px;padding-bottom:72px;">
+<div class="container-xl px-4" style="max-width:1140px;">
+<div class="d-flex flex-column gap-4">
+
+  <!-- Page header -->
+  <section class="anim-fade-up">
+    <div class="mb-1">
+      <h1 class="fw-900 mb-1" style="font-size:1.55rem;letter-spacing:-.4px;color:var(--c-text);">Progress &amp; Planning</h1>
+      <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Ahmed Kamal · Computer Science · Year 3 · Spring 2026</p>
+    </div>
+    <div class="page-tabs mt-3">
+      <a href="progress-tracker.html" class="page-tab">Progress Tracker</a>
+      <a href="gpa-simulator.html"    class="page-tab active">GPA Simulator</a>
+    </div>
+  </section>
+
+
+  <div class="row g-4 align-items-start anim-fade-up-1">
+
+    <!-- ── Left Column ──────────────────────────────────── -->
+    <div class="col-12 col-lg-7 d-flex flex-column gap-4">
+
+      <div class="status-bar-card">
+        <div class="d-flex">
+          <div class="status-bar-item">
+            <div class="status-bar-value" id="current-cgpa-display">3.24</div>
+            <div class="status-bar-label">Current CGPA</div>
+          </div>
+          <div class="status-bar-item">
+            <div class="status-bar-value" id="last-sgpa-display">2.85</div>
+            <div class="status-bar-label">Last SGPA</div>
+          </div>
+          <div class="status-bar-item">
+            <div class="d-flex align-items-center justify-content-center h-100">
+              <span class="d-inline-flex align-items-center gap-1 rounded-pill px-3 py-1 fw-700"
+                    style="font-size:12px;background:var(--standing-bg);color:var(--standing-text);border:1px solid var(--standing-bd);">
+                <span class="rounded-circle" style="width:6px;height:6px;background:currentColor;display:inline-block;flex-shrink:0;"></span>
+                Good Standing
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grade-table-card">
+        <div class="grade-table-head d-flex align-items-start justify-content-between">
+          <div>
+            <p class="fw-800 mb-0" style="font-size:14px;color:var(--c-text);">Predict Your Grades</p>
+            <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);margin-top:2px;">Select expected grades for your current semester — results update live</p>
+          </div>
+          <button id="reset-btn" class="btn btn-sm fw-700 d-flex align-items-center gap-1"
+                  style="border-radius:8px;font-size:11.5px;border:1px solid var(--c-border);background:var(--c-bg);color:var(--c-muted);">
+            <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 400">refresh</span>
+            Reset
+          </button>
+        </div>
+        <div id="courses-body"></div>
+      </div>
+
+      <div class="improvement-card">
+        <div class="improvement-header">
+          <span class="material-symbols-outlined" style="font-size:19px;color:#b45309;font-variation-settings:'FILL' 1,'wght' 500">restart_alt</span>
+          <div>
+            <p class="fw-800 mb-0" style="font-size:13.5px;color:var(--c-text);">Grade Improvement Eligible</p>
+            <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);margin-top:1px;">Courses you can retake (original grade ≤ D+)</p>
+          </div>
+        </div>
+        <div id="improvement-body"></div>
+      </div>
+    </div>
+
+
+    <!-- ── Right Column ───────────────── -->
+    <div class="col-12 col-lg-5">
+      <div class="d-flex flex-column gap-4" style="position:sticky;top:84px;">
+
+        <!-- Live Prediction Hero -->
+        <div class="results-hero anim-fade-up-2">
+          <p class="predicted-gpa-label">Live Prediction</p>
+
+          <div class="row g-0">
+            <div class="col-6">
+              <div class="predicted-gpa-label">Predicted SGPA</div>
+              <div class="predicted-gpa-value" id="predicted-sgpa">—</div>
+              <div class="predicted-gpa-sublabel">This semester</div>
+            </div>
+            <div class="col-6" style="border-left:1px solid rgba(255,255,255,.15);padding-left:20px;">
+              <div class="predicted-gpa-label">Predicted CGPA</div>
+              <div class="predicted-gpa-value" id="predicted-cgpa">—</div>
+              <div class="predicted-gpa-sublabel">
+                <span id="cgpa-change-label"></span>
+              </div>
+            </div>
+          </div>
+
+          <div id="standing-pill" class="standing-pill">
+            Select grades to see prediction
+          </div>
+
+          <div id="honor-badge-wrap" class="honor-badge-wrap">
+            <span id="honor-badge-inner"></span>
+          </div>
+        </div>
+
+        <div class="target-card anim-fade-up-3">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 500">flag</span>
+            <p class="fw-800 mb-0" style="font-size:13.5px;color:var(--c-text);">Set a Target CGPA</p>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 mb-1">
+            <p class="mb-0 fw-600 flex-1" style="font-size:12px;color:var(--c-muted);">Target</p>
+            <span id="target-value-display" class="fw-900" style="font-size:1.2rem;color:var(--c-primary);letter-spacing:-.5px;">3.50</span>
+          </div>
+
+          <input type="range" id="target-slider" class="gpa-slider mb-2" min="1.0" max="4.0" step="0.05" value="3.50"/>
+
+          <div class="d-flex justify-content-between mb-3">
+            <span style="font-size:10.5px;color:var(--c-muted);">1.0</span>
+            <span style="font-size:10.5px;color:var(--c-muted);">2.0 min grad</span>
+            <span style="font-size:10.5px;color:var(--c-muted);">4.0</span>
+          </div>
+
+          <div id="target-result" class="target-result"></div>
+        </div>
+
+        <div class="stats-card anim-fade-up-4">
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 500">insights</span>
+            <p class="fw-800 mb-0" style="font-size:13.5px;color:var(--c-text);">Semester Summary</p>
+          </div>
+          <div style="margin-top:12px;">
+            <div class="stats-row">
+              <span class="stats-label">Semester Credits</span>
+              <span class="stats-value" id="stat-semester-credits">—</span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">Total Completed Credits</span>
+              <span class="stats-value">84</span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">Existing Quality Points</span>
+              <span class="stats-value">272.16</span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">CGPA Change</span>
+              <span class="stats-value" id="stat-cgpa-impact">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</main>
+
+<!-- ─── Footer ───────────────────────────────────────── -->
+<footer class="py-4" style="border-top:1px solid var(--c-border);">
+  <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1200px;">
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
+  </div>
+</footer>
+
+<script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/site.js"></script>
+<script src="../../js/pages/student/gpa-simulator.js"></script>
+</body>
+</html>

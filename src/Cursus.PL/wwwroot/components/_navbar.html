@@ -1,0 +1,11 @@
+<!--
+  IMPORTANT: Do not embed both student and admin navbars on the same page — duplicate element IDs
+  break getElementById and shared JS (dark mode, notifications, user menu).
+
+  Use exactly one of:
+  - _navbar-student.html — student area (relative links to student/*.html)
+  - _navbar-admin.html   — admin area (relative links to admin/*.html)
+
+  Static pages in wwwroot/pages duplicate this markup inline; when moving to Razor partials,
+  map to a single partial per layout (Student vs Admin).
+-->

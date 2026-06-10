@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — Admin Profile</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/admin/admin-profile.css"/>
+</head>
+<body>
+
+<!-- ─── Navbar ───────────────────────────────────────── -->
+<nav class="navbar-cursus fixed-top d-flex align-items-center">
+  <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+    <div class="d-flex align-items-center gap-3">
+      <a href="admin-dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+        <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+      </a>
+      <div class="d-none d-md-flex align-items-center gap-1">
+        <a href="admin-dashboard.html" class="nav-pill">Dashboard</a>
+        <a href="courses.html"         class="nav-pill">Courses</a>
+        <a href="students.html"        class="nav-pill">Students</a>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-1">
+      <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+        <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+      </button>
+      <div class="position-relative">
+        <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+          <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+          <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+        </button>
+        <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+          <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+            <span class="fw-700" style="font-size:13px;">Notifications</span>
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:12px;">CS201 failure rate exceeded threshold</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Data Structures · 40% failure · 1h ago</p>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;">
+            <p class="fw-700 mb-0" style="font-size:12px;">New student batch enrolled</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">14 students · CS Department · Yesterday</p>
+          </div>
+          <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+          </div>
+        </div>
+      </div>
+      <div class="custom-select-wrap position-relative ms-1">
+        <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+          <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+               style="width:36px;height:36px;background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.2);color:#dc2626;font-size:13px;">MA</div>
+          <div class="d-none d-md-block text-start">
+            <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Dr. Mona Hassan</p>
+            <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">Dept. Admin</p>
+          </div>
+          <span class="material-symbols-outlined d-none d-md-block" id="user-menu-chevron"
+                style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;transition:transform 0.22s ease;">expand_more</span>
+        </button>
+        <div id="user-dropdown" class="custom-dropdown position-absolute end-0 mt-2" style="min-width:210px;z-index:1060;">
+          <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Dr. Mona Hassan</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">mona.hassan@svu.edu</p>
+          </div>
+          <a href="admin-profile.html" class="custom-dropdown-item text-decoration-none">
+            <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+            <span class="custom-dropdown-label" style="color:#dc2626;">My Profile</span>
+          </a>
+          <a href="#" class="custom-dropdown-item text-decoration-none">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+            <span class="custom-dropdown-label">Settings</span>
+          </a>
+          <div style="border-top:1px solid var(--c-border);">
+            <a href="../auth/login.html" class="custom-dropdown-item text-decoration-none">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+              <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main style="padding-top:80px;padding-bottom:72px;">
+<div class="container-xl px-4" style="max-width:1100px;">
+
+  <!-- ── Admin Hero ─────────────────────────────────────── -->
+  <section class="ap-hero anim-fade-up">
+    <div class="ap-hero-bg"></div>
+    <div class="ap-hero-content">
+      <div class="ap-avatar-wrap">
+        <div class="ap-avatar">MA</div>
+        <div class="ap-role-dot" title="Admin"></div>
+      </div>
+      <div class="ap-hero-info">
+        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+          <h1 class="fw-900 mb-0" style="font-size:1.6rem;letter-spacing:-.4px;color:var(--c-text);">Dr. Mona Hassan</h1>
+          <span class="ap-admin-badge">
+            <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400">shield</span>
+            Department Admin
+          </span>
+        </div>
+        <p style="font-size:13.5px;color:var(--c-muted);margin:0 0 12px;">mona.hassan@svu.edu · Staff ID: SVU-STAFF-0042</p>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="sp-tag">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">business</span>
+            South Valley University
+          </span>
+          <span class="sp-tag">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">laptop_mac</span>
+            Computer Science Dept.
+          </span>
+          <span class="sp-tag">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">group</span>
+            142 Students Managed
+          </span>
+        </div>
+      </div>
+      <div class="ap-hero-actions">
+        <button class="sp-btn-primary ap-btn" onclick="openEditModal()">
+          <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
+          Edit Profile
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Stats strip ───────────────────────────────────── -->
+  <section class="sp-stats anim-fade-up-1">
+    <div class="sp-stat">
+      <p class="sp-stat-val" style="color:#dc2626;">142</p>
+      <p class="sp-stat-label">Students</p>
+    </div>
+    <div class="sp-stat-div"></div>
+    <div class="sp-stat">
+      <p class="sp-stat-val">68</p>
+      <p class="sp-stat-label">Courses</p>
+    </div>
+    <div class="sp-stat-div"></div>
+    <div class="sp-stat">
+      <p class="sp-stat-val">4</p>
+      <p class="sp-stat-label">Years Active</p>
+    </div>
+    <div class="sp-stat-div"></div>
+    <div class="sp-stat">
+      <p class="sp-stat-val" style="color:#10b981;">97%</p>
+      <p class="sp-stat-label">Data Accuracy</p>
+    </div>
+  </section>
+
+  <!-- ── Main grid ─────────────────────────────────────── -->
+  <div class="row g-4 anim-fade-up-2">
+
+    <!-- LEFT col ──────────────────────────────────────── -->
+    <div class="col-12 col-lg-7 d-flex flex-column gap-4">
+
+      <!-- Personal Information -->
+      <div class="sp-card">
+        <div class="sp-card-header">
+          <div class="d-flex align-items-center gap-2">
+            <div class="sp-card-icon" style="background:rgba(239,68,68,.1);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">person</span>
+            </div>
+            <h3 class="sp-card-title">Personal Information</h3>
+          </div>
+          <button class="sp-edit-btn" onclick="openEditModal()">
+            <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
+            Edit
+          </button>
+        </div>
+        <div class="sp-field-grid">
+          <div class="sp-field">
+            <p class="sp-field-label">Full Name</p>
+            <p class="sp-field-value">Dr. Mona Hassan Ibrahim</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Staff ID</p>
+            <p class="sp-field-value">SVU-STAFF-0042</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Email Address</p>
+            <p class="sp-field-value">mona.hassan@svu.edu</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Office Phone</p>
+            <p class="sp-field-value">+20 96 512 3456</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Office Location</p>
+            <p class="sp-field-value">Faculty Building B, Room 214</p>
+          </div>
+          <div class="sp-field">
+            <p class="sp-field-label">Office Hours</p>
+            <p class="sp-field-value">Sun & Tue, 10:00–13:00</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Role & Permissions -->
+      <div class="sp-card">
+        <div class="sp-card-header">
+          <div class="d-flex align-items-center gap-2">
+            <div class="sp-card-icon" style="background:var(--icon-amber-bg);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 300">admin_panel_settings</span>
+            </div>
+            <h3 class="sp-card-title">Role & Permissions</h3>
+          </div>
+        </div>
+        <div class="d-flex flex-column gap-2">
+          <div class="ap-perm-row ap-perm-on">
+            <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+            <div class="flex-fill">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Course Catalog Management</p>
+              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Create, edit, and deactivate courses</p>
+            </div>
+          </div>
+          <div class="ap-perm-row ap-perm-on">
+            <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+            <div class="flex-fill">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Student Grade Entry</p>
+              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Record and update student grades</p>
+            </div>
+          </div>
+          <div class="ap-perm-row ap-perm-on">
+            <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+            <div class="flex-fill">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Prerequisite Configuration</p>
+              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Define and modify prerequisite chains</p>
+            </div>
+          </div>
+          <div class="ap-perm-row ap-perm-on">
+            <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+            <div class="flex-fill">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Graduation Requirements</p>
+              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Configure degree completion rules</p>
+            </div>
+          </div>
+          <div class="ap-perm-row ap-perm-off">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-border);font-variation-settings:'FILL' 1,'wght' 400">cancel</span>
+            <div class="flex-fill">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-muted);">Super Admin Access</p>
+              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">University-level settings — not granted</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security -->
+      <div class="sp-card">
+        <div class="sp-card-header">
+          <div class="d-flex align-items-center gap-2">
+            <div class="sp-card-icon" style="background:var(--icon-blue-bg);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">lock</span>
+            </div>
+            <h3 class="sp-card-title">Security</h3>
+          </div>
+        </div>
+        <div class="d-flex flex-column gap-2">
+          <div class="sp-security-row">
+            <div class="d-flex align-items-center gap-3">
+              <div class="sp-security-icon">
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">password</span>
+              </div>
+              <div>
+                <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Password</p>
+                <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Last changed 1 month ago</p>
+              </div>
+            </div>
+            <button class="sp-edit-btn">Change</button>
+          </div>
+          <div class="sp-security-row">
+            <div class="d-flex align-items-center gap-3">
+              <div class="sp-security-icon">
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">notifications_active</span>
+              </div>
+              <div>
+                <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Failure-Rate Alerts</p>
+                <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Get notified when course failure exceeds threshold</p>
+              </div>
+            </div>
+            <label class="sp-toggle">
+              <input type="checkbox" checked>
+              <span class="sp-toggle-track"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT col ─────────────────────────────────────── -->
+    <div class="col-12 col-lg-5">
+      <div style="position:sticky;top:84px;" class="d-flex flex-column gap-4">
+
+        <!-- Department Overview -->
+        <div class="sp-card">
+          <div class="sp-card-header">
+            <div class="d-flex align-items-center gap-2">
+              <div class="sp-card-icon" style="background:var(--icon-purple-bg);">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 300">domain</span>
+              </div>
+              <h3 class="sp-card-title">Department Overview</h3>
+            </div>
+          </div>
+          <div class="d-flex flex-column gap-3 mt-2">
+            <div class="ap-dept-row">
+              <p class="sp-field-label mb-1">Total Students</p>
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="fw-700" style="font-size:13px;color:var(--c-text);">142 active</span>
+                <span style="font-size:11px;color:#10b981;font-weight:700;">+14 this semester</span>
+              </div>
+              <div class="ap-bar-track">
+                <div class="ap-bar-fill" style="--w:71%;background:var(--c-primary);"></div>
+              </div>
+            </div>
+            <div class="ap-dept-row">
+              <p class="sp-field-label mb-1">Good Standing Rate</p>
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="fw-700" style="font-size:13px;color:var(--c-text);">114 students</span>
+                <span style="font-size:11px;color:#10b981;font-weight:700;">80.3%</span>
+              </div>
+              <div class="ap-bar-track">
+                <div class="ap-bar-fill" style="--w:80%;background:#10b981;"></div>
+              </div>
+            </div>
+            <div class="ap-dept-row">
+              <p class="sp-field-label mb-1">Avg. Department GPA</p>
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="fw-700" style="font-size:13px;color:var(--c-text);">2.91 / 4.0</span>
+                <span style="font-size:11px;color:#d97706;font-weight:700;">72.8%</span>
+              </div>
+              <div class="ap-bar-track">
+                <div class="ap-bar-fill" style="--w:72.8%;background:#d97706;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="sp-card">
+          <div class="sp-card-header">
+            <div class="d-flex align-items-center gap-2">
+              <div class="sp-card-icon" style="background:var(--tile-green-bg);">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 0,'wght' 300">history</span>
+              </div>
+              <h3 class="sp-card-title">Recent Activity</h3>
+            </div>
+          </div>
+          <div class="d-flex flex-column gap-1 mt-1">
+            <div class="ap-activity-row">
+              <div class="ap-activity-dot" style="background:#10b981;"></div>
+              <div>
+                <p class="fw-600 mb-0" style="font-size:12.5px;color:var(--c-text);">Grades entered for CS211 — 28 students</p>
+                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Today, 11:24 AM</p>
+              </div>
+            </div>
+            <div class="ap-activity-row">
+              <div class="ap-activity-dot" style="background:var(--c-primary);"></div>
+              <div>
+                <p class="fw-600 mb-0" style="font-size:12.5px;color:var(--c-text);">New course AI413 added to catalog</p>
+                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Yesterday, 2:15 PM</p>
+              </div>
+            </div>
+            <div class="ap-activity-row">
+              <div class="ap-activity-dot" style="background:#d97706;"></div>
+              <div>
+                <p class="fw-600 mb-0" style="font-size:12.5px;color:var(--c-text);">CS201 failure rate alert acknowledged</p>
+                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Yesterday, 9:03 AM</p>
+              </div>
+            </div>
+            <div class="ap-activity-row">
+              <div class="ap-activity-dot" style="background:var(--c-primary);"></div>
+              <div>
+                <p class="fw-600 mb-0" style="font-size:12.5px;color:var(--c-text);">Prerequisite updated: AI301 → CS311</p>
+                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">3 days ago</p>
+              </div>
+            </div>
+            <div class="ap-activity-row" style="border-bottom:none;">
+              <div class="ap-activity-dot" style="background:#10b981;"></div>
+              <div>
+                <p class="fw-600 mb-0" style="font-size:12.5px;color:var(--c-text);">14 new students enrolled and assigned</p>
+                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">5 days ago</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Admin Links -->
+        <div class="sp-card">
+          <div class="sp-card-header">
+            <div class="d-flex align-items-center gap-2">
+              <div class="sp-card-icon" style="background:var(--icon-amber-bg);">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 300">grid_view</span>
+              </div>
+              <h3 class="sp-card-title">Quick Admin Links</h3>
+            </div>
+          </div>
+          <div class="d-flex flex-column gap-2 mt-2">
+            <a href="courses.html"   class="sp-quick-link">
+              <span class="material-symbols-outlined sp-ql-icon" style="color:var(--c-primary);">menu_book</span>
+              <span>Manage Courses</span>
+              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+            </a>
+            <a href="students.html"  class="sp-quick-link">
+              <span class="material-symbols-outlined sp-ql-icon" style="color:#10b981;">group</span>
+              <span>Manage Students</span>
+              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+            </a>
+            <a href="add-course.html" class="sp-quick-link">
+              <span class="material-symbols-outlined sp-ql-icon" style="color:#7c3aed;">add_circle</span>
+              <span>Add New Course</span>
+              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+            </a>
+            <a href="add-student.html" class="sp-quick-link">
+              <span class="material-symbols-outlined sp-ql-icon" style="color:#d97706;">person_add</span>
+              <span>Add New Student</span>
+              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<!-- ── Edit Modal ──────────────────────────────────────── -->
+<div id="edit-modal" class="sp-modal-overlay" onclick="closeEditModal(event)">
+  <div class="sp-modal">
+    <div class="sp-modal-header">
+      <h3 class="fw-800 mb-0" style="font-size:15px;color:var(--c-text);">Edit Admin Profile</h3>
+      <button class="sp-modal-close" onclick="closeEditModal()">
+        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+      </button>
+    </div>
+    <div class="sp-modal-body">
+      <div class="row g-3">
+        <div class="col-12 col-sm-6">
+          <label class="sp-label">Full Name</label>
+          <input type="text" class="sp-input" value="Dr. Mona Hassan Ibrahim">
+        </div>
+        <div class="col-12 col-sm-6">
+          <label class="sp-label">Office Phone</label>
+          <input type="text" class="sp-input" value="+20 96 512 3456">
+        </div>
+        <div class="col-12">
+          <label class="sp-label">Email Address</label>
+          <input type="email" class="sp-input" value="mona.hassan@svu.edu">
+        </div>
+        <div class="col-12 col-sm-6">
+          <label class="sp-label">Office Location</label>
+          <input type="text" class="sp-input" value="Faculty Building B, Room 214">
+        </div>
+        <div class="col-12 col-sm-6">
+          <label class="sp-label">Office Hours</label>
+          <input type="text" class="sp-input" value="Sun &amp; Tue, 10:00–13:00">
+        </div>
+      </div>
+    </div>
+    <div class="sp-modal-footer">
+      <button class="sp-btn-ghost" onclick="closeEditModal()">Cancel</button>
+      <button class="sp-btn-primary ap-btn" onclick="saveProfile()">
+        <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">save</span>
+        Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer class="py-4" style="border-top:1px solid var(--c-border);">
+  <div class="container-xl px-4 d-flex align-items-center justify-content-between" style="max-width:1100px;">
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8</p>
+  </div>
+</footer>
+
+<script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/site.js"></script>
+<script>
+function openEditModal() {
+  document.getElementById('edit-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeEditModal(e) {
+  if (e && e.target !== document.getElementById('edit-modal')) return;
+  document.getElementById('edit-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function saveProfile() { closeEditModal(); }
+
+// Animate progress bars
+requestAnimationFrame(() => {
+  document.querySelectorAll('.ap-bar-fill').forEach(b => b.classList.add('animated'));
+});
+</script>
+</body>
+</html>

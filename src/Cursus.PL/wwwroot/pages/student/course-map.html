@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — Course Map</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/student/course-map.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+</head>
+
+<body class="cm-body">
+
+<!-- ─── Navbar ───────────────────────────────────────── -->
+<nav class="navbar-cursus fixed-top d-flex align-items-center">
+  <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+    <div class="d-flex align-items-center gap-3">
+      <a href="student-dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+        <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+      </a>
+      <div class="d-none d-md-flex align-items-center gap-1">
+        <a href="student-dashboard.html" class="nav-pill">Dashboard</a>
+        <a href="course-map.html"        class="nav-pill active">Course Map</a>
+        <a href="semester-planner.html" class="nav-pill">Planner</a>
+        <a href="progress-tracker.html"  class="nav-pill">Progress</a>
+        <a href="ai-advisor.html"        class="nav-pill">AI Advisor</a>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-1">
+      <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+        <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+      </button>
+      <div class="position-relative">
+        <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+          <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+          <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+        </button>
+        <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+          <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+            <span class="fw-700" style="font-size:13px;">Notifications</span>
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:12px;">Semester plan approved</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Your advisor approved Spring 2026 · 2h ago</p>
+          </div>
+          <div class="px-4 py-3" style="cursor:pointer;">
+            <p class="fw-700 mb-0" style="font-size:12px;">Grade posted — CS301</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Midterm grade: B+ · Yesterday</p>
+          </div>
+          <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+            <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+          </div>
+        </div>
+      </div>
+      <div class="custom-select-wrap position-relative ms-1">
+        <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+          <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+               style="width:36px;height:36px;background:var(--c-soft);border:2px solid rgba(79,70,229,.2);color:var(--c-primary);font-size:13px;">AK</div>
+          <div class="d-none d-md-block text-start">
+            <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">CS · Year 3</p>
+          </div>
+          <span class="material-symbols-outlined d-none d-md-block" id="user-menu-chevron"
+                style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;transition:transform 0.22s ease;">expand_more</span>
+        </button>
+        <div id="user-dropdown" class="custom-dropdown position-absolute end-0 mt-2" style="min-width:210px;z-index:1060;">
+          <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+            <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Ahmed Kamal</p>
+            <p class="mb-0" style="font-size:11px;color:var(--c-muted);">ahmed.kamal@svu.edu</p>
+          </div>
+          <a href="student-profile.html" class="custom-dropdown-item text-decoration-none">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+            <span class="custom-dropdown-label">My Profile</span>
+          </a>
+          <a href="#" class="custom-dropdown-item text-decoration-none">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+            <span class="custom-dropdown-label">Settings</span>
+          </a>
+          <div style="border-top:1px solid var(--c-border);">
+            <a href="../auth/login.html" class="custom-dropdown-item text-decoration-none">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+              <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- ─── End Navbar ───────────────────────────────────────── -->
+
+
+<!-- ─── Map Layout ──────────────────────────── -->
+<div class="cm-layout">
+
+  <div id="cy" class="cm-canvas"></div>
+
+  <!-- ── Toolbar ── -->
+  <div class="cm-toolbar surface anim-fade-up">
+    <button id="btn-zoom-in"  class="cm-tool-btn" title="Zoom in">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">add</span>
+    </button>
+    <button id="btn-zoom-out" class="cm-tool-btn" title="Zoom out">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">remove</span>
+    </button>
+    <div class="cm-tool-divider"></div>
+    <button id="btn-fit"      class="cm-tool-btn" title="Fit to screen">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">filter_center_focus</span>
+    </button>
+    <button id="btn-impact-toggle" class="cm-tool-btn cm-impact-tool" title="Impact Analyzer" style="display:none;">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1,'wght' 400">bolt</span>
+    </button>
+  </div>
+
+  <!-- ── Legend ── -->
+  <div class="cm-legend surface anim-fade-up">
+    <p class="cm-legend-title">Legend</p>
+    <div class="cm-legend-items">
+      <div class="cm-legend-item"><span class="cm-dot" style="background:#10b981;"></span>Passed</div>
+      <div class="cm-legend-item"><span class="cm-dot" style="background:#3b82f6;"></span>In Progress</div>
+      <div class="cm-legend-item"><span class="cm-dot" style="background:#8492A6;"></span>Remaining</div>
+      <div class="cm-legend-item"><span class="cm-dot" style="background:#334155;"></span>Blocked</div>
+      <div class="cm-legend-item"><span class="cm-dot" style="background:#ef4444;"></span>Failed / Cascade</div>
+    </div>
+  </div>
+
+  <div id="sim-banner" class="cm-sim-banner">
+    <div class="d-flex align-items-center gap-2">
+      <span class="material-symbols-outlined" style="font-size:18px;color:#d97706;font-variation-settings:'FILL' 1,'wght' 400">bolt</span>
+      <span class="fw-700" style="font-size:13px;color:#92400e;">Simulation Mode</span>
+      <span style="font-size:13px;color:#92400e;">— Impact of failing <strong id="sim-course-label"></strong></span>
+    </div>
+    <button id="btn-clear-banner" class="cm-sim-clear-btn">
+      <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+      Clear
+    </button>
+  </div>
+
+  <!-- ── Node Panel ── -->
+  <aside id="node-panel" class="cm-panel surface">
+
+    <div class="cm-panel-header">
+      <span id="panel-status-pill" class="cm-status-pill"></span>
+      <button id="btn-close-panel" class="cm-panel-close">
+        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+      </button>
+    </div>
+
+    <div class="cm-panel-identity">
+      <h2 id="panel-code" class="fw-900" style="font-size:1.3rem;letter-spacing:-.3px;color:var(--c-text);margin:0;"></h2>
+      <p id="panel-name" style="font-size:13px;color:var(--c-text-sub);margin:3px 0 0;"></p>
+      <p id="panel-credits" style="font-size:11px;color:var(--c-muted);margin:2px 0 0;"></p>
+    </div>
+
+    <!-- Status row -->
+    <div id="panel-status-box" class="cm-panel-status-box">
+      <span class="material-symbols-outlined cm-panel-status-icon" id="panel-status-icon" style="font-size:18px;"></span>
+      <div>
+        <p id="panel-status-text" class="fw-700 mb-0" style="font-size:13px;"></p>
+        <p id="panel-grade-text"  style="font-size:11px;color:var(--c-muted);margin:0;"></p>
+      </div>
+    </div>
+
+    <div class="cm-panel-grid">
+      <div class="cm-panel-meta-item">
+        <span class="cm-panel-meta-label">Type</span>
+        <span id="panel-type" class="cm-panel-meta-value"></span>
+      </div>
+      <div class="cm-panel-meta-item">
+        <span class="cm-panel-meta-label">Availability</span>
+        <span id="panel-avail" class="cm-panel-meta-value"></span>
+      </div>
+      <div class="cm-panel-meta-item">
+        <span class="cm-panel-meta-label">Pass Grade</span>
+        <span id="panel-pass" class="cm-panel-meta-value"></span>
+      </div>
+      <div class="cm-panel-meta-item">
+        <span class="cm-panel-meta-label">Department</span>
+        <span id="panel-dept" class="cm-panel-meta-value"></span>
+      </div>
+    </div>
+
+    <!-- Prerequisites -->
+    <div class="cm-panel-section">
+      <p class="cm-panel-section-title">Prerequisites</p>
+      <div id="panel-prereqs"></div>
+    </div>
+
+    <!-- Unlocks -->
+    <div class="cm-panel-section">
+      <p class="cm-panel-section-title">Unlocks</p>
+      <div id="panel-unlocks" class="d-flex flex-wrap gap-1"></div>
+    </div>
+
+    <!-- Simulate button -->
+    <div id="panel-simulate-wrap" class="cm-panel-action">
+      <button id="btn-simulate" class="cm-btn-simulate">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">bolt</span>
+        Simulate Failure
+      </button>
+    </div>
+    <div id="panel-clear-wrap" class="cm-panel-action" style="display:none;">
+      <button id="btn-clear-panel" class="cm-btn-clear">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 0,'wght' 300">refresh</span>
+        Clear Simulation
+      </button>
+    </div>
+    <div class="cm-panel-ask-ai">
+      <a href="ai-advisor.html" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
+        <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
+        Ask AI Advisor about this course
+      </a>
+    </div>
+  </aside>
+</div>
+
+<!-- ─── Footer ───────────────────────────────────────── -->
+<footer class="py-4" style="border-top:1px solid var(--c-border);">
+  <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:1200px;">
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
+  </div>
+</footer>
+
+<script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lib/jquery/dist/jquery.min.js"></script>
+<script src="../../js/site.js"></script>
+<script src="../../js/pages/student/course-map.js"></script>
+</body>
+</html>

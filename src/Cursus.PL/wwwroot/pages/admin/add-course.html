@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cursus — Add Course</title>
+  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../css/site.css"/>
+  <link rel="stylesheet" href="../../css/pages/admin/add-course.css"/>
+</head>
+
+<body>
+
+  <!-- ─── Navbar ───────────────────────────────────────── -->
+  <nav class="navbar-cursus fixed-top d-flex align-items-center">
+    <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+
+      <div class="d-flex align-items-center gap-3">
+        <a href="admin-dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+          <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+        </a>
+        <div class="d-none d-md-flex align-items-center gap-1">
+          <a href="admin-dashboard.html" class="nav-pill">Dashboard</a>
+          <a href="courses.html"         class="nav-pill active">Courses</a>
+          <a href="students.html"        class="nav-pill">Students</a>
+          <!-- <a href="reports.html"         class="nav-pill">Reports</a> -->
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-1">
+        <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
+          <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
+        </button>
+        <div class="position-relative">
+          <button id="notif-btn" class="btn btn-link p-2 rounded-circle position-relative" style="color:var(--c-muted);">
+            <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">notifications</span>
+            <span class="notif-dot position-absolute rounded-circle bg-danger" style="width:8px;height:8px;top:6px;right:6px;border:2px solid white;"></span>
+          </button>
+          <div id="notif-panel" class="notif-panel d-none position-absolute end-0 mt-2 surface shadow-lg overflow-hidden" style="z-index:1060;border-radius:14px;">
+            <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+              <span class="fw-700" style="font-size:13px;">Notifications</span>
+              <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">Mark all read</span>
+            </div>
+            <div class="px-4 py-3" style="cursor:pointer;border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:12px;">CS201 failure rate exceeded threshold</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Data Structures · 40% failure · 1h ago</p>
+            </div>
+            <div class="px-4 py-3" style="cursor:pointer;">
+              <p class="fw-700 mb-0" style="font-size:12px;">New student batch enrolled</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">14 students · CS Department · Yesterday</p>
+            </div>
+            <div class="px-4 py-2 text-center" style="border-top:1px solid var(--c-border);">
+              <span class="fw-600" style="font-size:12px;cursor:pointer;color:var(--c-primary);">View all →</span>
+            </div>
+          </div>
+        </div>
+        <!-- User dropdown -->
+        <div class="custom-select-wrap position-relative ms-1">
+          <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
+            <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
+                 style="width:36px;height:36px;background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.2);color:#dc2626;font-size:13px;">MA</div>
+            <div class="d-none d-md-block text-start">
+              <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">Dept. Admin</p>
+            </div>
+            <span class="material-symbols-outlined d-none d-md-block" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">expand_more</span>
+          </button>
+          <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:200px;z-index:1060;">
+            <div class="px-4 py-3" style="border-bottom:1px solid var(--c-border);">
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Dr. Mona Hassan</p>
+              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">mona.hassan@svu.edu</p>
+            </div>
+            <a href="admin-profile.html" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">manage_accounts</span>
+              <span class="custom-dropdown-label">My Profile</span>
+            </a>
+            <a href="#" class="custom-dropdown-item text-decoration-none" style="color:var(--c-text);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">settings</span>
+              <span class="custom-dropdown-label">Settings</span>
+            </a>
+            <div style="border-top:1px solid var(--c-border);">
+              <a href="#" class="custom-dropdown-item text-decoration-none">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+                <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- ─── End Navbar ───────────────────────────────────────── -->
+
+
+  <!-- ─── Main ───────────────────────────────────────── -->
+  <main style="padding-top:80px;padding-bottom:80px;">
+  <div class="container-xl px-4" style="max-width:900px;">
+
+    <!-- Breadcrumb + Header -->
+    <div class="mb-4 anim-fade-up">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0" style="font-size:12px;">
+          <li class="breadcrumb-item"><a href="courses.html" style="color:var(--c-muted);text-decoration:none;">Courses</a></li>
+          <li class="breadcrumb-item active" style="color:var(--c-primary);font-weight:600;">Add New Course</li>
+        </ol>
+      </nav>
+      <div class="d-flex align-items-center justify-content-between gap-3">
+        <div>
+          <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Add New Course</h1>
+          <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Fill in the course details below. Fields marked <span style="color:#dc2626;">*</span> are required.</p>
+        </div>
+        <a href="courses.html" class="btn d-flex align-items-center gap-2 fw-600 flex-shrink-0"
+           style="border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);border-radius:12px;font-size:13px;padding:8px 16px;text-decoration:none;">
+          <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 0,'wght' 300">arrow_back</span>
+          Back
+        </a>
+      </div>
+    </div>
+
+
+    <!-- ── Progress Steps ── -->
+    <div class="steps-bar surface p-3 mb-4 anim-fade-up-1">
+      <div class="d-flex align-items-center gap-0">
+        <div class="step-item step-active" data-step="1">
+          <div class="step-circle">
+            <span class="material-symbols-outlined step-icon" style="font-variation-settings:'FILL' 0,'wght' 400">info</span>
+            <span class="step-check material-symbols-outlined" style="font-size:14px;display:none;font-variation-settings:'FILL' 1,'wght' 400">check</span>
+          </div>
+          <span class="step-label">Basic Info</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="2">
+          <div class="step-circle">
+            <span class="material-symbols-outlined step-icon" style="font-variation-settings:'FILL' 0,'wght' 400">tune</span>
+            <span class="step-check material-symbols-outlined" style="font-size:14px;display:none;font-variation-settings:'FILL' 1,'wght' 400">check</span>
+          </div>
+          <span class="step-label">Configuration</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="3">
+          <div class="step-circle">
+            <span class="material-symbols-outlined step-icon" style="font-variation-settings:'FILL' 0,'wght' 400">account_tree</span>
+            <span class="step-check material-symbols-outlined" style="font-size:14px;display:none;font-variation-settings:'FILL' 1,'wght' 400">check</span>
+          </div>
+          <span class="step-label">Prerequisites</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="4">
+          <div class="step-circle">
+            <span class="material-symbols-outlined step-icon" style="font-variation-settings:'FILL' 0,'wght' 400">check_circle</span>
+          </div>
+          <span class="step-label">Review</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Basic Info ───────────────────────────────────────── -->
+    <div id="step-1" class="step-panel anim-fade-up-2">
+      <div class="surface p-4 p-md-5 mb-3">
+
+        <div class="step-panel-header mb-4">
+          <div class="step-panel-icon">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">info</span>
+          </div>
+          <div>
+            <h2 class="fw-800 mb-0" style="font-size:1.1rem;color:var(--c-text);">Basic Information</h2>
+            <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Identity and categorization of the course</p>
+          </div>
+        </div>
+
+        <div class="row g-4">
+
+          <!-- Course Code -->
+          <div class="col-12 col-md-4">
+            <div class="form-group-fancy" id="fg-code">
+              <label class="form-label-fancy" for="course-code">
+                Course Code <span style="color:#dc2626;">*</span>
+              </label>
+              <div class="input-wrap">
+                <span class="input-prefix">
+                  <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">tag</span>
+                </span>
+                <input type="text" id="course-code" class="form-control fancy-input has-prefix"
+                       placeholder="e.g. CS201" maxlength="10"
+                       oninput="this.value = this.value.toUpperCase()"/>
+              </div>
+              <p class="field-hint">Unique code within the department</p>
+              <p class="field-error" id="err-code">Course code is required</p>
+            </div>
+          </div>
+
+          <!-- Course Name -->
+          <div class="col-12 col-md-8">
+            <div class="form-group-fancy" id="fg-name">
+              <label class="form-label-fancy" for="course-name">
+                Course Name <span style="color:#dc2626;">*</span>
+              </label>
+              <div class="input-wrap">
+                <span class="input-prefix">
+                  <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">menu_book</span>
+                </span>
+                <input type="text" id="course-name" class="form-control fancy-input has-prefix"
+                       placeholder="e.g. Data Structures & Algorithms" maxlength="100"/>
+              </div>
+              <p class="field-hint">Full course name as it appears on the transcript</p>
+              <p class="field-error" id="err-name">Course name is required</p>
+            </div>
+          </div>
+
+          <!-- Department -->
+          <div class="col-12 col-md-6">
+            <div class="form-group-fancy" id="fg-dept">
+              <label class="form-label-fancy" for="course-dept">
+                Department <span style="color:#dc2626;">*</span>
+              </label>
+              <div class="input-wrap">
+                <span class="input-prefix">
+                  <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">apartment</span>
+                </span>
+                <select id="course-dept" class="form-select fancy-input has-prefix">
+                  <option value="">Select department…</option>
+                  <option value="cs">Computer Science</option>
+                  <option value="is">Information Systems</option>
+                  <option value="it">Information Technology</option>
+                  <option value="ai">Artificial Intelligence</option>
+                </select>
+              </div>
+              <p class="field-error" id="err-dept">Please select a department</p>
+            </div>
+          </div>
+
+          <!-- Course Type -->
+          <div class="col-12 col-md-6">
+            <div class="form-group-fancy" id="fg-type">
+              <label class="form-label-fancy" for="course-type">
+                Course Type <span style="color:#dc2626;">*</span>
+              </label>
+              <div class="input-wrap">
+                <span class="input-prefix">
+                  <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">category</span>
+                </span>
+                <select id="course-type" class="form-select fancy-input has-prefix">
+                  <option value="">Select type…</option>
+                  <option value="core">Core</option>
+                  <option value="dept-elective">Department Elective</option>
+                  <option value="free-elective">Free Elective</option>
+                  <option value="university-req">University Requirement</option>
+                </select>
+              </div>
+              <p class="field-error" id="err-type">Please select a course type</p>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="col-12">
+            <div class="form-group-fancy">
+              <label class="form-label-fancy" for="course-desc">Description</label>
+              <textarea id="course-desc" class="form-control fancy-input fancy-textarea"
+                        placeholder="Brief course overview or syllabus description…" rows="3"></textarea>
+              <p class="field-hint">Optional — helps students understand course content</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button class="btn-step-next" onclick="goToStep(2)">
+          Continue to Configuration
+          <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+
+
+    <!-- ─── Configuration ───────────────────────────────────────── -->
+    <div id="step-2" class="step-panel d-none anim-fade-up-2">
+      <div class="surface p-4 p-md-5 mb-3">
+
+        <div class="step-panel-header mb-4">
+          <div class="step-panel-icon">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">tune</span>
+          </div>
+          <div>
+            <h2 class="fw-800 mb-0" style="font-size:1.1rem;color:var(--c-text);">Configuration</h2>
+            <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Credits, availability, and grading rules</p>
+          </div>
+        </div>
+
+        <div class="row g-4">
+
+          <!-- Credit Hours -->
+          <div class="col-12 col-md-4">
+            <div class="form-group-fancy" id="fg-credits">
+              <label class="form-label-fancy" for="course-credits">
+                Credit Hours <span style="color:#dc2626;">*</span>
+              </label>
+              <div class="credits-selector d-flex gap-2 flex-wrap mt-1">
+                <button type="button" class="credit-btn" data-val="1" onclick="selectCredit(this)">1</button>
+                <button type="button" class="credit-btn" data-val="2" onclick="selectCredit(this)">2</button>
+                <button type="button" class="credit-btn credit-btn-selected" data-val="3" onclick="selectCredit(this)">3</button>
+                <button type="button" class="credit-btn" data-val="4" onclick="selectCredit(this)">4</button>
+                <button type="button" class="credit-btn" data-val="5" onclick="selectCredit(this)">5</button>
+                <button type="button" class="credit-btn" data-val="6" onclick="selectCredit(this)">6</button>
+              </div>
+              <input type="hidden" id="course-credits" value="3"/>
+              <p class="field-hint mt-2">Typically 1–3 for labs, 3–4 for theory</p>
+              <p class="field-error" id="err-credits">Please select credit hours</p>
+            </div>
+          </div>
+
+          <!-- Semester Availability -->
+          <div class="col-12 col-md-8">
+            <div class="form-group-fancy" id="fg-avail">
+              <label class="form-label-fancy">
+                Semester Availability <span style="color:#dc2626;">*</span>
+              </label>
+              <div class="avail-selector d-flex gap-2 flex-wrap mt-1">
+                <label class="avail-option">
+                  <input type="radio" name="avail" value="fall" hidden/>
+                  <span class="avail-label">
+                    <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">ac_unit</span>
+                    Fall only
+                  </span>
+                </label>
+                <label class="avail-option">
+                  <input type="radio" name="avail" value="spring" hidden/>
+                  <span class="avail-label">
+                    <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">wb_sunny</span>
+                    Spring only
+                  </span>
+                </label>
+                <label class="avail-option">
+                  <input type="radio" name="avail" value="both" hidden checked/>
+                  <span class="avail-label avail-label-checked">
+                    <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">event_repeat</span>
+                    Fall & Spring
+                  </span>
+                </label>
+                <label class="avail-option">
+                  <input type="radio" name="avail" value="all" hidden/>
+                  <span class="avail-label">
+                    <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">calendar_month</span>
+                    All Semesters
+                  </span>
+                </label>
+              </div>
+              <p class="field-error" id="err-avail">Please select availability</p>
+            </div>
+          </div>
+
+          <!-- Passing Grade Threshold -->
+          <div class="col-12 col-md-6">
+            <div class="form-group-fancy">
+              <label class="form-label-fancy" for="course-pass-grade">Passing Grade Threshold</label>
+              <div class="input-wrap">
+                <span class="input-prefix">
+                  <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">grade</span>
+                </span>
+                <select id="course-pass-grade" class="form-select fancy-input has-prefix">
+                  <option value="D">D — Default (1.0)</option>
+                  <option value="D+">D+ (1.3)</option>
+                  <option value="C-">C- (1.7)</option>
+                  <option value="C">C (2.0) — For core courses</option>
+                  <option value="C+">C+ (2.3)</option>
+                </select>
+              </div>
+              <p class="field-hint">Minimum grade a student must earn to pass</p>
+            </div>
+          </div>
+
+          <!-- Min Passed Credit Hours -->
+          <div class="col-12 col-md-6">
+            <div class="form-group-fancy">
+              <label class="form-label-fancy" for="course-min-credits">
+                Min. Completed Credits to Unlock
+                <span class="optional-badge">optional</span>
+              </label>
+              <div class="input-wrap">
+                <span class="input-prefix">
+                  <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">lock_open</span>
+                </span>
+                <input type="number" id="course-min-credits" class="form-control fancy-input has-prefix"
+                       placeholder="e.g. 60" min="0" max="200"/>
+              </div>
+              <p class="field-hint">For courses like Senior Project — require X credit hours first</p>
+            </div>
+          </div>
+
+          <!-- Active Status toggle -->
+          <div class="col-12">
+            <div class="surface p-3 d-flex align-items-center justify-content-between gap-3"
+                 style="border-radius:12px;border-color:rgba(79,70,229,.15);">
+              <div>
+                <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Course Active Status</p>
+                <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Inactive courses are hidden from students but remain in the database</p>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" id="course-active" class="toggle-input" checked/>
+                <label for="course-active" class="toggle-label">
+                  <span class="toggle-knob"></span>
+                </label>
+                <span id="toggle-text" class="toggle-text">Active</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <button class="btn-step-back" onclick="goToStep(1)">
+          <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400">arrow_back</span>
+          Back
+        </button>
+        <button class="btn-step-next" onclick="goToStep(3)">
+          Continue to Prerequisites
+          <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+
+
+    <!-- ─── Prerequisites ───────────────────────────────────────── -->
+    <div id="step-3" class="step-panel d-none anim-fade-up-2">
+      <div class="surface p-4 p-md-5 mb-3">
+
+        <div class="step-panel-header mb-4">
+          <div class="step-panel-icon">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">account_tree</span>
+          </div>
+          <div>
+            <h2 class="fw-800 mb-0" style="font-size:1.1rem;color:var(--c-text);">Prerequisites</h2>
+            <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Courses students must pass before taking this one</p>
+          </div>
+        </div>
+
+        <!-- Search & add prerequisite -->
+        <div class="prereq-search-wrap mb-3">
+          <div class="input-wrap">
+            <span class="input-prefix">
+              <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">search</span>
+            </span>
+            <input type="text" id="prereq-search" class="form-control fancy-input has-prefix"
+                   placeholder="Search courses to add as prerequisites…"
+                   oninput="filterPrereqSearch(this.value)" autocomplete="off"/>
+          </div>
+          <!-- Dropdown results -->
+          <div id="prereq-dropdown" class="prereq-dropdown surface d-none">
+            <!-- populated by JS -->
+          </div>
+        </div>
+
+        <!-- Selected prerequisites -->
+        <div id="selected-prereqs" class="prereq-chips-wrap">
+          <div id="prereq-empty" class="prereq-empty-state text-center py-4">
+            <span class="material-symbols-outlined mb-2" style="font-size:32px;color:var(--c-border);font-variation-settings:'FILL' 0,'wght' 200;display:block;">account_tree</span>
+            <p class="fw-600 mb-0" style="font-size:13px;color:var(--c-muted);">No prerequisites added</p>
+            <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Search above to add prerequisite courses</p>
+          </div>
+        </div>
+
+        <!-- Corequisites -->
+        <div class="mt-4 pt-3" style="border-top:1px solid var(--c-border);">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="fw-700" style="font-size:13px;color:var(--c-text);">Corequisites</span>
+            <span class="optional-badge">optional</span>
+          </div>
+          <p class="mb-3" style="font-size:12px;color:var(--c-muted);">Courses that must be taken concurrently (same semester)</p>
+          <div class="input-wrap">
+            <span class="input-prefix">
+              <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">sync_alt</span>
+            </span>
+            <input type="text" id="coreq-input" class="form-control fancy-input has-prefix"
+                   placeholder="Type course codes separated by commas, e.g. CS201L, MTH102"/>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <button class="btn-step-back" onclick="goToStep(2)">
+          <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400">arrow_back</span>
+          Back
+        </button>
+        <button class="btn-step-next" onclick="goToStep(4)">
+          Review Course
+          <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+
+
+    <!-- ─── Review & Submit ───────────────────────────────────────── -->
+    <div id="step-4" class="step-panel d-none anim-fade-up-2">
+      <div class="surface p-4 p-md-5 mb-3">
+
+        <div class="step-panel-header mb-4">
+          <div class="step-panel-icon step-panel-icon-success">
+            <span class="material-symbols-outlined" style="font-size:20px;color:#059669;font-variation-settings:'FILL' 0,'wght' 400">check_circle</span>
+          </div>
+          <div>
+            <h2 class="fw-800 mb-0" style="font-size:1.1rem;color:var(--c-text);">Review & Confirm</h2>
+            <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Verify everything looks correct before saving</p>
+          </div>
+        </div>
+
+        <!-- Review card -->
+        <div class="review-card mb-3">
+          <div class="review-card-header d-flex align-items-center justify-content-between">
+            <span class="fw-700" style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--c-muted);">Basic Information</span>
+            <button class="review-edit-btn" onclick="goToStep(1)">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
+              Edit
+            </button>
+          </div>
+          <div class="review-grid">
+            <div class="review-field">
+              <span class="review-label">Course Code</span>
+              <span class="review-value fw-700" id="rv-code">—</span>
+            </div>
+            <div class="review-field">
+              <span class="review-label">Course Name</span>
+              <span class="review-value" id="rv-name">—</span>
+            </div>
+            <div class="review-field">
+              <span class="review-label">Department</span>
+              <span class="review-value" id="rv-dept">—</span>
+            </div>
+            <div class="review-field">
+              <span class="review-label">Type</span>
+              <span class="review-value" id="rv-type">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card mb-3">
+          <div class="review-card-header d-flex align-items-center justify-content-between">
+            <span class="fw-700" style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--c-muted);">Configuration</span>
+            <button class="review-edit-btn" onclick="goToStep(2)">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
+              Edit
+            </button>
+          </div>
+          <div class="review-grid">
+            <div class="review-field">
+              <span class="review-label">Credit Hours</span>
+              <span class="review-value fw-700" id="rv-credits">—</span>
+            </div>
+            <div class="review-field">
+              <span class="review-label">Availability</span>
+              <span class="review-value" id="rv-avail">—</span>
+            </div>
+            <div class="review-field">
+              <span class="review-label">Passing Grade</span>
+              <span class="review-value" id="rv-pass">—</span>
+            </div>
+            <div class="review-field">
+              <span class="review-label">Status</span>
+              <span class="review-value" id="rv-status">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-header d-flex align-items-center justify-content-between">
+            <span class="fw-700" style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--c-muted);">Prerequisites</span>
+            <button class="review-edit-btn" onclick="goToStep(3)">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
+              Edit
+            </button>
+          </div>
+          <div id="rv-prereqs" style="font-size:13px;color:var(--c-text);padding:12px 0 0;">
+            <span style="color:var(--c-muted);font-style:italic;">None</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center">
+        <button class="btn-step-back" onclick="goToStep(3)">
+          <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400">arrow_back</span>
+          Back
+        </button>
+        <div class="d-flex gap-2">
+          <a href="courses.html" class="btn-step-back" style="text-decoration:none;">Cancel</a>
+          <button class="btn-submit" id="submit-btn" onclick="submitCourse()">
+            <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400">add_circle</span>
+            Save Course
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ─── Success State ───────────────────────────────────────── -->
+    <div id="success-state" class="d-none text-center anim-fade-up-2">
+      <div class="surface p-5">
+        <div class="success-ring mx-auto mb-4">
+          <span class="material-symbols-outlined" style="font-size:36px;color:#059669;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+        </div>
+        <h2 class="fw-900 mb-2" style="font-size:1.4rem;color:var(--c-text);">Course Added!</h2>
+        <p class="mb-4" style="font-size:14px;color:var(--c-muted);">
+          <strong id="success-code" style="color:var(--c-primary);"></strong> has been added to the course catalog.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+          <a href="courses.html" class="btn btn-primary fw-700 d-flex align-items-center gap-2"
+             style="border-radius:12px;font-size:13px;padding:10px 20px;box-shadow:0 4px 14px rgba(79,70,229,.28);">
+            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">arrow_back</span>
+            Back to Courses
+          </a>
+          <button onclick="resetForm()" class="btn fw-600 d-flex align-items-center gap-2"
+                  style="border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);border-radius:12px;font-size:13px;padding:10px 20px;">
+            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">add</span>
+            Add Another
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </main>
+  <!-- ─── End Main ───────────────────────────────────────── -->
+
+
+  <!-- ─── Footer ───────────────────────────────────────── -->
+  <footer class="py-4" style="border-top:1px solid var(--c-border);">
+    <div class="container-xl px-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2" style="max-width:900px;">
+      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">© 2026 Cursus — DEPI Graduation Project</p>
+      <p class="mb-0" style="font-size:12px;color:var(--c-muted);">ASP.NET Core 8 · Bootstrap 5 · SQL Server</p>
+    </div>
+  </footer>
+  <!-- ─── End Footer ───────────────────────────────────────── -->
+
+  <script src="../../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/site.js"></script>
+  <script src="../../js/pages/admin/add-course.js"></script>
+
+</body>
+</html>
