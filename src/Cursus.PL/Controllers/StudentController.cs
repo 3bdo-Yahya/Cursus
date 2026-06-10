@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Cursus.Domain.Entities;
+using Cursus.Domain.Constants;
 using Cursus.PL.Models;
 
 namespace Cursus.PL.Controllers;
 
-[Authorize(Roles = "Student")]
+[Authorize(Roles = Roles.Student)]
 public class StudentController : Controller
 {
     private readonly UserManager<AppUser> _userManager;

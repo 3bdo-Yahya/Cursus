@@ -42,6 +42,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddRazorPages();
+        builder.Services.AddScoped<Cursus.BLL.Interfaces.IStudentManagementService, Cursus.BLL.Services.StudentManagementService>();
 
         var app = builder.Build();
 
@@ -64,6 +65,7 @@ public class Program
         app.UseAuthorization();
 
         await StartupSeeder.SeedSampleCatalogAsync(app.Services);
+        await StartupSeeder.SeedSampleStudentsAsync(app.Services);
 
         app.MapStaticAssets();
         app.MapControllerRoute(

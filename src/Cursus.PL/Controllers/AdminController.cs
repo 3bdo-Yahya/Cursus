@@ -1,5 +1,7 @@
 using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
+using Cursus.Domain.Constants;
+using Cursus.BLL.Interfaces;
 using Cursus.PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,14 +10,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.PL.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = Roles.Admin)]
 public class AdminController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IStudentManagementService _studentManagementService;
 
-    public AdminController(ApplicationDbContext context)
+    public AdminController(ApplicationDbContext context, IStudentManagementService studentManagementService)
     {
         _context = context;
+        _studentManagementService = studentManagementService;
     }
 
     public async Task<IActionResult> Courses(string? searchTerm, int? departmentId, bool includeInactive = false)
@@ -62,7 +66,17 @@ public class AdminController : Controller
     public IActionResult CourseIndex(string? searchTerm, int? departmentId, bool includeInactive = false)
         => RedirectToAction(nameof(Courses), new { searchTerm, departmentId, includeInactive });
 
-    public IActionResult Students() => View();
+    public async Task<IActionResult> Students(string? searchTerm, int? departmentId)
+    {
+        ViewData["SearchTerm"] = searchTerm;
+        ViewData["SelectedDepartmentId"] = departmentId;
+
+        var students = await _studentManagementService.GetStudentsAsync(searchTerm, departmentId);
+
+        await PopulateDepartmentsFilterDropDownListAsync(departmentId);
+
+        return View("Students/Index", students);
+    }
 
     public IActionResult AddCourse() => RedirectToAction(nameof(CourseCreate));
 

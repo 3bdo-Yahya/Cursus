@@ -1,0 +1,192 @@
+@using Cursus.Domain.Entities
+@using Cursus.Domain.Enums
+@model IEnumerable<AppUser>
+
+@{
+    ViewData["Title"] = "Student Management";
+    var list = Model.ToList();
+    var searchTerm = ViewData["SearchTerm"] as string;
+    var selectedDepartmentId = ViewData["SelectedDepartmentId"]?.ToString();
+    var total = list.Count;
+    var goodStanding = list.Count(s => s.CurrentStanding == AcademicStanding.Good);
+    var warningOrProbation = list.Count(s => s.CurrentStanding == AcademicStanding.Warning || s.CurrentStanding == AcademicStanding.Probation);
+    var dismissed = list.Count(s => s.CurrentStanding == AcademicStanding.Dismissed);
+}
+
+@functions {
+    string GetInitials(string name)
+    {
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+            return $"{char.ToUpper(parts[0][0])}{char.ToUpper(parts[1][0])}";
+        return name.Length >= 2 ? name[..2].ToUpper() : name.ToUpper();
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/courses.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/pages/admin/students.css" asp-append-version="true"/>
+}
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3 mb-4 anim-fade-up">
+  <div>
+    <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Students</h1>
+    <p class="mb-0" style="font-size:13px;color:var(--c-muted);">
+      Search, filter, and manage students across departments.
+    </p>
+  </div>
+  <a asp-action="AddStudent" class="btn btn-primary d-flex align-items-center gap-2 fw-700 flex-shrink-0 text-decoration-none"
+     style="border-radius:12px;font-size:13px;padding:9px 18px;box-shadow:0 4px 14px rgba(79,70,229,.28);">
+    <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">person_add</span>
+    Add Student
+  </a>
+</div>
+
+<!-- Stat Pills -->
+<div class="d-flex flex-wrap gap-2 mb-4 anim-fade-up-1">
+  <div class="stat-pill d-flex align-items-center gap-2">
+    <span class="stat-pill-dot" style="background:#4F46E5;"></span>
+    <span class="fw-700" style="font-size:13px;color:var(--c-text);">@total</span>
+    <span style="font-size:12px;color:var(--c-muted);">Total</span>
+  </div>
+  <div class="stat-pill d-flex align-items-center gap-2">
+    <span class="stat-pill-dot" style="background:#10b981;"></span>
+    <span class="fw-700" style="font-size:13px;color:var(--c-text);">@goodStanding</span>
+    <span style="font-size:12px;color:var(--c-muted);">Good Standing</span>
+  </div>
+  <div class="stat-pill d-flex align-items-center gap-2" style="border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.04);">
+    <span class="stat-pill-dot" style="background:#f59e0b;"></span>
+    <span class="fw-700" style="font-size:13px;color:#d97706;">@warningOrProbation</span>
+    <span style="font-size:12px;color:var(--c-muted);">Warning / Probation</span>
+  </div>
+  <div class="stat-pill d-flex align-items-center gap-2" style="border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.04);">
+    <span class="stat-pill-dot" style="background:#ef4444;"></span>
+    <span class="fw-700" style="font-size:13px;color:#dc2626;">@dismissed</span>
+    <span style="font-size:12px;color:var(--c-muted);">Dismissed</span>
+  </div>
+</div>
+
+<!-- Filters Bar -->
+<form asp-action="Students" method="get" class="surface p-3 mb-4 anim-fade-up-1">
+  <div class="row g-2 align-items-end">
+    <!-- Search -->
+    <div class="col-md-6">
+      <label class="form-label fw-600" style="font-size:12px;color:var(--c-text-sub);" for="searchTerm">Search</label>
+      <div class="position-relative">
+        <span class="material-symbols-outlined position-absolute top-50 translate-middle-y"
+              style="left:12px;font-size:17px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;pointer-events:none;">search</span>
+        <input id="searchTerm" name="searchTerm" value="@searchTerm" class="form-control ps-5" placeholder="Search by name or email…" style="border-radius:10px;font-size:13px;height:38px;" />
+      </div>
+    </div>
+
+    <!-- Department -->
+    <div class="col-md-4">
+      <label class="form-label fw-600" style="font-size:12px;color:var(--c-text-sub);" for="departmentId">Department</label>
+      <select id="departmentId" name="departmentId" class="form-select" asp-items="ViewBag.FilterDepartmentId" style="border-radius:10px;font-size:13px;height:38px;">
+        <option value="">All departments</option>
+      </select>
+    </div>
+
+    <!-- Actions -->
+    <div class="col-md-2">
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary w-100 fw-700" style="border-radius:10px;font-size:13px;height:38px;">Apply</button>
+        <a asp-action="Students" class="btn btn-outline-secondary w-100 fw-600" style="border-radius:10px;font-size:13px;height:38px;display:flex;align-items:center;justify-content:center;text-decoration:none;">Clear</a>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- Students Table -->
+@if (total > 0)
+{
+<div class="surface anim-fade-up-2 overflow-hidden" id="students-table-wrap">
+  <div class="table-responsive">
+    <table class="table courses-table mb-0">
+      <thead>
+        <tr>
+          <th class="col-student-name">Student</th>
+          <th class="col-student-email">Email</th>
+          <th class="col-student-dept">Department</th>
+          <th class="col-student-year text-center">Academic Year</th>
+          <th class="col-student-semester text-center">Semester</th>
+          <th class="col-student-standing">Standing</th>
+          <th class="col-actions text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="students-tbody">
+        @foreach (var item in list)
+        {
+            var initials = GetInitials(item.DisplayName);
+            var standingMeta = item.CurrentStanding switch
+            {
+                AcademicStanding.Good => ("standing-good", "Good"),
+                AcademicStanding.Warning => ("standing-warning", "Warning"),
+                AcademicStanding.Probation => ("standing-probation", "Probation"),
+                AcademicStanding.Dismissed => ("standing-dismissed", "Dismissed"),
+                _ => ("standing-dismissed", item.CurrentStanding.ToString())
+            };
+
+            <tr class="course-row">
+              <td class="col-student-name">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="student-avatar" style="background:rgba(79,70,229,.12);color:#4F46E5;">@initials</div>
+                  <div>
+                    <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">@item.DisplayName</p>
+                    <p class="mb-0" style="font-size:11px;color:var(--c-muted);">ID: @item.UserName?.Split('@')[0]</p>
+                  </div>
+                </div>
+              </td>
+              <td class="col-student-email" style="font-size:12px;color:var(--c-text-sub);">@item.Email</td>
+              <td class="col-student-dept" style="font-size:12px;color:var(--c-text-sub);">
+                @(item.Department?.Name ?? "Unassigned")
+              </td>
+              <td class="col-student-year text-center"><span class="year-badge">Year @(item.AcademicYear ?? "N/A")</span></td>
+              <td class="col-student-semester text-center" style="font-size:12px;color:var(--c-text-sub);">
+                @item.CurrentSemester
+              </td>
+              <td class="col-student-standing">
+                <span class="standing-badge @standingMeta.Item1">
+                  @if (item.CurrentStanding == AcademicStanding.Good)
+                  {
+                    <span class="standing-dot"></span>
+                  }
+                  else if (item.CurrentStanding == AcademicStanding.Warning)
+                  {
+                    <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400">warning</span>
+                  }
+                  else if (item.CurrentStanding == AcademicStanding.Probation)
+                  {
+                    <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400">error</span>
+                  }
+                  @standingMeta.Item2
+                </span>
+              </td>
+              <td class="col-actions">
+                <div class="actions-cell text-end">
+                  <a asp-action="ViewStudent" asp-route-id="@item.Id" class="action-btn action-view" title="View profile"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span></a>
+                  <a asp-action="EditStudent" asp-route-id="@item.Id" class="action-btn action-edit" title="Edit student"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span></a>
+                </div>
+              </td>
+            </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 px-4 py-3"
+       style="border-top:1px solid var(--c-border);background:var(--c-surface);">
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">
+      Showing <span class="fw-700" style="color:var(--c-primary);">@total</span> student@(total == 1 ? "" : "s")
+    </p>
+  </div>
+</div>
+}
+else
+{
+<div class="surface anim-fade-up-2 overflow-hidden text-center py-5 px-3">
+  <span class="material-symbols-outlined d-block mb-3" style="font-size:40px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 200">manage_search</span>
+  <p class="fw-700 mb-1" style="font-size:14px;color:var(--c-text);">No students found</p>
+  <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Try adjusting your search or department filters.</p>
+</div>
+}
