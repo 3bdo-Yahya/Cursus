@@ -1,6 +1,7 @@
 using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Constants;
+using Cursus.Domain.Enums;
 using Cursus.BLL.Interfaces;
 using Cursus.PL.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -102,8 +103,169 @@ public class AdminController : Controller
 
     public IActionResult AddStudent() => View();
     public IActionResult EditStudent() => View();
-    public IActionResult ViewStudent() => View();
     public IActionResult Profile() => View();
+
+    // ── Student Detail ────────────────────────────────────────────────────────
+
+    [HttpGet]
+    public async Task<IActionResult> StudentDetail(string? id)
+    {
+        if (string.IsNullOrEmpty(id))
+            return RedirectToAction(nameof(Students));
+
+        var student = await _studentManagementService.GetStudentDetailAsync(id);
+        if (student is null)
+            return NotFound();
+
+        return View("Students/Detail", student);
+    }
+
+    // ── StudentAddCourse ──────────────────────────────────────────────────────
+
+    [HttpGet]
+    public async Task<IActionResult> StudentAddCourse(string? id)
+    {
+        if (string.IsNullOrEmpty(id))
+            return RedirectToAction(nameof(Students));
+
+        var student = await _studentManagementService.GetStudentDetailAsync(id);
+        if (student is null)
+            return NotFound();
+
+        var vm = new AddCourseRecordViewModel
+        {
+            StudentId   = id,
+            StudentName = student.DisplayName,
+            AcademicYear = DateTime.Today.Year + "-" + (DateTime.Today.Year + 1)
+        };
+
+        await PopulateStudentCourseFormAsync(vm, student.DepartmentId);
+        return View("Students/AddCourse", vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> StudentAddCourse(AddCourseRecordViewModel vm)
+    {
+        // ── Extra domain validation ───────────────────────────────────────────
+        if (!string.IsNullOrWhiteSpace(vm.Grade) && !IsKnownGrade(vm.Grade))
+            ModelState.AddModelError(nameof(vm.Grade), "Grade must be one of: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F.");
+
+        // Check for duplicate course record
+        if (ModelState.IsValid)
+        {
+            var duplicate = await _context.StudentCourses.AnyAsync(sc =>
+                sc.StudentId == vm.StudentId &&
+                sc.CourseId  == vm.CourseId  &&
+                sc.Semester  == vm.Semester  &&
+                sc.AcademicYear == vm.AcademicYear.Trim());
+
+            if (duplicate)
+                ModelState.AddModelError(string.Empty,
+                    "This student already has a record for the selected course in the same semester and academic year.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            var student = await _studentManagementService.GetStudentDetailAsync(vm.StudentId);
+            await PopulateStudentCourseFormAsync(vm, student?.DepartmentId);
+            return View("Students/AddCourse", vm);
+        }
+
+        try
+        {
+            await _studentManagementService.AddCourseRecordAsync(
+                vm.StudentId,
+                vm.CourseId,
+                vm.Grade,
+                StudentCourseStatus.InProgress,   // service resolves this from grade
+                vm.Semester,
+                vm.AcademicYear.Trim());
+
+            TempData["StatusMessage"] = "Course record added successfully.";
+            return RedirectToAction(nameof(StudentDetail), new { id = vm.StudentId });
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = "Unable to add course record.";
+            ModelState.AddModelError(string.Empty, ex.Message);
+            var student = await _studentManagementService.GetStudentDetailAsync(vm.StudentId);
+            await PopulateStudentCourseFormAsync(vm, student?.DepartmentId);
+            return View("Students/AddCourse", vm);
+        }
+    }
+
+    // ── StudentEditCourse ─────────────────────────────────────────────────────
+
+    [HttpGet]
+    public async Task<IActionResult> StudentEditCourse(int? id)
+    {
+        if (id is null)
+            return RedirectToAction(nameof(Students));
+
+        var record = await _context.StudentCourses
+            .Include(sc => sc.Course)
+            .Include(sc => sc.Student)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(sc => sc.Id == id.Value);
+
+        if (record is null)
+            return NotFound();
+
+        var vm = new EditCourseRecordViewModel
+        {
+            RecordId     = record.Id,
+            StudentId    = record.StudentId,
+            StudentName  = record.Student?.DisplayName ?? "Student",
+            CourseCode   = record.Course?.Code ?? string.Empty,
+            CourseName   = record.Course?.Name ?? string.Empty,
+            Grade        = record.Grade,
+            Status       = record.Status,
+            Semester     = record.Semester,
+            AcademicYear = record.AcademicYear
+        };
+
+        await PopulateStudentCourseFormAsync(vm, record.Student?.DepartmentId);
+        return View("Students/EditCourse", vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> StudentEditCourse(EditCourseRecordViewModel vm)
+    {
+        if (!string.IsNullOrWhiteSpace(vm.Grade) && !IsKnownGrade(vm.Grade))
+            ModelState.AddModelError(nameof(vm.Grade), "Grade must be one of: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F.");
+
+        if (!ModelState.IsValid)
+        {
+            var student = await _studentManagementService.GetStudentDetailAsync(vm.StudentId);
+            await PopulateStudentCourseFormAsync(vm, student?.DepartmentId);
+            return View("Students/EditCourse", vm);
+        }
+
+        try
+        {
+            await _studentManagementService.UpdateCourseRecordAsync(
+                vm.RecordId,
+                vm.Grade,
+                vm.Status);
+
+            TempData["StatusMessage"] = "Course record updated successfully.";
+            return RedirectToAction(nameof(StudentDetail), new { id = vm.StudentId });
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = "Unable to update course record.";
+            ModelState.AddModelError(string.Empty, ex.Message);
+            var student = await _studentManagementService.GetStudentDetailAsync(vm.StudentId);
+            await PopulateStudentCourseFormAsync(vm, student?.DepartmentId);
+            return View("Students/EditCourse", vm);
+        }
+    }
 
     public async Task<IActionResult> Index()
     {
@@ -461,6 +623,56 @@ public class AdminController : Controller
             : "Course deactivated successfully.";
 
         return RedirectToAction(nameof(Courses), new { searchTerm, departmentId, includeInactive });
+    }
+
+    // ── Form population helpers ───────────────────────────────────────────────
+
+    private static readonly string[] KnownGrades =
+        ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"];
+
+    private static bool IsKnownGrade(string? grade) =>
+        !string.IsNullOrWhiteSpace(grade) &&
+        KnownGrades.Contains(grade.Trim().ToUpper());
+
+    /// <summary>
+    /// Fills <paramref name="vm"/>'s CourseOptions, GradeOptions, and
+    /// SemesterOptions SelectLists.  Courses are filtered to the student's
+    /// department when <paramref name="departmentId"/> is supplied.
+    /// </summary>
+    private async Task PopulateStudentCourseFormAsync(
+        CourseRecordFormBase vm, int? departmentId = null)
+    {
+        // Courses — scoped to student's department, active only
+        var coursesQuery = _context.Courses
+            .Include(c => c.Department)
+            .Where(c => c.IsActive)
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (departmentId.HasValue)
+            coursesQuery = coursesQuery.Where(c => c.DepartmentId == departmentId.Value);
+
+        var courses = await coursesQuery
+            .OrderBy(c => c.Code)
+            .Select(c => new
+            {
+                c.Id,
+                Label = $"{c.Code} — {c.Name} ({c.CreditHours} cr)"
+            })
+            .ToListAsync();
+
+        vm.CourseOptions = courses.Select(c => new SelectListItem(c.Label, c.Id.ToString()));
+
+        // Grade options — blank first for InProgress
+        vm.GradeOptions =
+        [
+            new SelectListItem("— No grade (In Progress) —", ""),
+            .. KnownGrades.Select(g => new SelectListItem(g, g))
+        ];
+
+        // Semester options from enum
+        vm.SemesterOptions = Enum.GetValues<SemesterType>()
+            .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
     }
 
     private async Task PopulateUniversitiesDropDownListAsync(object? selectedUniversity = null)

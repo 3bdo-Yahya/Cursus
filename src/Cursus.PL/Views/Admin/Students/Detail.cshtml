@@ -1,0 +1,214 @@
+@model Cursus.Domain.Entities.AppUser
+@using Cursus.Domain.Enums
+@{
+    ViewData["Title"] = "Student Details";
+    var completedCourses = Model.StudentCourses.Where(sc => sc.Status == StudentCourseStatus.Completed).ToList();
+    var failedCourses    = Model.StudentCourses.Where(sc => sc.Status == StudentCourseStatus.Failed).ToList();
+    var inProgress       = Model.StudentCourses.Where(sc => sc.Status == StudentCourseStatus.InProgress).ToList();
+    var totalCredits     = completedCourses.Sum(sc => sc.Course?.CreditHours ?? 0);
+    var initials = string.Join("", Model.DisplayName.Split(' ').Take(2).Select(p => p.FirstOrDefault()));
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/students.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/pages/admin/view-student.css" asp-append-version="true"/>
+}
+
+<!-- ── Breadcrumb + actions ────────────────────────────────────────────── -->
+<div class="mb-4 anim-fade-up">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0" style="font-size:12px;">
+            <li class="breadcrumb-item"><a asp-action="Students" style="color:var(--c-muted);text-decoration:none;">Students</a></li>
+            <li class="breadcrumb-item active" style="color:var(--c-primary);font-weight:600;">@Model.DisplayName</li>
+        </ol>
+    </nav>
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <h1 class="fw-900 mb-0" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Student Profile</h1>
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-action="StudentAddCourse" asp-route-id="@Model.Id"
+               class="btn btn-primary d-flex align-items-center gap-2 fw-700 text-decoration-none"
+               style="border-radius:12px;font-size:13px;padding:9px 16px;box-shadow:0 4px 14px rgba(79,70,229,.25);">
+                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 400">add_circle</span>
+                Add Course
+            </a>
+            <a asp-action="Students"
+               class="btn d-flex align-items-center gap-2 fw-600 text-decoration-none"
+               style="border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);border-radius:12px;font-size:13px;padding:9px 16px;">
+                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">arrow_back</span>
+                Back
+            </a>
+        </div>
+    </div>
+</div>
+
+<partial name="_AdminAlerts"/>
+
+<!-- ── Hero Card ──────────────────────────────────────────────────────── -->
+<div class="surface p-4 p-md-5 mb-4 anim-fade-up-1">
+    <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between gap-4">
+
+        <!-- Avatar + Identity -->
+        <div class="d-flex align-items-center gap-4">
+            <div class="vs-avatar-lg" style="background:rgba(79,70,229,.12);color:var(--c-primary);">@initials</div>
+            <div>
+                <h2 class="fw-900 mb-1" style="font-size:1.4rem;letter-spacing:-.3px;color:var(--c-text);">@Model.DisplayName</h2>
+                <p class="mb-2" style="font-size:12.5px;color:var(--c-text-sub);">@Model.Email</p>
+                <div class="d-flex flex-wrap gap-2">
+                    @if (Model.Department is not null)
+                    {
+                        <span class="vs-chip">
+                            <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 300">apartment</span>
+                            @Model.Department.Name
+                        </span>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.AcademicYear))
+                    {
+                        <span class="vs-chip">
+                            <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 300">school</span>
+                            Year @Model.AcademicYear
+                        </span>
+                    }
+                    <span class="vs-chip">
+                        <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 300">calendar_month</span>
+                        @Model.CurrentSemester.ToString()
+                    </span>
+                    <partial name="_AcademicStandingBadge" model="@Model.CurrentStanding"/>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI strip -->
+        <div class="vs-kpi-strip" data-scroll-group>
+            <div class="vs-kpi surface">
+                <div class="vs-kpi-icon" style="background:rgba(16,185,129,.08);">
+                    <span class="material-symbols-outlined" style="font-size:16px;color:#059669;font-variation-settings:'FILL' 0,'wght' 400">library_books</span>
+                </div>
+                <p class="vs-kpi-label">Completed</p>
+                <p class="vs-kpi-value" style="color:#059669;">@completedCourses.Count <span style="font-size:11px;font-weight:400;color:var(--c-muted);">courses</span></p>
+            </div>
+            <div class="vs-kpi surface">
+                <div class="vs-kpi-icon" style="background:rgba(59,130,246,.08);">
+                    <span class="material-symbols-outlined" style="font-size:16px;color:#2563eb;font-variation-settings:'FILL' 0,'wght' 400">radio_button_checked</span>
+                </div>
+                <p class="vs-kpi-label">In Progress</p>
+                <p class="vs-kpi-value" style="color:#2563eb;">@inProgress.Count</p>
+            </div>
+            <div class="vs-kpi surface">
+                <div class="vs-kpi-icon" style="background:rgba(239,68,68,.08);">
+                    <span class="material-symbols-outlined" style="font-size:16px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 400">cancel</span>
+                </div>
+                <p class="vs-kpi-label">Failed</p>
+                <p class="vs-kpi-value" style="color:#dc2626;">@failedCourses.Count</p>
+            </div>
+            <div class="vs-kpi surface">
+                <div class="vs-kpi-icon" style="background:var(--icon-purple-bg);">
+                    <span class="material-symbols-outlined" style="font-size:16px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 400">credit_score</span>
+                </div>
+                <p class="vs-kpi-label">Credits</p>
+                <p class="vs-kpi-value" style="color:#7c3aed;">@totalCredits</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Course Records table ────────────────────────────────────────────── -->
+<div class="surface anim-fade-up-1" style="overflow:hidden;">
+    <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--c-border);">
+        <div class="d-flex align-items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">library_books</span>
+            <h3 class="fw-800 mb-0" style="font-size:1rem;color:var(--c-text);">Course Records</h3>
+            <span class="stat-pill">@Model.StudentCourses.Count total</span>
+        </div>
+        <a asp-action="StudentAddCourse" asp-route-id="@Model.Id"
+           class="btn fw-600 d-flex align-items-center gap-2 text-decoration-none"
+           id="add-course-btn"
+           style="font-size:12px;color:var(--c-primary);background:var(--c-soft);border:1px solid rgba(79,70,229,.2);border-radius:10px;padding:6px 14px;">
+            <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">add</span>
+            Add Record
+        </a>
+    </div>
+
+    @if (!Model.StudentCourses.Any())
+    {
+        <div class="text-center py-5">
+            <span class="material-symbols-outlined" style="font-size:48px;color:var(--c-border);display:block;margin-bottom:12px;font-variation-settings:'FILL' 0,'wght' 200">library_books</span>
+            <p class="fw-600 mb-1" style="color:var(--c-text);">No course records yet</p>
+            <p class="mb-3" style="font-size:13px;color:var(--c-muted);">Add the first course record for this student.</p>
+            <a asp-action="StudentAddCourse" asp-route-id="@Model.Id"
+               class="btn btn-primary fw-700 text-decoration-none"
+               style="border-radius:12px;font-size:13px;padding:9px 20px;">
+                Add Course Record
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table courses-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Course</th>
+                        <th class="text-center">Credits</th>
+                        <th class="text-center">Grade</th>
+                        <th>Status</th>
+                        <th>Semester</th>
+                        <th>Acad. Year</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sc in Model.StudentCourses.OrderByDescending(sc => sc.AcademicYear).ThenBy(sc => sc.Course?.Code))
+                    {
+                        <tr class="course-row">
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="course-code">@(sc.Course?.Code ?? "—")</span>
+                                    <span class="course-name">@(sc.Course?.Name ?? "Unknown Course")</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="credits-badge">@(sc.Course?.CreditHours ?? 0)</span>
+                            </td>
+                            <td class="text-center">
+                                @if (!string.IsNullOrEmpty(sc.Grade))
+                                {
+                                    var gradeClass = sc.Grade is "A+" or "A" or "A-" or "B+" or "B" or "B-" ? "vs-grade-good"
+                                                   : sc.Grade is "C+" or "C" or "C-" or "D+" or "D" ? "vs-grade-avg"
+                                                   : "vs-grade-fail";
+                                    <span class="vs-grade @gradeClass">@sc.Grade</span>
+                                }
+                                else
+                                {
+                                    <span style="color:var(--c-muted);font-size:13px;">—</span>
+                                }
+                            </td>
+                            <td>
+                                <partial name="_CourseStatusBadge" model="@sc.Status"/>
+                            </td>
+                            <td style="font-size:12.5px;color:var(--c-text-sub);">@sc.Semester.ToString()</td>
+                            <td style="font-size:12.5px;color:var(--c-text-sub);">@sc.AcademicYear</td>
+                            <td class="text-end">
+                                <a asp-action="StudentEditCourse" asp-route-id="@sc.Id"
+                                   class="btn btn-sm fw-600 d-inline-flex align-items-center gap-1 text-decoration-none action-edit"
+                                   style="font-size:11.5px;padding:5px 12px;border-radius:8px;border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);">
+                                    <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
+                                    Edit
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="px-4 py-3 d-flex align-items-center justify-content-between" style="border-top:1px solid var(--c-border);background:var(--c-surface);">
+            <p class="mb-0" style="font-size:12px;color:var(--c-muted);">
+                @completedCourses.Count completed · @inProgress.Count in progress · @failedCourses.Count failed
+                · <strong style="color:var(--c-text);">@totalCredits credits earned</strong>
+            </p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/pages/admin/courses.js" asp-append-version="true"></script>
+}
