@@ -102,8 +102,74 @@ public class AdminController : Controller
     }
 
     public IActionResult AddStudent() => View();
-    public IActionResult EditStudent() => View();
     public IActionResult Profile() => View();
+
+    // ── EditStudent ────────────────────────────────────────────────────────────
+
+    [HttpGet]
+    public async Task<IActionResult> EditStudent(string? id)
+    {
+        if (string.IsNullOrEmpty(id))
+            return RedirectToAction(nameof(Students));
+
+        var student = await _context.Users
+            .Include(u => u.Department)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (student is null)
+            return NotFound();
+
+        var vm = new EditStudentViewModel
+        {
+            Id              = student.Id,
+            DisplayName     = student.DisplayName,
+            Email           = student.Email,
+            DepartmentId    = student.DepartmentId ?? 0,
+            AcademicYear    = student.AcademicYear ?? string.Empty,
+            CurrentSemester = student.CurrentSemester,
+            CurrentStanding = student.CurrentStanding
+        };
+
+        await PopulateEditStudentFormAsync(vm);
+        return View(vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditStudent(EditStudentViewModel vm)
+    {
+        if (!ModelState.IsValid)
+        {
+            await PopulateEditStudentFormAsync(vm);
+            return View(vm);
+        }
+
+        var student = await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == vm.Id);
+
+        if (student is null)
+            return NotFound();
+
+        student.DepartmentId    = vm.DepartmentId;
+        student.AcademicYear    = vm.AcademicYear.Trim();
+        student.CurrentSemester = vm.CurrentSemester;
+        student.CurrentStanding = vm.CurrentStanding;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            TempData["StatusMessage"] = $"{student.DisplayName}'s profile updated successfully.";
+            return RedirectToAction(nameof(StudentDetail), new { id = vm.Id });
+        }
+        catch (DbUpdateException)
+        {
+            TempData["ErrorMessage"] = "Unable to update student profile.";
+            ModelState.AddModelError(string.Empty, "A database error occurred. Please try again.");
+            await PopulateEditStudentFormAsync(vm);
+            return View(vm);
+        }
+    }
 
     // ── Student Detail ────────────────────────────────────────────────────────
 
@@ -672,6 +738,25 @@ public class AdminController : Controller
 
         // Semester options from enum
         vm.SemesterOptions = Enum.GetValues<SemesterType>()
+            .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
+    }
+
+    private async Task PopulateEditStudentFormAsync(EditStudentViewModel vm)
+    {
+        var departments = await _context.Departments
+            .Include(d => d.University)
+            .AsNoTracking()
+            .OrderBy(d => d.Name)
+            .ToListAsync();
+
+        vm.DepartmentOptions = departments.Select(d => new SelectListItem(
+            d.University is null ? d.Name : $"{d.Name} ({d.University.Name})",
+            d.Id.ToString()));
+
+        vm.SemesterOptions = Enum.GetValues<SemesterType>()
+            .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
+
+        vm.StandingOptions = Enum.GetValues<AcademicStanding>()
             .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
     }
 
