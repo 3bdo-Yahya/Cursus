@@ -3,8 +3,8 @@
 
 @{
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
-    var isAdmin = isAuthenticated && User.IsInRole("Admin");
-    var isStudent = isAuthenticated && User.IsInRole("Student");
+    var isAdmin = isAuthenticated && User.IsInRole(Roles.Admin);
+    var isStudent = isAuthenticated && User.IsInRole(Roles.Student);
 
     var accountEmail = isAuthenticated
         ? (User.FindFirstValue(ClaimTypes.Email) ?? User.Identity?.Name ?? string.Empty)

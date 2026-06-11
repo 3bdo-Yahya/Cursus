@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Constants;
 using Cursus.PL.Models;
+using Cursus.Domain.Constants;
 
 namespace Cursus.PL.Controllers;
 

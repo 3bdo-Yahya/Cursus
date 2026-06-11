@@ -1,14 +1,15 @@
-@model Cursus.PL.Models.PaginatedList<Course>
+@using Cursus.Domain.DTOs
+@model IEnumerable<CourseDto>
 
 @{
     ViewData["Title"] = "Course Management";
-    var list = Model.Items.ToList();
-    var includeInactive      = (bool?)ViewData["IncludeInactive"] ?? false;
-    var searchTerm            = ViewData["SearchTerm"] as string;
-    var selectedDepartmentId  = ViewData["SelectedDepartmentId"]?.ToString();
-    var total   = Model.Items.Count;
-    var active  = Model.Items.Count(c => c.IsActive);
-    var inactive= Model.Items.Count(c => !c.IsActive);
+    var list = Model.ToList();
+    var includeInactive = (bool?)ViewData["IncludeInactive"] ?? false;
+    var searchTerm = ViewData["SearchTerm"] as string;
+    var selectedDepartmentId = ViewData["SelectedDepartmentId"]?.ToString();
+    var total = list.Count;
+    var active = list.Count(c => c.IsActive);
+    var inactive = list.Count(c => !c.IsActive);
 
     string AvailClass(SemesterAvailability s) => s switch
     {
@@ -39,7 +40,7 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/admin/courses.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/pages/admin/courses.css" asp-append-version="true" />
 }
 
 <div class="d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3 mb-4 anim-fade-up">
@@ -49,9 +50,11 @@
             Search and manage catalog courses by department.
         </p>
     </div>
-    <a asp-action="CourseCreate" class="btn btn-primary d-flex align-items-center gap-2 fw-700 flex-shrink-0 text-decoration-none"
+    <a asp-action="CourseCreate"
+       class="btn btn-primary d-flex align-items-center gap-2 fw-700 flex-shrink-0 text-decoration-none"
        style="border-radius:12px;font-size:13px;padding:9px 18px;box-shadow:0 4px 14px rgba(79,70,229,.28);">
-        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">add</span>
+        <span class="material-symbols-outlined"
+              style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">add</span>
         Add course
     </a>
 </div>
@@ -80,7 +83,8 @@
     <div class="row g-2 align-items-end">
         <div class="col-md-5">
             <label class="form-label" for="searchTerm">Search</label>
-            <input id="searchTerm" name="searchTerm" value="@searchTerm" class="form-control" placeholder="Course code or name" />
+            <input id="searchTerm" name="searchTerm" value="@searchTerm" class="form-control"
+                   placeholder="Course code or name" />
         </div>
         <div class="col-md-4">
             <label class="form-label" for="departmentId">Department</label>
@@ -90,7 +94,8 @@
         </div>
         <div class="col-md-3">
             <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="includeInactive" name="includeInactive" value="true" @(includeInactive ? "checked" : null) />
+                <input class="form-check-input" type="checkbox" id="includeInactive" name="includeInactive" value="true"
+                @(includeInactive ? "checked" : null) />
                 <label class="form-check-label" for="includeInactive">Include inactive</label>
             </div>
             <div class="d-flex gap-2">
@@ -104,98 +109,112 @@
 <div class="mb-3">
     @if (includeInactive)
     {
-        <a asp-action="Courses" asp-route-searchTerm="@searchTerm" asp-route-departmentId="@selectedDepartmentId" class="btn btn-outline-secondary btn-sm">Active only</a>
+        <a asp-action="Courses" asp-route-searchTerm="@searchTerm" asp-route-departmentId="@selectedDepartmentId"
+           class="btn btn-outline-secondary btn-sm">Active only</a>
     }
     else
     {
-        <a asp-action="Courses" asp-route-searchTerm="@searchTerm" asp-route-departmentId="@selectedDepartmentId" asp-route-includeInactive="true" class="btn btn-outline-secondary btn-sm">Include inactive</a>
+        <a asp-action="Courses" asp-route-searchTerm="@searchTerm" asp-route-departmentId="@selectedDepartmentId"
+           asp-route-includeInactive="true" class="btn btn-outline-secondary btn-sm">Include inactive</a>
     }
 </div>
 
 @if (total > 0)
 {
-<div class="surface anim-fade-up-2 overflow-hidden" id="courses-table-wrap">
-    <div class="table-responsive">
-        <table class="table courses-table mb-0">
-            <thead>
-                <tr>
-                    <th class="col-code">Code</th>
-                    <th class="col-name">Name</th>
-                    <th class="col-credits text-center">Cr.</th>
-                    <th class="col-type">Type</th>
-                    <th class="col-avail">Availability</th>
-                    <th class="col-prereqs">Prerequisites</th>
-                    <th class="col-status">Status</th>
-                    <th class="col-actions text-end">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in list)
-            {
-                var typeMeta = TypeMeta(item.CourseType);
-                var avail = AvailMeta(item.SemesterAvailability);
-                var prereqs = item.Prerequisites?.Where(p => p.Prerequisite != null).ToList() ?? new List<CoursePrerequisite>();
-                <tr class="course-row">
-                    <td class="col-code"><span class="course-code">@item.Code</span></td>
-                    <td class="col-name"><span class="course-name">@item.Name</span></td>
-                    <td class="col-credits text-center"><span class="credits-badge">@item.CreditHours</span></td>
-                    <td class="col-type"><span class="type-badge @typeMeta.Css">@typeMeta.Label</span></td>
-                    <td class="col-avail">
-                        <span class="avail-badge @AvailClass(item.SemesterAvailability)">
-                            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">@avail.Icon</span>@avail.Label
-                        </span>
-                    </td>
-                    <td class="col-prereqs">
-                        @if (prereqs.Count > 0)
-                        {
-                            <div class="d-flex flex-wrap gap-1">
-                                @foreach (var p in prereqs.Take(3))
+    <div class="surface anim-fade-up-2 overflow-hidden" id="courses-table-wrap">
+        <div class="table-responsive">
+            <table class="table courses-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="col-code">Code</th>
+                        <th class="col-name">Name</th>
+                        <th class="col-credits text-center">Cr.</th>
+                        <th class="col-type">Type</th>
+                        <th class="col-avail">Availability</th>
+                        <th class="col-prereqs">Prerequisites</th>
+                        <th class="col-status">Status</th>
+                        <th class="col-actions text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in list)
+                    {
+                        var typeMeta = TypeMeta(item.CourseType);
+                        var avail = AvailMeta(item.SemesterAvailability);
+                        var prereqs = item.Prerequisites?.ToList() ?? new List<CoursePrerequisiteDto>();
+
+                        <tr class="course-row">
+                            <td class="col-code"><span class="course-code">@item.Code</span></td>
+                            <td class="col-name"><span class="course-name">@item.Name</span></td>
+                            <td class="col-credits text-center"><span class="credits-badge">@item.CreditHours</span></td>
+                            <td class="col-type"><span class="type-badge @typeMeta.Css">@typeMeta.Label</span></td>
+                            <td class="col-avail">
+                                <span class="avail-badge @AvailClass(item.SemesterAvailability)">
+                                    <span class="material-symbols-outlined"
+                                          style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">@avail.Icon</span>@avail.Label
+                                </span>
+                            </td>
+                            <td class="col-prereqs">
+                                @if (prereqs.Count > 0)
                                 {
-                                    <span class="prereq-tag">@p.Prerequisite!.Code</span>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        @foreach (var p in prereqs.Take(3))
+                                        {
+                                            <span class="prereq-tag">@p.PrerequisiteCode</span>
+                                        }
+                                        @if (prereqs.Count > 3)
+                                        {
+                                            <span class="prereq-more">+@(prereqs.Count - 3)</span>
+                                        }
+                                    </div>
                                 }
-                                @if (prereqs.Count > 3)
+                                else
                                 {
-                                    <span class="prereq-more">+@(prereqs.Count - 3)</span>
+                                    <span class="prereq-none">None</span>
                                 }
-                            </div>
-                        }
-                        else
-                        {
-                            <span class="prereq-none">None</span>
-                        }
-                    </td>
-                    <td class="col-status">
-                        @if (item.IsActive)
-                        {
-                            <span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span>
-                        }
-                        else
-                        {
-                            <span class="status-badge status-archived">Inactive</span>
-                        }
-                    </td>
-                    <td class="col-actions text-end">
-                        <a asp-action="CourseEdit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <form asp-action="CourseDeactivate" asp-route-id="@item.Id" asp-route-searchTerm="@searchTerm" asp-route-departmentId="@selectedDepartmentId" asp-route-includeInactive="@includeInactive" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm @(item.IsActive ? "btn-outline-danger" : "btn-outline-success")"
-                                    onclick="return confirm('@(item.IsActive ? "Deactivate" : "Reactivate") this course?');">
-                                @(item.IsActive ? "Deactivate" : "Reactivate")
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
+                            </td>
+                            <td class="col-status">
+                                @if (item.IsActive)
+                                {
+                                    <span class="status-badge status-active"><span class="status-dot-sm"></span>Active</span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-archived">Inactive</span>
+                                }
+                            </td>
+                            <td class="col-actions text-end">
+                                <a asp-action="CourseEdit" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-primary">Edit</a>
+                                <form asp-action="CourseDeactivate" asp-route-id="@item.Id" asp-route-searchTerm="@searchTerm"
+                                      asp-route-departmentId="@selectedDepartmentId" asp-route-includeInactive="@includeInactive"
+                                      method="post" class="d-inline">
+                                    <button type="submit"
+                                            class="btn btn-sm @(item.IsActive ? "btn-outline-danger" : "btn-outline-success")"
+                                            onclick="return confirm('@(item.IsActive ? "Deactivate" : "Reactivate") this course?');">
+                                        @(item.IsActive ? "Deactivate" : "Reactivate")
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 px-4 py-3"
+             style="border-top:1px solid var(--c-border);">
+            <p class="mb-0" style="font-size:12px;color:var(--c-muted);">
+                Showing <span class="fw-700" style="color:var(--c-primary);">@total</span> course@(total == 1 ? "" : "s")
+            </p>
+        </div>
     </div>
-    <partial name="_Pagination" />
-</div>
 }
 else
 {
-<div class="surface anim-fade-up-2 overflow-hidden text-center py-5 px-3">
-    <span class="material-symbols-outlined d-block mb-3" style="font-size:40px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 200">search_off</span>
-    <p class="fw-700 mb-1" style="font-size:14px;color:var(--c-text);">No courses match</p>
-    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Adjust search or department filters.</p>
-</div>
+    <div class="surface anim-fade-up-2 overflow-hidden text-center py-5 px-3">
+        <span class="material-symbols-outlined d-block mb-3"
+              style="font-size:40px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 200">search_off</span>
+        <p class="fw-700 mb-1" style="font-size:14px;color:var(--c-text);">No courses match</p>
+        <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Adjust search or department filters.</p>
+    </div>
 }

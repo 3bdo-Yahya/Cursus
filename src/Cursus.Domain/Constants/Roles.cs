@@ -1,8 +1,7 @@
-namespace Cursus.Domain.Constants
+namespace Cursus.Domain.Constants;
+
+public static class Roles
 {
-    public static class Roles
-    {
-        public const string Admin = "Admin";
-        public const string Student = "Student";
-    }
+    public const string Admin = "Admin";
+    public const string Student = "Student";
 }
