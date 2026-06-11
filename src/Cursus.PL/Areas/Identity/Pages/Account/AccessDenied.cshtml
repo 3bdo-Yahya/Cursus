@@ -1,0 +1,165 @@
+@page
+@model Cursus.PL.Areas.Identity.Pages.Account.AccessDeniedModel
+
+@{
+    ViewData["Title"] = "Access Denied";
+    Layout = "/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="login-split">
+
+    <div class="login-panel-left d-none d-lg-flex">
+    <svg id="graph-svg" class="login-graph-svg" viewBox="0 0 700 800"
+         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <g id="connectors" opacity="0.15" stroke="white" stroke-width="1" fill="none">
+        <line id="c1"  x1="140" y1="180" x2="300" y2="120"/>
+        <line id="c2"  x1="300" y1="120" x2="480" y2="220"/>
+        <line id="c3"  x1="300" y1="120" x2="240" y2="380"/>
+        <line id="c4"  x1="480" y1="220" x2="560" y2="460"/>
+        <line id="c5"  x1="240" y1="380" x2="400" y2="560"/>
+        <line id="c6"  x1="560" y1="460" x2="400" y2="560"/>
+        <line id="c7"  x1="140" y1="180" x2="240" y2="380"/>
+        <line id="c8"  x1="400" y1="560" x2="300" y2="680"/>
+        <line id="c9"  x1="80"  y1="500" x2="240" y2="380"/>
+        <line id="c10" x1="620" y1="150" x2="480" y2="220"/>
+      </g>
+      <g class="node-1" style="transform-origin:140px 180px">
+        <circle cx="140" cy="180" r="10" fill="white" opacity="0.08"/>
+        <circle cx="140" cy="180" r="4"  fill="white" opacity="0.85"/>
+      </g>
+      <g class="node-2" style="transform-origin:300px 120px">
+        <circle cx="300" cy="120" r="14" fill="white" opacity="0.1"/>
+        <circle cx="300" cy="120" r="6"  fill="white" opacity="1" class="node-pulse"/>
+      </g>
+      <g class="node-3" style="transform-origin:480px 220px">
+        <circle cx="480" cy="220" r="10" fill="white" opacity="0.08"/>
+        <circle cx="480" cy="220" r="4"  fill="white" opacity="0.85"/>
+      </g>
+      <g class="node-4" style="transform-origin:240px 380px">
+        <circle cx="240" cy="380" r="12" fill="white" opacity="0.09"/>
+        <circle cx="240" cy="380" r="5"  fill="white" opacity="0.9" class="node-pulse"/>
+      </g>
+      <g class="node-5" style="transform-origin:560px 460px">
+        <circle cx="560" cy="460" r="10" fill="white" opacity="0.08"/>
+        <circle cx="560" cy="460" r="4"  fill="white" opacity="0.8"/>
+      </g>
+      <g class="node-6" style="transform-origin:400px 560px">
+        <circle cx="400" cy="560" r="13" fill="white" opacity="0.1"/>
+        <circle cx="400" cy="560" r="5"  fill="white" opacity="0.9" class="node-pulse"/>
+      </g>
+      <g class="node-7" style="transform-origin:300px 680px">
+        <circle cx="300" cy="680" r="10" fill="white" opacity="0.08"/>
+        <circle cx="300" cy="680" r="4"  fill="white" opacity="0.75"/>
+      </g>
+      <g class="node-8" style="transform-origin:80px 500px">
+        <circle cx="80"  cy="500" r="8" fill="white" opacity="0.07"/>
+        <circle cx="80"  cy="500" r="3" fill="white" opacity="0.6"/>
+      </g>
+      <g class="node-9" style="transform-origin:620px 150px">
+        <circle cx="620" cy="150" r="8" fill="white" opacity="0.07"/>
+        <circle cx="620" cy="150" r="3" fill="white" opacity="0.65"/>
+      </g>
+    </svg>
+
+    <div class="login-brand-content">
+      <div class="anim-fade-in">
+        <h1 class="login-brand-title">Cursus</h1>
+      </div>
+      <p class="login-brand-sub anim-fade-up">
+        Your AI-Powered Academic Advisor<span class="cursor"></span>
+      </p>
+      <div class="login-pills anim-fade-up-2">
+        <span class="login-pill">Graduation Planner</span>
+        <span class="login-pill">Drop/Fail Analyzer</span>
+        <span class="login-pill">AI Chatbot</span>
+      </div>
+    </div>
+
+    <div class="login-bottom-tag anim-fade-in">
+      <p>DEPI Graduation Project · 2026</p>
+    </div>
+  </div>
+
+
+  <div class="login-panel-right">
+    <div class="login-form-wrap">
+      <div class="ad-card anim-fade-in">
+        <div class="ad-icon-wrap anim-fade-up">
+          <span class="material-symbols-outlined ad-icon">lock</span>
+        </div>
+
+        <div class="login-heading text-center anim-fade-up-1">
+          <h2>Access Denied</h2>
+          <p>You do not have permission to access this page.</p>
+        </div>
+
+        <div class="fp-success-note anim-fade-up-2">
+          <span class="material-symbols-outlined fp-note-icon">info</span>
+          <span>If you believe this is a mistake, please contact your administrator.</span>
+        </div>
+
+        <div class="ad-actions anim-fade-up-3">
+          <a asp-controller="Home" asp-action="Index" class="login-btn-primary w-100 d-block text-center text-decoration-none">
+            Go to Home
+          </a>
+          <a asp-page="./Login" class="ad-link">
+            Sign in with a different account
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ad-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+  }
+
+  .ad-icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(220, 53, 69, 0.08);
+    border: 1.5px solid rgba(220, 53, 69, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.75rem;
+  }
+
+  .ad-icon {
+    font-size: 2rem;
+    color: #dc3545;
+  }
+
+  .ad-card .fp-success-note {
+    text-align: left;
+    margin-bottom: 1.75rem;
+    width: 100%;
+  }
+
+  .ad-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .ad-link {
+    font-size: 0.8rem;
+    color: var(--c-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .ad-link:hover {
+    color: var(--c-primary);
+  }
+</style>
