@@ -4,6 +4,7 @@ using Cursus.Domain.Entities;
 using Cursus.Domain.Interfaces.Services;
 using Cursus.PL.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;

@@ -8,6 +8,7 @@ namespace Cursus.Domain.DTOs
         int InactiveDepartments,
         int TotalCourses,
         int ActiveCourses,
-        int InactiveCourses
+        int InactiveCourses,
+        int TotalStudents
     );
 }

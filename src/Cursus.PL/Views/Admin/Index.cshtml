@@ -36,6 +36,28 @@
   <!-- Metric Cards -->
   <div class="row g-3 anim-fade-up-1" data-scroll-group>
 
+    <!-- Students -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="surface metric-card h-100 p-4">
+        <div class="d-flex align-items-start justify-content-between mb-3">
+          <div>
+            <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Students</p>
+            <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@Model.TotalStudents</p>
+            <p class="fw-600 mb-0" style="font-size:11px;color:var(--c-muted);">Enrolled students</p>
+          </div>
+          <div class="d-flex align-items-center justify-content-center rounded-2" style="width:40px;height:40px;flex-shrink:0;background:rgba(14,165,233,0.1);">
+            <span class="material-symbols-outlined" style="font-size:20px;color:#0ea5e9;font-variation-settings:'FILL' 0,'wght' 400">group</span>
+          </div>
+        </div>
+        <div class="pt-2" style="border-top:1px solid var(--c-border);">
+          <a asp-action="Students" class="fw-700 text-decoration-none d-flex align-items-center gap-1" style="font-size:11px;color:var(--c-primary);">
+            Manage
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
     <!-- Universities -->
     <div class="col-12 col-sm-6 col-xl-3">
       <div class="surface metric-card h-100 p-4">
