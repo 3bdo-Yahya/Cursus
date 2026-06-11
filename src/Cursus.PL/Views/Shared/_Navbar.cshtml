@@ -3,8 +3,8 @@
 
 @{
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
-    var isAdmin = isAuthenticated && User.IsInRole("Admin");
-    var isStudent = isAuthenticated && User.IsInRole("Student");
+    var isAdmin = isAuthenticated && User.IsInRole(Roles.Admin);
+    var isStudent = isAuthenticated && User.IsInRole(Roles.Student);
 
     var accountEmail = isAuthenticated
         ? (User.FindFirstValue(ClaimTypes.Email) ?? User.Identity?.Name ?? string.Empty)
@@ -16,11 +16,11 @@
     if (initials.Length < 2) initials = displayName.Length >= 2 ? displayName[..2].ToUpper() : displayName.ToUpper();
 
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
-    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var currentAction    = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
 }
 
-<nav class="navbar-cursus fixed-top d-flex align-items-center">
-  <div class="container-xl px-4 d-flex align-items-center justify-content-between w-100">
+<nav class="navbar-cursus fixed-top">
+  <div class="container-xl px-3 px-md-4 d-flex align-items-center justify-content-between w-100" style="height:64px;">
 
     <div class="d-flex align-items-center gap-3">
       @if (isAdmin)
@@ -30,11 +30,11 @@
         </a>
         <div class="d-none d-md-flex align-items-center gap-1">
           <a asp-controller="Admin" asp-action="Index"
-             class="nav-pill @(currentController == "Admin" && currentAction == "Index" ? "active" : "")">Dashboard</a>
+             class="nav-pill @(currentController=="Admin"&&currentAction=="Index"?"active":"")">Dashboard</a>
           <a asp-controller="Admin" asp-action="Courses"
-             class="nav-pill @(currentController == "Admin" && (currentAction == "Courses" || currentAction == "CourseCreate" || currentAction == "CourseEdit") ? "active" : "")">Courses</a>
+             class="nav-pill @(currentController=="Admin"&&(currentAction=="Courses"||currentAction=="CourseCreate"||currentAction=="CourseEdit")?"active":"")">Courses</a>
           <a asp-controller="Admin" asp-action="Students"
-             class="nav-pill @(currentController == "Admin" && currentAction == "Students" ? "active" : "")">Students</a>
+             class="nav-pill @(currentController=="Admin"&&currentAction=="Students"?"active":"")">Students</a>
         </div>
       }
       else if (isStudent)
@@ -44,15 +44,15 @@
         </a>
         <div class="d-none d-md-flex align-items-center gap-1">
           <a asp-controller="Student" asp-action="Dashboard"
-             class="nav-pill @(currentController == "Student" && currentAction == "Dashboard" ? "active" : "")">Dashboard</a>
+             class="nav-pill @(currentController=="Student"&&currentAction=="Dashboard"?"active":"")">Dashboard</a>
           <a asp-controller="Student" asp-action="CourseMap"
-             class="nav-pill @(currentController == "Student" && currentAction == "CourseMap" ? "active" : "")">Course Map</a>
+             class="nav-pill @(currentController=="Student"&&currentAction=="CourseMap"?"active":"")">Course Map</a>
           <a asp-controller="Student" asp-action="Planner"
-             class="nav-pill @(currentController == "Student" && currentAction == "Planner" ? "active" : "")">Planner</a>
+             class="nav-pill @(currentController=="Student"&&currentAction=="Planner"?"active":"")">Planner</a>
           <a asp-controller="Student" asp-action="Progress"
-             class="nav-pill @(currentController == "Student" && currentAction == "Progress" ? "active" : "")">Progress</a>
+             class="nav-pill @(currentController=="Student"&&currentAction=="Progress"?"active":"")">Progress</a>
           <a asp-controller="Student" asp-action="AiAdvisor"
-             class="nav-pill @(currentController == "Student" && currentAction == "AiAdvisor" ? "active" : "")">AI Advisor</a>
+             class="nav-pill @(currentController=="Student"&&currentAction=="AiAdvisor"?"active":"")">AI Advisor</a>
         </div>
       }
       else
@@ -62,12 +62,13 @@
         </a>
         <div class="d-none d-md-flex align-items-center gap-1">
           <a asp-controller="Home" asp-action="Index"
-             class="nav-pill @(currentController == "Home" && currentAction == "Index" ? "active" : "")">Home</a>
+             class="nav-pill @(currentController=="Home"&&currentAction=="Index"?"active":"")">Home</a>
         </div>
       }
     </div>
 
     <div class="d-flex align-items-center gap-1">
+
       <button id="dark-toggle" class="btn btn-link p-2 rounded-circle" style="color:var(--c-muted);" aria-label="Toggle dark mode">
         <span class="material-symbols-outlined" id="dark-icon" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">dark_mode</span>
       </button>
@@ -90,15 +91,15 @@
           </div>
         </div>
 
-        <div class="custom-select-wrap position-relative ms-1">
+        <div class="custom-select-wrap position-relative ms-1 d-none d-md-block">
           <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
             <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
-                 style="width:36px;height:36px;background:@(isAdmin ? "rgba(239,68,68,0.1)" : "var(--c-soft)");border:2px solid @(isAdmin ? "rgba(239,68,68,0.2)" : "rgba(79,70,229,.2)");color:@(isAdmin ? "#dc2626" : "var(--c-primary)");font-size:13px;">@initials</div>
+                 style="width:36px;height:36px;background:@(isAdmin?"rgba(239,68,68,0.1)":"var(--c-soft)");border:2px solid @(isAdmin?"rgba(239,68,68,0.2)":"rgba(79,70,229,.2)");color:@(isAdmin?"#dc2626":"var(--c-primary)");font-size:13px;">@initials</div>
             <div class="d-none d-md-block text-start">
               <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">@displayName</p>
-              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">@(isAdmin ? "Administrator" : "Student")</p>
+              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">@(isAdmin?"Administrator":"Student")</p>
             </div>
-            <span class="material-symbols-outlined d-none d-md-block" id="user-menu-chevron"
+            <span class="material-symbols-outlined" id="user-menu-chevron"
                   style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;transition:transform 0.22s ease;">expand_more</span>
           </button>
           <div id="user-dropdown" class="user-menu custom-dropdown position-absolute end-0 mt-2" style="min-width:210px;z-index:1060;">
@@ -124,7 +125,7 @@
               </a>
             }
             <div style="border-top:1px solid var(--c-border);">
-              <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+              <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index","Home",new{area=""})" method="post">
                 <button type="submit" class="custom-dropdown-item text-decoration-none w-100 border-0 bg-transparent text-start">
                   <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
                   <span class="custom-dropdown-label" style="color:#dc2626;">Sign Out</span>
@@ -133,6 +134,11 @@
             </div>
           </div>
         </div>
+
+        <button class="navbar-hamburger d-flex d-md-none align-items-center justify-content-center ms-1"
+                id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer">
+          <span class="material-symbols-outlined" style="font-size:22px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">menu</span>
+        </button>
       }
       else
       {
@@ -142,3 +148,83 @@
     </div>
   </div>
 </nav>
+
+@if (isAuthenticated)
+{
+  <div id="mobile-drawer-backdrop" class="mobile-drawer-backdrop" aria-hidden="true"></div>
+
+  <aside id="mobile-drawer" class="mobile-drawer d-md-none" role="dialog" aria-modal="true" aria-label="Navigation menu">
+
+    <div class="mobile-drawer-header">
+      <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center justify-content-center rounded-circle fw-700"
+             style="width:38px;height:38px;background:@(isAdmin?"rgba(239,68,68,0.1)":"var(--c-soft)");border:2px solid @(isAdmin?"rgba(239,68,68,0.2)":"rgba(79,70,229,.2)");color:@(isAdmin?"#dc2626":"var(--c-primary)");font-size:13px;flex-shrink:0;">@initials</div>
+        <div>
+          <p class="mb-0 fw-700 lh-1" style="font-size:14px;color:var(--c-text);">@displayName</p>
+          <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">@(isAdmin?"Administrator":"Student")</p>
+        </div>
+      </div>
+      <button id="mobile-drawer-close" class="btn btn-link p-1" aria-label="Close menu" style="color:var(--c-muted);">
+        <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+      </button>
+    </div>
+
+    <nav class="mobile-drawer-nav">
+      @if (isAdmin)
+      {
+        <a asp-controller="Admin" asp-action="Index"
+           class="mobile-nav-item @(currentController=="Admin"&&currentAction=="Index"?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+        <a asp-controller="Admin" asp-action="Courses"
+           class="mobile-nav-item @(currentController=="Admin"&&(currentAction=="Courses"||currentAction=="CourseCreate"||currentAction=="CourseEdit")?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">menu_book</span>
+          <span>Courses</span>
+        </a>
+        <a asp-controller="Admin" asp-action="Students"
+           class="mobile-nav-item @(currentController=="Admin"&&currentAction=="Students"?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">group</span>
+          <span>Students</span>
+        </a>
+      }
+      else if (isStudent)
+      {
+        <a asp-controller="Student" asp-action="Dashboard"
+           class="mobile-nav-item @(currentController=="Student"&&currentAction=="Dashboard"?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+        <a asp-controller="Student" asp-action="CourseMap"
+           class="mobile-nav-item @(currentController=="Student"&&currentAction=="CourseMap"?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">account_tree</span>
+          <span>Course Map</span>
+        </a>
+        <a asp-controller="Student" asp-action="Planner"
+           class="mobile-nav-item @(currentController=="Student"&&currentAction=="Planner"?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">calendar_today</span>
+          <span>Planner</span>
+        </a>
+        <a asp-controller="Student" asp-action="Progress"
+           class="mobile-nav-item @(currentController=="Student"&&currentAction=="Progress"?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">bar_chart</span>
+          <span>Progress</span>
+        </a>
+        <a asp-controller="Student" asp-action="AiAdvisor"
+           class="mobile-nav-item @(currentController=="Student"&&currentAction=="AiAdvisor"?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">smart_toy</span>
+          <span>AI Advisor</span>
+        </a>
+      }
+    </nav>
+
+    <div class="mobile-drawer-footer">
+      <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index","Home",new{area=""})" method="post">
+        <button type="submit" class="mobile-nav-item w-100 border-0 bg-transparent text-start" style="color:#dc2626;">
+          <span class="material-symbols-outlined mobile-nav-icon" style="color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">logout</span>
+          <span>Sign Out</span>
+        </button>
+      </form>
+    </div>
+  </aside>
+}

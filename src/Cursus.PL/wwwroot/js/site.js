@@ -1,8 +1,4 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-/* ── Shared UI namespace (avoid global name collisions with page scripts) ── */
-window.CursusUI = window.CursusUI || {};
+﻿window.CursusUI = window.CursusUI || {};
 
 /* ── Dark Mode Toggle ────────────────────────────────────── */
 const darkToggle = document.getElementById('dark-toggle');
@@ -23,9 +19,6 @@ if (notifBtn && notifPanel) {
   document.addEventListener('click', () => notifPanel.classList.add('d-none'));
 }
 
-/**
- * One implementation for all navbars: `${id}-dropdown`, `${id}-btn`, optional #user-menu-chevron
- */
 CursusUI.toggleDropdown = function (id) {
   const dropdown = document.getElementById(`${id}-dropdown`);
   const btn = document.getElementById(`${id}-btn`);
@@ -65,3 +58,38 @@ const _vcObserver = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.08 });
 document.querySelectorAll('[data-scroll],[data-scroll-group]').forEach(el => _vcObserver.observe(el));
+/* ── Mobile Drawer ────────────────────────────────── */
+(function () {
+  const btn      = document.getElementById('mobile-menu-btn');
+  const drawer   = document.getElementById('mobile-drawer');
+  const backdrop = document.getElementById('mobile-drawer-backdrop');
+  const closeBtn = document.getElementById('mobile-drawer-close');
+
+  if (!btn || !drawer) return;
+
+  function openDrawer() {
+    drawer.classList.add('open');
+    backdrop.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    backdrop.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', openDrawer);
+  if (closeBtn)  closeBtn.addEventListener('click', closeDrawer);
+  if (backdrop)  backdrop.addEventListener('click', closeDrawer);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDrawer();
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 768) closeDrawer();
+  });
+}());

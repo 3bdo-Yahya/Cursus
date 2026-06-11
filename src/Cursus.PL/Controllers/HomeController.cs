@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Cursus.PL.Models;
+using Cursus.Domain.Constants;
 
 namespace Cursus.PL.Controllers;
 
@@ -10,10 +11,10 @@ public class HomeController : Controller
     {
         if (User.Identity?.IsAuthenticated == true)
         {
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole(Roles.Admin))
                 return RedirectToAction("Index", "Admin");
 
-            if (User.IsInRole("Student"))
+            if (User.IsInRole(Roles.Student))
                 return RedirectToAction("Dashboard", "Student");
         }
 

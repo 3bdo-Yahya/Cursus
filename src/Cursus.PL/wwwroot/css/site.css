@@ -22,7 +22,7 @@
   --tile-green-bg:  #ECFDF5;
   --tile-purple-bg: #F5F3FF;
 
-  /* Icon tile backgrounds — for the small square icons in metric cards */
+  /* Icon tile backgrounds */
   --icon-blue-bg:   #EEF2FF;
   --icon-purple-bg: #F5F3FF;
   --icon-amber-bg:  #FFFBEB;
@@ -151,9 +151,6 @@ body {
   }
 }
 
-/* .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-} */
 .btn-primary {
   background-color: var(--bs-primary);
   border: none;
@@ -226,7 +223,7 @@ html.dark .nav-pill.active { background: rgba(79,70,229,0.18); }
 .user-menu-item:hover span[class*="material"] {
   color: var(--c-primary) !important;
 }
-/* ── Custom Dropdown (user menu) — shared across all pages ─ */
+
 @keyframes dropIn {
   from { opacity:0; transform:translateY(-6px) scale(.98); }
   to   { opacity:1; transform:translateY(0) scale(1); }
@@ -274,7 +271,7 @@ html.dark .custom-dropdown-item:hover { background: rgba(255,255,255,.04); }
 .user-avatar-btn:hover { background: rgba(79,70,229,.06); }
 html.dark .user-avatar-btn:hover { background: rgba(255,255,255,.05); }
 
-/* ── Notification Panel ─────────────────────────────────── */
+/* ── Notifications ─────────────────────────────────── */
 @keyframes panelDrop {
   from { opacity:0; transform: translateY(-8px) scale(.97); }
   to   { opacity:1; transform: translateY(0) scale(1); }
@@ -285,3 +282,123 @@ html.dark .user-avatar-btn:hover { background: rgba(255,255,255,.05); }
   50%     { transform:scale(1.3); }
 }
 .notif-dot { animation: badgePop 2s ease-in-out 2s 3; }
+
+/* ── Mobile Hamburger Button ────────────────────────────── */
+.navbar-hamburger {
+  width:  38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--c-border);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.navbar-hamburger:hover { background: var(--c-soft); }
+
+/* ── Mobile Drawer Backdrop ─────────────────────────────── */
+.mobile-drawer-backdrop {
+  position:   fixed;
+  inset:      0;
+  z-index:    1050;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  opacity:    0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+.mobile-drawer-backdrop.open {
+  opacity:        1;
+  pointer-events: all;
+}
+
+/* ── Mobile Drawer Panel ────────────────────────────────── */
+.mobile-drawer {
+  position:   fixed;
+  top:        0;
+  right:      0;
+  bottom:     0;
+  z-index:    1055;
+  width:      min(300px, 85vw);
+  background: var(--c-surface);
+  border-left: 1px solid var(--c-border);
+  box-shadow: -8px 0 40px rgba(0,0,0,.12);
+  display:    flex;
+  flex-direction: column;
+  transform:  translateX(100%);
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  overflow-y: auto;
+}
+.mobile-drawer.open { transform: translateX(0); }
+
+.mobile-drawer-header {
+  display:     flex;
+  align-items: center;
+  justify-content: space-between;
+  padding:     18px 20px;
+  border-bottom: 1px solid var(--c-border);
+  flex-shrink: 0;
+}
+
+.mobile-drawer-nav {
+  display:        flex;
+  flex-direction: column;
+  padding:        12px 10px;
+  gap:            2px;
+  flex:           1;
+}
+
+.mobile-nav-item {
+  display:     flex;
+  align-items: center;
+  gap:         12px;
+  padding:     12px 14px;
+  border-radius: 12px;
+  font-size:   14px;
+  font-weight: 500;
+  color:       var(--c-muted);
+  text-decoration: none;
+  transition:  background 0.16s ease, color 0.16s ease;
+}
+.mobile-nav-item:hover {
+  background: var(--c-soft);
+  color:      var(--c-primary);
+}
+.mobile-nav-item.active {
+  background: var(--c-soft);
+  color:      var(--c-primary);
+  font-weight: 700;
+}
+html.dark .mobile-nav-item.active,
+html.dark .mobile-nav-item:hover { background: rgba(79,70,229,0.15); }
+
+.mobile-nav-icon {
+  font-size: 20px;
+  font-variation-settings: 'FILL' 0, 'wght' 300;
+  flex-shrink: 0;
+}
+.mobile-nav-item.active .mobile-nav-icon,
+.mobile-nav-item:hover  .mobile-nav-icon { font-variation-settings: 'FILL' 1, 'wght' 400; }
+
+.mobile-drawer-footer {
+  padding:      10px;
+  border-top:   1px solid var(--c-border);
+  flex-shrink:  0;
+}
+
+/* ── Dashboard Mobile Polish ────────────────────────────── */
+@media (max-width: 575px) {
+  .metric-card { padding: 18px !important; }
+  .metric-card .fw-900[style*="2.2rem"] { font-size: 1.8rem !important; }
+
+  .row.g-3 .col-6 { width: 50%; }
+
+  .status-dot { display: none; }
+
+  .alert-item { padding: 12px 14px; }
+
+  .container-xl { padding-left: 16px !important; padding-right: 16px !important; }
+}
+
+@media (max-width: 767px) {
+  .row { --bs-gutter-x: 0.75rem; }
+}

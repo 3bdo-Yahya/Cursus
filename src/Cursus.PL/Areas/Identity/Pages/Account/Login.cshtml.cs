@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Cursus.Domain.Constants;
 
 namespace Cursus.PL.Areas.Identity.Pages.Account;
 
@@ -90,10 +91,10 @@ public class LoginModel : PageModel
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user is not null)
             {
-                if (await _userManager.IsInRoleAsync(user, "Admin"))
+                if (await _userManager.IsInRoleAsync(user, Roles.Admin))
                     return RedirectToAction("Index", "Admin");
 
-                if (await _userManager.IsInRoleAsync(user, "Student"))
+                if (await _userManager.IsInRoleAsync(user, Roles.Student))
                     return RedirectToAction("Dashboard", "Student");
             }
 
