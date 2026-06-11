@@ -25,59 +25,6 @@ public static class StartupSeeder
         await context.Database.EnsureCreatedAsync();
     }
 
-    public static async Task SeedIdentityAsync(IServiceProvider serviceProvider)
-    {
-        using var scope = serviceProvider.CreateScope();
-
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-
-        const string adminRoleName = "Admin";
-        const string seededAdminEmail = "admin@cursus.local";
-        const string seededAdminUserName = "admin@cursus.local";
-        const string seededAdminPassword = "ChangeMe123!";
-
-        if (!await roleManager.RoleExistsAsync(adminRoleName))
-        {
-            var createRoleResult = await roleManager.CreateAsync(new IdentityRole(adminRoleName));
-            if (!createRoleResult.Succeeded && !await roleManager.RoleExistsAsync(adminRoleName))
-            {
-                throw new InvalidOperationException(
-                    $"Unable to create the '{adminRoleName}' role: {string.Join(", ", createRoleResult.Errors.Select(error => error.Description))}");
-            }
-        }
-
-        var adminUser = await userManager.FindByEmailAsync(seededAdminEmail)
-            ?? await userManager.FindByNameAsync(seededAdminUserName);
-
-        if (adminUser is null)
-        {
-            adminUser = new AppUser
-            {
-                UserName = seededAdminUserName,
-                Email = seededAdminEmail,
-                EmailConfirmed = true
-            };
-
-            var createUserResult = await userManager.CreateAsync(adminUser, seededAdminPassword);
-            if (!createUserResult.Succeeded)
-            {
-                throw new InvalidOperationException(
-                    $"Unable to create the initial admin user: {string.Join(", ", createUserResult.Errors.Select(error => error.Description))}");
-            }
-        }
-
-        if (!await userManager.IsInRoleAsync(adminUser, adminRoleName))
-        {
-            var addRoleResult = await userManager.AddToRoleAsync(adminUser, adminRoleName);
-            if (!addRoleResult.Succeeded)
-            {
-                throw new InvalidOperationException(
-                    $"Unable to assign the '{adminRoleName}' role to the initial admin user: {string.Join(", ", addRoleResult.Errors.Select(error => error.Description))}");
-            }
-        }
-    }
-
     public static async Task SeedSampleCatalogAsync(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
