@@ -1,109 +1,54 @@
-/* ── Helpers ────────────────────────────────────────────── */
-function setFieldError(inputEl, errorEl, msg) {
-  errorEl.textContent = msg;
-  inputEl.style.borderColor = '#dc3545';
-  inputEl.style.boxShadow   = '0 0 0 3px rgba(220,53,69,0.15)';
-}
-function clearFieldError(inputEl, errorEl) {
-  errorEl.textContent      = '';
-  inputEl.style.borderColor = '';
-  inputEl.style.boxShadow   = '';
-}
+(function initGraph() {
+  const svg = document.getElementById('graph-svg');
+  if (!svg) return;
 
-/* ── Password toggle ────────────────────────────────────── */
-const pwInput   = document.getElementById('password');
-const toggleBtn = document.getElementById('toggle-pw');
-if (pwInput && toggleBtn) {
-  const eyeIcon = toggleBtn.querySelector('span');
-  toggleBtn.addEventListener('click', () => {
-    const isHidden = pwInput.type === 'password';
-    pwInput.type        = isHidden ? 'text' : 'password';
-    eyeIcon.textContent = isHidden ? 'visibility_off' : 'visibility';
-  });
-}
+  const nodes = [
+    { sel: '.node-1', home: { x: 140, y: 180 }, amp: 14, px: 0.0,  py: 1.3,  sp: 0.00070 },
+    { sel: '.node-2', home: { x: 300, y: 120 }, amp: 18, px: 2.1,  py: 0.5,  sp: 0.00055 },
+    { sel: '.node-3', home: { x: 480, y: 220 }, amp: 12, px: 4.3,  py: 2.8,  sp: 0.00080 },
+    { sel: '.node-4', home: { x: 240, y: 380 }, amp: 16, px: 1.0,  py: 3.7,  sp: 0.00045 },
+    { sel: '.node-5', home: { x: 560, y: 460 }, amp: 13, px: 3.5,  py: 0.9,  sp: 0.00065 },
+    { sel: '.node-6', home: { x: 400, y: 560 }, amp: 15, px: 5.2,  py: 4.1,  sp: 0.00050 },
+    { sel: '.node-7', home: { x: 300, y: 680 }, amp: 11, px: 0.8,  py: 2.3,  sp: 0.00075 },
+    { sel: '.node-8', home: { x:  80, y: 500 }, amp:  8, px: 6.0,  py: 1.7,  sp: 0.00060 },
+    { sel: '.node-9', home: { x: 620, y: 150 }, amp:  9, px: 2.9,  py: 5.0,  sp: 0.00085 },
+  ];
 
-/* ── Live clear-on-type ─────────────────────────────────── */
-const emailInput  = document.getElementById('email');
-const emailError  = document.getElementById('email-error');
-const pwError     = document.getElementById('password-error');
+  nodes.forEach(n => { n.el = n.sel ? svg.querySelector(n.sel) : null; });
 
-if (emailInput && emailError) {
-  emailInput.addEventListener('input', () => clearFieldError(emailInput, emailError));
-}
-if (pwInput && pwError) {
-  pwInput.addEventListener('input', () => clearFieldError(pwInput, pwError));
-}
-
-/* ── Form submit + validation ───────────────────────────── */
-const loginForm = document.getElementById('login-form');
-const btnLabel  = document.getElementById('btn-label');
-const signinBtn = document.getElementById('signin-btn');
-
-if (loginForm) {
-  loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    let valid = true;
-
-    /* Email validation */
-    const emailVal = emailInput ? emailInput.value.trim() : '';
-    if (!emailVal) {
-      setFieldError(emailInput, emailError, 'Email address is required.');
-      valid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-      setFieldError(emailInput, emailError, 'Please enter a valid email address.');
-      valid = false;
-    }
-
-    /* Password validation */
-    const pwVal = pwInput ? pwInput.value : '';
-    if (!pwVal) {
-      setFieldError(pwInput, pwError, 'Password is required.');
-      valid = false;
-    } else if (pwVal.length < 6) {
-      setFieldError(pwInput, pwError, 'Password must be at least 6 characters.');
-      valid = false;
-    }
-
-    if (!valid) return;
-
-    /* Loading state — will then replaced with real submit */
-    if (signinBtn) { signinBtn.disabled = true; signinBtn.style.opacity = '0.75'; }
-    if (btnLabel)  btnLabel.textContent = 'Signing in…';
-
-    setTimeout(() => {
-      if (btnLabel)  btnLabel.textContent = 'Sign In';
-      if (signinBtn) { signinBtn.disabled = false; signinBtn.style.opacity = '1'; }
-    }, 2000);
-  });
-}
-
-/* ── Animated SVG connectors ────────────────────────────── */
-const graphSvg = document.getElementById('graph-svg');
-if (graphSvg) {
-  const nodeGroups = graphSvg.querySelectorAll('g[style*="transform-origin"]');
   const lineMap = {
-    c1:[0,1], c2:[1,2], c3:[1,3], c4:[2,4],
-    c5:[3,5], c6:[4,5], c7:[0,3], c8:[5,6],
-    c9:[7,3], c10:[8,2]
+    c1:  [0, 1], c2:  [1, 2], c3:  [1, 3], c4:  [2, 4],
+    c5:  [3, 5], c6:  [4, 5], c7:  [0, 3], c8:  [5, 6],
+    c9:  [7, 3], c10: [8, 2],
   };
-  function getCenter(g) {
-    const circle = g.querySelectorAll('circle')[1];
-    const cx = parseFloat(circle.getAttribute('cx'));
-    const cy = parseFloat(circle.getAttribute('cy'));
-    const mat = new DOMMatrix(getComputedStyle(g).transform);
-    return { x: cx + mat.m41, y: cy + mat.m42 };
-  }
-  function updateLines() {
-    const centers = Array.from(nodeGroups).map(getCenter);
-    Object.entries(lineMap).forEach(([id, [a, b]]) => {
-      const line = document.getElementById(id);
-      if (!line || !centers[a] || !centers[b]) return;
-      line.setAttribute('x1', centers[a].x);
-      line.setAttribute('y1', centers[a].y);
-      line.setAttribute('x2', centers[b].x);
-      line.setAttribute('y2', centers[b].y);
+
+  const lines = {};
+  Object.keys(lineMap).forEach(id => { lines[id] = document.getElementById(id); });
+
+  function tick(t) {
+    const pos = nodes.map(n => ({
+      x: n.home.x + Math.sin(t * n.sp        + n.px) * n.amp,
+      y: n.home.y + Math.cos(t * n.sp * 0.83 + n.py) * n.amp,
+    }));
+
+    nodes.forEach((n, i) => {
+      if (!n.el) return;
+      const dx = pos[i].x - n.home.x;
+      const dy = pos[i].y - n.home.y;
+      n.el.setAttribute('transform', `translate(${dx.toFixed(2)},${dy.toFixed(2)})`);
     });
-    requestAnimationFrame(updateLines);
+
+    Object.entries(lineMap).forEach(([id, [a, b]]) => {
+      const line = lines[id];
+      if (!line) return;
+      line.setAttribute('x1', pos[a].x.toFixed(2));
+      line.setAttribute('y1', pos[a].y.toFixed(2));
+      line.setAttribute('x2', pos[b].x.toFixed(2));
+      line.setAttribute('y2', pos[b].y.toFixed(2));
+    });
+
+    requestAnimationFrame(tick);
   }
-  requestAnimationFrame(updateLines);
-}
+
+  requestAnimationFrame(tick);
+})();
