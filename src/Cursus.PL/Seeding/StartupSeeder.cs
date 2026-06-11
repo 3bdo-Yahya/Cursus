@@ -4,6 +4,7 @@ using Cursus.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Cursus.Domain.Constants;
 
 namespace Cursus.PL.Seeding;
 

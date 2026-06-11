@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Cursus.Domain.Constants;
 
 namespace Cursus.PL.Areas.Identity.Pages.Account;
 
@@ -75,7 +76,7 @@ public class RegisterModel : PageModel
         {
             _logger.LogInformation("User created a new account with password.");
 
-            var addRoleResult = await _userManager.AddToRoleAsync(user, "Student");
+            var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.Student);
             if (!addRoleResult.Succeeded)
             {
                 foreach (var error in addRoleResult.Errors)
