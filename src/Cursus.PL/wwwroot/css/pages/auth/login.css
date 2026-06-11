@@ -97,22 +97,8 @@
 }
 
 /* ── Node animations ─────────────────────────────────────── */
-@keyframes drift1 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(18px,-22px)} 66%{transform:translate(-12px,14px)} }
-@keyframes drift2 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-20px,16px)} 66%{transform:translate(14px,-18px)} }
-@keyframes drift3 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(14px,20px)} 66%{transform:translate(-18px,-10px)} }
-@keyframes drift4 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-10px,-18px)} 66%{transform:translate(20px,12px)} }
-@keyframes drift5 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(16px,10px)} 66%{transform:translate(-8px,-20px)} }
-@keyframes drift6 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-14px,18px)} 66%{transform:translate(10px,-14px)} }
-@keyframes drift7 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(8px,-14px)} 66%{transform:translate(-16px,8px)} }
-
-.node-1 { animation: drift1  9s ease-in-out infinite; }
-.node-2 { animation: drift2 11s ease-in-out infinite; }
-.node-3 { animation: drift3  8s ease-in-out infinite; }
-.node-4 { animation: drift4 13s ease-in-out infinite; }
-.node-5 { animation: drift5 10s ease-in-out infinite; }
-.node-6 { animation: drift6 12s ease-in-out infinite; }
-.node-7 { animation: drift7  7s ease-in-out infinite; }
-
+/* Node drift is driven entirely by login.js via SVG attribute updates.
+   CSS only handles the subtle inner-dot pulse. */
 @keyframes nodePulse { 0%,100%{r:4;opacity:0.9} 50%{r:6;opacity:1} }
 .node-pulse { animation: nodePulse 2.5s ease-in-out infinite; }
 

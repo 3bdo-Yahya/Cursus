@@ -1,4 +1,5 @@
-@model Course
+@using Cursus.Domain.DTOs
+@model EditCourseDto
 
 @{
     ViewData["Title"] = "Edit Course";
@@ -49,13 +50,15 @@
 
                 <div class="col-md-6">
                     <label asp-for="CourseType" class="form-label"></label>
-                    <select asp-for="CourseType" class="form-select" asp-items="Html.GetEnumSelectList<CourseType>()"></select>
+                    <select asp-for="CourseType" class="form-select"
+                            asp-items="Html.GetEnumSelectList<CourseType>()"></select>
                     <span asp-validation-for="CourseType" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6">
                     <label asp-for="SemesterAvailability" class="form-label"></label>
-                    <select asp-for="SemesterAvailability" class="form-select" asp-items="Html.GetEnumSelectList<SemesterAvailability>()"></select>
+                    <select asp-for="SemesterAvailability" class="form-select"
+                            asp-items="Html.GetEnumSelectList<SemesterAvailability>()"></select>
                     <span asp-validation-for="SemesterAvailability" class="text-danger"></span>
                 </div>
 
