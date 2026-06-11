@@ -11,12 +11,19 @@ namespace Cursus.DAL.Configurations
             builder.Property(user => user.AcademicYear)
                 .HasMaxLength(10);
 
+            builder.HasOne(user => user.University)
+                .WithMany(university => university.Users)
+                .HasForeignKey(user => user.UniversityId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             builder.HasOne(user => user.Department)
                 .WithMany(department => department.Students)
                 .HasForeignKey(user => user.DepartmentId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            builder.HasIndex(user => user.UniversityId);
             builder.HasIndex(user => user.DepartmentId);
+            builder.HasIndex(user => new { user.UniversityId, user.DepartmentId });
             builder.HasIndex(user => new { user.DepartmentId, user.AcademicYear, user.CurrentSemester });
         }
     }

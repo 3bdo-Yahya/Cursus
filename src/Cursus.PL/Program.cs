@@ -26,15 +26,16 @@ public class Program
 
         await StartupSeeder.InitializeDatabaseAsync(app.Services);
         await SeedRolesAsync(app.Services);
+        await StartupSeeder.SeedSampleCatalogAsync(app.Services);
+        await StartupSeeder.SeedGradeScaleAsync(app.Services);
         await SeedDefaultAdminAsync(app.Services);
+        await StartupSeeder.SeedDemoStudentsAsync(app.Services);
 
         app.UseHttpsRedirection();
         app.UseRouting();
 
         app.UseAuthentication();
         app.UseAuthorization();
-
-        await StartupSeeder.SeedSampleCatalogAsync(app.Services);
 
         app.MapStaticAssets();
         app.MapControllerRoute(
@@ -73,6 +74,7 @@ public class Program
     {
         using var scope = services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var options = scope.ServiceProvider.GetRequiredService<IOptions<IdentitySeedOptions>>().Value;
 
         if (string.IsNullOrWhiteSpace(options.AdminPassword))
@@ -81,6 +83,14 @@ public class Program
         var adminEmail = string.IsNullOrWhiteSpace(options.AdminEmail)
             ? "admin@cursus.com"
             : options.AdminEmail.Trim();
+
+        // Resolve admin university
+        var adminUniversity = await ResolveAdminUniversityAsync(context, options.AdminUniversityName);
+        if (adminUniversity is null)
+        {
+            throw new InvalidOperationException(
+                $"Unable to find admin university: {options.AdminUniversityName}");
+        }
 
         var adminUser = await userManager.FindByEmailAsync(adminEmail)
             ?? await userManager.FindByNameAsync(adminEmail);
@@ -91,7 +101,8 @@ public class Program
             {
                 UserName = adminEmail,
                 Email = adminEmail,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                UniversityId = adminUniversity.Id  // Admin linked to specific university
             };
 
             var createResult = await userManager.CreateAsync(adminUser, options.AdminPassword);
@@ -110,6 +121,18 @@ public class Program
                         $"Unable to create default admin user: {string.Join(", ", createResult.Errors.Select(error => error.Description))}");
             }
         }
+        
+        // Ensure admin UniversityId is set to the configured university
+        if (adminUser.UniversityId != adminUniversity.Id)
+        {
+            adminUser.UniversityId = adminUniversity.Id;
+            var updateResult = await userManager.UpdateAsync(adminUser);
+            if (!updateResult.Succeeded)
+            {
+                throw new InvalidOperationException(
+                    $"Unable to update seeded admin user (set university link): {string.Join(", ", updateResult.Errors.Select(error => error.Description))}");
+            }
+        }
 
         if (!await userManager.IsInRoleAsync(adminUser, Roles.Admin))
         {
@@ -118,5 +141,18 @@ public class Program
                 throw new InvalidOperationException(
                     $"Unable to assign 'Admin' role to seeded admin user: {string.Join(", ", addRoleResult.Errors.Select(error => error.Description))}");
         }
+        
+        Console.WriteLine($"[Seeding] Admin user seeded and linked to {adminUniversity.Name} university");
+    }
+
+    private static async Task<University?> ResolveAdminUniversityAsync(ApplicationDbContext context, string? universityName)
+    {
+        if (string.IsNullOrWhiteSpace(universityName))
+        {
+            return null;
+        }
+
+        return await context.Universities
+            .FirstOrDefaultAsync(u => u.Name == universityName.Trim());
     }
 }
