@@ -1,0 +1,114 @@
+@*
+  _Pagination.cshtml
+  ──────────────────
+  Parameters (passed via ViewData or a typed model — use a dictionary for simplicity):
+    • PageIndex     int
+    • TotalPages    int
+    • TotalCount    int
+    • PageSize      int
+    • ActionName    string        — the controller action to link to
+    • RouteValues   Dictionary<string,string?>  — current filters to preserve
+*@
+
+@{
+    var pageIndex   = (int)ViewData["PageIndex"]!;
+    var totalPages  = (int)ViewData["TotalPages"]!;
+    var totalCount  = (int)ViewData["TotalCount"]!;
+    var pageSize    = (int)ViewData["PageSize"]!;
+    var actionName  = (string)ViewData["PagingAction"]!;
+    var routeValues = (Dictionary<string, string?>)ViewData["PagingRouteValues"]!;
+
+    int firstItem = (pageIndex - 1) * pageSize + 1;
+    int lastItem  = Math.Min(pageIndex * pageSize, totalCount);
+
+    // Build a route dict for a given page number
+    IDictionary<string, string?> PageRoute(int p)
+    {
+        var rv = new Dictionary<string, string?>(routeValues) { ["page"] = p.ToString() };
+        return rv;
+    }
+
+    // Window of page buttons: at most 5 centred around current page
+    int windowStart = Math.Max(1, pageIndex - 2);
+    int windowEnd   = Math.Min(totalPages, windowStart + 4);
+    if (windowEnd - windowStart < 4)
+        windowStart = Math.Max(1, windowEnd - 4);
+}
+
+@if (totalPages <= 1) { return; }
+
+<div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 px-4 py-3"
+     style="border-top:1px solid var(--c-border);background:var(--c-surface);">
+
+    <!-- Info label -->
+    <p class="mb-0" style="font-size:12px;color:var(--c-muted);">
+        Showing <span class="fw-700" style="color:var(--c-text);">@firstItem–@lastItem</span>
+        of <span class="fw-700" style="color:var(--c-text);">@totalCount</span>
+    </p>
+
+    <!-- Page controls -->
+    <nav aria-label="Pagination">
+        <ul class="pagination pagination-sm mb-0 gap-1" style="--bs-pagination-border-radius:8px;">
+
+            <!-- Prev -->
+            <li class="page-item @(pageIndex == 1 ? "disabled" : "")">
+                <a class="page-link" style="border-radius:8px;border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);"
+                   asp-action="@actionName" asp-all-route-data="@PageRoute(pageIndex - 1)"
+                   aria-label="Previous">
+                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;font-variation-settings:'FILL' 0,'wght' 300">chevron_left</span>
+                </a>
+            </li>
+
+            <!-- First page + ellipsis -->
+            @if (windowStart > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" style="border-radius:8px;border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);"
+                       asp-action="@actionName" asp-all-route-data="@PageRoute(1)">1</a>
+                </li>
+                @if (windowStart > 2)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link" style="border-radius:8px;border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-muted);">…</span>
+                    </li>
+                }
+            }
+
+            <!-- Window -->
+            @for (int p = windowStart; p <= windowEnd; p++)
+            {
+                var isActive = p == pageIndex;
+                <li class="page-item @(isActive ? "active" : "")">
+                    <a class="page-link fw-@(isActive ? "700" : "500")"
+                       style="border-radius:8px;border:1px solid @(isActive ? "var(--c-primary)" : "var(--c-border)");background:@(isActive ? "var(--c-primary)" : "var(--c-surface)");color:@(isActive ? "#fff" : "var(--c-text)");"
+                       asp-action="@actionName" asp-all-route-data="@PageRoute(p)"
+                       aria-current="@(isActive ? "page" : null)">@p</a>
+                </li>
+            }
+
+            <!-- Last page + ellipsis -->
+            @if (windowEnd < totalPages)
+            {
+                @if (windowEnd < totalPages - 1)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link" style="border-radius:8px;border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-muted);">…</span>
+                    </li>
+                }
+                <li class="page-item">
+                    <a class="page-link" style="border-radius:8px;border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);"
+                       asp-action="@actionName" asp-all-route-data="@PageRoute(totalPages)">@totalPages</a>
+                </li>
+            }
+
+            <!-- Next -->
+            <li class="page-item @(pageIndex == totalPages ? "disabled" : "")">
+                <a class="page-link" style="border-radius:8px;border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);"
+                   asp-action="@actionName" asp-all-route-data="@PageRoute(pageIndex + 1)"
+                   aria-label="Next">
+                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

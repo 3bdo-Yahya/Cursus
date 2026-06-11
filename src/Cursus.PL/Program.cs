@@ -5,6 +5,8 @@ using Cursus.PL.Seeding;
 using Microsoft.Extensions.Options;
 using System;
 using Cursus.Domain.Constants;
+using Cursus.DAL.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.PL;
 
@@ -36,6 +38,7 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+
 
         app.MapStaticAssets();
         app.MapControllerRoute(

@@ -8,6 +8,7 @@ using Cursus.Domain.Interfaces.Services;
 using Cursus.PL.Models.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Cursus.BLL.Interfaces;
 
 namespace Cursus.PL
 {
@@ -19,12 +20,12 @@ namespace Cursus.PL
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
+ 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
-
+ 
             services.AddDatabaseDeveloperPageExceptionFilter();
-
+ 
             services.AddIdentity<AppUser, IdentityRole>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
@@ -35,28 +36,29 @@ namespace Cursus.PL
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
                 .AddDefaultUI();
-
+ 
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
-
+ 
             services.Configure<IdentitySeedOptions>(
                 configuration.GetSection("IdentitySeed"));
-
+ 
             services.AddControllersWithViews();
             services.AddRazorPages();
-
+ 
             #region Repository
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             #endregion
-
+ 
             #region Services
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IUniversityService, UniversityService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+            services.AddScoped<IStudentManagementService, StudentManagementService>();
             #endregion
 
 

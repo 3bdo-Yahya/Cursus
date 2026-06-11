@@ -1,146 +1,146 @@
+@model Cursus.PL.Models.EditStudentViewModel
+@using Cursus.Domain.Enums
 @{
     ViewData["Title"] = "Edit Student";
+    var initials = string.Join("", Model.DisplayName.Split(' ').Take(2).Select(p => p.FirstOrDefault()));
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/admin/courses.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/pages/admin/students.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/css/pages/admin/add-course.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/css/pages/admin/add-student.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/pages/admin/edit-student.css" asp-append-version="true"/>
 }
 
+<!-- ── Breadcrumb + header ─────────────────────────────────────────────── -->
 <div class="mb-4 anim-fade-up">
-        <nav aria-label="breadcrumb" class="mb-2">
-          <ol class="breadcrumb mb-0" style="font-size:12px;">
-            <li class="breadcrumb-item"><a href="/Admin/Students" style="color:var(--c-muted);text-decoration:none;">Students</a></li>
-            <li class="breadcrumb-item active" style="color:var(--c-primary);font-weight:600;">Edit Student</li>
-          </ol>
-        </nav>
-        <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Edit Student</h1>
-        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Update profile and academic assignment for an existing student.</p>
-      </div>
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0" style="font-size:12px;">
+            <li class="breadcrumb-item"><a asp-action="Students" style="color:var(--c-muted);text-decoration:none;">Students</a></li>
+            <li class="breadcrumb-item">
+                <a asp-action="StudentDetail" asp-route-id="@Model.Id" style="color:var(--c-muted);text-decoration:none;">@Model.DisplayName</a>
+            </li>
+            <li class="breadcrumb-item active" style="color:var(--c-primary);font-weight:600;">Edit</li>
+        </ol>
+    </nav>
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+            <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Edit Student</h1>
+            <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Update academic assignment for <strong style="color:var(--c-text);">@Model.DisplayName</strong></p>
+        </div>
+        <a asp-action="StudentDetail" asp-route-id="@Model.Id"
+           class="btn d-flex align-items-center gap-2 fw-600 text-decoration-none"
+           style="border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);border-radius:12px;font-size:13px;padding:9px 16px;">
+            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">arrow_back</span>
+            Back
+        </a>
+    </div>
+</div>
 
-      <form id="edit-student-form" novalidate>
-        <div id="update-feedback" class="student-success-alert d-none anim-fade-up-1" role="status" aria-live="polite"></div>
+<partial name="_AdminAlerts"/>
 
-        <div class="surface p-4 p-md-5 mb-3 anim-fade-up-1">
-          <div class="row g-4">
-            <div class="col-12 col-md-6">
-              <div class="form-group-fancy" id="fg-fullname">
-                <label class="form-label-fancy" for="student-fullname">Full Name <span style="color:#dc2626;">*</span></label>
-                <div class="input-wrap">
-                  <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;">badge</span></span>
-                  <input type="text" id="student-fullname" class="form-control fancy-input has-prefix" value="Ahmed Kamal"/>
-                </div>
-                <p class="field-error" id="err-fullname">Full name is required</p>
-              </div>
+<form asp-action="EditStudent" method="post" novalidate>
+    <input type="hidden" asp-for="Id"/>
+    <input type="hidden" asp-for="DisplayName"/>
+    <input type="hidden" asp-for="Email"/>
+    @Html.AntiForgeryToken()
+
+    <!-- ── Identity card (read-only) ──────────────────────────────────── -->
+    <div class="surface p-4 mb-4 anim-fade-up-1 d-flex align-items-center gap-4">
+        <div class="vs-avatar-lg" style="background:rgba(79,70,229,.12);color:var(--c-primary);flex-shrink:0;">@initials</div>
+        <div>
+            <p class="fw-800 mb-1" style="font-size:1.1rem;color:var(--c-text);">@Model.DisplayName</p>
+            <p class="mb-0" style="font-size:12.5px;color:var(--c-muted);">@Model.Email</p>
+        </div>
+        <div class="ms-auto">
+            <span class="stat-pill" style="font-size:11.5px;">Identity is managed by ASP.NET Core Identity — not editable here</span>
+        </div>
+    </div>
+
+    <!-- ── Academic assignment ─────────────────────────────────────────── -->
+    <div class="surface p-4 p-md-5 anim-fade-up-1" style="max-width:700px;">
+
+        <div class="d-flex align-items-center gap-3 mb-4 pb-4" style="border-bottom:1px solid var(--c-border);">
+            <div style="width:40px;height:40px;border-radius:12px;background:rgba(79,70,229,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <span class="material-symbols-outlined" style="font-size:20px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">school</span>
             </div>
-            <div class="col-12 col-md-6">
-              <div class="form-group-fancy" id="fg-email">
-                <label class="form-label-fancy" for="student-email">Email Address <span style="color:#dc2626;">*</span></label>
-                <div class="input-wrap">
-                  <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;">mail</span></span>
-                  <input type="email" id="student-email" class="form-control fancy-input has-prefix" value="ahmed.kamal@svu.edu.eg"/>
-                </div>
-                <p class="field-error" id="err-email">A valid email address is required</p>
-              </div>
+            <div>
+                <h2 class="fw-800 mb-0" style="font-size:1rem;color:var(--c-text);">Academic Assignment</h2>
+                <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Department, year, semester, and standing.</p>
             </div>
-            <div class="col-12 col-md-6">
-              <div class="form-group-fancy" id="fg-password">
-                <label class="form-label-fancy" for="student-password">Temporary Password <span style="color:#dc2626;">*</span></label>
-                <div class="input-wrap">
-                  <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;">lock</span></span>
-                  <input type="password" id="student-password" class="form-control fancy-input has-prefix" value="TempPass#2026" style="padding-right:44px;"/>
-                  <button type="button" class="pass-toggle-btn" onclick="togglePassword()">
-                    <span class="material-symbols-outlined" id="pass-toggle-icon" style="font-size:18px;">visibility</span>
-                  </button>
-                </div>
-                <p class="field-error" id="err-password">Password must be at least 8 characters</p>
-              </div>
-            </div>
-            <div class="col-12 col-md-6">
-              <div class="form-group-fancy" id="fg-university">
-                <label class="form-label-fancy">University <span style="color:#dc2626;">*</span></label>
-                <div class="custom-select-wrap" id="stud-uni-wrap" style="display:block;">
-                  <button type="button" class="custom-select-btn fancy-input" id="stud-uni-btn" style="height:40px;" onclick="toggleDropdown('stud-uni')">
-                    <span class="custom-select-icon"><span class="material-symbols-outlined" style="font-size:16px;">account_balance</span></span>
-                    <span class="custom-select-value" id="stud-uni-value">South Valley University</span>
-                    <span class="material-symbols-outlined custom-select-arrow" style="font-size:16px;">expand_more</span>
-                  </button>
-                  <div class="custom-dropdown" id="stud-uni-dropdown">
-                    <div class="custom-dropdown-item selected" data-value="svu" onclick="selectStudentUni(this)"><span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;">check_circle</span><div><div class="custom-dropdown-label">South Valley University</div></div></div>
-                    <div class="custom-dropdown-item" data-value="auc" onclick="selectStudentUni(this)"><span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;">check_circle</span><div><div class="custom-dropdown-label">American University in Cairo</div></div></div>
-                    <div class="custom-dropdown-item" data-value="su" onclick="selectStudentUni(this)"><span class="custom-dropdown-check material-symbols-outlined" style="font-size:15px;">check_circle</span><div><div class="custom-dropdown-label">Sinai University</div></div></div>
-                  </div>
-                  <select id="student-university" class="d-none" aria-hidden="true" tabindex="-1">
-                    <option value="">Select university</option>
-                    <option value="svu" selected>South Valley University</option>
-                    <option value="auc">American University in Cairo</option>
-                    <option value="su">Sinai University</option>
-                  </select>
-                </div>
-                <p class="field-error" id="err-university">Please select a university</p>
-              </div>
-            </div>
-            <div class="col-12 col-md-6">
-              <div class="form-group-fancy" id="fg-department">
-                <label class="form-label-fancy">Department <span style="color:#dc2626;">*</span></label>
-                <div class="custom-select-wrap" id="stud-dept-wrap" style="display:block;">
-                  <button type="button" class="custom-select-btn fancy-input" id="stud-dept-btn" style="height:40px;" onclick="toggleDropdown('stud-dept')">
-                    <span class="custom-select-icon dept-icon-cs" id="stud-dept-icon-el"><span class="material-symbols-outlined" style="font-size:16px;">computer</span></span>
-                    <span class="custom-select-value" id="stud-dept-value">Computer Science</span>
-                    <span class="material-symbols-outlined custom-select-arrow" style="font-size:16px;">expand_more</span>
-                  </button>
-                  <div class="custom-dropdown" id="stud-dept-dropdown"></div>
-                </div>
-                <p class="field-error" id="err-department">Please select a department</p>
-              </div>
-            </div>
-            <div class="col-12 col-md-6">
-              <div class="form-group-fancy" id="fg-acyear">
-                <label class="form-label-fancy" for="student-acyear">Academic Year <span style="color:#dc2626;">*</span></label>
-                <div class="input-wrap">
-                  <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;">calendar_today</span></span>
-                  <input type="text" id="student-acyear" class="form-control fancy-input has-prefix" value="2025-2026"/>
-                </div>
-                <p class="field-error" id="err-acyear">Academic year is required</p>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <div class="d-flex align-items-center justify-content-between gap-3 anim-fade-up-2 student-edit-actions">
-          <a href="/Admin/Students" class="btn-step-back text-decoration-none"><span class="material-symbols-outlined" style="font-size:16px;">close</span>Cancel</a>
-          <button type="button" class="btn-submit" id="update-student-btn"><span class="material-symbols-outlined" style="font-size:18px;">save</span>Update Student</button>
-        </div>
-      </form>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert" style="font-size:13px;border-radius:10px;"></div>
 
-      <div id="update-success-state" class="d-none text-center anim-fade-up">
-        <div class="surface p-5">
-          <div class="success-ring mx-auto mb-4">
-            <span class="material-symbols-outlined" style="font-size:36px;color:#059669;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
-          </div>
-          <h2 class="fw-900 mb-2" style="font-size:1.4rem;color:var(--c-text);">Student Updated!</h2>
-          <p class="mb-4" style="font-size:14px;color:var(--c-muted);">
-            <strong id="update-success-name" style="color:var(--c-primary);"></strong> has been updated in the system.
-          </p>
-          <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a href="/Admin/Students" class="btn btn-primary fw-700 d-flex align-items-center gap-2 text-decoration-none"
-               style="border-radius:12px;font-size:13px;padding:10px 20px;box-shadow:0 4px 14px rgba(79,70,229,.28);">
-              <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">group</span>
-              View All Students
-            </a>
-            <button onclick="resetEditStudentForm()" class="btn fw-600 d-flex align-items-center gap-2"
-                    style="border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);border-radius:12px;font-size:13px;padding:10px 20px;">
-              <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
-              Edit Again
+        <div class="row g-4">
+
+            <!-- Department -->
+            <div class="col-12">
+                <label asp-for="DepartmentId" class="form-label fw-700" style="font-size:13px;color:var(--c-text);">
+                    Department <span style="color:#ef4444;">*</span>
+                </label>
+                <select asp-for="DepartmentId" asp-items="Model.DepartmentOptions"
+                        class="form-select" id="dept-select"
+                        style="border-radius:10px;border:1px solid var(--c-border);background:var(--c-bg);color:var(--c-text);font-size:13px;padding:10px 14px;">
+                    <option value="0">— Select a department —</option>
+                </select>
+                <span asp-validation-for="DepartmentId" class="text-danger" style="font-size:12px;"></span>
+            </div>
+
+            <!-- Academic Year -->
+            <div class="col-12 col-sm-4">
+                <label asp-for="AcademicYear" class="form-label fw-700" style="font-size:13px;color:var(--c-text);">
+                    Year of Study <span style="color:#ef4444;">*</span>
+                </label>
+                <input asp-for="AcademicYear" class="form-control" id="acyear-input"
+                       placeholder="e.g. 2" maxlength="1"
+                       style="border-radius:10px;border:1px solid var(--c-border);background:var(--c-bg);color:var(--c-text);font-size:13px;padding:10px 14px;"/>
+                <span asp-validation-for="AcademicYear" class="text-danger" style="font-size:12px;"></span>
+                <p class="mt-1 mb-0" style="font-size:11.5px;color:var(--c-muted);">Enter a number from 1 to 6.</p>
+            </div>
+
+            <!-- Semester -->
+            <div class="col-12 col-sm-4">
+                <label asp-for="CurrentSemester" class="form-label fw-700" style="font-size:13px;color:var(--c-text);">
+                    Current Semester <span style="color:#ef4444;">*</span>
+                </label>
+                <select asp-for="CurrentSemester" asp-items="Model.SemesterOptions"
+                        class="form-select" id="semester-select"
+                        style="border-radius:10px;border:1px solid var(--c-border);background:var(--c-bg);color:var(--c-text);font-size:13px;padding:10px 14px;">
+                </select>
+                <span asp-validation-for="CurrentSemester" class="text-danger" style="font-size:12px;"></span>
+            </div>
+
+            <!-- Academic Standing -->
+            <div class="col-12 col-sm-4">
+                <label asp-for="CurrentStanding" class="form-label fw-700" style="font-size:13px;color:var(--c-text);">
+                    Academic Standing <span style="color:#ef4444;">*</span>
+                </label>
+                <select asp-for="CurrentStanding" asp-items="Model.StandingOptions"
+                        class="form-select" id="standing-select"
+                        style="border-radius:10px;border:1px solid var(--c-border);background:var(--c-bg);color:var(--c-text);font-size:13px;padding:10px 14px;">
+                </select>
+                <span asp-validation-for="CurrentStanding" class="text-danger" style="font-size:12px;"></span>
+            </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex align-items-center gap-3 mt-4 pt-4" style="border-top:1px solid var(--c-border);">
+            <button type="submit" id="update-student-btn"
+                    class="btn btn-primary fw-700 d-flex align-items-center gap-2"
+                    style="border-radius:12px;font-size:13px;padding:10px 20px;box-shadow:0 4px 14px rgba(79,70,229,.25);">
+                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 400">save</span>
+                Update Student
             </button>
-          </div>
+            <a asp-action="StudentDetail" asp-route-id="@Model.Id"
+               class="btn fw-600 text-decoration-none"
+               style="border:1px solid var(--c-border);background:transparent;color:var(--c-text-sub);border-radius:12px;font-size:13px;padding:10px 18px;">
+                Cancel
+            </a>
         </div>
-      </div>
+    </div>
+</form>
+
 @section Scripts {
-    <script src="~/js/pages/admin/courses.js" asp-append-version="true"></script>
-    <script src="~/js/pages/admin/form-helpers.js" asp-append-version="true"></script>
-    <script src="~/js/pages/admin/edit-student.js" asp-append-version="true"></script>
+    <partial name="_ValidationScriptsPartial"/>
 }
