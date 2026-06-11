@@ -25,6 +25,7 @@ appsettings.Development.json
 Cursus.PL.csproj.lscache
 Cursus.BLL.csproj.lscache
 Cursus.DAL.csproj.lscache
+Cursus.Domain.csproj.lscache
 # =========================
 # IDE & OS
 # =========================

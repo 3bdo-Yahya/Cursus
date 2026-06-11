@@ -29,7 +29,7 @@ namespace Cursus.Domain.Entities
         [Required]
         [StringLength(2)]
         public string PassingGradeThreshold { get; set; } = "D";
-        
+
         [Required]
         public int DepartmentId { set; get; }
 
@@ -39,7 +39,7 @@ namespace Cursus.Domain.Entities
         // each course is belong to a departments and department have many courses
         // many to many this will lead to a new junction table
 
-        
+
         public Department? Department { get; set; }
 
         // الكورس هنا بيبقي عنده متطلبات عشان يتفتح
