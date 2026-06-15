@@ -154,7 +154,11 @@
   },
   {
     "categoryType": "FreeElective",
-    "requiredCredits": 0,
-    "eligibleCourseCodes": []
+    "requiredCredits": 6,
+    "eligibleCourseCodes": [
+      "GE101",
+      "GE102",
+      "GE103"
+    ]
   }
 ]
