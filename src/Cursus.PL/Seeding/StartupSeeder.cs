@@ -413,22 +413,6 @@ public static class StartupSeeder
                 .OrderBy(course => course.Code)
                 .ToListAsync();
 
-            // Also fetch FreeElective courses for this department so the Progress
-            // page Free Elective card shows real completed data for demo students.
-            var freeElectiveCourses = await context.Courses
-                .Where(course => course.DepartmentId == department.Id
-                              && course.IsActive
-                              && course.CourseType == CourseType.FreeElective)
-                .OrderBy(course => course.Code)
-                .ToListAsync();
-
-            // Append FE courses that aren't already in the main list.
-            foreach (var feCourse in freeElectiveCourses)
-            {
-                if (!courses.Any(c => c.Id == feCourse.Id))
-                    courses.Add(feCourse);
-            }
-
             if (courses.Count == 0)
             {
                 Console.WriteLine($"[Seeding] WARNING: No courses found for demo student {profile.Email}, skipping history");
