@@ -81,7 +81,7 @@ html.dark .alert-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,.3); }
 .alert-text-info  { color: var(--alert-info-text); }
 
 /* ── Badges ─────────────────────────────────────────────── */
-.badge-core     { 
+.badge-core, .badge-uniReq { 
   background: var(--badge-core-bg); 
   color: var(--badge-core-text); 
   border: 1px solid var(--badge-core-bd); 

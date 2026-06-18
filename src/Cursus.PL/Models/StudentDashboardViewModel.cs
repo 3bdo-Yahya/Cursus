@@ -23,6 +23,7 @@ public class StudentDashboardViewModel
     public int CoursesRemaining { get; init; }
     public int CoreCoursesRemaining { get; init; }
     public int ElectiveCoursesRemaining { get; init; }
+    public int UniReqCoursesRemaining   { get; init; }
 
     public required string GraduationSemester { get; init; }
     public int SemestersCompleted { get; init; }

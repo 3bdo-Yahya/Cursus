@@ -10,6 +10,15 @@
 
 <div class="d-flex flex-column gap-4">
 
+  @if (TempData["Warning"] is string warning)
+  {
+    <div class="alert d-flex align-items-center gap-2 rounded-3 px-4 py-3" role="alert"
+         style="background:#fef3c7;border:1px solid #fcd34d;color:#92400e;">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1">warning</span>
+      <span class="fw-600" style="font-size:13.5px;">@warning</span>
+    </div>
+  }
+
   <!-- Welcome Bar -->
   <section class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 pt-2 anim-fade-up">
     <div class="d-flex align-items-center gap-3">
@@ -98,6 +107,7 @@
         <div class="d-flex flex-wrap gap-1">
           <span class="rounded-pill px-2 py-1 fw-700 badge-core" style="font-size:11px;">@Model.CoreCoursesRemaining Core</span>
           <span class="rounded-pill px-2 py-1 fw-700 badge-elective" style="font-size:11px;">@Model.ElectiveCoursesRemaining Electives</span>
+          <span class="rounded-pill px-2 py-1 fw-700 badge-uniReq" style="font-size:11px;">@Model.UniReqCoursesRemaining Uni Req</span>
         </div>
       </div>
     </div>
