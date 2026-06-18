@@ -59,6 +59,7 @@ namespace Cursus.PL
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IAdminDashboardService, AdminDashboardService>();
             services.AddScoped<IStudentManagementService, StudentManagementService>();
+            services.AddScoped<IProgressService, ProgressService>();
             #endregion
 
 

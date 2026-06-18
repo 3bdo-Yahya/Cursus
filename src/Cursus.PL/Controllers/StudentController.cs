@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Constants;
+using Cursus.Domain.Interfaces.Services;
 using Cursus.PL.Models;
-using Cursus.Domain.Constants;
 
 namespace Cursus.PL.Controllers;
 
@@ -12,10 +12,14 @@ namespace Cursus.PL.Controllers;
 public class StudentController : Controller
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly IProgressService _progressService;
 
-    public StudentController(UserManager<AppUser> userManager)
+    public StudentController(
+        UserManager<AppUser> userManager,
+        IProgressService progressService)
     {
-        _userManager = userManager;
+        _userManager      = userManager;
+        _progressService  = progressService;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -60,7 +64,21 @@ public class StudentController : Controller
 
     public IActionResult CourseMap() => View();
     public IActionResult Planner() => View();
-    public IActionResult Progress() => View();
+    public async Task<IActionResult> Progress()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToPage("/Identity/Account/Login");
+
+        var audit = await _progressService.GetGraduationAuditAsync(user.Id);
+        if (audit is null)
+        {
+            TempData["Error"] = "Your academic record could not be loaded. Please contact your advisor.";
+            return RedirectToAction(nameof(Dashboard));
+        }
+
+        return View(new ProgressViewModel { Audit = audit });
+    }
     public IActionResult AiAdvisor() => View();
     public IActionResult GpaSimulator() => View();
     public IActionResult ImpactAnalyzer() => View();
