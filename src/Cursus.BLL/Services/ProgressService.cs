@@ -69,7 +69,13 @@ public sealed class ProgressService : IProgressService
             // Prefer Completed > InProgress > Failed when a student re-took a course
             .ToDictionary(
                 g => g.Key,
-                g => g.OrderBy(sc => sc.Status).First());
+                g => g.OrderBy(sc => sc.Status switch
+                {
+                    StudentCourseStatus.Completed => 0,
+                    StudentCourseStatus.InProgress => 1,
+                    StudentCourseStatus.Failed => 2,
+                    _ => 3
+                }).First());
 
         // ── 5. Resolve CGPA from the most recent StandingHistory ──────────
         var latestStanding = student.StandingHistories
@@ -132,8 +138,7 @@ public sealed class ProgressService : IProgressService
             creditsRemaining, student.CurrentSemester, student.AcademicYear ?? "");
 
         // ── 9. Determine on-track status ──────────────────────────────────
-        var isOnTrack = categories.All(c => c.IsSatisfied)
-                        && cgpa >= student.Department.MinGpaForGraduation;
+        var isOnTrack = cgpa >= student.Department.MinGpaForGraduation;
 
         return new GraduationAuditDto
         {
@@ -230,17 +235,27 @@ public sealed class ProgressService : IProgressService
     {
         var relevantCourses = studentCourses
             .Where(sc => sc.Course?.CourseType == courseType)
-            .ToList();
+            .GroupBy(sc => sc.CourseId)
+            // Prefer Completed > InProgress > Failed when a student took/retook a course
+            .ToDictionary(
+                g => g.Key,
+                g => g.OrderBy(sc => sc.Status switch
+                {
+                    StudentCourseStatus.Completed => 0,
+                    StudentCourseStatus.InProgress => 1,
+                    StudentCourseStatus.Failed => 2,
+                    _ => 3
+                }).First());
 
-        int earnedCredits = relevantCourses
+        int earnedCredits = relevantCourses.Values
             .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
             .Sum(sc => sc.Course!.CreditHours);
 
-        int inProgressCredits = relevantCourses
+        int inProgressCredits = relevantCourses.Values
             .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
             .Sum(sc => sc.Course!.CreditHours);
 
-        var auditItems = relevantCourses
+        var auditItems = relevantCourses.Values
             .Where(sc => sc.Course is not null)
             .Select(sc => new CourseAuditItemDto
             {
