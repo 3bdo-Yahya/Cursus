@@ -83,7 +83,7 @@ public class StudentController : Controller
             StudentName = dto.DisplayName,
             Initials = GetInitials(dto.DisplayName),
             Department = dto.DepartmentName,
-            Year = ResolveAcademicYearNumber(dto.AcademicYear),
+            Year = (dto.SemestersCompleted / 2) + 1,
             Semester = FormatSemester(dto.CurrentSemester, dto.AcademicYear),
             AcademicStanding = FormatStanding(dto.Standing),
 
@@ -142,16 +142,6 @@ public class StudentController : Controller
         _ => "Good Standing"
     };
 
-    private static int ResolveAcademicYearNumber(string? academicYear)
-    {
-        if (string.IsNullOrWhiteSpace(academicYear))
-            return 1;
-
-        var yearPart = academicYear.Split('-').FirstOrDefault();
-        return int.TryParse(yearPart, out var year)
-            ? Math.Clamp(DateTime.UtcNow.Year - year + 1, 1, 6)
-            : 1;
-    }
 
     private static string GetInitials(string name)
     {
