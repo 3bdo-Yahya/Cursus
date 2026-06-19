@@ -48,6 +48,11 @@ namespace Cursus.PL
             services.Configure<OpenAiOptions>(
                 configuration.GetSection(OpenAiOptions.SectionName));
 
+            services.AddAntiforgery(options =>
+            {
+                options.HeaderName = "RequestVerificationToken";
+            });
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
