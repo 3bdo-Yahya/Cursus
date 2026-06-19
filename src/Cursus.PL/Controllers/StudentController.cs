@@ -1,10 +1,13 @@
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Cursus.Domain.Entities;
+using Cursus.Domain.Enums;
 using Cursus.Domain.Constants;
+using Cursus.Domain.DTOs;
+using Cursus.Domain.Interfaces.Services;
 using Cursus.PL.Models;
-using Cursus.Domain.Constants;
 
 namespace Cursus.PL.Controllers;
 
@@ -12,55 +15,53 @@ namespace Cursus.PL.Controllers;
 public class StudentController : Controller
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly IProgressService _progressService;
+    private readonly IStudentDashboardService _dashboardService;
 
-    public StudentController(UserManager<AppUser> userManager)
+    public StudentController(
+        UserManager<AppUser> userManager,
+        IProgressService progressService,
+        IStudentDashboardService dashboardService)
     {
-        _userManager = userManager;
+        _userManager      = userManager;
+        _progressService  = progressService;
+        _dashboardService = dashboardService;
     }
 
     public async Task<IActionResult> Dashboard()
     {
         var user = await _userManager.GetUserAsync(User);
-        var username = user?.UserName?.Split('@').FirstOrDefault() ?? "Student";
+        if (user is null)
+            return RedirectToAction("Login", "Account");
 
-        var model = new StudentDashboardViewModel
-        {
-            StudentName = username,
-            Initials = GetInitials(username),
-            Department = "Computer Science",
-            Year = 3,
-            Semester = "Spring 2026",
-            AcademicStanding = "Good Standing",
+        var dto = await _dashboardService.GetDashboardDataAsync(user.Id);
+        if (dto is null)
+            return RedirectToAction("Login", "Account");
 
-            Cgpa = 3.24,
-            CgpaChange = +0.12,
+        if (dto.DepartmentName == "Not assigned")
+            TempData["Warning"] = "Please contact your admin to assign your department.";
 
-            CreditsEarned = 84,
-            CreditsRequired = 132,
-
-            CoursesRemaining = 16,
-            CoreCoursesRemaining = 12,
-            ElectiveCoursesRemaining = 4,
-
-            GraduationSemester = "Spring 2027",
-            SemestersCompleted = 5,
-            TotalSemesters = 8,
-
-            CurrentCourses =
-            [
-                new() { Code = "CS301", Name = "Operating Systems", Schedule = "Mon, Wed 10:00 · Room 402", CreditHours = 3 },
-                new() { Code = "CS304", Name = "Database Systems", Schedule = "Tue, Thu 14:00 · Online", CreditHours = 4 },
-                new() { Code = "MATH301", Name = "Linear Algebra", Schedule = "Sun, Tue 09:00 · Room 210", CreditHours = 3 },
-                new() { Code = "CS3XX", Name = "Free Elective", Schedule = "Wed 13:00 · TBD", CreditHours = 3, IsElective = true }
-            ]
-        };
-
+        var model = MapToViewModel(dto);
         return View(model);
     }
 
     public IActionResult CourseMap() => View();
     public IActionResult Planner() => View();
-    public IActionResult Progress() => View();
+    public async Task<IActionResult> Progress()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToPage("/Identity/Account/Login");
+
+        var audit = await _progressService.GetGraduationAuditAsync(user.Id);
+        if (audit is null)
+        {
+            TempData["Error"] = "Your academic record could not be loaded. Please contact your advisor.";
+            return RedirectToAction(nameof(Dashboard));
+        }
+
+        return View(new ProgressViewModel { Audit = audit });
+    }
     public IActionResult AiAdvisor() => View();
     public IActionResult GpaSimulator() => View();
     public IActionResult ImpactAnalyzer() => View();
@@ -74,6 +75,73 @@ public class StudentController : Controller
         ViewData["Initials"] = GetInitials(username);
         return View();
     }
+
+    private static StudentDashboardViewModel MapToViewModel(StudentDashboardDto dto)
+    {
+        return new StudentDashboardViewModel
+        {
+            StudentName = dto.DisplayName,
+            Initials = GetInitials(dto.DisplayName),
+            Department = dto.DepartmentName,
+            Year = (dto.SemestersCompleted / 2) + 1,
+            Semester = FormatSemester(dto.CurrentSemester, dto.AcademicYear),
+            AcademicStanding = FormatStanding(dto.Standing),
+
+            Cgpa = (double)dto.Cgpa,
+            MaxGpa = 4.0,
+            CgpaChange = (double)dto.CgpaChange,
+
+            CreditsEarned = dto.CreditsCompleted,
+            CreditsRequired = dto.CreditsRequired,
+
+            CoursesRemaining = dto.CoursesRemaining,
+            CoreCoursesRemaining = dto.CoreCoursesRemaining,
+            ElectiveCoursesRemaining = dto.ElectiveCoursesRemaining,
+
+            GraduationSemester = dto.ProjectedGraduation,
+            SemestersCompleted = dto.SemestersCompleted,
+            TotalSemesters = dto.TotalSemesters,
+
+            CurrentCourses = dto.CurrentCourses
+                .Select(c => new EnrolledCourseViewModel
+                {
+                    Code = c.Code,
+                    Name = c.Name,
+                    Schedule = $"{c.CreditHours} credit hours",
+                    CreditHours = c.CreditHours,
+                    IsElective = c.IsElective
+                })
+                .ToList()
+        };
+    }
+
+    private static string FormatSemester(SemesterType semester, string? academicYear)
+    {
+        var semesterName = semester switch
+        {
+            SemesterType.Fall => "Fall",
+            SemesterType.Spring => "Spring",
+            _ => "Summer"
+        };
+
+        if (!string.IsNullOrWhiteSpace(academicYear))
+        {
+            var year = academicYear.Split('-').FirstOrDefault() ?? DateTime.UtcNow.Year.ToString();
+            return $"{semesterName} {year}";
+        }
+
+        return $"{semesterName} {DateTime.UtcNow.Year}";
+    }
+
+    private static string FormatStanding(AcademicStanding standing) => standing switch
+    {
+        AcademicStanding.Good => "Good Standing",
+        AcademicStanding.Warning => "Academic Warning",
+        AcademicStanding.Probation => "Probation",
+        AcademicStanding.Dismissed => "Dismissed",
+        _ => "Good Standing"
+    };
+
 
     private static string GetInitials(string name)
     {
