@@ -7,6 +7,7 @@ using Cursus.Domain.Enums;
 using Cursus.Domain.Constants;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Interfaces.Services;
+using Cursus.BLL.Services;
 using Cursus.PL.Models;
 
 namespace Cursus.PL.Controllers;
@@ -17,15 +18,18 @@ public class StudentController : Controller
     private readonly UserManager<AppUser> _userManager;
     private readonly IProgressService _progressService;
     private readonly IStudentDashboardService _dashboardService;
+    private readonly IAiAdvisorService _aiAdvisorService;
 
     public StudentController(
         UserManager<AppUser> userManager,
         IProgressService progressService,
-        IStudentDashboardService dashboardService)
+        IStudentDashboardService dashboardService,
+        IAiAdvisorService aiAdvisorService)
     {
         _userManager      = userManager;
         _progressService  = progressService;
         _dashboardService = dashboardService;
+        _aiAdvisorService = aiAdvisorService;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -63,6 +67,48 @@ public class StudentController : Controller
         return View(new ProgressViewModel { Audit = audit });
     }
     public IActionResult AiAdvisor() => View();
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AiAdvisorChat(
+        [FromBody] AiAdvisorChatRequest? request,
+        CancellationToken cancellationToken)
+    {
+        var message = request?.Message?.Trim();
+        if (string.IsNullOrWhiteSpace(message) || message.Length > 2000)
+        {
+            return BadRequest(AiAdvisorResponseDto.Failure(
+                "invalid_message",
+                "Enter a message between 1 and 2000 characters."));
+        }
+
+        var studentId = _userManager.GetUserId(User);
+        if (string.IsNullOrWhiteSpace(studentId))
+        {
+            return Unauthorized(AiAdvisorResponseDto.Failure(
+                "student_not_authenticated",
+                "Sign in with a student account to use the AI advisor."));
+        }
+
+        var audit = await _progressService.GetGraduationAuditAsync(studentId);
+        if (audit is null)
+        {
+            return UnprocessableEntity(AiAdvisorResponseDto.Failure(
+                "student_context_unavailable",
+                "Your academic profile could not be loaded. Please contact your faculty advisor."));
+        }
+
+        var studentContext = AiAdvisorContextFactory.Create(audit);
+        var response = await _aiAdvisorService.GetAdvisorResponseAsync(
+            studentContext,
+            message,
+            cancellationToken);
+
+        return response.Succeeded
+            ? Ok(response)
+            : StatusCode(StatusCodes.Status503ServiceUnavailable, response);
+    }
+
     public IActionResult GpaSimulator() => View();
     public IActionResult ImpactAnalyzer() => View();
 

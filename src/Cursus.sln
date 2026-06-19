@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.Domain", "Cursus.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.BLL.Tests", "..\tests\Cursus.BLL.Tests\Cursus.BLL.Tests.csproj", "{8EB1892C-8081-46AF-A204-4313256B68ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.PL.Tests", "..\tests\Cursus.PL.Tests\Cursus.PL.Tests.csproj", "{5D5D458A-E064-4C7E-927A-9DE528ED4808}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{8EB1892C-8081-46AF-A204-4313256B68ED}.Release|x64.Build.0 = Release|Any CPU
 		{8EB1892C-8081-46AF-A204-4313256B68ED}.Release|x86.ActiveCfg = Release|Any CPU
 		{8EB1892C-8081-46AF-A204-4313256B68ED}.Release|x86.Build.0 = Release|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Debug|x64.Build.0 = Debug|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Debug|x86.Build.0 = Debug|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Release|x64.ActiveCfg = Release|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Release|x64.Build.0 = Release|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Release|x86.ActiveCfg = Release|Any CPU
+		{5D5D458A-E064-4C7E-927A-9DE528ED4808}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

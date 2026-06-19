@@ -20,6 +20,18 @@ public sealed class AiAdvisorPromptBuilderTests
             CreditsCompleted = 84,
             CreditsRequired = 132,
             ProjectedGraduation = "Spring 2027",
+            CategoryProgress =
+            [
+                new AiAdvisorCategoryProgressDto
+                {
+                    Label = "Core Courses",
+                    RequiredCredits = 72,
+                    EarnedCredits = 60,
+                    InProgressCredits = 3,
+                    Percentage = 83,
+                    IsSatisfied = false
+                }
+            ],
             CompletedCourses =
             [
                 new AiAdvisorCourseDto
@@ -57,6 +69,7 @@ public sealed class AiAdvisorPromptBuilderTests
         Assert.Contains("Department: Computer Science", prompt);
         Assert.Contains("Cumulative GPA: 3.24", prompt);
         Assert.Contains("Credits completed: 84/132", prompt);
+        Assert.Contains("Core Courses: 60/72 credits earned, 3 in progress, 83% (remaining)", prompt);
         Assert.Contains("CS201: Data Structures, grade B+", prompt);
         Assert.Contains("CS301: Operating Systems", prompt);
         Assert.Contains("MTH102: Calculus II, grade D", prompt);
@@ -76,7 +89,7 @@ public sealed class AiAdvisorPromptBuilderTests
         Assert.Contains("Academic standing: Unknown", prompt);
         Assert.Contains("Credits completed: Unknown", prompt);
         Assert.Contains("Projected graduation: Unknown", prompt);
-        Assert.Equal(3, CountOccurrences(prompt, "- None provided"));
+        Assert.Equal(4, CountOccurrences(prompt, "- None provided"));
     }
 
     private static int CountOccurrences(string value, string search)

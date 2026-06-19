@@ -17,9 +17,23 @@ public sealed class AiAdvisorContextDto
     public int? CreditsRequired { get; init; }
     public string ProjectedGraduation { get; init; } = string.Empty;
 
+    public IReadOnlyCollection<AiAdvisorCategoryProgressDto> CategoryProgress { get; init; } = [];
     public IReadOnlyCollection<AiAdvisorCourseDto> CompletedCourses { get; init; } = [];
     public IReadOnlyCollection<AiAdvisorCourseDto> InProgressCourses { get; init; } = [];
     public IReadOnlyCollection<AiAdvisorCourseDto> FailedOrLowGradeCourses { get; init; } = [];
+}
+
+/// <summary>
+/// Credit progress for one graduation requirement category.
+/// </summary>
+public sealed class AiAdvisorCategoryProgressDto
+{
+    public string Label { get; init; } = string.Empty;
+    public int RequiredCredits { get; init; }
+    public int EarnedCredits { get; init; }
+    public int InProgressCredits { get; init; }
+    public int Percentage { get; init; }
+    public bool IsSatisfied { get; init; }
 }
 
 /// <summary>

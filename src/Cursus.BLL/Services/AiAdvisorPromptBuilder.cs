@@ -34,6 +34,7 @@ public static class AiAdvisorPromptBuilder
         prompt.AppendLine($"Projected graduation: {Clean(context.ProjectedGraduation, "Unknown")}");
         prompt.AppendLine();
 
+        AppendCategoryProgress(prompt, context.CategoryProgress);
         AppendCourses(prompt, "COMPLETED COURSES", context.CompletedCourses);
         AppendCourses(prompt, "IN-PROGRESS COURSES", context.InProgressCourses);
         AppendCourses(prompt, "FAILED OR LOW-GRADE COURSES", context.FailedOrLowGradeCourses);
@@ -45,6 +46,32 @@ public static class AiAdvisorPromptBuilder
         prompt.AppendLine("- Keep the response to 3-5 short paragraphs unless the student asks for a list.");
 
         return prompt.ToString().Trim();
+    }
+
+    private static void AppendCategoryProgress(
+        StringBuilder prompt,
+        IEnumerable<AiAdvisorCategoryProgressDto>? categories)
+    {
+        prompt.AppendLine("DEGREE PROGRESS BY CATEGORY");
+
+        var safeCategories = categories?.ToList() ?? [];
+        if (safeCategories.Count == 0)
+        {
+            prompt.AppendLine("- None provided");
+            prompt.AppendLine();
+            return;
+        }
+
+        foreach (var category in safeCategories)
+        {
+            var status = category.IsSatisfied ? "satisfied" : "remaining";
+            prompt.AppendLine(
+                $"- {Clean(category.Label, "Unknown category")}: " +
+                $"{category.EarnedCredits}/{category.RequiredCredits} credits earned, " +
+                $"{category.InProgressCredits} in progress, {category.Percentage}% ({status})");
+        }
+
+        prompt.AppendLine();
     }
 
     private static void AppendCourses(
