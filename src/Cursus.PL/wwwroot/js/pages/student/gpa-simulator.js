@@ -21,8 +21,7 @@ const CURRENT_COURSES = [
 ];
 
 const IMPROVABLE_COURSES = [
-  { id: 'MTH102', name: 'Calculus II',    credits: 3, originalGrade: 'D',  originalPoints: 1.00 },
-  { id: 'CS102',  name: 'Programming I',  credits: 3, originalGrade: 'D+', originalPoints: 1.33 },
+  { id: 'MTH102', name: 'Calculus II',    credits: 3, originalGrade: 'F', originalPoints: 0.00 },
 ];
 
 /* ── Custom grade dropdown ───────────────────── */
@@ -81,8 +80,9 @@ function renderImprovementTable() {
   body.innerHTML = '';
 
   IMPROVABLE_COURSES.forEach((c, i) => {
+    // Only show grades strictly better than F (i.e. D+ and above)
     const eligibleGrades = ['—', ...Object.keys(GRADE_SCALE).filter(
-      g => GRADE_SCALE[g] > c.originalPoints
+      g => GRADE_SCALE[g] > 0.00
     )];
 
     const row = document.createElement('div');
