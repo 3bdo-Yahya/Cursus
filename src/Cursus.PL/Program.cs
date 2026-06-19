@@ -124,7 +124,7 @@ public class Program
                         $"Unable to create default admin user: {string.Join(", ", createResult.Errors.Select(error => error.Description))}");
             }
         }
-        
+
         // Ensure admin UniversityId is set to the configured university
         if (adminUser.UniversityId != adminUniversity.Id)
         {
@@ -144,7 +144,7 @@ public class Program
                 throw new InvalidOperationException(
                     $"Unable to assign 'Admin' role to seeded admin user: {string.Join(", ", addRoleResult.Errors.Select(error => error.Description))}");
         }
-        
+
         Console.WriteLine($"[Seeding] Admin user seeded and linked to {adminUniversity.Name} university");
     }
 
