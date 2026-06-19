@@ -4,6 +4,6 @@ namespace Cursus.Domain.Interfaces.Services
 {
     public interface ICourseMapService
     {
-        Task<CourseGraphDto> GetCourseGraphForStudentAsync(int studentId, int departmentId);
+        Task<CourseGraphDto> GetCourseGraphForStudentAsync(string studentId, int departmentId);
     }
 }
