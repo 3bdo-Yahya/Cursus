@@ -348,7 +348,7 @@ public sealed class ProgressService : IProgressService
         return current switch
         {
             SemesterType.Fall   => (SemesterType.Spring, year),
-            SemesterType.Spring => (SemesterType.Fall,   year + 1),
+            SemesterType.Spring => (SemesterType.Summer, year),
             SemesterType.Summer => (SemesterType.Fall,   year + 1),
             _                   => (SemesterType.Spring, year)
         };
