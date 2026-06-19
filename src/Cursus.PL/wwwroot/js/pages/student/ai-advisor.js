@@ -1,21 +1,4 @@
-/* ── Student context ─ */
-const STUDENT_CONTEXT = {
-  name:        'Ahmed Kamal',
-  department:  'Computer Science',
-  year:        3,
-  semester:    'Spring 2026',
-  cgpa:        3.24,
-  standing:    'Good Standing',
-  completed:   84,
-  total:       132,
-  graduation:  'Spring 2027',
-  completed_courses: [
-    'CS101 (A), CS201 (B+), CS202 (B), AI402 (A-), WEB200 (B+)',
-    'MUS101 (A), ART200 (B), ENG102 (B+), HIST201 (A-), PHYS101 (B)'
-  ].join(', '),
-  in_progress: 'CS301 Operating Systems, MTH201 Linear Algebra, ENG201 Technical Writing, CS303 Computer Networks, CS202 Discrete Mathematics',
-  failed:      'MTH102 (D), CS102 (D+)',
-};
+const ADVISOR_CHAT_ENDPOINT = '/Student/AiAdvisorChat';
 
 /* ── Chat state ─────────────────────────────────────────── */
 let chatHistory = [];        
@@ -95,10 +78,11 @@ function appendMessage(role, text) {
 
   const bubble = document.createElement('div');
   bubble.className = `msg-bubble ${isAI ? 'ai' : 'user'}`;
+  const safeText = escapeHTML(text);
   bubble.innerHTML = isAI
-    ? text.replace(/\b([A-Z]{2,4}\d{3}[A-Z]?)\b/g, '<span class="course-ref">$1</span>')
-           .replace(/\n/g, '<br>')
-    : escapeHTML(text).replace(/\n/g, '<br>');
+    ? safeText.replace(/\b([A-Z]{2,4}\d{3}[A-Z]?)\b/g, '<span class="course-ref">$1</span>')
+              .replace(/\n/g, '<br>')
+    : safeText.replace(/\n/g, '<br>');
 
   body.appendChild(sender);
   body.appendChild(bubble);
@@ -151,9 +135,10 @@ function removeTyping() {
 }
 
 /* ── Error banner ───────────────────────────────────────── */
-function appendErrorBanner() {
+function appendErrorBanner(message) {
   const wrap = document.createElement('div');
   wrap.className = 'error-banner';
+  const fallbackMessage = message || 'Please try again in a moment.';
   wrap.innerHTML = `
     <div class="error-icon">
       <span class="material-symbols-outlined">warning</span>
@@ -161,7 +146,7 @@ function appendErrorBanner() {
     <div>
       <p class="fw-800 mb-1" style="font-size:13px;color:var(--alert-warn-title);">AI Advisor is temporarily unavailable</p>
       <p class="mb-0" style="font-size:12.5px;color:var(--alert-warn-text);line-height:1.6;">
-        Please try again in a moment. While we reconnect, you can review your
+        ${escapeHTML(fallbackMessage)} While we reconnect, you can review your
         <a href="/Student/Progress" style="color:var(--c-primary);font-weight:700;">Progress Tracker</a>
         or use the
         <a href="/Student/GpaSimulator" style="color:var(--c-primary);font-weight:700;">GPA Simulator</a>
@@ -182,43 +167,61 @@ function escapeHTML(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/** Local demo only — replace with `fetch('/api/ai-advisor/chat', …)` once the backend exists. */
-async function mockAdvisorReply(userText) {
-  await new Promise((r) => setTimeout(r, 600 + Math.random() * 400));
-  const lower = userText.toLowerCase();
-  if (/fail|drop|withdraw/i.test(lower)) {
-    return 'If you are considering a withdrawal, open the **Impact Analyzer** to see which downstream courses become blocked and whether your graduation term shifts. I can also walk through recovery options once you share the course code.';
-  }
-  if (/gpa|grade|standing/i.test(lower)) {
-    return `Your current CGPA is **${STUDENT_CONTEXT.cgpa}** (${STUDENT_CONTEXT.standing}). Check the **GPA Simulator** to model "what-if" grades for this semester.`;
-  }
-  return `Thanks for your question. With your **${STUDENT_CONTEXT.completed}** of **${STUDENT_CONTEXT.total}** credits completed, focus on clearing prerequisites for **${STUDENT_CONTEXT.in_progress.split(',')[0].trim() || 'your in-progress courses'}**. For anything that depends on failing a course, use the **Course Map** cascade view.`;
+/* ── Server endpoint helpers ───────────────────────────── */
+function getAntiForgeryToken() {
+  return document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
 }
 
-/* ── Build system prompt with student context ───────────── */
-function buildSystemPrompt() {
-  return `You are a friendly and supportive academic advisor at a credit-hour university using the Cursus platform.
-You help students understand their academic situation and make informed decisions.
+function readAdvisorResponse(payload) {
+  if (!payload || typeof payload !== 'object') {
+    return {
+      succeeded: false,
+      message: 'The AI advisor returned an unexpected response.'
+    };
+  }
 
-Student Data:
-- Name: ${STUDENT_CONTEXT.name}
-- Department: ${STUDENT_CONTEXT.department}
-- Academic Year: ${STUDENT_CONTEXT.year}, Current Semester: ${STUDENT_CONTEXT.semester}
-- Cumulative GPA: ${STUDENT_CONTEXT.cgpa}
-- Academic Standing: ${STUDENT_CONTEXT.standing}
-- Credits Completed: ${STUDENT_CONTEXT.completed}/${STUDENT_CONTEXT.total}
-- Projected Graduation: ${STUDENT_CONTEXT.graduation}
-- Completed Courses: ${STUDENT_CONTEXT.completed_courses}
-- In-Progress Courses: ${STUDENT_CONTEXT.in_progress}
-- Failed/Low-Grade Courses (eligible for improvement): ${STUDENT_CONTEXT.failed}
+  return {
+    succeeded: payload.succeeded ?? payload.Succeeded ?? false,
+    message: payload.message ?? payload.Message ?? '',
+    errorCode: payload.errorCode ?? payload.ErrorCode ?? null
+  };
+}
 
-Guidelines:
-- Be supportive and encouraging, but honest about academic risks.
-- Always reference specific course codes and names when relevant.
-- If the student asks about consequences of failing a course, suggest they use the Impact Analyzer for detailed cascade analysis.
-- Keep responses concise (3–5 short paragraphs maximum).
-- Do not make up course names or requirements not in the data above.
-- Format course codes clearly (e.g. CS301).`;
+async function parseAdvisorPayload(response) {
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    return {
+      succeeded: false,
+      message: await response.text()
+    };
+  }
+
+  return readAdvisorResponse(await response.json());
+}
+
+async function requestAdvisorReply(userText) {
+  const token = getAntiForgeryToken();
+  if (!token) {
+    throw new Error('The secure chat token is missing. Refresh the page and try again.');
+  }
+
+  const response = await fetch(ADVISOR_CHAT_ENDPOINT, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'RequestVerificationToken': token
+    },
+    body: JSON.stringify({ message: userText })
+  });
+
+  const result = await parseAdvisorPayload(response);
+  if (!response.ok || !result.succeeded) {
+    throw new Error(result.message || 'The AI advisor is temporarily unavailable. Please try again later.');
+  }
+
+  return result.message;
 }
 
 /* ── Main send function ─────────────────────────────────── */
@@ -242,9 +245,7 @@ async function sendMessage() {
   appendTyping();
 
   try {
-    // Do not call third-party LLM APIs from the browser (keys would be exposed). Production will use a
-    // server endpoint, e.g. POST /api/ai-advisor/chat, with the key stored only on the server.
-    const reply = await mockAdvisorReply(text);
+    const reply = await requestAdvisorReply(text);
 
     removeTyping();
     appendMessage('ai', reply);
@@ -252,7 +253,7 @@ async function sendMessage() {
 
   } catch (err) {
     removeTyping();
-    appendErrorBanner();
+    appendErrorBanner(err.message);
     chatInput.value = text;
     chatHistory.pop(); 
     autoResize(chatInput);
