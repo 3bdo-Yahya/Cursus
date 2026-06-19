@@ -1,4 +1,6 @@
-const ADVISOR_CHAT_ENDPOINT = '/Student/AiAdvisorChat';
+const advisorPage = document.querySelector('[data-advisor-chat-url]');
+const ADVISOR_CHAT_ENDPOINT = advisorPage?.dataset.advisorChatUrl || '/Student/AiAdvisorChat';
+const DEFAULT_ERROR_MESSAGE = 'Please try again in a moment.';
 
 /* ── Chat state ─────────────────────────────────────────── */
 let chatHistory = [];        
@@ -66,7 +68,7 @@ function appendMessage(role, text) {
   if (isAI) {
     av.innerHTML = `<span class="material-symbols-outlined">smart_toy</span>`;
   } else {
-    av.textContent = 'AK';
+    av.textContent = 'You';
   }
 
   const body = document.createElement('div');
@@ -138,7 +140,7 @@ function removeTyping() {
 function appendErrorBanner(message) {
   const wrap = document.createElement('div');
   wrap.className = 'error-banner';
-  const fallbackMessage = message || 'Please try again in a moment.';
+  const fallbackMessage = normalizeFallbackMessage(message);
   wrap.innerHTML = `
     <div class="error-icon">
       <span class="material-symbols-outlined">warning</span>
@@ -146,7 +148,7 @@ function appendErrorBanner(message) {
     <div>
       <p class="fw-800 mb-1" style="font-size:13px;color:var(--alert-warn-title);">AI Advisor is temporarily unavailable</p>
       <p class="mb-0" style="font-size:12.5px;color:var(--alert-warn-text);line-height:1.6;">
-        ${escapeHTML(fallbackMessage)} While we reconnect, you can review your
+        ${escapeHTML(fallbackMessage)} You can also review your
         <a href="/Student/Progress" style="color:var(--c-primary);font-weight:700;">Progress Tracker</a>
         or use the
         <a href="/Student/GpaSimulator" style="color:var(--c-primary);font-weight:700;">GPA Simulator</a>
@@ -164,7 +166,11 @@ function scrollToBottom() {
 
 /* ── Escape HTML ────────────────────────────────────────── */
 function escapeHTML(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
 }
 
 /* ── Server endpoint helpers ───────────────────────────── */
@@ -187,16 +193,50 @@ function readAdvisorResponse(payload) {
   };
 }
 
+function buildGenericErrorMessage(response) {
+  if (response.status === 401 || response.status === 403 || response.redirected) {
+    return 'Your session may have expired. Refresh the page and sign in again.';
+  }
+
+  if (response.status === 400) {
+    return 'The advisor could not read that message. Please check it and try again.';
+  }
+
+  if (response.status >= 500) {
+    return 'The advisor service is temporarily unavailable. Please try again later.';
+  }
+
+  return DEFAULT_ERROR_MESSAGE;
+}
+
+function normalizeFallbackMessage(message) {
+  const safeMessage = String(message || DEFAULT_ERROR_MESSAGE).trim();
+  if (!safeMessage || /<(!doctype|html|head|body|form)\b/i.test(safeMessage)) {
+    return DEFAULT_ERROR_MESSAGE;
+  }
+
+  return safeMessage.length > 240
+    ? `${safeMessage.slice(0, 237)}...`
+    : safeMessage;
+}
+
 async function parseAdvisorPayload(response) {
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('application/json')) {
     return {
       succeeded: false,
-      message: await response.text()
+      message: buildGenericErrorMessage(response)
     };
   }
 
-  return readAdvisorResponse(await response.json());
+  try {
+    return readAdvisorResponse(await response.json());
+  } catch {
+    return {
+      succeeded: false,
+      message: buildGenericErrorMessage(response)
+    };
+  }
 }
 
 async function requestAdvisorReply(userText) {
