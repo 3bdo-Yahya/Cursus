@@ -12,8 +12,22 @@ const COMPLETED_CREDITS = window.STUDENT_DATA?.completedCredits ?? 0;
 const COMPLETED_QP = window.STUDENT_DATA?.completedQp ?? 0;
 const CURRENT_CGPA = window.STUDENT_DATA?.currentCgpa ?? 0;
 
+<<<<<<< HEAD
 const CURRENT_COURSES = window.STUDENT_DATA?.currentCourses ?? [];
 const IMPROVABLE_COURSES = window.STUDENT_DATA?.improvableCourses ?? [];
+=======
+const CURRENT_COURSES = [
+  { id: 'CS202',  name: 'Discrete Mathematics', credits: 3 },
+  { id: 'MTH201', name: 'Linear Algebra',        credits: 3 },
+  { id: 'CS301',  name: 'Operating Systems',     credits: 3 },
+  { id: 'ENG201', name: 'Technical Writing',     credits: 2 },
+  { id: 'CS303',  name: 'Computer Networks',     credits: 3 },
+];
+
+const IMPROVABLE_COURSES = [
+  { id: 'MTH102', name: 'Calculus II',    credits: 3, originalGrade: 'F', originalPoints: 0.00 },
+];
+>>>>>>> origin/feature/S3-003-wire-progress-tracker-gpa-simulator
 
 /* ── Custom grade dropdown ───────────────────── */
 function buildCustomSelect(grades, idx, type) {
@@ -71,8 +85,9 @@ function renderImprovementTable() {
   body.innerHTML = '';
 
   IMPROVABLE_COURSES.forEach((c, i) => {
+    // Only show grades strictly better than F (i.e. D+ and above)
     const eligibleGrades = ['—', ...Object.keys(GRADE_SCALE).filter(
-      g => GRADE_SCALE[g] > c.originalPoints
+      g => GRADE_SCALE[g] > 0.00
     )];
 
     const row = document.createElement('div');
