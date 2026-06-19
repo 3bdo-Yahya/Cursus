@@ -1,4 +1,3 @@
-using Cursus.BLL.Interfaces;
 using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
@@ -55,7 +54,7 @@ namespace Cursus.BLL.Services
                 var term = searchTerm.Trim().ToLower();
                 query = query.Where(u =>
                     (u.UserName != null && u.UserName.ToLower().Contains(term)) ||
-                    (u.Email    != null && u.Email.ToLower().Contains(term)));
+                    (u.Email != null && u.Email.ToLower().Contains(term)));
             }
 
             return await query.OrderBy(u => u.UserName).ToListAsync();
@@ -122,11 +121,11 @@ namespace Cursus.BLL.Services
 
             var record = new StudentCourse
             {
-                StudentId    = studentId,
-                CourseId     = courseId,
-                Grade        = NormalizeGrade(grade),
-                Status       = await resolvedStatus,
-                Semester     = semester,
+                StudentId = studentId,
+                CourseId = courseId,
+                Grade = NormalizeGrade(grade),
+                Status = await resolvedStatus,
+                Semester = semester,
                 AcademicYear = academicYear
             };
 
@@ -148,7 +147,7 @@ namespace Cursus.BLL.Services
                 ?? throw new KeyNotFoundException(
                     $"StudentCourse record with id {recordId} was not found.");
 
-            record.Grade  = NormalizeGrade(grade);
+            record.Grade = NormalizeGrade(grade);
             record.Status = await ResolveStatus(grade, status, record.CourseId);
 
             await _context.SaveChangesAsync();
@@ -204,7 +203,7 @@ namespace Cursus.BLL.Services
         /// </summary>
         private static bool IsGradeAtLeast(string grade, string threshold)
         {
-            var gradeIdx     = IndexOf(grade);
+            var gradeIdx = IndexOf(grade);
             var thresholdIdx = IndexOf(threshold);
 
             // Unknown grades are treated as failing.

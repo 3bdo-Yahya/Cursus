@@ -1,7 +1,7 @@
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
 
-namespace Cursus.BLL.Interfaces
+namespace Cursus.Domain.Interfaces.Services
 {
     public interface IStudentManagementService
     {
