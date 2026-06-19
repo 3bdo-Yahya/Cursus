@@ -1,25 +1,15 @@
-<<<<<<< HEAD
-using Cursus.Domain.Constants;
-using Cursus.Domain.Entities;
-using Cursus.Domain.Enums;
-using Cursus.PL.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Cursus.DAL.Database;
-using Microsoft.EntityFrameworkCore;
-=======
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
 using Cursus.Domain.Constants;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Interfaces.Services;
 using Cursus.PL.Models;
->>>>>>> origin/feature/S3-003-wire-progress-tracker-gpa-simulator
 
 namespace Cursus.PL.Controllers;
 
@@ -27,27 +17,20 @@ namespace Cursus.PL.Controllers;
 public class StudentController : Controller
 {
     private readonly UserManager<AppUser> _userManager;
-<<<<<<< HEAD
     private readonly ApplicationDbContext _db;
-    public StudentController(
-    UserManager<AppUser> userManager,
-    ApplicationDbContext db)
-    {
-        _userManager = userManager;
-        _db = db;
-=======
     private readonly IProgressService _progressService;
     private readonly IStudentDashboardService _dashboardService;
 
     public StudentController(
         UserManager<AppUser> userManager,
+        ApplicationDbContext db,
         IProgressService progressService,
         IStudentDashboardService dashboardService)
     {
-        _userManager      = userManager;
-        _progressService  = progressService;
+        _userManager = userManager;
+        _db = db;
+        _progressService = progressService;
         _dashboardService = dashboardService;
->>>>>>> origin/feature/S3-003-wire-progress-tracker-gpa-simulator
     }
 
     public async Task<IActionResult> Dashboard()
@@ -102,11 +85,13 @@ public class StudentController : Controller
         if (student is null)
             return NotFound();
 
-        // Resolve Grade Scale for their university
-        var gradeScale = await _db.GradeScales
-            .AsNoTracking()
-            .Where(gs => gs.UniversityId == student.Department.UniversityId)
-            .ToDictionaryAsync(gs => gs.LetterGrade.ToUpper(), gs => (double)gs.PointValue);
+        // Resolve Grade Scale for their university, safe from null department
+        var gradeScale = student.Department is not null
+            ? await _db.GradeScales
+                .AsNoTracking()
+                .Where(gs => gs.UniversityId == student.Department.UniversityId)
+                .ToDictionaryAsync(gs => gs.LetterGrade.ToUpper(), gs => (double)gs.PointValue)
+            : new Dictionary<string, double>();
 
         if (gradeScale.Count == 0) // Default fallback
         {
@@ -129,15 +114,38 @@ public class StudentController : Controller
 
         var studentCourses = student.StudentCourses.ToList();
 
-        // Completed Courses
-        var completedCourses = studentCourses
+        // Group by CourseId to filter out duplicates / retakes (Completed > InProgress > Failed)
+        var studentCourseMap = studentCourses
+            .GroupBy(sc => sc.CourseId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.OrderBy(sc => sc.Status switch
+                {
+                    StudentCourseStatus.Completed => 0,
+                    StudentCourseStatus.InProgress => 1,
+                    StudentCourseStatus.Failed => 2,
+                    _ => 3
+                }).First());
+
+        var bestAttempts = studentCourseMap.Values.ToList();
+
+        // Completed Courses (only status == Completed)
+        var completedCourses = bestAttempts
             .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
             .ToList();
 
         var completedCredits = completedCourses.Sum(sc => sc.Course!.CreditHours);
 
+        // Graded Courses (Completed or Failed best attempts with grades)
+        var gradedCourses = bestAttempts
+            .Where(sc => (sc.Status == StudentCourseStatus.Completed || sc.Status == StudentCourseStatus.Failed)
+                         && !string.IsNullOrWhiteSpace(sc.Grade) && sc.Course is not null)
+            .ToList();
+
+        var gpaHours = gradedCourses.Sum(sc => sc.Course!.CreditHours);
+
         // Calculate completed Quality Points (QP)
-        double completedQp = completedCourses
+        double completedQp = gradedCourses
             .Sum(sc => (gradeScale.TryGetValue(sc.Grade?.Trim().ToUpper() ?? "", out var pts) ? pts : 0.0) * sc.Course!.CreditHours);
 
         // Current In-Progress Courses
@@ -152,7 +160,7 @@ public class StudentController : Controller
             .ToList();
 
         // Improvable Courses (Original Grade <= D+ or F)
-        var improvableCourses = studentCourses
+        var improvableCourses = bestAttempts
             .Where(sc => (sc.Status == StudentCourseStatus.Failed || sc.Grade == "D" || sc.Grade == "D+") && sc.Course is not null)
             .Select(sc => new ImprovableCourseViewModel
             {
@@ -183,6 +191,7 @@ public class StudentController : Controller
             AcademicStanding = student.CurrentStanding.ToString(),
             CompletedCredits = completedCredits,
             CompletedQp = completedQp,
+            GpaHours = gpaHours,
             CurrentCourses = currentCourses,
             ImprovableCourses = improvableCourses,
             GradeScale = gradeScale

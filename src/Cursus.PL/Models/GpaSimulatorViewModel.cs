@@ -14,6 +14,7 @@ public class GpaSimulatorViewModel
     public required string AcademicStanding { get; init; }
     public int CompletedCredits { get; init; }
     public double CompletedQp { get; init; }
+    public int GpaHours { get; init; }
 
     public required List<SimulatedCourseViewModel> CurrentCourses { get; init; }
     public required List<ImprovableCourseViewModel> ImprovableCourses { get; init; }
