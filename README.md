@@ -23,7 +23,7 @@ Cursus is a web platform that helps university students **see, understand, and p
 | Graph Viz      | Cytoscape.js (interactive prerequisite map) |
 | Database       | SQL Server + Entity Framework Core          |
 | Auth           | ASP.NET Identity (cookie-based, role-based) |
-| AI             | OpenAI API (GPT-3.5-turbo)                  |
+| AI             | OpenAI API (configurable chat model)         |
 | CI/CD          | GitHub Actions (`dotnet-ci.yml`)            |
 
 ---
@@ -131,6 +131,9 @@ dotnet restore
 # Apply database migrations
 dotnet ef database update --project Cursus.DAL --startup-project Cursus.PL
 
+# Configure the OpenAI key for local development
+dotnet user-secrets set "OpenAi:ApiKey" "YOUR_API_KEY" --project Cursus.PL
+
 # Run the application
 dotnet run --project Cursus.PL
 ```
@@ -140,6 +143,10 @@ The app will be available at `https://localhost:5001` (or the port shown in the 
 > **Note:** For detailed OS-specific setup instructions (Windows vs Linux/Docker), see [SETUP.md](SETUP.md).
 
 > **Security:** If you enable identity seeding for local testing, provide seed admin credentials through secure local configuration such as environment variables or .NET user-secrets. Do not rely on seeded credentials in shared or production environments.
+
+The OpenAI key must also remain outside source control. In deployed environments, set
+`OpenAi__ApiKey` as an environment variable. The model and generation limits can be
+configured through the `OpenAi` section in `Cursus.PL/appsettings.json`.
 
 ---
 

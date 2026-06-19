@@ -9,6 +9,7 @@ using Cursus.PL.Models.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Cursus.BLL.Interfaces;
+using Cursus.BLL.Options;
 
 namespace Cursus.PL
 {
@@ -45,6 +46,8 @@ namespace Cursus.PL
  
             services.Configure<IdentitySeedOptions>(
                 configuration.GetSection("IdentitySeed"));
+            services.Configure<OpenAiOptions>(
+                configuration.GetSection(OpenAiOptions.SectionName));
  
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -60,6 +63,8 @@ namespace Cursus.PL
             services.AddScoped<IAdminDashboardService, AdminDashboardService>();
             services.AddScoped<IStudentManagementService, StudentManagementService>();
             services.AddScoped<IProgressService, ProgressService>();
+            services.AddSingleton<IOpenAiChatClient, OpenAiChatClient>();
+            services.AddScoped<IAiAdvisorService, AiAdvisorService>();
             #endregion
 
 

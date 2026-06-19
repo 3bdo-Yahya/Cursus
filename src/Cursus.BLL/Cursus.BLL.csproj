@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="NuGet.Packaging" Version="6.12.1" />
     <PackageReference Include="NuGet.Protocol" Version="6.12.1" />
+    <PackageReference Include="OpenAI" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
