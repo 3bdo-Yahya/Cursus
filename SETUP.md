@@ -104,7 +104,53 @@ dotnet restore
 
 ---
 
-## 3. Database Migrations
+## 3. OpenAI AI Advisor Key
+
+The AI Advisor uses OpenAI through the `OpenAi` configuration section in `src/Cursus.PL/appsettings.json`.
+
+Never commit a real OpenAI API key to `appsettings.json`, `appsettings.Development.json`, or any other tracked file. For local development, store the key with .NET user secrets.
+
+From the `src/` directory:
+
+```bash
+# Store your local OpenAI API key securely
+dotnet user-secrets set "OpenAi:ApiKey" "YOUR_OPENAI_API_KEY" --project Cursus.PL
+```
+
+The web project already has a `UserSecretsId`, so `dotnet user-secrets init` should not be needed. If you ever create a new web project or remove the `UserSecretsId`, initialize secrets first:
+
+```bash
+dotnet user-secrets init --project Cursus.PL
+```
+
+Optional local overrides:
+
+```bash
+dotnet user-secrets set "OpenAi:Model" "gpt-4o-mini" --project Cursus.PL
+dotnet user-secrets set "OpenAi:MaxOutputTokenCount" "500" --project Cursus.PL
+dotnet user-secrets set "OpenAi:Temperature" "0.3" --project Cursus.PL
+dotnet user-secrets set "OpenAi:TopP" "0.9" --project Cursus.PL
+```
+
+To confirm the key exists:
+
+```bash
+dotnet user-secrets list --project Cursus.PL
+```
+
+> **Security:** `dotnet user-secrets list` prints secret values. Do not share screenshots or logs that include the output.
+
+For deployed environments, set the key as an environment variable instead of using user secrets:
+
+```bash
+OpenAi__ApiKey=YOUR_OPENAI_API_KEY
+```
+
+The AI Advisor will show the configured fallback message if the key is missing, invalid, or the OpenAI account has no available quota.
+
+---
+
+## 4. Database Migrations
 
 You need to apply the database schema so your local SQL Server knows what tables to create.
 
@@ -117,7 +163,7 @@ dotnet ef database update --project Cursus.DAL --startup-project Cursus.PL
 
 ---
 
-## 4. Running the Application
+## 5. Running the Application
 
 ```bash
 # From the src/ directory:
@@ -141,7 +187,7 @@ On first run, the application will:
 
 ---
 
-## 5. Daily Git Workflow (Gitflow Lite)
+## 6. Daily Git Workflow (Gitflow Lite)
 
 As per our `CONTRIBUTING.md`, we use a structured tracking workflow. We track tasks in **ClickUp** and code in **GitHub**.
 
@@ -159,7 +205,7 @@ As per our `CONTRIBUTING.md`, we use a structured tracking workflow. We track ta
 
 ---
 
-## 6. Common Commands Reference
+## 7. Common Commands Reference
 
 ```bash
 # ── Build & Run ──────────────────────────────────────
@@ -180,7 +226,7 @@ dotnet build --configuration Release                            # Stricter build
 
 ---
 
-## 7. Troubleshooting Common OS Issues
+## 8. Troubleshooting Common OS Issues
 
 - **Line Endings (CRLF vs LF):** Windows uses CRLF for line breaks, Linux uses LF. To prevent Git from showing every file as "modified" just because of line endings, ensure you have `.gitattributes` configured properly (it is already included in our repo). If you have issues, run:
   ```bash
