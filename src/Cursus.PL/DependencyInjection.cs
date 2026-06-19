@@ -61,6 +61,7 @@ namespace Cursus.PL
             services.AddScoped<ICourseMapService, CourseMapService>();
             services.AddScoped<IProgressService, ProgressService>();
             services.AddScoped<IStudentDashboardService, StudentDashboardService>();
+            services.AddScoped<IImpactAnalysisService, ImpactAnalysisService>();
             #endregion
 
 
