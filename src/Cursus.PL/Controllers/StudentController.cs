@@ -40,6 +40,9 @@ public class StudentController : Controller
 
         if (dto.DepartmentName == "Not assigned")
             TempData["Warning"] = "Please contact your admin to assign your department.";
+            
+        else if (!dto.HasAcademicRecords)
+            TempData["Warning"] = "No academic records found yet. Your dashboard will populate once your admin enters your course history.";
 
         var model = MapToViewModel(dto);
         return View(model);
@@ -86,6 +89,9 @@ public class StudentController : Controller
             Year = (dto.SemestersCompleted / 2) + 1,
             Semester = FormatSemester(dto.CurrentSemester, dto.AcademicYear),
             AcademicStanding = FormatStanding(dto.Standing),
+            StandingCssClass = GetStandingCssClass(dto.Standing),
+            StandingAlertMessage = dto.StandingAlert,
+            ShowStandingAlert = dto.Standing != AcademicStanding.Good,
 
             Cgpa = (double)dto.Cgpa,
             MaxGpa = 4.0,
@@ -97,6 +103,7 @@ public class StudentController : Controller
             CoursesRemaining = dto.CoursesRemaining,
             CoreCoursesRemaining = dto.CoreCoursesRemaining,
             ElectiveCoursesRemaining = dto.ElectiveCoursesRemaining,
+            UniversityRequiredCoursesRemaining = dto.UniReqCoursesRemaining,
 
             GraduationSemester = dto.ProjectedGraduation,
             SemestersCompleted = dto.SemestersCompleted,
@@ -142,6 +149,14 @@ public class StudentController : Controller
         _ => "Good Standing"
     };
 
+    private static string GetStandingCssClass(AcademicStanding standing) => standing switch
+    {
+        AcademicStanding.Good => "good",
+        AcademicStanding.Warning => "warning",
+        AcademicStanding.Probation => "danger",
+        AcademicStanding.Dismissed => "danger",
+        _ => "good"
+    };
 
     private static string GetInitials(string name)
     {
