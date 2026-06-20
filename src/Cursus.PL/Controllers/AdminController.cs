@@ -2,11 +2,9 @@ using Cursus.DAL.Database;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
-using Cursus.BLL.Interfaces;
 using Cursus.Domain.Interfaces.Services;
 using Cursus.PL.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -132,11 +130,11 @@ public class AdminController : Controller
 
         var vm = new EditStudentViewModel
         {
-            Id              = student.Id,
-            DisplayName     = student.DisplayName,
-            Email           = student.Email,
-            DepartmentId    = student.DepartmentId ?? 0,
-            AcademicYear    = student.AcademicYear ?? string.Empty,
+            Id = student.Id,
+            DisplayName = student.DisplayName,
+            Email = student.Email,
+            DepartmentId = student.DepartmentId ?? 0,
+            AcademicYear = student.AcademicYear ?? string.Empty,
             CurrentSemester = student.CurrentSemester,
             CurrentStanding = student.CurrentStanding
         };
@@ -161,8 +159,8 @@ public class AdminController : Controller
         if (student is null)
             return NotFound();
 
-        student.DepartmentId    = vm.DepartmentId;
-        student.AcademicYear    = vm.AcademicYear.Trim();
+        student.DepartmentId = vm.DepartmentId;
+        student.AcademicYear = vm.AcademicYear.Trim();
         student.CurrentSemester = vm.CurrentSemester;
         student.CurrentStanding = vm.CurrentStanding;
 
@@ -210,7 +208,7 @@ public class AdminController : Controller
 
         var vm = new AddCourseRecordViewModel
         {
-            StudentId   = id,
+            StudentId = id,
             StudentName = student.DisplayName,
             AcademicYear = DateTime.Today.Year + "-" + (DateTime.Today.Year + 1)
         };
@@ -232,8 +230,8 @@ public class AdminController : Controller
         {
             var duplicate = await _context.StudentCourses.AnyAsync(sc =>
                 sc.StudentId == vm.StudentId &&
-                sc.CourseId  == vm.CourseId  &&
-                sc.Semester  == vm.Semester  &&
+                sc.CourseId == vm.CourseId &&
+                sc.Semester == vm.Semester &&
                 sc.AcademicYear == vm.AcademicYear.Trim());
 
             if (duplicate)
@@ -290,14 +288,14 @@ public class AdminController : Controller
 
         var vm = new EditCourseRecordViewModel
         {
-            RecordId     = record.Id,
-            StudentId    = record.StudentId,
-            StudentName  = record.Student?.DisplayName ?? "Student",
-            CourseCode   = record.Course?.Code ?? string.Empty,
-            CourseName   = record.Course?.Name ?? string.Empty,
-            Grade        = record.Grade,
-            Status       = record.Status,
-            Semester     = record.Semester,
+            RecordId = record.Id,
+            StudentId = record.StudentId,
+            StudentName = record.Student?.DisplayName ?? "Student",
+            CourseCode = record.Course?.Code ?? string.Empty,
+            CourseName = record.Course?.Name ?? string.Empty,
+            Grade = record.Grade,
+            Status = record.Status,
+            Semester = record.Semester,
             AcademicYear = record.AcademicYear
         };
 
