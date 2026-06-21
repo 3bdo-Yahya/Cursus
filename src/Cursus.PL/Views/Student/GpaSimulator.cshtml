@@ -1,6 +1,30 @@
+
+@model Cursus.PL.Models.GpaSimulatorViewModel
+
+
 @{
     ViewData["Title"] = "GPA Simulator";
 }
+
+<script>
+    window.STUDENT_DATA = {
+        completedCredits: @Model.GpaHours,
+        completedQp: @Model.CompletedQp,
+        currentCgpa: @Model.CurrentCgpa,
+
+        currentCourses: @Html.Raw(
+                        System.Text.Json.JsonSerializer.Serialize(Model.CurrentCourses)
+                ),
+
+        improvableCourses: @Html.Raw(
+                        System.Text.Json.JsonSerializer.Serialize(Model.ImprovableCourses)
+                ),
+
+        gradeScale: @Html.Raw(
+                        System.Text.Json.JsonSerializer.Serialize(Model.GradeScale)
+                )
+    };
+</script>
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/student/gpa-simulator.css" asp-append-version="true"/>
@@ -12,7 +36,9 @@
   <section class="anim-fade-up">
     <div class="mb-1">
       <h1 class="fw-900 mb-1" style="font-size:1.55rem;letter-spacing:-.4px;color:var(--c-text);">Progress &amp; Planning</h1>
-      <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Ahmed Kamal · Computer Science · Year 3 · Spring 2026</p>
+            <p class="mb-0" style="font-size:13px;color:var(--c-muted);">
+                @Model.StudentName · @Model.Department · Year @Model.Year · @Model.Semester
+            </p>
     </div>
     <div class="page-tabs mt-3">
       <a href="/Student/Progress" class="page-tab">Progress Tracker</a>
@@ -28,11 +54,15 @@
       <div class="status-bar-card">
         <div class="d-flex">
           <div class="status-bar-item">
-            <div class="status-bar-value" id="current-cgpa-display">3.24</div>
+                        <div class="status-bar-value" id="current-cgpa-display">
+                            @Model.CurrentCgpa.ToString("0.00")
+                        </div>
             <div class="status-bar-label">Current CGPA</div>
           </div>
           <div class="status-bar-item">
-            <div class="status-bar-value" id="last-sgpa-display">2.85</div>
+                        <div class="status-bar-value" id="last-sgpa-display">
+                            @Model.LastSgpa.ToString("0.00")
+                        </div>
             <div class="status-bar-label">Last SGPA</div>
           </div>
           <div class="status-bar-item">
@@ -40,8 +70,8 @@
               <span class="d-inline-flex align-items-center gap-1 rounded-pill px-3 py-1 fw-700"
                     style="font-size:12px;background:var(--standing-bg);color:var(--standing-text);border:1px solid var(--standing-bd);">
                 <span class="rounded-circle" style="width:6px;height:6px;background:currentColor;display:inline-block;flex-shrink:0;"></span>
-                Good Standing
-              </span>
+                                @Model.AcademicStanding
+                            </span>
             </div>
           </div>
         </div>
@@ -140,11 +170,11 @@
             </div>
             <div class="stats-row">
               <span class="stats-label">Total Completed Credits</span>
-              <span class="stats-value">84</span>
-            </div>
+                            <span class="stats-value">@Model.CompletedCredits</span>
+                        </div>
             <div class="stats-row">
               <span class="stats-label">Existing Quality Points</span>
-              <span class="stats-value">272.16</span>
+                            <span class="stats-value">@Model.CompletedQp.ToString("0.00")</span>
             </div>
             <div class="stats-row">
               <span class="stats-label">CGPA Change</span>
