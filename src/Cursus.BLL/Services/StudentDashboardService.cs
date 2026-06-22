@@ -39,8 +39,8 @@ public sealed class StudentDashboardService : IStudentDashboardService
                 g => g.OrderBy(sc => sc.Status switch
                 {
                     StudentCourseStatus.Completed => 0,
-                    StudentCourseStatus.InProgress => 1,
-                    StudentCourseStatus.Failed => 2,
+                    StudentCourseStatus.Failed => 1,
+                    StudentCourseStatus.InProgress => 2,
                     _ => 3
                 }).First());
 
@@ -82,7 +82,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
 
         if (student.DepartmentId is null)
         {
-            // No department assigned yet
+            // No department assigned yet 
         }
         else if (gradReqs.Count > 0)
         {
@@ -113,7 +113,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
         {
             // Fallback if graduation requirements are not seeded/defined for department
             var fallbackCourses = await _db.Courses
-                .Where(c => c.DepartmentId == student.DepartmentId && c.IsActive)
+                .Where(c => (c.DepartmentId == student.DepartmentId || c.CourseType == CourseType.UniversityReq) && c.IsActive)
                 .AsNoTracking()
                 .ToListAsync();
 

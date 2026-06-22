@@ -125,8 +125,8 @@ public class StudentController : Controller
                 g => g.OrderBy(sc => sc.Status switch
                 {
                     StudentCourseStatus.Completed => 0,
-                    StudentCourseStatus.InProgress => 1,
-                    StudentCourseStatus.Failed => 2,
+                    StudentCourseStatus.Failed => 1,
+                    StudentCourseStatus.InProgress => 2,
                     _ => 3
                 }).First());
 
@@ -152,19 +152,40 @@ public class StudentController : Controller
             .Sum(sc => (gradeScale.TryGetValue(sc.Grade?.Trim().ToUpper() ?? "", out var pts) ? pts : 0.0) * sc.Course!.CreditHours);
 
         // Current In-Progress Courses
+        var failedAttempts = studentCourses
+            .Where(sc => sc.Status == StudentCourseStatus.Failed && !string.IsNullOrWhiteSpace(sc.Grade))
+            .GroupBy(sc => sc.CourseId)
+            .ToDictionary(g => g.Key, g => g.First());
+
         var currentCourses = studentCourses
             .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
-            .Select(sc => new SimulatedCourseViewModel
+            .Select(sc =>
             {
+                var isRetake = failedAttempts.TryGetValue(sc.CourseId, out var oldAttempt);
+                return new SimulatedCourseViewModel
+               {
                 Id = sc.Course!.Code,
                 Name = sc.Course.Name,
-                Credits = sc.Course.CreditHours
+                Credits = sc.Course.CreditHours,
+                IsRetake = isRetake,
+                OriginalGrade = isRetake ? oldAttempt!.Grade! : string.Empty,
+                OriginalPoints = isRetake && gradeScale.TryGetValue(oldAttempt!.Grade!.ToUpper(), out var pts) ? pts : 0.0
+               };
             })
             .ToList();
 
-        // Improvable Courses (Original Grade <= D+ or F)
+        // Improvable Courses
+        var inProgressCourseIds = studentCourses
+            .Where(sc => sc.Status == StudentCourseStatus.InProgress)
+            .Select(sc => sc.CourseId)
+            .ToHashSet();
+        
+
         var improvableCourses = bestAttempts
-            .Where(sc => (sc.Status == StudentCourseStatus.Failed || sc.Grade == "D" || sc.Grade == "D+") && sc.Course is not null)
+            .Where(sc => (sc.Status == StudentCourseStatus.Failed || sc.Grade == "D" || sc.Grade == "D+")
+                && sc.Course is not null
+                && !inProgressCourseIds.Contains(sc.CourseId))
+            
             .Select(sc => new ImprovableCourseViewModel
             {
                 Id = sc.Course!.Code,
