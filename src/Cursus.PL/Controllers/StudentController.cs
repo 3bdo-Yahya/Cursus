@@ -152,24 +152,21 @@ public class StudentController : Controller
             .Sum(sc => (gradeScale.TryGetValue(sc.Grade?.Trim().ToUpper() ?? "", out var pts) ? pts : 0.0) * sc.Course!.CreditHours);
 
         // Current In-Progress Courses
-        var failedAttempts = studentCourses
-            .Where(sc => sc.Status == StudentCourseStatus.Failed && !string.IsNullOrWhiteSpace(sc.Grade))
-            .GroupBy(sc => sc.CourseId)
-            .ToDictionary(g => g.Key, g => g.First());
-
         var currentCourses = studentCourses
             .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
             .Select(sc =>
             {
-                var isRetake = failedAttempts.TryGetValue(sc.CourseId, out var oldAttempt);
+                bool isRetake = studentCourseMap.TryGetValue(sc.CourseId, out var bestAttempt)
+                                && (bestAttempt.Status == StudentCourseStatus.Completed || bestAttempt.Status == StudentCourseStatus.Failed)
+                                && !string.IsNullOrWhiteSpace(bestAttempt.Grade);
                 return new SimulatedCourseViewModel
                {
                 Id = sc.Course!.Code,
                 Name = sc.Course.Name,
                 Credits = sc.Course.CreditHours,
                 IsRetake = isRetake,
-                OriginalGrade = isRetake ? oldAttempt!.Grade! : string.Empty,
-                OriginalPoints = isRetake && gradeScale.TryGetValue(oldAttempt!.Grade!.ToUpper(), out var pts) ? pts : 0.0
+                OriginalGrade = isRetake ? bestAttempt!.Grade! : string.Empty,
+                OriginalPoints = isRetake && gradeScale.TryGetValue(bestAttempt!.Grade!.ToUpper(), out var pts) ? pts : 0.0
                };
             })
             .ToList();
