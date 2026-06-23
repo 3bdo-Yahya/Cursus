@@ -1,0 +1,15 @@
+@if (TempData["Warning"] is string warningMessage)
+{
+    <div class="standing-alert status-warning">
+        <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400">warning</span>
+        <span>@warningMessage</span>
+    </div>
+}
+
+@if (TempData["Error"] is string errorMessage)
+{
+    <div class="standing-alert status-danger">
+        <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400">warning</span>
+        <span>@errorMessage</span>
+    </div>
+}

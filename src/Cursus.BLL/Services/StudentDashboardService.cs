@@ -39,8 +39,8 @@ public sealed class StudentDashboardService : IStudentDashboardService
                 g => g.OrderBy(sc => sc.Status switch
                 {
                     StudentCourseStatus.Completed => 0,
-                    StudentCourseStatus.InProgress => 1,
-                    StudentCourseStatus.Failed => 2,
+                    StudentCourseStatus.Failed => 1,
+                    StudentCourseStatus.InProgress => 2,
                     _ => 3
                 }).First());
 
@@ -68,17 +68,23 @@ public sealed class StudentDashboardService : IStudentDashboardService
             .ToHashSet();
 
         // Load graduation requirements for this student's department
-        var gradReqs = await _db.GraduationRequirements
-            .Include(r => r.GraduationRequirementCourses)
-            .Where(r => r.DepartmentId == student.DepartmentId)
-            .AsNoTracking()
-            .ToListAsync();
+        var gradReqs = student.DepartmentId is null
+            ? new List<GraduationRequirement>()
+            : await _db.GraduationRequirements
+                .Include(r => r.GraduationRequirementCourses)
+                .Where(r => r.DepartmentId == student.DepartmentId)
+                .AsNoTracking()
+                .ToListAsync();
 
         int coreRemaining = 0;
         int electiveRemaining = 0;
         int uniReqRemaining = 0;
 
-        if (gradReqs.Count > 0)
+        if (student.DepartmentId is null)
+        {
+            // No department assigned yet 
+        }
+        else if (gradReqs.Count > 0)
         {
             foreach (var req in gradReqs)
             {
@@ -87,19 +93,19 @@ public sealed class StudentDashboardService : IStudentDashboardService
                     coreRemaining = req.GraduationRequirementCourses
                         .Count(rc => !completedCourseIds.Contains(rc.CourseId));
                 }
-                else if (req.CategoryType == CourseType.UniversityReq)
-                {
-                    uniReqRemaining = req.GraduationRequirementCourses
-                        .Count(rc => !completedCourseIds.Contains(rc.CourseId));
-                }
-                else if (req.CategoryType is CourseType.DeptElective or CourseType.FreeElective)
+                else if (req.CategoryType is CourseType.DeptElective or CourseType.FreeElective or CourseType.UniversityReq)
                 {
                     int earnedCredits = studentCourseMap.Values
                         .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course?.CourseType == req.CategoryType)
                         .Sum(sc => sc.Course!.CreditHours);
 
                     int remainingCredits = Math.Max(0, req.RequiredCredits - earnedCredits);
-                    electiveRemaining += (int)Math.Ceiling(remainingCredits / 3.0);
+                    int coursesNeeded = (int)Math.Ceiling(remainingCredits / 3.0);
+
+                    if (req.CategoryType == CourseType.UniversityReq)
+                        uniReqRemaining += coursesNeeded;
+                    else
+                        electiveRemaining += coursesNeeded;
                 }
             }
         }
@@ -149,6 +155,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
             ElectiveCoursesRemaining = electiveRemaining,
             UniReqCoursesRemaining = uniReqRemaining,
             StandingAlert = standingAlert,
+            HasAcademicRecords = allCourses.Count > 0,
             ProjectedGraduation = projectedGraduation,
             SemestersCompleted = student.StandingHistories.Count,
             TotalSemesters = totalSemesters,

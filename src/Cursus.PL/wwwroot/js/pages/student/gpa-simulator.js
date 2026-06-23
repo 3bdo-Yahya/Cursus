@@ -160,13 +160,21 @@ function calculate() {
   let anySelected = false;
 
   // ── Current semester courses
+  let retakeQPDelta = 0;
+  let retakeCreditsDelta = 0;
+
   courseSelects.forEach((sel, i) => {
     const grade = sel.dataset.currentVal || '—';
     if (grade === '—') return;
     anySelected = true;
-    const credits = CURRENT_COURSES[i].credits;
-    semCredits += credits;
-    semQP      += credits * GRADE_SCALE[grade];
+    const c = CURRENT_COURSES[i];
+    semCredits += c.credits;
+    semQP      += c.credits * GRADE_SCALE[grade];
+
+    if (c.isRetake) {
+      retakeQPDelta     -= c.originalPoints * c.credits;
+      retakeCreditsDelta -= c.credits;
+    }
   });
 
   let improveQPDelta = 0;
@@ -188,8 +196,8 @@ function calculate() {
   }
 
   const sgpa = semCredits > 0 ? (semQP / semCredits) : 0;
-  const totalQP = COMPLETED_QP + semQP + improveQPDelta;
-  const totalCr = COMPLETED_CREDITS + semCredits;
+  const totalQP = COMPLETED_QP + retakeQPDelta + semQP + improveQPDelta;
+  const totalCr = COMPLETED_CREDITS + retakeCreditsDelta + semCredits;
   const cgpa    = totalCr > 0 ? (totalQP / totalCr) : 0;
   const delta   = cgpa - CURRENT_CGPA;
 
