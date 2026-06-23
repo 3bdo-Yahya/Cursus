@@ -131,9 +131,11 @@ public sealed class StudentControllerAiAdvisorTests
     {
         var controller = new StudentController(
             CreateUserManager(),
+            null!,
             progressService,
             new FakeDashboardService(),
-            advisorService);
+            advisorService,
+            null!);
 
         var claims = studentId is null
             ? []

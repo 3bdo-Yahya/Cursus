@@ -1,28 +1,19 @@
 /* ── Grade Scale ────────────────────────────────────────── */
-const GRADE_SCALE = {
-  'A+': 4.00, 'A': 4.00, 'A-': 3.67,
-  'B+': 3.33, 'B': 3.00, 'B-': 2.67,
-  'C+': 2.33, 'C': 2.00, 'C-': 1.67,
-  'D+': 1.33, 'D': 1.00, 'F':  0.00,
+const GRADE_SCALE = window.STUDENT_DATA?.gradeScale || {
+    'A+': 4.00, 'A': 4.00, 'A-': 3.67,
+    'B+': 3.33, 'B': 3.00, 'B-': 2.67,
+    'C+': 2.33, 'C': 2.00, 'C-': 1.67,
+    'D+': 1.33, 'D': 1.00, 'F': 0.00,
 };
-const GRADE_OPTIONS = ['—', 'A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
+const GRADE_OPTIONS = ['—', ...Object.keys(GRADE_SCALE)];
 
 /* ── Student Data ───────────────────────────────────────── */
-const COMPLETED_CREDITS = 84;
-const COMPLETED_QP      = 272.16;   // 84 × 3.24
-const CURRENT_CGPA      = 3.24;
+const COMPLETED_CREDITS = window.STUDENT_DATA?.completedCredits ?? 0;
+const COMPLETED_QP = window.STUDENT_DATA?.completedQp ?? 0;
+const CURRENT_CGPA = window.STUDENT_DATA?.currentCgpa ?? 0;
 
-const CURRENT_COURSES = [
-  { id: 'CS202',  name: 'Discrete Mathematics', credits: 3 },
-  { id: 'MTH201', name: 'Linear Algebra',        credits: 3 },
-  { id: 'CS301',  name: 'Operating Systems',     credits: 3 },
-  { id: 'ENG201', name: 'Technical Writing',     credits: 2 },
-  { id: 'CS303',  name: 'Computer Networks',     credits: 3 },
-];
-
-const IMPROVABLE_COURSES = [
-  { id: 'MTH102', name: 'Calculus II',    credits: 3, originalGrade: 'F', originalPoints: 0.00 },
-];
+const CURRENT_COURSES = window.STUDENT_DATA?.currentCourses ?? [];
+const IMPROVABLE_COURSES = window.STUDENT_DATA?.improvableCourses ?? [];
 
 /* ── Custom grade dropdown ───────────────────── */
 function buildCustomSelect(grades, idx, type) {
@@ -169,19 +160,28 @@ function calculate() {
   let anySelected = false;
 
   // ── Current semester courses
+  let retakeQPDelta = 0;
+  let retakeCreditsDelta = 0;
+
   courseSelects.forEach((sel, i) => {
     const grade = sel.dataset.currentVal || '—';
     if (grade === '—') return;
     anySelected = true;
-    const credits = CURRENT_COURSES[i].credits;
-    semCredits += credits;
-    semQP      += credits * GRADE_SCALE[grade];
+    const c = CURRENT_COURSES[i];
+    semCredits += c.credits;
+    semQP      += c.credits * GRADE_SCALE[grade];
+
+    if (c.isRetake) {
+      retakeQPDelta     -= c.originalPoints * c.credits;
+      retakeCreditsDelta -= c.credits;
+    }
   });
 
   let improveQPDelta = 0;
   improveSelects.forEach((sel, i) => {
     const grade = sel.dataset.currentVal || '—';
     if (grade === '—') return;
+    anySelected = true;
     const c = IMPROVABLE_COURSES[i];
     improveQPDelta += c.credits * (GRADE_SCALE[grade] - c.originalPoints);
   });
@@ -196,8 +196,8 @@ function calculate() {
   }
 
   const sgpa = semCredits > 0 ? (semQP / semCredits) : 0;
-  const totalQP = COMPLETED_QP + semQP + improveQPDelta;
-  const totalCr = COMPLETED_CREDITS + semCredits;
+  const totalQP = COMPLETED_QP + retakeQPDelta + semQP + improveQPDelta;
+  const totalCr = COMPLETED_CREDITS + retakeCreditsDelta + semCredits;
   const cgpa    = totalCr > 0 ? (totalQP / totalCr) : 0;
   const delta   = cgpa - CURRENT_CGPA;
 

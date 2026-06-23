@@ -71,6 +71,7 @@ namespace Cursus.PL
             services.AddScoped<IStudentDashboardService, StudentDashboardService>();
             services.AddSingleton<IOpenAiChatClient, OpenAiChatClient>();
             services.AddScoped<IAiAdvisorService, AiAdvisorService>();
+            services.AddScoped<IImpactAnalysisService, ImpactAnalysisService>();
             #endregion
 
 
