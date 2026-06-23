@@ -20,17 +20,20 @@ public class StudentController : Controller
     private readonly ApplicationDbContext _db;
     private readonly IProgressService _progressService;
     private readonly IStudentDashboardService _dashboardService;
+    private readonly IImpactAnalysisService _impactAnalysisService;
 
     public StudentController(
         UserManager<AppUser> userManager,
         ApplicationDbContext db,
         IProgressService progressService,
-        IStudentDashboardService dashboardService)
+        IStudentDashboardService dashboardService,
+        IImpactAnalysisService impactAnalysisService)
     {
         _userManager = userManager;
         _db = db;
         _progressService = progressService;
         _dashboardService = dashboardService;
+        _impactAnalysisService = impactAnalysisService;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -221,6 +224,27 @@ public class StudentController : Controller
         return View(model);
     }
     public IActionResult ImpactAnalyzer() => View();
+
+    /// <summary>
+    /// AJAX endpoint for the Impact Analyzer.
+    /// Accepts a course ID and returns the list of courses blocked
+    /// by simulating that course as failed.
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> SimulateFailure([FromBody] SimulateFailureRequest request)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return Unauthorized();
+
+        if (user.DepartmentId is null)
+            return BadRequest(new { error = "No department assigned to your account." });
+
+        var blocked = await _impactAnalysisService
+            .GetBlockedCoursesAsync(request.CourseId, user.DepartmentId.Value);
+
+        return Json(blocked);
+    }
 
     public async Task<IActionResult> Profile()
     {
