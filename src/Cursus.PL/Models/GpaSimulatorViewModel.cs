@@ -26,6 +26,9 @@ public class SimulatedCourseViewModel
     public required string Id { get; init; }
     public required string Name { get; init; }
     public int Credits { get; init; }
+    public bool IsRetake { get; set; }
+    public double OriginalPoints { get; set; }
+    public string OriginalGrade { get; set; } = string.Empty;
 }
 
 public class ImprovableCourseViewModel

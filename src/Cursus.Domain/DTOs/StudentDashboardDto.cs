@@ -10,6 +10,7 @@ public sealed class StudentDashboardDto
     public required string AcademicYear { get; init; }
     public required SemesterType CurrentSemester { get; init; }
     public required AcademicStanding Standing { get; init; }
+    public bool HasAcademicRecords { get; init; }
 
     public decimal Cgpa { get; init; }
     public decimal Sgpa { get; init; }
