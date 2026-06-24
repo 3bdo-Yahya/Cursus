@@ -19,7 +19,7 @@ namespace Cursus.BLL.Services
             _studentCourseRepository = studentCourseRepository;
         }
 
-        public async Task<CourseGraphDto> GetCourseGraphForStudentAsync(string? studentId, int departmentId)
+        public async Task<CourseGraphDto> GetCourseGraphForStudentAsync(string studentId, int departmentId)
         {
             // Load courses for the department or general university requirements that are active
             var courses = await _courseRepository.GetAll()
