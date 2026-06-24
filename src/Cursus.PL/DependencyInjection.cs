@@ -62,6 +62,12 @@ namespace Cursus.PL
             services.AddScoped<IProgressService, ProgressService>();
             services.AddScoped<IStudentDashboardService, StudentDashboardService>();
             services.AddScoped<IImpactAnalysisService, ImpactAnalysisService>();
+            services.AddScoped<IGeminiService>(sp =>
+            {
+                var config = sp.GetRequiredService<IConfiguration>();
+                var apiKey = config["Gemini:ApiKey"];
+                return new GeminiService(apiKey!);
+            });
             #endregion
 
 
