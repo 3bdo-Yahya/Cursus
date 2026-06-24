@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Interfaces.Services;
 using Cursus.BLL.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Cursus.PL.Services;
 
 namespace Cursus.PL;
 
@@ -24,6 +26,7 @@ public class Program
         // Email Settings
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<IEmailSender, IdentityEmailSender>();
         builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
         {
             options.TokenLifespan = TimeSpan.FromMinutes(5);
