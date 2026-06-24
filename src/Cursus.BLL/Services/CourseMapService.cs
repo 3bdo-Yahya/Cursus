@@ -35,8 +35,21 @@ namespace Cursus.BLL.Services
                 .AsNoTracking()
                 .ToListAsync();
 
+            // Group by CourseId to handle duplicate attempts/retakes and select the best attempt status
             var studentCourseMap = studentCourses
-                .ToDictionary(sc => sc.CourseId, sc => (sc.Status, sc.Grade));
+                .GroupBy(sc => sc.CourseId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => {
+                        var bestAttempt = g.OrderBy(sc => sc.Status switch
+                        {
+                            StudentCourseStatus.Completed => 0,
+                            StudentCourseStatus.InProgress => 1,
+                            StudentCourseStatus.Failed => 2,
+                            _ => 3
+                        }).First();
+                        return (bestAttempt.Status, bestAttempt.Grade);
+                    });
 
             var nodes = courses.Select(c =>
             {
