@@ -7,6 +7,9 @@ using System;
 using Cursus.Domain.Constants;
 using Cursus.DAL.Database;
 using Microsoft.EntityFrameworkCore;
+using Cursus.Domain.DTOs;
+using Cursus.Domain.Interfaces.Services;
+using Cursus.BLL.Services;
 
 namespace Cursus.PL;
 
@@ -18,6 +21,13 @@ public class Program
 
         builder.Services.AddApplicationServices(builder.Configuration);
 
+        // Email Settings
+        builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+        builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromMinutes(5);
+        });
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())
