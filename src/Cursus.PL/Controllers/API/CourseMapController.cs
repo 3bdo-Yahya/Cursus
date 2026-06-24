@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using Cursus.Domain.Constants;
+using Cursus.Domain.Entities;
 using Cursus.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cursus.PL.Controllers.API
@@ -12,19 +14,27 @@ namespace Cursus.PL.Controllers.API
     public class CourseMapController : ControllerBase
     {
         private readonly ICourseMapService _courseMapService;
-        public CourseMapController(ICourseMapService courseMapService)
+        private readonly UserManager<AppUser> _userManager;
+
+        public CourseMapController(
+            ICourseMapService courseMapService,
+            UserManager<AppUser> userManager)
         {
             _courseMapService = courseMapService;
+            _userManager = userManager;
         }
 
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll([FromQuery] int departmentId)
+        public async Task<IActionResult> GetAll()
         {
-            var studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(studentId))
+            var user = await _userManager.GetUserAsync(User);
+            if (user is null)
                 return Unauthorized();
 
-            var result = await _courseMapService.GetCourseGraphForStudentAsync(studentId, departmentId);
+            if (user.DepartmentId is null)
+                return BadRequest(new { error = "Please contact your admin to assign your department." });
+
+            var result = await _courseMapService.GetCourseGraphForStudentAsync(user.Id, user.DepartmentId.Value);
             return Ok(result);
         }
     }
