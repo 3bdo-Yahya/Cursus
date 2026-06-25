@@ -8,6 +8,7 @@ using Cursus.Domain.Interfaces.Services;
 using Cursus.PL.Models.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Cursus.BLL.Options;
 
 namespace Cursus.PL
 {
@@ -44,6 +45,8 @@ namespace Cursus.PL
 
             services.Configure<IdentitySeedOptions>(
                 configuration.GetSection("IdentitySeed"));
+            services.Configure<GeminiOptions>(
+                configuration.GetSection(GeminiOptions.SectionName));
 
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -62,12 +65,8 @@ namespace Cursus.PL
             services.AddScoped<IProgressService, ProgressService>();
             services.AddScoped<IStudentDashboardService, StudentDashboardService>();
             services.AddScoped<IImpactAnalysisService, ImpactAnalysisService>();
-            services.AddScoped<IGeminiService>(sp =>
-            {
-                var config = sp.GetRequiredService<IConfiguration>();
-                var apiKey = config["Gemini:ApiKey"];
-                return new GeminiService(apiKey!);
-            });
+            services.AddSingleton<IGeminiChatClient, GeminiChatClient>();
+            services.AddScoped<IGeminiService, GeminiService>();
             #endregion
 
 

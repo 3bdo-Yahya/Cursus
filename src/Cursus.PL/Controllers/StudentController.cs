@@ -79,7 +79,7 @@ public class StudentController : Controller
     public IActionResult AiAdvisor() => View();
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AiAdvisorChat([FromBody] ChatRequestDto request)
+    public async Task<IActionResult> AiAdvisorChat([FromBody] ChatRequestDto request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request?.Message))
             return BadRequest(new { error = "Message is required." });
@@ -92,104 +92,15 @@ public class StudentController : Controller
         if (audit is null)
             return BadRequest(new { error = "Could not load student academic record." });
 
-        var systemPrompt = BuildAdvisorSystemPrompt(audit);
-        var fullPrompt = BuildFullPrompt(systemPrompt, request);
-
         try
         {
-            var reply = await _geminiService.AskGeminiAsync(fullPrompt);
+            var reply = await _geminiService.AskGeminiAsync(audit, request, cancellationToken);
             return Json(new { reply });
         }
         catch
         {
             return StatusCode(500, new { error = "AI Advisor is temporarily unavailable." });
         }
-    }
-
-    private static string BuildAdvisorSystemPrompt(GraduationAuditDto audit)
-    {
-        var sb = new StringBuilder();
-
-        sb.AppendLine("You are a friendly and supportive academic advisor at a credit-hour university using the Cursus platform.");
-        sb.AppendLine("You help students understand their academic situation and make informed decisions.");
-        sb.AppendLine();
-        sb.AppendLine("=== STUDENT OVERVIEW ===");
-        sb.AppendLine($"- Name: {audit.StudentName}");
-        sb.AppendLine($"- Department: {audit.DepartmentName}");
-        sb.AppendLine($"- Current Term: {audit.CurrentSemester} {audit.AcademicYear}");
-        sb.AppendLine($"- Academic Standing: {audit.CurrentStanding}");
-        sb.AppendLine($"- Cumulative GPA: {audit.Cgpa} (Minimum required to graduate: {audit.MinGpaForGraduation})");
-        sb.AppendLine($"- Overload Eligible (CGPA >= 3.0): {(audit.IsOverloadEligible ? "Yes" : "No")}");
-        sb.AppendLine($"- Total Credits Earned: {audit.TotalCreditsEarned} / {audit.TotalCreditsRequired} ({audit.OverallPercentage}%)");
-        sb.AppendLine($"- Credits Remaining: {audit.CreditsRemaining}");
-        sb.AppendLine($"- Estimated Graduation: {audit.EstimatedGradSemester}");
-        sb.AppendLine($"- On Track to Graduate: {(audit.IsOnTrack ? "Yes" : "No")}");
-        sb.AppendLine();
-
-        sb.AppendLine("=== DEGREE REQUIREMENTS BREAKDOWN ===");
-        foreach (var category in audit.Categories)
-        {
-            sb.AppendLine();
-            sb.AppendLine($"--- {category.Label} ({category.CourseType}) ---");
-            sb.AppendLine(category.Description);
-            sb.AppendLine($"Progress: {category.EarnedCredits}/{category.RequiredCredits} credits earned " +
-                           $"({category.Percentage}%), {category.InProgressCredits} credits in progress. " +
-                           $"Satisfied: {(category.IsSatisfied ? "Yes" : "No")}");
-
-            var completed = category.Courses.Where(c => c.Status == CourseAuditStatus.Completed).ToList();
-            var inProgress = category.Courses.Where(c => c.Status == CourseAuditStatus.InProgress).ToList();
-            var failed = category.Courses.Where(c => c.Status == CourseAuditStatus.Failed).ToList();
-            var available = category.Courses.Where(c => c.Status == CourseAuditStatus.Available).ToList();
-            var locked = category.Courses.Where(c => c.Status == CourseAuditStatus.Locked).ToList();
-
-            if (completed.Any())
-                sb.AppendLine("Completed: " + string.Join(", ", completed.Select(c => $"{c.Code} - {c.Name} ({c.CreditHours}cr, Grade: {c.Grade})")));
-
-            if (inProgress.Any())
-                sb.AppendLine("In Progress: " + string.Join(", ", inProgress.Select(c => $"{c.Code} - {c.Name} ({c.CreditHours}cr)")));
-
-            if (failed.Any())
-                sb.AppendLine("Failed (needs retake): " + string.Join(", ", failed.Select(c => $"{c.Code} - {c.Name} ({c.CreditHours}cr, Grade: {c.Grade})")));
-
-            if (available.Any())
-                sb.AppendLine("Available now (prerequisites met, not yet taken): " + string.Join(", ", available.Select(c => $"{c.Code} - {c.Name} ({c.CreditHours}cr)")));
-
-            if (locked.Any())
-                sb.AppendLine("Locked (prerequisites not met yet): " + string.Join(", ", locked.Select(c => $"{c.Code} - {c.Name} ({c.CreditHours}cr)")));
-        }
-
-        sb.AppendLine();
-        sb.AppendLine("=== GUIDELINES ===");
-        sb.AppendLine("- Be supportive and encouraging, but honest about academic risks.");
-        sb.AppendLine("- Always reference specific course codes and names when relevant, using the exact data above.");
-        sb.AppendLine("- If the student asks about consequences of failing a course, suggest they use the Impact Analyzer for detailed cascade analysis.");
-        sb.AppendLine("- Keep responses concise (3-5 short paragraphs maximum).");
-        sb.AppendLine("- Do not make up course names, credit hours, or requirements not present in the data above.");
-        sb.AppendLine("- If asked about something not covered above (e.g. a course not in this student's plan), say you don't have that information rather than guessing.");
-        sb.AppendLine("- Format course codes clearly (e.g. CS301).");
-
-        return sb.ToString();
-    }
-
-    private static string BuildFullPrompt(string systemPrompt, ChatRequestDto request)
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine(systemPrompt);
-        sb.AppendLine();
-        sb.AppendLine("Conversation so far:");
-
-        if (request.History != null)
-        {
-            foreach (var msg in request.History)
-            {
-                var speaker = msg.Role == "user" ? "Student" : "Advisor";
-                sb.AppendLine($"{speaker}: {msg.Content}");
-            }
-        }
-
-        sb.AppendLine($"Student: {request.Message}");
-        sb.Append("Advisor:");
-        return sb.ToString();
     }
     public async Task<IActionResult> GpaSimulator()
     {

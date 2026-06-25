@@ -32,14 +32,6 @@ public class Program
             options.TokenLifespan = TimeSpan.FromMinutes(5);
         });
 
-        // Gemini Settings
-        builder.Services.AddSingleton<GeminiService>(sp =>
-        {
-            var config = sp.GetRequiredService<IConfiguration>();
-            var apiKey = config["Gemini:ApiKey"];
-            return new GeminiService(apiKey!);
-        });
-
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())
