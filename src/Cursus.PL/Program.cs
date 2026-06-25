@@ -91,6 +91,7 @@ public class Program
         using var scope = services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var environment = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
         var options = scope.ServiceProvider.GetRequiredService<IOptions<IdentitySeedOptions>>().Value;
 
         if (string.IsNullOrWhiteSpace(options.AdminPassword))
@@ -137,6 +138,15 @@ public class Program
                         $"Unable to create default admin user: {string.Join(", ", createResult.Errors.Select(error => error.Description))}");
             }
         }
+        else if (environment.IsDevelopment())
+        {
+            await EnsureDevelopmentAdminPasswordAsync(userManager, adminUser, options.AdminPassword);
+        }
+
+        if (environment.IsDevelopment())
+        {
+            await ClearDevelopmentAdminLockoutAsync(userManager, adminUser);
+        }
 
         // Ensure admin UniversityId is set to the configured university
         if (adminUser.UniversityId != adminUniversity.Id)
@@ -159,6 +169,48 @@ public class Program
         }
 
         Console.WriteLine($"[Seeding] Admin user seeded and linked to {adminUniversity.Name} university");
+    }
+
+    private static async Task EnsureDevelopmentAdminPasswordAsync(
+        UserManager<AppUser> userManager,
+        AppUser adminUser,
+        string configuredPassword)
+    {
+        if (await userManager.CheckPasswordAsync(adminUser, configuredPassword))
+            return;
+
+        var resetToken = await userManager.GeneratePasswordResetTokenAsync(adminUser);
+        var resetResult = await userManager.ResetPasswordAsync(adminUser, resetToken, configuredPassword);
+        if (!resetResult.Succeeded)
+            throw new InvalidOperationException(
+                $"Unable to reset seeded development admin password: {string.Join(", ", resetResult.Errors.Select(error => error.Description))}");
+    }
+
+    private static async Task ClearDevelopmentAdminLockoutAsync(
+        UserManager<AppUser> userManager,
+        AppUser adminUser)
+    {
+        var changed = false;
+
+        if (adminUser.AccessFailedCount != 0)
+        {
+            adminUser.AccessFailedCount = 0;
+            changed = true;
+        }
+
+        if (adminUser.LockoutEnd is not null)
+        {
+            adminUser.LockoutEnd = null;
+            changed = true;
+        }
+
+        if (!changed)
+            return;
+
+        var updateResult = await userManager.UpdateAsync(adminUser);
+        if (!updateResult.Succeeded)
+            throw new InvalidOperationException(
+                $"Unable to clear seeded development admin lockout: {string.Join(", ", updateResult.Errors.Select(error => error.Description))}");
     }
 
     private static async Task<University?> ResolveAdminUniversityAsync(ApplicationDbContext context, string? universityName)

@@ -1,7 +1,9 @@
 using Cursus.BLL.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using OpenAI;
 using OpenAI.Chat;
+using System.ClientModel;
 
 namespace Cursus.BLL.Services;
 
@@ -33,7 +35,7 @@ public sealed class OpenAiChatClient : IOpenAiChatClient
             ? "gpt-4o-mini"
             : _options.Model.Trim();
 
-        _client = new ChatClient(model, _options.ApiKey.Trim());
+        _client = CreateChatClient(model);
     }
 
     public bool IsConfigured => _client is not null;
@@ -73,5 +75,28 @@ public sealed class OpenAiChatClient : IOpenAiChatClient
         return string.IsNullOrWhiteSpace(responseText)
             ? null
             : responseText.Trim();
+    }
+
+    private ChatClient CreateChatClient(string model)
+    {
+        var credential = new ApiKeyCredential(_options.ApiKey.Trim());
+
+        if (string.IsNullOrWhiteSpace(_options.BaseUrl))
+        {
+            return new ChatClient(model, credential);
+        }
+
+        if (!Uri.TryCreate(_options.BaseUrl.Trim(), UriKind.Absolute, out var endpoint))
+        {
+            throw new InvalidOperationException("OpenAi:BaseUrl must be a valid absolute URL.");
+        }
+
+        return new ChatClient(
+            model,
+            credential,
+            new OpenAIClientOptions
+            {
+                Endpoint = endpoint
+            });
     }
 }
