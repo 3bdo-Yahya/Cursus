@@ -48,6 +48,11 @@ namespace Cursus.PL
             services.Configure<GeminiOptions>(
                 configuration.GetSection(GeminiOptions.SectionName));
 
+            services.AddAntiforgery(options =>
+            {
+                options.HeaderName = "RequestVerificationToken";
+            });
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 

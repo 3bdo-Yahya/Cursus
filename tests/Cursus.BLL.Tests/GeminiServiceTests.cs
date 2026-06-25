@@ -6,6 +6,8 @@ using Cursus.BLL.Services;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Enums;
 using Xunit;
+using Microsoft.Extensions.Logging.Abstractions;
+
 
 namespace Cursus.BLL.Tests
 {
@@ -37,7 +39,7 @@ namespace Cursus.BLL.Tests
             {
                 Response = "Yes, you are on track."
             };
-            var service = new GeminiService(client);
+            var service = new GeminiService(client, NullLogger<GeminiService>.Instance);
 
             // Act
             var result = await service.AskGeminiAsync(TestAudit, TestRequest);
@@ -57,7 +59,7 @@ namespace Cursus.BLL.Tests
             {
                 IsConfigured = false
             };
-            var service = new GeminiService(client);
+            var service = new GeminiService(client, NullLogger<GeminiService>.Instance);
 
             // Act
             var result = await service.AskGeminiAsync(TestAudit, TestRequest);
@@ -75,7 +77,7 @@ namespace Cursus.BLL.Tests
             {
                 Exception = new InvalidOperationException("API error")
             };
-            var service = new GeminiService(client);
+            var service = new GeminiService(client, NullLogger<GeminiService>.Instance);
 
             // Act
             var result = await service.AskGeminiAsync(TestAudit, TestRequest);
@@ -96,7 +98,7 @@ namespace Cursus.BLL.Tests
             {
                 Exception = new OperationCanceledException(cts.Token)
             };
-            var service = new GeminiService(client);
+            var service = new GeminiService(client, NullLogger<GeminiService>.Instance);
 
             // Act & Assert
             await Assert.ThrowsAsync<OperationCanceledException>(() =>
@@ -106,7 +108,7 @@ namespace Cursus.BLL.Tests
         [Fact]
         public async Task AskGeminiAsync_ThrowsArgumentNullException_WhenAuditIsNull()
         {
-            var service = new GeminiService(new FakeGeminiChatClient());
+            var service = new GeminiService(new FakeGeminiChatClient(), NullLogger<GeminiService>.Instance);
 
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 service.AskGeminiAsync(null!, TestRequest));
@@ -115,7 +117,7 @@ namespace Cursus.BLL.Tests
         [Fact]
         public async Task AskGeminiAsync_ThrowsArgumentNullException_WhenRequestIsNull()
         {
-            var service = new GeminiService(new FakeGeminiChatClient());
+            var service = new GeminiService(new FakeGeminiChatClient(), NullLogger<GeminiService>.Instance);
 
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 service.AskGeminiAsync(TestAudit, null!));
