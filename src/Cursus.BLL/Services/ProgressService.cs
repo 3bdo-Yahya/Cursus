@@ -43,6 +43,7 @@ public sealed class ProgressService : IProgressService
                     .ThenInclude(c => c!.Prerequisites)
             .Include(u => u.StandingHistories)
             .AsNoTracking()
+            .AsSplitQuery()
             .FirstOrDefaultAsync(u => u.Id == studentId);
 
         if (student is null || student.DepartmentId is null || student.Department is null)
@@ -54,6 +55,7 @@ public sealed class ProgressService : IProgressService
                 .ThenInclude(rc => rc.Course)
                     .ThenInclude(c => c!.Prerequisites)
             .AsNoTracking()
+            .AsSplitQuery()
             .Where(r => r.DepartmentId == student.DepartmentId)
             .ToListAsync();
 

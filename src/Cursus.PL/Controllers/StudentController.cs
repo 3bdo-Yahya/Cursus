@@ -17,11 +17,15 @@ namespace Cursus.PL.Controllers;
 [Authorize(Roles = Roles.Student)]
 public class StudentController : Controller
 {
+    private const int MaxProviderHistoryMessages = 12;
+    private const int MaxDisplayedHistoryMessages = 80;
+
     private readonly UserManager<AppUser> _userManager;
     private readonly ApplicationDbContext _db;
     private readonly IProgressService _progressService;
     private readonly IStudentDashboardService _dashboardService;
     private readonly IAiAdvisorService _aiAdvisorService;
+    private readonly IAiAdvisorHistoryService _aiAdvisorHistoryService;
     private readonly IImpactAnalysisService _impactAnalysisService;
 
     public StudentController(
@@ -30,6 +34,7 @@ public class StudentController : Controller
         IProgressService progressService,
         IStudentDashboardService dashboardService,
         IAiAdvisorService aiAdvisorService,
+        IAiAdvisorHistoryService aiAdvisorHistoryService,
         IImpactAnalysisService impactAnalysisService)
     {
         _userManager = userManager;
@@ -37,6 +42,7 @@ public class StudentController : Controller
         _progressService = progressService;
         _dashboardService = dashboardService;
         _aiAdvisorService = aiAdvisorService;
+        _aiAdvisorHistoryService = aiAdvisorHistoryService;
         _impactAnalysisService = impactAnalysisService;
     }
 
@@ -78,6 +84,42 @@ public class StudentController : Controller
         return View(new ProgressViewModel { Audit = audit });
     }
     public IActionResult AiAdvisor() => View();
+
+    [HttpGet]
+    public async Task<IActionResult> AiAdvisorHistory(CancellationToken cancellationToken)
+    {
+        var studentId = _userManager.GetUserId(User);
+        if (string.IsNullOrWhiteSpace(studentId))
+        {
+            return Unauthorized(AiAdvisorResponseDto.Failure(
+                "student_not_authenticated",
+                "Sign in with a student account to use the AI advisor."));
+        }
+
+        var messages = await _aiAdvisorHistoryService.GetRecentMessagesAsync(
+            studentId,
+            MaxDisplayedHistoryMessages,
+            cancellationToken);
+
+        return Ok(messages);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AiAdvisorClearHistory(CancellationToken cancellationToken)
+    {
+        var studentId = _userManager.GetUserId(User);
+        if (string.IsNullOrWhiteSpace(studentId))
+        {
+            return Unauthorized(AiAdvisorResponseDto.Failure(
+                "student_not_authenticated",
+                "Sign in with a student account to use the AI advisor."));
+        }
+
+        await _aiAdvisorHistoryService.ClearAsync(studentId, cancellationToken);
+        return NoContent();
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AiAdvisorChat(
@@ -108,15 +150,30 @@ public class StudentController : Controller
                 "Your academic profile could not be loaded. Please contact your faculty advisor."));
         }
 
+        var conversationHistory = await _aiAdvisorHistoryService.GetRecentMessagesAsync(
+            studentId,
+            MaxProviderHistoryMessages,
+            cancellationToken);
+
         var studentContext = AiAdvisorContextFactory.Create(audit);
         var response = await _aiAdvisorService.GetAdvisorResponseAsync(
             studentContext,
             message,
+            cancellationToken,
+            conversationHistory);
+
+        if (!response.Succeeded)
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, response);
+
+        await _aiAdvisorHistoryService.SaveExchangeAsync(
+            studentId,
+            message,
+            response.Message,
             cancellationToken);
 
-        return response.Succeeded
-            ? Ok(response)
-            : StatusCode(StatusCodes.Status503ServiceUnavailable, response);
+        return Ok(AiAdvisorResponseDto.Success(
+            response.Message,
+            BuildSuggestedQuestions(message, response.Message)));
     }
 
     public async Task<IActionResult> GpaSimulator()
@@ -360,6 +417,56 @@ public class StudentController : Controller
         }
 
         return $"{semesterName} {DateTime.UtcNow.Year}";
+    }
+
+    private static IReadOnlyList<string> BuildSuggestedQuestions(
+        string userMessage,
+        string advisorMessage)
+    {
+        var combined = $"{userMessage} {advisorMessage}".ToLowerInvariant();
+        var questions = new List<string>();
+
+        void Add(string question)
+        {
+            if (!questions.Contains(question, StringComparer.OrdinalIgnoreCase))
+                questions.Add(question);
+        }
+
+        if (combined.Contains("gpa") || combined.Contains("cgpa") || combined.Contains("grade"))
+        {
+            Add("Which courses can raise my GPA the most?");
+            Add("What grades should I target this semester?");
+        }
+
+        if (combined.Contains("fail") ||
+            combined.Contains("drop") ||
+            combined.Contains("withdraw") ||
+            combined.Contains("impact"))
+        {
+            Add("Which courses would be delayed if this goes wrong?");
+            Add("How should I recover if I fail this course?");
+        }
+
+        if (combined.Contains("next semester") ||
+            combined.Contains("available") ||
+            combined.Contains("take next"))
+        {
+            Add("Can you rank my available courses for next semester?");
+            Add("What is a balanced course load for me?");
+        }
+
+        if (combined.Contains("locked") ||
+            combined.Contains("prerequisite") ||
+            combined.Contains("unlock"))
+        {
+            Add("Which prerequisites should I clear first?");
+        }
+
+        Add("Am I still on track to graduate?");
+        Add("What should I focus on this week?");
+        Add("What should I ask my faculty advisor?");
+
+        return questions.Take(4).ToList();
     }
 
     private static string FormatStanding(AcademicStanding standing) => standing switch

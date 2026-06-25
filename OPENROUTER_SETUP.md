@@ -35,7 +35,7 @@ dotnet user-secrets set "OpenAi:BaseUrl" "https://openrouter.ai/api/v1" --projec
 dotnet user-secrets set "OpenAi:Model" "openrouter/free" --project src/Cursus.PL
 ```
 
-Restart the web app after changing these values. `OpenAiChatClient` is registered as a singleton, so it reads the AI provider configuration when the application starts.
+Restart the web app after changing these values. `OpenAiChatClient` is registered as a singleton, so it reads the AI provider configuration when the application starts. The tracked default configuration already points `OpenAi:BaseUrl` to OpenRouter and `OpenAi:Model` to `openrouter/free`; only the API key must stay secret.
 
 ## Choosing A Specific Model
 

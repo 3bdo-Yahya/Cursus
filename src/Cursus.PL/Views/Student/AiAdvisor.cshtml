@@ -7,7 +7,11 @@
 }
 
 <!-- ─── Advisor Shell ────────────────────────────────────── -->
-<div class="ai-advisor-page" data-advisor-chat-url="@Url.Action("AiAdvisorChat", "Student")">
+<div
+  class="ai-advisor-page"
+  data-advisor-chat-url="@Url.Action("AiAdvisorChat", "Student")"
+  data-advisor-history-url="@Url.Action("AiAdvisorHistory", "Student")"
+  data-advisor-clear-url="@Url.Action("AiAdvisorClearHistory", "Student")">
   @Html.AntiForgeryToken()
 <div class="advisor-shell">
   <div class="chat-wrap">
@@ -23,7 +27,7 @@
           <p class="fw-800 mb-0 lh-1" style="font-size:15px;color:var(--c-text);">AI Advisor</p>
           <p class="mb-0 lh-1" style="font-size:11.5px;color:var(--c-muted);margin-top:3px;">
             <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:5px;vertical-align:middle;"></span>
-            Online · Powered by OpenAI
+            Online · Powered by OpenRouter
           </p>
         </div>
       </div>

@@ -104,17 +104,17 @@ dotnet restore
 
 ---
 
-## 3. OpenAI AI Advisor Key
+## 3. OpenRouter AI Advisor Key
 
-The AI Advisor uses OpenAI through the `OpenAi` configuration section in `src/Cursus.PL/appsettings.json`.
+The AI Advisor uses OpenRouter through the OpenAI-compatible `OpenAi` configuration section in `src/Cursus.PL/appsettings.json`.
 
-Never commit a real OpenAI API key to `appsettings.json`, `appsettings.Development.json`, or any other tracked file. For local development, store the key with .NET user secrets.
+Never commit a real OpenRouter API key to `appsettings.json`, `appsettings.Development.json`, or any other tracked file. For local development, store the key with .NET user secrets.
 
 From the `src/` directory:
 
 ```bash
-# Store your local OpenAI API key securely
-dotnet user-secrets set "OpenAi:ApiKey" "YOUR_OPENAI_API_KEY" --project Cursus.PL
+# Store your local OpenRouter API key securely
+dotnet user-secrets set "OpenAi:ApiKey" "YOUR_OPENROUTER_KEY" --project Cursus.PL
 ```
 
 The web project already has a `UserSecretsId`, so `dotnet user-secrets init` should not be needed. If you ever create a new web project or remove the `UserSecretsId`, initialize secrets first:
@@ -126,7 +126,8 @@ dotnet user-secrets init --project Cursus.PL
 Optional local overrides:
 
 ```bash
-dotnet user-secrets set "OpenAi:Model" "gpt-4o-mini" --project Cursus.PL
+dotnet user-secrets set "OpenAi:BaseUrl" "https://openrouter.ai/api/v1" --project Cursus.PL
+dotnet user-secrets set "OpenAi:Model" "openrouter/free" --project Cursus.PL
 dotnet user-secrets set "OpenAi:MaxOutputTokenCount" "500" --project Cursus.PL
 dotnet user-secrets set "OpenAi:Temperature" "0.3" --project Cursus.PL
 dotnet user-secrets set "OpenAi:TopP" "0.9" --project Cursus.PL
@@ -143,10 +144,12 @@ dotnet user-secrets list --project Cursus.PL
 For deployed environments, set the key as an environment variable instead of using user secrets:
 
 ```bash
-OpenAi__ApiKey=YOUR_OPENAI_API_KEY
+OpenAi__ApiKey=YOUR_OPENROUTER_KEY
+OpenAi__BaseUrl=https://openrouter.ai/api/v1
+OpenAi__Model=openrouter/free
 ```
 
-The AI Advisor will show the configured fallback message if the key is missing, invalid, or the OpenAI account has no available quota.
+The AI Advisor will show the configured fallback message if the key is missing, invalid, or the OpenRouter account/model has no available quota.
 
 ---
 

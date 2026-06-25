@@ -21,6 +21,7 @@ namespace Cursus.DAL.Database
         public DbSet<CreditHourRule> CreditHourRules => Set<CreditHourRule>();
         public DbSet<StudentCourse> StudentCourses => Set<StudentCourse>();
         public DbSet<StandingHistory> StandingHistories => Set<StandingHistory>();
+        public DbSet<AiAdvisorChatMessage> AiAdvisorChatMessages => Set<AiAdvisorChatMessage>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -37,10 +37,24 @@ public sealed class StudentControllerAiAdvisorTests
         {
             Response = AiAdvisorResponseDto.Success("You are making good progress.")
         };
-        var controller = CreateController(progressService, advisorService);
+        var historyService = new FakeAiAdvisorHistoryService
+        {
+            Messages =
+            [
+                new AiAdvisorMessageDto
+                {
+                    Role = "user",
+                    Content = "Can you remember my last question?"
+                }
+            ]
+        };
+        var controller = CreateController(progressService, advisorService, historyService);
 
         var result = await controller.AiAdvisorChat(
-            new AiAdvisorChatRequest { Message = "  Am I on track?  " },
+            new AiAdvisorChatRequest
+            {
+                Message = "  Am I on track?  "
+            },
             CancellationToken.None);
 
         var ok = Assert.IsType<OkObjectResult>(result);
@@ -48,6 +62,12 @@ public sealed class StudentControllerAiAdvisorTests
         Assert.True(response.Succeeded);
         Assert.Equal("student-1", progressService.ReceivedStudentId);
         Assert.Equal("Am I on track?", advisorService.ReceivedMessage);
+        Assert.Single(advisorService.ReceivedHistory);
+        Assert.Equal("student-1", historyService.LoadedStudentId);
+        Assert.Equal("student-1", historyService.SavedStudentId);
+        Assert.Equal("Am I on track?", historyService.SavedUserMessage);
+        Assert.Equal("You are making good progress.", historyService.SavedAssistantMessage);
+        Assert.NotEmpty(response.SuggestedQuestions);
         Assert.Equal("Test Student", advisorService.ReceivedContext?.DisplayName);
         Assert.Equal(4, advisorService.ReceivedContext?.CategoryProgress.Count);
         Assert.Contains(
@@ -107,6 +127,7 @@ public sealed class StudentControllerAiAdvisorTests
     [Fact]
     public async Task AiAdvisorChat_ReturnsServiceUnavailableForProviderFailure()
     {
+        var historyService = new FakeAiAdvisorHistoryService();
         var controller = CreateController(
             new FakeProgressService { Audit = CreateAudit() },
             new FakeAiAdvisorService
@@ -114,7 +135,8 @@ public sealed class StudentControllerAiAdvisorTests
                 Response = AiAdvisorResponseDto.Failure(
                     "openai_request_failed",
                     "The AI advisor is temporarily unavailable.")
-            });
+            },
+            historyService);
 
         var result = await controller.AiAdvisorChat(
             new AiAdvisorChatRequest { Message = "Hello" },
@@ -122,11 +144,52 @@ public sealed class StudentControllerAiAdvisorTests
 
         var unavailable = Assert.IsType<ObjectResult>(result);
         Assert.Equal(StatusCodes.Status503ServiceUnavailable, unavailable.StatusCode);
+        Assert.Null(historyService.SavedStudentId);
+    }
+
+    [Fact]
+    public async Task AiAdvisorHistory_ReturnsSavedMessagesForStudent()
+    {
+        var historyService = new FakeAiAdvisorHistoryService
+        {
+            Messages =
+            [
+                new AiAdvisorMessageDto { Role = "user", Content = "Hello" },
+                new AiAdvisorMessageDto { Role = "assistant", Content = "Hi there" }
+            ]
+        };
+        var controller = CreateController(
+            new FakeProgressService(),
+            new FakeAiAdvisorService(),
+            historyService);
+
+        var result = await controller.AiAdvisorHistory(CancellationToken.None);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var messages = Assert.IsAssignableFrom<IReadOnlyList<AiAdvisorMessageDto>>(ok.Value);
+        Assert.Equal(2, messages.Count);
+        Assert.Equal("student-1", historyService.LoadedStudentId);
+    }
+
+    [Fact]
+    public async Task AiAdvisorClearHistory_DeletesSavedMessagesForStudent()
+    {
+        var historyService = new FakeAiAdvisorHistoryService();
+        var controller = CreateController(
+            new FakeProgressService(),
+            new FakeAiAdvisorService(),
+            historyService);
+
+        var result = await controller.AiAdvisorClearHistory(CancellationToken.None);
+
+        Assert.IsType<NoContentResult>(result);
+        Assert.Equal("student-1", historyService.ClearedStudentId);
     }
 
     private static StudentController CreateController(
         IProgressService progressService,
         IAiAdvisorService advisorService,
+        IAiAdvisorHistoryService? historyService = null,
         string? studentId = "student-1")
     {
         var controller = new StudentController(
@@ -135,6 +198,7 @@ public sealed class StudentControllerAiAdvisorTests
             progressService,
             new FakeDashboardService(),
             advisorService,
+            historyService ?? new FakeAiAdvisorHistoryService(),
             null!);
 
         var claims = studentId is null
@@ -251,11 +315,56 @@ public sealed class StudentControllerAiAdvisorTests
         public Task<AiAdvisorResponseDto> GetAdvisorResponseAsync(
             AiAdvisorContextDto studentContext,
             string userMessage,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            IEnumerable<AiAdvisorMessageDto>? conversationHistory = null)
         {
             ReceivedContext = studentContext;
             ReceivedMessage = userMessage;
+            ReceivedHistory = conversationHistory?.ToList() ?? [];
             return Task.FromResult(Response);
+        }
+
+        public IReadOnlyList<AiAdvisorMessageDto> ReceivedHistory { get; private set; } = [];
+    }
+
+    private sealed class FakeAiAdvisorHistoryService : IAiAdvisorHistoryService
+    {
+        public IReadOnlyList<AiAdvisorMessageDto> Messages { get; init; } = [];
+        public string? LoadedStudentId { get; private set; }
+        public int LoadedCount { get; private set; }
+        public string? SavedStudentId { get; private set; }
+        public string? SavedUserMessage { get; private set; }
+        public string? SavedAssistantMessage { get; private set; }
+        public string? ClearedStudentId { get; private set; }
+
+        public Task<IReadOnlyList<AiAdvisorMessageDto>> GetRecentMessagesAsync(
+            string studentId,
+            int count,
+            CancellationToken cancellationToken = default)
+        {
+            LoadedStudentId = studentId;
+            LoadedCount = count;
+            return Task.FromResult(Messages);
+        }
+
+        public Task SaveExchangeAsync(
+            string studentId,
+            string userMessage,
+            string assistantMessage,
+            CancellationToken cancellationToken = default)
+        {
+            SavedStudentId = studentId;
+            SavedUserMessage = userMessage;
+            SavedAssistantMessage = assistantMessage;
+            return Task.CompletedTask;
+        }
+
+        public Task ClearAsync(
+            string studentId,
+            CancellationToken cancellationToken = default)
+        {
+            ClearedStudentId = studentId;
+            return Task.CompletedTask;
         }
     }
 

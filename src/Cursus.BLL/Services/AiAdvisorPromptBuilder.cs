@@ -29,8 +29,13 @@ public static class AiAdvisorPromptBuilder
         prompt.AppendLine($"Academic year: {Clean(context.AcademicYear, "Unknown")}");
         prompt.AppendLine($"Current semester: {context.CurrentSemester?.ToString() ?? "Unknown"}");
         prompt.AppendLine($"Cumulative GPA: {FormatGpa(context.Cgpa)}");
+        prompt.AppendLine($"Minimum graduation GPA: {FormatGpa(context.MinGpaForGraduation)}");
         prompt.AppendLine($"Academic standing: {context.AcademicStanding?.ToString() ?? "Unknown"}");
         prompt.AppendLine($"Credits completed: {FormatCredits(context.CreditsCompleted, context.CreditsRequired)}");
+        prompt.AppendLine($"Credits remaining: {context.CreditsRemaining?.ToString(CultureInfo.InvariantCulture) ?? "Unknown"}");
+        prompt.AppendLine($"Overall progress: {FormatPercentage(context.OverallProgressPercentage)}");
+        prompt.AppendLine($"Overload eligible: {FormatBoolean(context.IsOverloadEligible)}");
+        prompt.AppendLine($"On track to graduate: {FormatBoolean(context.IsOnTrack)}");
         prompt.AppendLine($"Projected graduation: {Clean(context.ProjectedGraduation, "Unknown")}");
         prompt.AppendLine();
 
@@ -38,12 +43,17 @@ public static class AiAdvisorPromptBuilder
         AppendCourses(prompt, "COMPLETED COURSES", context.CompletedCourses);
         AppendCourses(prompt, "IN-PROGRESS COURSES", context.InProgressCourses);
         AppendCourses(prompt, "FAILED OR LOW-GRADE COURSES", context.FailedOrLowGradeCourses);
+        AppendCourses(prompt, "AVAILABLE COURSES", context.AvailableCourses);
+        AppendCourses(prompt, "LOCKED COURSES", context.LockedCourses);
 
         prompt.AppendLine("RESPONSE RULES");
         prompt.AppendLine("- Answer the student's question directly.");
         prompt.AppendLine("- Reference course codes and names only when they appear in the profile.");
+        prompt.AppendLine("- Use AVAILABLE COURSES for next-semester suggestions and LOCKED COURSES for prerequisite blockers.");
         prompt.AppendLine("- Explain uncertainty clearly.");
-        prompt.AppendLine("- Keep the response to 3-5 short paragraphs unless the student asks for a list.");
+        prompt.AppendLine("- Prefer 2-4 short paragraphs or a compact numbered list.");
+        prompt.AppendLine("- Avoid large raw data dumps, JSON, markdown tables, or repeating the full student profile.");
+        prompt.AppendLine("- Do not add a separate follow-up question menu; the app will show suggested next questions.");
 
         return prompt.ToString().Trim();
     }
@@ -127,5 +137,15 @@ public static class AiAdvisorPromptBuilder
     private static string FormatCredits(int? completed, int? required) =>
         completed.HasValue && required.HasValue
             ? $"{completed.Value}/{required.Value}"
+            : "Unknown";
+
+    private static string FormatPercentage(int? percentage) =>
+        percentage.HasValue
+            ? $"{percentage.Value.ToString(CultureInfo.InvariantCulture)}%"
+            : "Unknown";
+
+    private static string FormatBoolean(bool? value) =>
+        value.HasValue
+            ? (value.Value ? "Yes" : "No")
             : "Unknown";
 }

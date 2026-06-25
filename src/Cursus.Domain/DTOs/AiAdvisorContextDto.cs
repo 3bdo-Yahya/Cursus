@@ -13,14 +13,21 @@ public sealed class AiAdvisorContextDto
     public SemesterType? CurrentSemester { get; init; }
     public AcademicStanding? AcademicStanding { get; init; }
     public decimal? Cgpa { get; init; }
+    public decimal? MinGpaForGraduation { get; init; }
     public int? CreditsCompleted { get; init; }
     public int? CreditsRequired { get; init; }
+    public int? CreditsRemaining { get; init; }
+    public int? OverallProgressPercentage { get; init; }
+    public bool? IsOverloadEligible { get; init; }
+    public bool? IsOnTrack { get; init; }
     public string ProjectedGraduation { get; init; } = string.Empty;
 
     public IReadOnlyCollection<AiAdvisorCategoryProgressDto> CategoryProgress { get; init; } = [];
     public IReadOnlyCollection<AiAdvisorCourseDto> CompletedCourses { get; init; } = [];
     public IReadOnlyCollection<AiAdvisorCourseDto> InProgressCourses { get; init; } = [];
     public IReadOnlyCollection<AiAdvisorCourseDto> FailedOrLowGradeCourses { get; init; } = [];
+    public IReadOnlyCollection<AiAdvisorCourseDto> AvailableCourses { get; init; } = [];
+    public IReadOnlyCollection<AiAdvisorCourseDto> LockedCourses { get; init; } = [];
 }
 
 /// <summary>
@@ -45,4 +52,14 @@ public sealed class AiAdvisorCourseDto
     public string Name { get; init; } = string.Empty;
     public int CreditHours { get; init; }
     public string? Grade { get; init; }
+}
+
+/// <summary>
+/// One previous chat turn supplied to the AI advisor for continuity.
+/// </summary>
+public sealed class AiAdvisorMessageDto
+{
+    public string Role { get; init; } = string.Empty;
+    public string Content { get; init; } = string.Empty;
+    public DateTimeOffset? CreatedAtUtc { get; init; }
 }

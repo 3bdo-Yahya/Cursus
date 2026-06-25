@@ -37,8 +37,13 @@ public static class AiAdvisorContextFactory
             CurrentSemester = audit.CurrentSemester,
             AcademicStanding = audit.CurrentStanding,
             Cgpa = audit.Cgpa,
+            MinGpaForGraduation = audit.MinGpaForGraduation,
             CreditsCompleted = audit.TotalCreditsEarned,
             CreditsRequired = audit.TotalCreditsRequired,
+            CreditsRemaining = audit.CreditsRemaining,
+            OverallProgressPercentage = audit.OverallPercentage,
+            IsOverloadEligible = audit.IsOverloadEligible,
+            IsOnTrack = audit.IsOnTrack,
             ProjectedGraduation = audit.EstimatedGradSemester,
             CategoryProgress = audit.Categories
                 .Select(category => new AiAdvisorCategoryProgressDto
@@ -58,7 +63,11 @@ public static class AiAdvisorContextFactory
             FailedOrLowGradeCourses = MapCourses(
                 courses.Where(course =>
                     course.Status == CourseAuditStatus.Failed ||
-                    IsLowGrade(course.Grade)))
+                    IsLowGrade(course.Grade))),
+            AvailableCourses = MapCourses(
+                courses.Where(course => course.Status == CourseAuditStatus.Available)),
+            LockedCourses = MapCourses(
+                courses.Where(course => course.Status == CourseAuditStatus.Locked))
         };
     }
 

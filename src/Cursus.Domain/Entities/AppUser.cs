@@ -35,5 +35,6 @@ namespace Cursus.Domain.Entities
 
         public ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
         public ICollection<StandingHistory> StandingHistories { get; set; } = new List<StandingHistory>();
+        public ICollection<AiAdvisorChatMessage> AiAdvisorChatMessages { get; set; } = new List<AiAdvisorChatMessage>();
     }
 }

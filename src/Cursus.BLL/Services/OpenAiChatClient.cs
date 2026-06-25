@@ -1,4 +1,5 @@
 using Cursus.BLL.Options;
+using Cursus.Domain.DTOs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OpenAI;
@@ -8,7 +9,7 @@ using System.ClientModel;
 namespace Cursus.BLL.Services;
 
 /// <summary>
-/// OpenAI .NET SDK wrapper used by the AI advisor service.
+/// OpenAI-compatible .NET SDK wrapper used by the AI advisor service.
 /// </summary>
 public sealed class OpenAiChatClient : IOpenAiChatClient
 {
@@ -26,13 +27,13 @@ public sealed class OpenAiChatClient : IOpenAiChatClient
         if (string.IsNullOrWhiteSpace(_options.ApiKey))
         {
             _logger.LogWarning(
-                "OpenAI is not configured. Set {ConfigurationKey} using user secrets or an environment variable.",
+                "The AI advisor provider is not configured. Set {ConfigurationKey} using user secrets or an environment variable.",
                 $"{OpenAiOptions.SectionName}:ApiKey");
             return;
         }
 
         var model = string.IsNullOrWhiteSpace(_options.Model)
-            ? "gpt-4o-mini"
+            ? OpenAiOptions.DefaultModel
             : _options.Model.Trim();
 
         _client = CreateChatClient(model);
@@ -43,16 +44,13 @@ public sealed class OpenAiChatClient : IOpenAiChatClient
     public async Task<string?> CompleteAsync(
         string systemPrompt,
         string userMessage,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IReadOnlyList<AiAdvisorMessageDto>? conversationHistory = null)
     {
         if (_client is null)
             return null;
 
-        var messages = new ChatMessage[]
-        {
-            new SystemChatMessage(systemPrompt),
-            new UserChatMessage(userMessage)
-        };
+        var messages = BuildMessages(systemPrompt, userMessage, conversationHistory);
 
         var completionOptions = new ChatCompletionOptions
         {
@@ -98,5 +96,33 @@ public sealed class OpenAiChatClient : IOpenAiChatClient
             {
                 Endpoint = endpoint
             });
+    }
+
+    private static List<ChatMessage> BuildMessages(
+        string systemPrompt,
+        string userMessage,
+        IReadOnlyList<AiAdvisorMessageDto>? conversationHistory)
+    {
+        var messages = new List<ChatMessage>
+        {
+            new SystemChatMessage(systemPrompt)
+        };
+
+        foreach (var message in conversationHistory ?? [])
+        {
+            if (string.Equals(message.Role, "user", StringComparison.OrdinalIgnoreCase))
+            {
+                messages.Add(new UserChatMessage(message.Content));
+                continue;
+            }
+
+            if (string.Equals(message.Role, "assistant", StringComparison.OrdinalIgnoreCase))
+            {
+                messages.Add(new AssistantChatMessage(message.Content));
+            }
+        }
+
+        messages.Add(new UserChatMessage(userMessage));
+        return messages;
     }
 }

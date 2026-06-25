@@ -38,7 +38,9 @@ public sealed class AiAdvisorContextFactoryTests
                         Course(1, "CS201", "Data Structures", "B+", CourseAuditStatus.Completed),
                         Course(2, "CS301", "Operating Systems", null, CourseAuditStatus.InProgress),
                         Course(3, "MTH102", "Calculus II", "F", CourseAuditStatus.Failed),
-                        Course(4, "CS202", "Discrete Mathematics", "D+", CourseAuditStatus.Completed)
+                        Course(4, "CS202", "Discrete Mathematics", "D+", CourseAuditStatus.Completed),
+                        Course(5, "CS302", "Databases", null, CourseAuditStatus.Available),
+                        Course(6, "CS401", "Capstone Project", null, CourseAuditStatus.Locked)
                     ]
                 },
                 new CategoryProgressDto
@@ -63,12 +65,21 @@ public sealed class AiAdvisorContextFactoryTests
         Assert.Equal("Ahmed Kamal", context.DisplayName);
         Assert.Equal(AcademicStanding.Warning, context.AcademicStanding);
         Assert.Equal(2.25m, context.Cgpa);
+        Assert.Equal(2m, context.MinGpaForGraduation);
+        Assert.Equal(75, context.CreditsRemaining);
+        Assert.Equal(38, context.OverallProgressPercentage);
+        Assert.False(context.IsOverloadEligible);
+        Assert.True(context.IsOnTrack);
         Assert.Equal(2, context.CategoryProgress.Count);
         Assert.Equal(2, context.CompletedCourses.Count);
         Assert.Single(context.InProgressCourses);
         Assert.Equal(2, context.FailedOrLowGradeCourses.Count);
+        Assert.Single(context.AvailableCourses);
+        Assert.Single(context.LockedCourses);
         Assert.Contains(context.FailedOrLowGradeCourses, course => course.Code == "MTH102");
         Assert.Contains(context.FailedOrLowGradeCourses, course => course.Code == "CS202");
+        Assert.Contains(context.AvailableCourses, course => course.Code == "CS302");
+        Assert.Contains(context.LockedCourses, course => course.Code == "CS401");
     }
 
     private static CourseAuditItemDto Course(

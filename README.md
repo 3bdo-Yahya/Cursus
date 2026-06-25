@@ -23,7 +23,7 @@ Cursus is a web platform that helps university students **see, understand, and p
 | Graph Viz      | Cytoscape.js (interactive prerequisite map) |
 | Database       | SQL Server + Entity Framework Core          |
 | Auth           | ASP.NET Identity (cookie-based, role-based) |
-| AI             | OpenAI API (configurable chat model)         |
+| AI             | OpenRouter via OpenAI-compatible chat API    |
 | CI/CD          | GitHub Actions (`dotnet-ci.yml`)            |
 
 ---
@@ -131,8 +131,8 @@ dotnet restore
 # Apply database migrations
 dotnet ef database update --project Cursus.DAL --startup-project Cursus.PL
 
-# Configure the OpenAI key for local development
-dotnet user-secrets set "OpenAi:ApiKey" "YOUR_API_KEY" --project Cursus.PL
+# Configure the OpenRouter key for local development
+dotnet user-secrets set "OpenAi:ApiKey" "YOUR_OPENROUTER_KEY" --project Cursus.PL
 
 # Run the application
 dotnet run --project Cursus.PL
@@ -144,9 +144,9 @@ The app will be available at `https://localhost:5001` (or the port shown in the 
 
 > **Security:** If you enable identity seeding for local testing, provide seed admin credentials through secure local configuration such as environment variables or .NET user-secrets. Do not rely on seeded credentials in shared or production environments.
 
-The OpenAI key must also remain outside source control. In deployed environments, set
-`OpenAi__ApiKey` as an environment variable. The model and generation limits can be
-configured through the `OpenAi` section in `Cursus.PL/appsettings.json`.
+The OpenRouter key must also remain outside source control. In deployed environments, set
+`OpenAi__ApiKey` as an environment variable. The OpenRouter endpoint, model, and generation
+limits are configured through the `OpenAi` section in `Cursus.PL/appsettings.json`.
 
 ---
 

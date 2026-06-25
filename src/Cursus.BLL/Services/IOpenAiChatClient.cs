@@ -1,8 +1,10 @@
+using Cursus.Domain.DTOs;
+
 namespace Cursus.BLL.Services;
 
 /// <summary>
-/// Small boundary around the OpenAI SDK so advisor behavior can be tested
-/// without making external API requests.
+/// Small boundary around the OpenAI-compatible SDK so advisor behavior can be
+/// tested without making external API requests.
 /// </summary>
 public interface IOpenAiChatClient
 {
@@ -11,5 +13,6 @@ public interface IOpenAiChatClient
     Task<string?> CompleteAsync(
         string systemPrompt,
         string userMessage,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default,
+        IReadOnlyList<AiAdvisorMessageDto>? conversationHistory = null);
 }
