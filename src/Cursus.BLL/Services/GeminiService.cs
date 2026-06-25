@@ -39,7 +39,7 @@ namespace Cursus.BLL.Services
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // In production, we'd log the exception using ILogger
                 return "The AI advisor is temporarily unavailable. Please try again later.";
