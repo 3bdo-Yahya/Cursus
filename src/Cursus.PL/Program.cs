@@ -31,6 +31,7 @@ public class Program
         {
             options.TokenLifespan = TimeSpan.FromMinutes(5);
         });
+
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())

@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,7 @@ using Cursus.Domain.Constants;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Interfaces.Services;
 using Cursus.PL.Models;
+using System.Text;
 
 namespace Cursus.PL.Controllers;
 
@@ -21,19 +21,22 @@ public class StudentController : Controller
     private readonly IProgressService _progressService;
     private readonly IStudentDashboardService _dashboardService;
     private readonly IImpactAnalysisService _impactAnalysisService;
+    private readonly IGeminiService _geminiService;
 
     public StudentController(
         UserManager<AppUser> userManager,
         ApplicationDbContext db,
         IProgressService progressService,
         IStudentDashboardService dashboardService,
-        IImpactAnalysisService impactAnalysisService)
+        IImpactAnalysisService impactAnalysisService,
+        IGeminiService geminiService)
     {
         _userManager = userManager;
         _db = db;
         _progressService = progressService;
         _dashboardService = dashboardService;
         _impactAnalysisService = impactAnalysisService;
+        _geminiService = geminiService;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -48,7 +51,7 @@ public class StudentController : Controller
 
         if (dto.DepartmentName == "Not assigned")
             TempData["Warning"] = "Please contact your admin to assign your department.";
-            
+
         else if (!dto.HasAcademicRecords)
             TempData["Warning"] = "No academic records found yet. Your dashboard will populate once your admin enters your course history.";
 
@@ -74,6 +77,31 @@ public class StudentController : Controller
         return View(new ProgressViewModel { Audit = audit });
     }
     public IActionResult AiAdvisor() => View();
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AiAdvisorChat([FromBody] ChatRequestDto request, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(request?.Message))
+            return BadRequest(new { error = "Message is required." });
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return Unauthorized();
+
+        var audit = await _progressService.GetGraduationAuditAsync(user.Id);
+        if (audit is null)
+            return BadRequest(new { error = "Could not load student academic record." });
+
+        try
+        {
+            var reply = await _geminiService.AskGeminiAsync(audit, request, cancellationToken);
+            return Json(new { reply });
+        }
+        catch
+        {
+            return StatusCode(500, new { error = "AI Advisor is temporarily unavailable." });
+        }
+    }
     public async Task<IActionResult> GpaSimulator()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -163,14 +191,14 @@ public class StudentController : Controller
                                 && (bestAttempt.Status == StudentCourseStatus.Completed || bestAttempt.Status == StudentCourseStatus.Failed)
                                 && !string.IsNullOrWhiteSpace(bestAttempt.Grade);
                 return new SimulatedCourseViewModel
-               {
-                Id = sc.Course!.Code,
-                Name = sc.Course.Name,
-                Credits = sc.Course.CreditHours,
-                IsRetake = isRetake,
-                OriginalGrade = isRetake ? bestAttempt!.Grade! : string.Empty,
-                OriginalPoints = isRetake && gradeScale.TryGetValue(bestAttempt!.Grade!.ToUpper(), out var pts) ? pts : 0.0
-               };
+                {
+                    Id = sc.Course!.Code,
+                    Name = sc.Course.Name,
+                    Credits = sc.Course.CreditHours,
+                    IsRetake = isRetake,
+                    OriginalGrade = isRetake ? bestAttempt!.Grade! : string.Empty,
+                    OriginalPoints = isRetake && gradeScale.TryGetValue(bestAttempt!.Grade!.ToUpper(), out var pts) ? pts : 0.0
+                };
             })
             .ToList();
 
@@ -179,13 +207,13 @@ public class StudentController : Controller
             .Where(sc => sc.Status == StudentCourseStatus.InProgress)
             .Select(sc => sc.CourseId)
             .ToHashSet();
-        
+
 
         var improvableCourses = bestAttempts
             .Where(sc => (sc.Status == StudentCourseStatus.Failed || sc.Grade == "D" || sc.Grade == "D+")
                 && sc.Course is not null
                 && !inProgressCourseIds.Contains(sc.CourseId))
-            
+
             .Select(sc => new ImprovableCourseViewModel
             {
                 Id = sc.Course!.Code,
