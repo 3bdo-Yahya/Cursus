@@ -8,6 +8,7 @@ namespace Cursus.Domain.DTOs
         string Name,
         int CreditHours,
         StudentCourseStatus? Status,  // Color code: Completed, Failed, InProgress, or null
-        string? Grade
+        string? Grade,
+        CourseType CourseType
     );
 }
