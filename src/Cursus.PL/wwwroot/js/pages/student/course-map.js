@@ -54,12 +54,15 @@ function buildCourses(nodes, edges) {
       status,
       grade: n.grade || null,
       prereqs,
+      courseType: n.courseType,
     };
   });
 }
 
 function buildElements(courses) {
   const elements = [];
+  const courseIdSet = new Set(courses.map(c => c.id));
+
   courses.forEach(c => {
     const s = STATUS_STYLE[c.status] || STATUS_STYLE['remaining'];
     elements.push({
@@ -74,7 +77,9 @@ function buildElements(courses) {
   });
   courses.forEach(c => {
     c.prereqs.forEach(p => {
-      elements.push({ data:{ id:`${p}->${c.id}`, source:p, target:c.id } });
+      if (courseIdSet.has(p)) {
+        elements.push({ data:{ id:`${p}->${c.id}`, source:p, target:c.id } });
+      }
     });
   });
   return elements;
@@ -227,6 +232,7 @@ cy.on('mouseover', 'node', () => document.getElementById('cy').style.cursor = 'p
 cy.on('mouseout',  'node', () => document.getElementById('cy').style.cursor = 'default');
 
   wireStaticControls();
+  wireFilterControls();
 }
 
 function openPanel(d) {
@@ -616,6 +622,53 @@ function closeImpactDrawer() {
   document.getElementById('btn-close-panel').addEventListener('click', closePanel);
   document.getElementById('btn-simulate').addEventListener('click', startSim);
   document.getElementById('btn-clear-panel').addEventListener('click', clearSimAnimated);
+}
+
+function updateGraphFilter(filterType) {
+  if (simActive) {
+    clearSim();
+  }
+
+  let filteredCourses = COURSES;
+  if (filterType === 'core') {
+    filteredCourses = COURSES.filter(c => c.courseType === 0);
+  } else if (filterType === 'elective') {
+    filteredCourses = COURSES.filter(c => c.courseType === 1 || c.courseType === 2);
+  } else if (filterType === 'uni') {
+    filteredCourses = COURSES.filter(c => c.courseType === 3);
+  }
+
+  const elements = buildElements(filteredCourses);
+
+  cy.elements().remove();
+  cy.add(elements);
+
+  const layout = cy.layout({
+    name: 'breadthfirst',
+    directed: true,
+    padding: 40,
+    spacingFactor: 1.3,
+    animate: true,
+    animationDuration: 400,
+    animationEasing: 'ease-out-cubic'
+  });
+  layout.run();
+
+  setTimeout(() => {
+    cy.animate({ fit: { padding: 60 }, duration: 300, easing: 'ease-out-sine' });
+  }, 450);
+}
+
+function wireFilterControls() {
+  const chips = document.querySelectorAll('.cm-filter-chip');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const filterType = chip.getAttribute('data-type');
+      updateGraphFilter(filterType);
+    });
+  });
 }
 
 })();

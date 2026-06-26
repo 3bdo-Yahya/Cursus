@@ -60,7 +60,8 @@ namespace Cursus.BLL.Services
                     Name: c.Name,
                     CreditHours: c.CreditHours,
                     Status: hasStudentRecord ? record.Status : null,
-                    Grade: hasStudentRecord ? record.Grade : null
+                    Grade: hasStudentRecord ? record.Grade : null,
+                    CourseType: c.CourseType
                 );
             }).ToList();
 
