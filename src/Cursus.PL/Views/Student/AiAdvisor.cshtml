@@ -1,96 +1,103 @@
 @{
-    ViewData["Title"] = "AI Advisor";
+  ViewData["Title"] = "AI Advisor";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/student/ai-advisor.css" asp-append-version="true"/>
+  <link rel="stylesheet" href="~/css/pages/student/ai-advisor.css" asp-append-version="true" />
 }
-
+@Html.AntiForgeryToken()
 <!-- ─── Advisor Shell ────────────────────────────────────── -->
 <div class="ai-advisor-page">
-<div class="advisor-shell">
-  <div class="chat-wrap">
+  <div class="advisor-shell">
+    <div class="chat-wrap">
 
-    <!-- Chat Header -->
-    <div class="chat-header anim-fade-up">
-      <div class="d-flex align-items-center gap-3">
-        <div class="advisor-avatar">
-          <span class="material-symbols-outlined">smart_toy</span>
-          <div class="advisor-online-dot"></div>
+      <!-- Chat Header -->
+      <div class="chat-header anim-fade-up">
+        <div class="d-flex align-items-center gap-3">
+          <div class="advisor-avatar">
+            <span class="material-symbols-outlined">smart_toy</span>
+            <div class="advisor-online-dot"></div>
+          </div>
+          <div>
+            <p class="fw-800 mb-0 lh-1" style="font-size:15px;color:var(--c-text);">AI Advisor</p>
+            <p class="mb-0 lh-1" style="font-size:11.5px;color:var(--c-muted);margin-top:3px;">
+              <span
+              style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:5px;vertical-align:middle;"></span>
+              Online · Powered by Gemini 2.5 flash
+            </p>
+          </div>
         </div>
-        <div>
-          <p class="fw-800 mb-0 lh-1" style="font-size:15px;color:var(--c-text);">AI Advisor</p>
-          <p class="mb-0 lh-1" style="font-size:11.5px;color:var(--c-muted);margin-top:3px;">
-            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:5px;vertical-align:middle;"></span>
-            Online · Powered by GPT-3.5
-          </p>
-        </div>
-      </div>
-      <button class="clear-chat-btn" id="clear-btn" onclick="clearChat()">
-        <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">delete_sweep</span>
-        Clear Chat
-      </button>
-    </div>
-
-    <!-- Messages -->
-    <div class="messages-area" id="messages-area">
-
-      <!-- Empty state -->
-      <div class="empty-state" id="empty-state">
-        <div class="empty-icon-ring">
-          <span class="material-symbols-outlined">auto_awesome</span>
-        </div>
-        <div>
-          <p class="fw-800 mb-1" style="font-size:1.05rem;color:var(--c-text);">Ask me anything about your academic journey</p>
-          <p class="mb-0" style="font-size:13px;color:var(--c-muted);max-width:340px;margin:0 auto;line-height:1.6;">
-            I can help you plan courses, understand prerequisite chains, simulate GPA scenarios, and navigate academic standing rules.
-          </p>
-        </div>
-        <!-- Context pills -->
-        <div class="d-flex flex-wrap gap-2 justify-content-center" style="margin-top:4px;">
-          <span style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:var(--c-soft);color:var(--c-primary);border:1px solid rgba(79,70,229,.2);">
-            <span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">person</span>
-            Ahmed Kamal
-          </span>
-          <span style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:var(--c-soft);color:var(--c-primary);border:1px solid rgba(79,70,229,.2);">
-            <span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">school</span>
-            CS · Year 3 · CGPA 3.24
-          </span>
-          <span style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:rgba(16,185,129,.1);color:#047857;border:1px solid rgba(16,185,129,.2);">
-            <span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">verified</span>
-            Good Standing
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Suggestion Chips -->
-    <div class="chips-row" id="chips-row">
-      <button class="suggestion-chip" onclick="sendSuggestion(this)">What should I take next semester?</button>
-      <button class="suggestion-chip" onclick="sendSuggestion(this)">Am I on track to graduate?</button>
-      <button class="suggestion-chip" onclick="sendSuggestion(this)">How can I improve my GPA?</button>
-      <button class="suggestion-chip" onclick="sendSuggestion(this)">What happens if I fail CS301?</button>
-    </div>
-
-    <!-- Input Area -->
-    <div class="input-area anim-fade-up-1">
-      <div class="input-shell">
-        <textarea
-          id="chat-input"
-          class="chat-input"
-          rows="1"
-          placeholder="Ask about your courses, GPA, graduation plan…"
-          onkeydown="handleKey(event)"
-          oninput="autoResize(this)"></textarea>
-        <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>
-          <span class="material-symbols-outlined">send</span>
+        <button class="clear-chat-btn" id="clear-btn" onclick="clearChat()">
+          <span class="material-symbols-outlined"
+                style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">delete_sweep</span>
+          Clear Chat
         </button>
       </div>
-      <p class="input-footer">AI Advisor can make mistakes. Verify important requirements with your faculty advisor.</p>
+
+      <!-- Messages -->
+      <div class="messages-area" id="messages-area">
+
+        <!-- Empty state -->
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon-ring">
+            <span class="material-symbols-outlined">auto_awesome</span>
+          </div>
+          <div>
+            <p class="fw-800 mb-1" style="font-size:1.05rem;color:var(--c-text);">Ask me anything about your academic
+              journey</p>
+              <p class="mb-0" style="font-size:13px;color:var(--c-muted);max-width:340px;margin:0 auto;line-height:1.6;">
+                I can help you plan courses, understand prerequisite chains, simulate GPA scenarios, and navigate academic
+                standing rules.
+              </p>
+            </div>
+            <!-- Context pills -->
+            <div class="d-flex flex-wrap gap-2 justify-content-center" style="margin-top:4px;">
+              <span
+                style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:var(--c-soft);color:var(--c-primary);border:1px solid rgba(79,70,229,.2);">
+                <span class="material-symbols-outlined"
+                      style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">person</span>
+                Ahmed Kamal
+              </span>
+              <span
+                style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:var(--c-soft);color:var(--c-primary);border:1px solid rgba(79,70,229,.2);">
+                <span class="material-symbols-outlined"
+                      style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">school</span>
+                CS · Year 3 · CGPA 3.24
+              </span>
+              <span
+                style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:rgba(16,185,129,.1);color:#047857;border:1px solid rgba(16,185,129,.2);">
+                <span class="material-symbols-outlined"
+                      style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">verified</span>
+                Good Standing
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggestion Chips -->
+        <div class="chips-row" id="chips-row">
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">What should I take next semester?</button>
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">Am I on track to graduate?</button>
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">How can I improve my GPA?</button>
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">What happens if I fail CS301?</button>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area anim-fade-up-1">
+          <div class="input-shell">
+            <textarea id="chat-input" class="chat-input" rows="1"
+                      placeholder="Ask about your courses, GPA, graduation plan…" onkeydown="handleKey(event)"
+                      oninput="autoResize(this)"></textarea>
+            <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>
+              <span class="material-symbols-outlined">send</span>
+            </button>
+          </div>
+          <p class="input-footer">AI Advisor can make mistakes. Verify important requirements with your faculty advisor.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-</div>
-@section Scripts {
+  @section Scripts {
     <script src="~/js/pages/student/ai-advisor.js" asp-append-version="true"></script>
-}
+  }
