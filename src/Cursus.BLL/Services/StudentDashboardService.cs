@@ -39,8 +39,8 @@ public sealed class StudentDashboardService : IStudentDashboardService
                 g => g.OrderBy(sc => sc.Status switch
                 {
                     StudentCourseStatus.Completed => 0,
-                    StudentCourseStatus.Failed => 1,
-                    StudentCourseStatus.InProgress => 2,
+                    StudentCourseStatus.InProgress => 1,
+                    StudentCourseStatus.Failed => 2,
                     _ => 3
                 }).First());
 
