@@ -559,7 +559,7 @@ function openImpactDrawer(blocked, src) {
     </div>
   `;
 
-  document.getElementById('btn-close-impact').addEventListener('click', () => { closePanel(); clearSimAnimated()(); });
+  document.getElementById('btn-close-impact').addEventListener('click', () => { closePanel(); clearSimAnimated(); });
   document.getElementById('btn-clear-impact').addEventListener('click', clearSimAnimated);
 }
 
