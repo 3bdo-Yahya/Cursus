@@ -23,6 +23,7 @@ let cy = null;
 let selectedNode   = null;
 let simActive      = false;
 let simSourceId    = null;
+let simTimeouts    = [];
 
 
 function buildCourses(nodes, edges) {
@@ -315,8 +316,30 @@ function wireStaticControls() {
     cy.animate({ fit:{ padding:60 }, duration:400, easing:'ease-out-cubic' }));
 
   document.getElementById('btn-simulate').addEventListener('click', startSim);
-  document.getElementById('btn-clear-banner').addEventListener('click', clearSim);
-  document.getElementById('btn-clear-panel').addEventListener('click', clearSim);
+  document.getElementById('btn-clear-banner').addEventListener('click', clearSimAnimated);
+  document.getElementById('btn-clear-panel').addEventListener('click', clearSimAnimated);
+}
+
+function pulseNode(node) {
+  node.animate(
+    { style: { 'width': 184, 'height': 66 } },
+    {
+      duration: 260,
+      easing: 'ease-out-sine',
+      complete: () => node.removeStyle('width height'),
+    }
+  );
+}
+
+function pulseEdge(edge) {
+  edge.animate(
+    { style: { 'width': 5, 'line-color': '#dc2626', 'target-arrow-color': '#dc2626' } },
+    {
+      duration: 260,
+      easing: 'ease-out-sine',
+      complete: () => edge.removeStyle('width line-color target-arrow-color'),
+    }
+  );
 }
 
 function startSim() {
@@ -345,15 +368,18 @@ function startSim() {
   cy.getElementById(simSourceId).removeClass('dimmed').addClass('cascade-source');
 
   blocked.forEach((dep, i) => {
-    setTimeout(() => {
+    const tId = setTimeout(() => {
       const n = cy.getElementById(dep.id);
       n.removeClass('dimmed').addClass('cascade-hit');
+      pulseNode(n);
       n.incomers('edge').forEach(edge => {
         if (visited.has(edge.source().id())) {
           edge.removeClass('dimmed').addClass('cascade-edge');
+          pulseEdge(edge);
         }
       });
     }, (i + 1) * 220);
+    simTimeouts.push(tId);
   });
 
   COURSES.filter(c => c.status === 'passed' || c.status === 'in-progress').forEach(c => {
@@ -370,10 +396,19 @@ function startSim() {
 
   document.getElementById('btn-impact-toggle').style.display = '';
 
-  setTimeout(() => openImpactDrawer(blocked, src), blocked.length * 220 + 350);
+  const drawerTId = setTimeout(() => openImpactDrawer(blocked, src), blocked.length * 220 + 350);
+  simTimeouts.push(drawerTId);
 }
 
 function clearSim() {
+  simTimeouts.forEach(id => clearTimeout(id));
+  simTimeouts = [];
+
+  cy.nodes().stop(true);
+  cy.edges().stop(true);
+  cy.nodes().removeStyle('width height');
+  cy.edges().removeStyle('width line-color target-arrow-color');
+
   simActive   = false;
   simSourceId = null;
 
@@ -389,6 +424,65 @@ function clearSim() {
   document.getElementById('panel-clear-wrap').style.display    = 'none';
 
   if (selectedNode) openPanel(selectedNode.data());
+}
+
+function clearSimAnimated() {
+  simTimeouts.forEach(id => clearTimeout(id));
+  simTimeouts = [];
+
+  cy.nodes().stop(true);
+  cy.edges().stop(true);
+
+  // Reverse the blocked order so last-hit clears first
+  const cascadeNodes = cy.nodes('.cascade-hit').toArray().reverse();
+  const cascadeEdges = cy.edges('.cascade-edge').toArray().reverse();
+
+  cascadeNodes.forEach((n, i) => {
+    const tId = setTimeout(() => {
+      n.animate(
+        { style: { opacity: 0.15 } },
+        {
+          duration: 180,
+          complete: () => {
+            n.removeClass('cascade-hit dimmed');
+            n.removeStyle('opacity width height');
+          }
+        }
+      );
+    }, i * 120);
+    simTimeouts.push(tId);
+  });
+
+  cascadeEdges.forEach((e, i) => {
+    const tId = setTimeout(() => {
+      e.removeClass('cascade-edge dimmed');
+      e.removeStyle('width line-color target-arrow-color');
+    }, i * 120);
+    simTimeouts.push(tId);
+  });
+
+  const totalDuration = cascadeNodes.length * 120 + 250;
+
+  const finalTId = setTimeout(() => {
+    simTimeouts = [];
+    cy.nodes().stop(true).removeStyle('width height opacity');
+    cy.nodes().removeClass('dimmed cascade-hit cascade-source');
+    cy.edges().removeClass('dimmed cascade-edge');
+    cy.nodes().style('opacity', 1);
+
+    simActive   = false;
+    simSourceId = null;
+
+    document.getElementById('sim-banner').classList.remove('show');
+    closeImpactDrawer();
+    document.getElementById('btn-impact-toggle').style.display = 'none';
+    document.getElementById('panel-simulate-wrap').style.display = '';
+    document.getElementById('panel-clear-wrap').style.display    = 'none';
+
+    if (selectedNode) openPanel(selectedNode.data());
+  }, totalDuration);
+
+  simTimeouts.push(finalTId);
 }
 
 
@@ -465,8 +559,8 @@ function openImpactDrawer(blocked, src) {
     </div>
   `;
 
-  document.getElementById('btn-close-impact').addEventListener('click', () => { closePanel(); clearSim(); });
-  document.getElementById('btn-clear-impact').addEventListener('click', clearSim);
+  document.getElementById('btn-close-impact').addEventListener('click', () => { closePanel(); clearSimAnimated()(); });
+  document.getElementById('btn-clear-impact').addEventListener('click', clearSimAnimated);
 }
 
 function closeImpactDrawer() {
@@ -521,7 +615,7 @@ function closeImpactDrawer() {
 
   document.getElementById('btn-close-panel').addEventListener('click', closePanel);
   document.getElementById('btn-simulate').addEventListener('click', startSim);
-  document.getElementById('btn-clear-panel').addEventListener('click', clearSim);
+  document.getElementById('btn-clear-panel').addEventListener('click', clearSimAnimated);
 }
 
 })();
