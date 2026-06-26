@@ -4,6 +4,25 @@ const API_URL = '/api/CourseMap/get-all';
 
 const STATUS_BY_CODE = { 0:'passed', 1:'failed', 2:'in-progress' };
 
+const SEMESTER_MIN = 1;
+const SEMESTER_MAX = 8;
+const FLEXIBLE_SEMESTER = 9;
+const COLUMN_WIDTH = 360;
+const ROW_HEIGHT = 92;
+const DENSE_LANE_WIDTH = 178;
+const HEADER_MODEL_Y = -92;
+const SEMESTER_LABELS = {
+  1: 'Sem 1',
+  2: 'Sem 2',
+  3: 'Sem 3',
+  4: 'Sem 4',
+  5: 'Sem 5',
+  6: 'Sem 6',
+  7: 'Sem 7',
+  8: 'Sem 8',
+  9: 'Flexible'
+};
+
 const STATUS_STYLE = {
   'passed':      { bg:'#10b981', border:'#059669', text:'#fff',     label:'Passed'      },
   'in-progress': { bg:'#3b82f6', border:'#2563eb', text:'#fff',     label:'In Progress' },
@@ -55,6 +74,7 @@ function buildCourses(nodes, edges) {
       grade: n.grade || null,
       prereqs,
       courseType: n.courseType,
+      recommendedSemester: normalizeSemester(n.recommendedSemester),
     };
   });
 }
@@ -83,6 +103,158 @@ function buildElements(courses) {
     });
   });
   return elements;
+}
+
+function normalizeSemester(value) {
+  const semester = Number(value);
+  return Number.isInteger(semester) && semester >= SEMESTER_MIN && semester <= SEMESTER_MAX
+    ? semester
+    : null;
+}
+
+function resolveCourseSemesters(courses) {
+  const courseById = new Map(courses.map(course => [course.id, course]));
+  const dependentsById = new Map();
+  courses.forEach(course => {
+    course.prereqs.forEach(prereqId => {
+      const dependents = dependentsById.get(prereqId) || [];
+      dependents.push(course.id);
+      dependentsById.set(prereqId, dependents);
+    });
+  });
+
+  const resolved = new Map();
+  const resolving = new Set();
+
+  function resolve(course) {
+    if (resolved.has(course.id)) return resolved.get(course.id);
+
+    const knownSemester = normalizeSemester(course.recommendedSemester);
+    if (knownSemester) {
+      resolved.set(course.id, knownSemester);
+      return knownSemester;
+    }
+
+    if (resolving.has(course.id)) {
+      return FLEXIBLE_SEMESTER;
+    }
+
+    resolving.add(course.id);
+    const prereqSemesters = course.prereqs
+      .map(prereqId => courseById.get(prereqId))
+      .filter(Boolean)
+      .map(prereq => resolve(prereq))
+      .filter(semester => semester >= SEMESTER_MIN && semester <= SEMESTER_MAX);
+    resolving.delete(course.id);
+
+    let semester = FLEXIBLE_SEMESTER;
+    if (prereqSemesters.length > 0) {
+      const nextSemester = Math.max(...prereqSemesters) + 1;
+      semester = nextSemester <= SEMESTER_MAX ? nextSemester : FLEXIBLE_SEMESTER;
+    } else if (course.prereqs.length === 0 && (dependentsById.get(course.id) || []).length > 0) {
+      semester = SEMESTER_MIN;
+    }
+
+    resolved.set(course.id, semester);
+    return semester;
+  }
+
+  courses.forEach(resolve);
+  return resolved;
+}
+
+function compareCoursesForLayout(a, b) {
+  return (a.courseType ?? 99) - (b.courseType ?? 99) || a.code.localeCompare(b.code);
+}
+
+function computeLaneCount(courseCount) {
+  if (courseCount > 14) return 3;
+  if (courseCount > 7) return 2;
+  return 1;
+}
+
+function computeSemesterPositions(courses) {
+  const resolvedSemesters = resolveCourseSemesters(courses);
+  const groups = new Map();
+  const positionMap = {};
+
+  courses.forEach(course => {
+    const semester = resolvedSemesters.get(course.id) || FLEXIBLE_SEMESTER;
+    const group = groups.get(semester) || [];
+    group.push(course);
+    groups.set(semester, group);
+  });
+
+  for (let semester = SEMESTER_MIN; semester <= FLEXIBLE_SEMESTER; semester++) {
+    const group = (groups.get(semester) || []).sort(compareCoursesForLayout);
+    const laneCount = computeLaneCount(group.length);
+    const rows = Math.max(1, Math.ceil(group.length / laneCount));
+    const columnX = getSemesterModelX(semester);
+
+    group.forEach((course, index) => {
+      const lane = index % laneCount;
+      const row = Math.floor(index / laneCount);
+      const laneOffset = (lane - (laneCount - 1) / 2) * DENSE_LANE_WIDTH;
+
+      positionMap[course.id] = {
+        x: columnX + laneOffset,
+        y: (row - (rows - 1) / 2) * ROW_HEIGHT
+      };
+    });
+  }
+
+  return positionMap;
+}
+
+function getSemesterModelX(semester) {
+  return (semester - SEMESTER_MIN) * COLUMN_WIDTH;
+}
+
+function buildPresetLayout(positionMap, animate) {
+  return {
+    name: 'preset',
+    positions: node => positionMap[node.id()] || { x: 0, y: 0 },
+    animate,
+    animationDuration: animate ? 400 : 0,
+    animationEasing: 'ease-out-cubic'
+  };
+}
+
+function renderSemesterHeaders() {
+  const headerContainer = document.getElementById('cm-semester-headers');
+  if (!headerContainer) return;
+
+  headerContainer.innerHTML = '';
+  for (let semester = SEMESTER_MIN; semester <= FLEXIBLE_SEMESTER; semester++) {
+    const label = document.createElement('div');
+    label.className = 'cm-semester-header';
+    label.dataset.semester = String(semester);
+    label.textContent = SEMESTER_LABELS[semester];
+    headerContainer.appendChild(label);
+  }
+}
+
+function updateSemesterHeaders() {
+  if (!cy) return;
+
+  const headerContainer = document.getElementById('cm-semester-headers');
+  if (!headerContainer) return;
+
+  const pan = cy.pan();
+  const zoom = cy.zoom();
+  headerContainer.querySelectorAll('.cm-semester-header').forEach(label => {
+    const semester = Number(label.dataset.semester);
+    const renderedX = pan.x + getSemesterModelX(semester) * zoom;
+    const renderedY = pan.y + HEADER_MODEL_Y * zoom;
+    label.style.transform = `translate(${renderedX}px, ${renderedY}px) translateX(-50%)`;
+  });
+}
+
+function wireSemesterHeaders() {
+  renderSemesterHeaders();
+  updateSemesterHeaders();
+  cy.on('pan zoom layoutstop render', updateSemesterHeaders);
+  window.addEventListener('resize', updateSemesterHeaders);
 }
 
 function showMessage(message) {
@@ -116,6 +288,7 @@ async function init() {
 
   COURSES = buildCourses(nodes, graph.edges || []);
   const elements = buildElements(COURSES);
+  const positionMap = computeSemesterPositions(COURSES);
 
 /* Init Cytoscape */
 cy = cytoscape({
@@ -206,7 +379,7 @@ cy = cytoscape({
       },
     },
   ],
-  layout: { name:'breadthfirst', directed:true, padding:40, spacingFactor:1.3 },
+  layout: buildPresetLayout(positionMap, false),
   minZoom: 0.35,
   maxZoom: 2.5,
   userZoomingEnabled:true,
@@ -215,6 +388,7 @@ cy = cytoscape({
 });
 
 cy.fit(undefined, 60);
+wireSemesterHeaders();
 
 cy.on('tap', 'node', e => {
   const n = e.target;
@@ -628,6 +802,7 @@ function updateGraphFilter(filterType) {
   if (simActive) {
     clearSim();
   }
+  closePanel();
 
   let filteredCourses = COURSES;
   if (filterType === 'core') {
@@ -639,20 +814,14 @@ function updateGraphFilter(filterType) {
   }
 
   const elements = buildElements(filteredCourses);
+  const positionMap = computeSemesterPositions(filteredCourses);
 
   cy.elements().remove();
   cy.add(elements);
 
-  const layout = cy.layout({
-    name: 'breadthfirst',
-    directed: true,
-    padding: 40,
-    spacingFactor: 1.3,
-    animate: true,
-    animationDuration: 400,
-    animationEasing: 'ease-out-cubic'
-  });
+  const layout = cy.layout(buildPresetLayout(positionMap, true));
   layout.run();
+  updateSemesterHeaders();
 
   setTimeout(() => {
     cy.animate({ fit: { padding: 60 }, duration: 300, easing: 'ease-out-sine' });

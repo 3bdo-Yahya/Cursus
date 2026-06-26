@@ -15,6 +15,10 @@ namespace Cursus.DAL.Configurations
                 tableBuilder.HasCheckConstraint(
                     "CK_Courses_CreditHours_Range",
                     "[CreditHours] >= 1 AND [CreditHours] <= 6");
+
+                tableBuilder.HasCheckConstraint(
+                    "CK_Courses_RecommendedSemester_Range",
+                    "[RecommendedSemester] IS NULL OR ([RecommendedSemester] >= 1 AND [RecommendedSemester] <= 8)");
             });
 
             builder.Property(course => course.Code)

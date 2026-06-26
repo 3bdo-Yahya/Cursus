@@ -35,6 +35,8 @@ namespace Cursus.Domain.Entities
 
         public bool IsActive { get; set; } = true;
 
+        public int? RecommendedSemester { get; set; }
+
         // Link to a department
         // each course is belong to a departments and department have many courses
         // many to many this will lead to a new junction table

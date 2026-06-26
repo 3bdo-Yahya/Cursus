@@ -61,7 +61,8 @@ namespace Cursus.BLL.Services
                     CreditHours: c.CreditHours,
                     Status: hasStudentRecord ? record.Status : null,
                     Grade: hasStudentRecord ? record.Grade : null,
-                    CourseType: c.CourseType
+                    CourseType: c.CourseType,
+                    RecommendedSemester: c.RecommendedSemester
                 );
             }).ToList();
 
