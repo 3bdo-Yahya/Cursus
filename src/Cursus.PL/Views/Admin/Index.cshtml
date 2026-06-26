@@ -1,11 +1,12 @@
-@model AdminDashboardViewModel
+@using Cursus.Domain.DTOs
+@model AdminDashboardDto
 
 @{
-    ViewData["Title"] = "Admin Dashboard";
+  ViewData["Title"] = "Admin Dashboard";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/admin/admin-dashboard.css" asp-append-version="true"/>
+  <link rel="stylesheet" href="~/css/pages/admin/admin-dashboard.css" asp-append-version="true" />
 }
 
 <div class="d-flex flex-column gap-4">
@@ -15,14 +16,16 @@
     <div>
       <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Admin Dashboard</h1>
       <p class="mb-0 d-flex align-items-center gap-1" style="font-size:13px;color:var(--c-muted);">
-        <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">calendar_today</span>
+        <span class="material-symbols-outlined"
+              style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">calendar_today</span>
         Academic Year 2025–2026 · System Overview
       </p>
     </div>
     <div class="d-flex gap-2">
       <a asp-action="CourseCreate" class="btn btn-primary d-flex align-items-center gap-2 fw-700"
          style="border-radius:12px;font-size:13px;padding:8px 16px;box-shadow:0 4px 14px rgba(79,70,229,.28);">
-        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">add</span>
+        <span class="material-symbols-outlined"
+              style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">add</span>
         Add Course
       </a>
     </div>
@@ -33,156 +36,214 @@
   <!-- Metric Cards -->
   <div class="row g-3 anim-fade-up-1" data-scroll-group>
 
+    <!-- Students -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="surface metric-card h-100 p-4">
+        <div class="d-flex align-items-start justify-content-between mb-3">
+          <div>
+            <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Students</p>
+            <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@Model.TotalStudents</p>
+            <p class="fw-600 mb-0" style="font-size:11px;color:var(--c-muted);">Enrolled students</p>
+          </div>
+          <div class="d-flex align-items-center justify-content-center rounded-2" style="width:40px;height:40px;flex-shrink:0;background:rgba(14,165,233,0.1);">
+            <span class="material-symbols-outlined" style="font-size:20px;color:#0ea5e9;font-variation-settings:'FILL' 0,'wght' 400">group</span>
+          </div>
+        </div>
+        <div class="pt-2" style="border-top:1px solid var(--c-border);">
+          <a asp-action="Students" class="fw-700 text-decoration-none d-flex align-items-center gap-1" style="font-size:11px;color:var(--c-primary);">
+            Manage
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
     <!-- Universities -->
     <div class="col-12 col-sm-6 col-xl-3">
       <div class="surface metric-card h-100 p-4">
         <div class="d-flex align-items-start justify-content-between mb-3">
           <div>
-            <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Universities</p>
-            <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@Model.TotalUniversities</p>
-            <p class="fw-600 mb-0" style="font-size:11px;color:var(--c-muted);">Institutions in the system</p>
-          </div>
-          <div class="d-flex align-items-center justify-content-center rounded-2 icon-box-blue" style="width:40px;height:40px;flex-shrink:0;">
-            <span class="material-symbols-outlined" style="font-size:20px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">account_balance</span>
-          </div>
-        </div>
-        <div class="pt-2" style="border-top:1px solid var(--c-border);">
-          <a asp-action="UniversityIndex" class="fw-700 text-decoration-none d-flex align-items-center gap-1" style="font-size:11px;color:var(--c-primary);">
-            Manage
-            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Departments -->
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="surface metric-card h-100 p-4">
-        <div class="d-flex align-items-start justify-content-between mb-3">
-          <div>
-            <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Departments</p>
-            <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@Model.TotalDepartments</p>
-            <p class="fw-600 mb-0" style="font-size:11px;color:#10b981;">@Model.ActiveDepartments active · @Model.InactiveDepartments inactive</p>
-          </div>
-          <div class="d-flex align-items-center justify-content-center rounded-2 icon-box-purple" style="width:40px;height:40px;flex-shrink:0;">
-            <span class="material-symbols-outlined" style="font-size:20px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 400">apartment</span>
+            <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">
+              Universities</p>
+              <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">
+                @Model.TotalUniversities</p>
+                <p class="fw-600 mb-0" style="font-size:11px;color:var(--c-muted);">Institutions in the system</p>
+              </div>
+              <div class="d-flex align-items-center justify-content-center rounded-2 icon-box-blue"
+                   style="width:40px;height:40px;flex-shrink:0;">
+                <span class="material-symbols-outlined"
+                      style="font-size:20px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">account_balance</span>
+              </div>
+            </div>
+            <div class="pt-2" style="border-top:1px solid var(--c-border);">
+              <a asp-action="UniversityIndex" class="fw-700 text-decoration-none d-flex align-items-center gap-1"
+                 style="font-size:11px;color:var(--c-primary);">
+                Manage
+                <span class="material-symbols-outlined"
+                      style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
+              </a>
+            </div>
           </div>
         </div>
-        <div class="pt-2" style="border-top:1px solid var(--c-border);">
-          <a asp-action="DepartmentIndex" class="fw-700 text-decoration-none d-flex align-items-center gap-1" style="font-size:11px;color:var(--c-primary);">
-            Manage
-            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
-          </a>
-        </div>
-      </div>
-    </div>
 
-    <!-- Courses -->
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="surface metric-card h-100 p-4">
-        <div class="d-flex align-items-start justify-content-between mb-3">
-          <div>
-            <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Courses</p>
-            <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@Model.TotalCourses</p>
-            <p class="fw-600 mb-0" style="font-size:11px;color:#10b981;">@Model.ActiveCourses active · @Model.InactiveCourses inactive</p>
-          </div>
-          <div class="d-flex align-items-center justify-content-center rounded-2 icon-box-amber" style="width:40px;height:40px;flex-shrink:0;">
-            <span class="material-symbols-outlined text-warning" style="font-size:20px;font-variation-settings:'FILL' 1,'wght' 400">menu_book</span>
-          </div>
-        </div>
-        <div class="pt-2" style="border-top:1px solid var(--c-border);">
-          <a asp-action="Courses" class="fw-700 text-decoration-none d-flex align-items-center gap-1" style="font-size:11px;color:var(--c-primary);">
-            Manage
-            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
-          </a>
-        </div>
-      </div>
-    </div>
+        <!-- Departments -->
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="surface metric-card h-100 p-4">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+              <div>
+                <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">
+                  Departments</p>
+                  <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">
+                    @Model.TotalDepartments</p>
+                    <p class="fw-600 mb-0" style="font-size:11px;color:#10b981;">@Model.ActiveDepartments active ·
+                      @Model.InactiveDepartments inactive</p>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center rounded-2 icon-box-purple"
+                         style="width:40px;height:40px;flex-shrink:0;">
+                      <span class="material-symbols-outlined"
+                            style="font-size:20px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 400">apartment</span>
+                    </div>
+                  </div>
+                  <div class="pt-2" style="border-top:1px solid var(--c-border);">
+                    <a asp-action="DepartmentIndex" class="fw-700 text-decoration-none d-flex align-items-center gap-1"
+                       style="font-size:11px;color:var(--c-primary);">
+                      Manage
+                      <span class="material-symbols-outlined"
+                            style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
 
-    <!-- Graduation Requirements -->
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="surface metric-card h-100 p-4">
-        <div class="d-flex align-items-start justify-content-between mb-3">
-          <div>
-            <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Grad. Requirements</p>
-            <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@Model.TotalGraduationRequirements</p>
-            <p class="fw-600 mb-0" style="font-size:11px;color:var(--c-muted);">Rules configured</p>
-          </div>
-          <div class="d-flex align-items-center justify-content-center rounded-2" style="width:40px;height:40px;flex-shrink:0;background:rgba(16,185,129,0.1);">
-            <span class="material-symbols-outlined" style="font-size:20px;color:#059669;font-variation-settings:'FILL' 0,'wght' 400">school</span>
-          </div>
-        </div>
-        <div class="pt-2" style="border-top:1px solid var(--c-border);">
-          <span style="font-size:11px;color:var(--c-muted);">Degree plan setup</span>
-        </div>
-      </div>
-    </div>
-  </div>
+              <!-- Courses -->
+              <div class="col-12 col-sm-6 col-xl-3">
+                <div class="surface metric-card h-100 p-4">
+                  <div class="d-flex align-items-start justify-content-between mb-3">
+                    <div>
+                      <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">
+                        Courses</p>
+                        <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">
+                          @Model.TotalCourses</p>
+                          <p class="fw-600 mb-0" style="font-size:11px;color:#10b981;">@Model.ActiveCourses active ·
+                            @Model.InactiveCourses inactive</p>
+                          </div>
+                          <div class="d-flex align-items-center justify-content-center rounded-2 icon-box-amber"
+                               style="width:40px;height:40px;flex-shrink:0;">
+                            <span class="material-symbols-outlined text-warning"
+                                  style="font-size:20px;font-variation-settings:'FILL' 1,'wght' 400">menu_book</span>
+                          </div>
+                        </div>
+                        <div class="pt-2" style="border-top:1px solid var(--c-border);">
+                          <a asp-action="Courses" class="fw-700 text-decoration-none d-flex align-items-center gap-1"
+                             style="font-size:11px;color:var(--c-primary);">
+                            Manage
+                            <span class="material-symbols-outlined"
+                                  style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
 
-  <!-- Quick Actions -->
-  <div class="row g-4" data-scroll="fade-up">
-    <div class="col-12">
-      <h2 class="fw-800 mb-3" style="font-size:15px;letter-spacing:-.2px;color:var(--c-text);">Quick Actions</h2>
-      <div class="row g-3">
+                    <!-- Graduation Requirements -->
+                    <div class="col-12 col-sm-6 col-xl-3">
+                      <div class="surface metric-card h-100 p-4">
+                        <div class="d-flex align-items-start justify-content-between mb-3">
+                          <div>
+                            <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">
+                              Grad. Requirements</p>
+                              <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">
+                                @Model.TotalGraduationRequirements</p>
+                                <p class="fw-600 mb-0" style="font-size:11px;color:var(--c-muted);">Rules configured</p>
+                              </div>
+                              <div class="d-flex align-items-center justify-content-center rounded-2"
+                                   style="width:40px;height:40px;flex-shrink:0;background:rgba(16,185,129,0.1);">
+                                <span class="material-symbols-outlined"
+                                      style="font-size:20px;color:#059669;font-variation-settings:'FILL' 0,'wght' 400">school</span>
+                              </div>
+                            </div>
+                            <div class="pt-2" style="border-top:1px solid var(--c-border);">
+                              <span style="font-size:11px;color:var(--c-muted);">Degree plan setup</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
 
-        <div class="col-12 col-sm-6 col-lg-3">
-          <a asp-action="UniversityIndex" class="surface action-card d-flex align-items-center gap-3 p-3 text-decoration-none h-100">
-            <div class="action-icon d-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
-                 style="width:44px;height:44px;background:var(--tile-blue-bg);">
-              <span class="material-symbols-outlined" style="font-size:22px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">account_balance</span>
-            </div>
-            <div class="flex-fill min-w-0">
-              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Universities</p>
-              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Create & manage</p>
-            </div>
-            <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
-          </a>
-        </div>
+                      <!-- Quick Actions -->
+                      <div class="row g-4" data-scroll="fade-up">
+                        <div class="col-12">
+                          <h2 class="fw-800 mb-3" style="font-size:15px;letter-spacing:-.2px;color:var(--c-text);">Quick Actions</h2>
+                          <div class="row g-3">
 
-        <div class="col-12 col-sm-6 col-lg-3">
-          <a asp-action="DepartmentCreate" class="surface action-card d-flex align-items-center gap-3 p-3 text-decoration-none h-100">
-            <div class="action-icon d-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
-                 style="width:44px;height:44px;background:var(--tile-purple-bg);">
-              <span class="material-symbols-outlined" style="font-size:22px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 300">add_business</span>
-            </div>
-            <div class="flex-fill min-w-0">
-              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">New Department</p>
-              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Create department</p>
-            </div>
-            <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
-          </a>
-        </div>
+                            <div class="col-12 col-sm-6 col-lg-3">
+                              <a asp-action="UniversityIndex"
+                                 class="surface action-card d-flex align-items-center gap-3 p-3 text-decoration-none h-100">
+                                <div class="action-icon d-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
+                                     style="width:44px;height:44px;background:var(--tile-blue-bg);">
+                                  <span class="material-symbols-outlined"
+                                        style="font-size:22px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">account_balance</span>
+                                </div>
+                                <div class="flex-fill min-w-0">
+                                  <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Universities</p>
+                                  <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Create & manage</p>
+                                </div>
+                                <span class="material-symbols-outlined flex-shrink-0"
+                                      style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+                              </a>
+                            </div>
 
-        <div class="col-12 col-sm-6 col-lg-3">
-          <a asp-action="CourseCreate" class="surface action-card d-flex align-items-center gap-3 p-3 text-decoration-none h-100">
-            <div class="action-icon d-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
-                 style="width:44px;height:44px;background:var(--tile-green-bg);">
-              <span class="material-symbols-outlined" style="font-size:22px;color:#059669;font-variation-settings:'FILL' 0,'wght' 300">note_add</span>
-            </div>
-            <div class="flex-fill min-w-0">
-              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">New Course</p>
-              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Add to catalog</p>
-            </div>
-            <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
-          </a>
-        </div>
+                            <div class="col-12 col-sm-6 col-lg-3">
+                              <a asp-action="DepartmentCreate"
+                                 class="surface action-card d-flex align-items-center gap-3 p-3 text-decoration-none h-100">
+                                <div class="action-icon d-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
+                                     style="width:44px;height:44px;background:var(--tile-purple-bg);">
+                                  <span class="material-symbols-outlined"
+                                        style="font-size:22px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 300">add_business</span>
+                                </div>
+                                <div class="flex-fill min-w-0">
+                                  <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">New Department</p>
+                                  <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Create department</p>
+                                </div>
+                                <span class="material-symbols-outlined flex-shrink-0"
+                                      style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+                              </a>
+                            </div>
 
-        <div class="col-12 col-sm-6 col-lg-3">
-          <a asp-action="Courses" class="surface action-card d-flex align-items-center gap-3 p-3 text-decoration-none h-100">
-            <div class="action-icon d-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
-                 style="width:44px;height:44px;background:var(--tile-red-bg);">
-              <span class="material-symbols-outlined" style="font-size:22px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">edit_note</span>
-            </div>
-            <div class="flex-fill min-w-0">
-              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Course Catalog</p>
-              <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Edit & deactivate</p>
-            </div>
-            <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
-          </a>
-        </div>
+                            <div class="col-12 col-sm-6 col-lg-3">
+                              <a asp-action="CourseCreate"
+                                 class="surface action-card d-flex align-items-center gap-3 p-3 text-decoration-none h-100">
+                                <div class="action-icon d-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
+                                     style="width:44px;height:44px;background:var(--tile-green-bg);">
+                                  <span class="material-symbols-outlined"
+                                        style="font-size:22px;color:#059669;font-variation-settings:'FILL' 0,'wght' 300">note_add</span>
+                                </div>
+                                <div class="flex-fill min-w-0">
+                                  <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">New Course</p>
+                                  <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Add to catalog</p>
+                                </div>
+                                <span class="material-symbols-outlined flex-shrink-0"
+                                      style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+                              </a>
+                            </div>
 
-      </div>
-    </div>
-  </div>
+                            <div class="col-12 col-sm-6 col-lg-3">
+                              <a asp-action="Courses"
+                                 class="surface action-card d-flex align-items-center gap-3 p-3 text-decoration-none h-100">
+                                <div class="action-icon d-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
+                                     style="width:44px;height:44px;background:var(--tile-red-bg);">
+                                  <span class="material-symbols-outlined"
+                                        style="font-size:22px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">edit_note</span>
+                                </div>
+                                <div class="flex-fill min-w-0">
+                                  <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Course Catalog</p>
+                                  <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Edit & deactivate</p>
+                                </div>
+                                <span class="material-symbols-outlined flex-shrink-0"
+                                      style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+                              </a>
+                            </div>
 
-</div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>

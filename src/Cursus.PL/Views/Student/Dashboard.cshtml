@@ -24,8 +24,8 @@
         <h2 id="greeting-text" class="fw-800 mb-1" data-username="@Model.StudentName" style="font-size:1.4rem;letter-spacing:-.3px;color:var(--c-text);"></h2>
         <div class="d-flex flex-wrap align-items-center gap-2">
           <span style="font-size:13px;color:var(--c-muted);">@Model.Department · Year @Model.Year · @Model.Semester</span>
-          <span class="d-inline-flex align-items-center gap-1 rounded-pill px-2 py-1 fw-700 badge-standing" style="font-size:11px;">
-            <span class="rounded-circle bg-success" style="width:5px;height:5px;display:inline-block;flex-shrink:0;"></span>
+          <span class="d-inline-flex align-items-center gap-1 rounded-pill px-2 py-1 fw-700 badge-standing standing-@Model.StandingCssClass" style="font-size:11px;">
+            <span class="rounded-circle standing-dot-@Model.StandingCssClass" style="width:5px;height:5px;display:inline-block;flex-shrink:0;"></span>
             @Model.AcademicStanding
           </span>
         </div>
@@ -39,6 +39,17 @@
     </a>
   </section>
 
+  @if (Model.ShowStandingAlert)
+  {
+    <section class="anim-fade-up-1">
+      <div class="standing-alert status-@Model.StandingCssClass">
+        <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400">warning</span>
+        <span>@Model.StandingAlertMessage</span>
+      </div>
+    </section>
+  }
+
+  <partial name="_StudentAlerts" />
   <!-- Metric Cards -->
   <section class="row g-3 anim-fade-up-1" data-scroll-group>
 
@@ -49,13 +60,16 @@
           <div>
             <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">CGPA</p>
             <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@Model.Cgpa.ToString("F2")</p>
-            <p class="fw-600 mb-0" style="font-size:11px;color:#10b981;">↑ +@Model.CgpaChange.ToString("F2") from last semester</p>
+            <p class="fw-600 mb-0" style="font-size:11px;color:@(Model.CgpaChange >= 0 ? "#10b981" : "#dc3545");">
+              @(Model.CgpaChange >= 0 ? "↑ +" : "↓ -")@Math.Abs(Model.CgpaChange).ToString("F2") from last semester
+            </p>
           </div>
           <div class="position-relative flex-shrink-0" style="width:52px;height:52px;">
             <svg viewBox="0 0 48 48" width="52" height="52" style="transform:rotate(-90deg)">
               <circle cx="24" cy="24" r="19" fill="none" stroke="var(--c-border)" stroke-width="4"/>
               <circle id="gpa-ring" cx="24" cy="24" r="19" fill="none" stroke="var(--c-primary)" stroke-width="4"
-                      stroke-linecap="round" stroke-dasharray="119.4" stroke-dashoffset="119.4"/>
+              stroke-linecap="round" stroke-dasharray="119.4" stroke-dashoffset="119.4"
+              data-cgpa="@Model.Cgpa.ToString("F2")" data-max-gpa="@Model.MaxGpa.ToString("F2")"/>
             </svg>
             <span class="position-absolute top-50 start-50 translate-middle fw-800" style="font-size:10px;color:var(--c-primary);">@Model.CgpaPercentage%</span>
           </div>
@@ -98,6 +112,7 @@
         <div class="d-flex flex-wrap gap-1">
           <span class="rounded-pill px-2 py-1 fw-700 badge-core" style="font-size:11px;">@Model.CoreCoursesRemaining Core</span>
           <span class="rounded-pill px-2 py-1 fw-700 badge-elective" style="font-size:11px;">@Model.ElectiveCoursesRemaining Electives</span>
+          <span class="rounded-pill px-2 py-1 fw-700 badge-unireq" style="font-size:11px;">@Model.UniversityRequiredCoursesRemaining Uni Req</span>
         </div>
       </div>
     </div>
@@ -151,12 +166,12 @@
       </a>
     </div>
     <div class="col-6 col-lg-3">
-      <div class="surface feature-tile" style="opacity:.6;cursor:default;">
+      <a asp-controller="Student" asp-action="AIAdvisor" class="surface feature-tile">
         <div class="tile-icon tile-purple">
           <span class="material-symbols-outlined" style="font-size:22px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 300">psychology</span>
         </div>
         <span class="fw-700" style="font-size:13px;">AI Advisor</span>
-      </div>
+      </a>
     </div>
   </section>
 

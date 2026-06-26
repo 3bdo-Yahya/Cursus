@@ -15,5 +15,6 @@ namespace Cursus.Domain.Entities
         
         public ICollection<Department> Departments { get; set; } = new List<Department>();
         public ICollection<GradeScale> GradeScales { get; set; } = new List<GradeScale>();
+        public ICollection<AppUser> Users { get; set; } = new List<AppUser>();
     }
 }

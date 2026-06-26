@@ -40,6 +40,48 @@ html.dark .cm-canvas {
 }
 
 
+/* ── Filter Bar ─────────────────────────────────────────── */
+.cm-filter-bar {
+  position:      absolute;
+  top:           16px;
+  left:          50%;
+  transform:     translateX(-50%);
+  z-index:       20;
+  padding:       5px;
+  border-radius: 14px !important;
+  display:       flex;
+  gap:           4px;
+  box-shadow:    0 8px 32px rgba(0,0,0,.08);
+}
+html.dark .cm-filter-bar {
+  box-shadow:    0 8px 32px rgba(0,0,0,.3);
+}
+.cm-filter-chip {
+  padding:       6px 14px;
+  border:        none;
+  background:    transparent;
+  border-radius: 10px;
+  font-size:     11.5px;
+  font-weight:   700;
+  color:         var(--c-muted);
+  cursor:        pointer;
+  transition:    background-color 0.15s ease, color 0.15s ease, transform 0.1s ease !important;
+  font-family:   'Outfit', system-ui, sans-serif;
+}
+.cm-filter-chip:hover {
+  background:    var(--c-bg);
+  color:         var(--c-text);
+}
+.cm-filter-chip.active {
+  background:    var(--c-primary);
+  color:         #fff !important;
+  box-shadow:    0 2px 8px rgba(79,70,229,.25);
+}
+.cm-filter-chip:active {
+  transform:     scale(0.97);
+}
+
+
 /* ── Floating toolbar ────────────────────────────────────── */
 .cm-toolbar {
   position:      absolute;

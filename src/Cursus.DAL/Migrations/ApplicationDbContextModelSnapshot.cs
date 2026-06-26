@@ -83,6 +83,9 @@ namespace Cursus.DAL.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("UniversityId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -98,6 +101,10 @@ namespace Cursus.DAL.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("UniversityId");
+
+                    b.HasIndex("UniversityId", "DepartmentId");
 
                     b.HasIndex("DepartmentId", "AcademicYear", "CurrentSemester");
 
@@ -574,7 +581,14 @@ namespace Cursus.DAL.Migrations
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Cursus.Domain.Entities.University", "University")
+                        .WithMany("Users")
+                        .HasForeignKey("UniversityId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Department");
+
+                    b.Navigation("University");
                 });
 
             modelBuilder.Entity("Cursus.Domain.Entities.Course", b =>
@@ -790,6 +804,8 @@ namespace Cursus.DAL.Migrations
                     b.Navigation("Departments");
 
                     b.Navigation("GradeScales");
+
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

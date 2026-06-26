@@ -1,21 +1,41 @@
 using Cursus.DAL.Database;
+using Cursus.Domain.DTOs;
 using Cursus.Domain.Entities;
+using Cursus.Domain.Enums;
+using Cursus.Domain.Interfaces.Services;
 using Cursus.PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Cursus.Domain.Constants;
 
 namespace Cursus.PL.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = Roles.Admin)]
 public class AdminController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAdminDashboardService _adminDashboardService;
+    private readonly ICourseService _courseService;
+    private readonly IUniversityService _universityService;
+    private readonly IDepartmentService _departmentService;
+    private readonly IStudentManagementService _studentManagementService;
 
-    public AdminController(ApplicationDbContext context)
+    public AdminController(
+        ApplicationDbContext context,
+        ICourseService courseService,
+        IAdminDashboardService adminDashboardService,
+        IUniversityService universityService,
+        IDepartmentService departmentService,
+        IStudentManagementService studentManagementService)
     {
         _context = context;
+        _courseService = courseService;
+        _adminDashboardService = adminDashboardService;
+        _universityService = universityService;
+        _departmentService = departmentService;
+        _studentManagementService = studentManagementService;
     }
 
     public async Task<IActionResult> Courses(string? searchTerm, int? departmentId, bool includeInactive = false)
@@ -24,36 +44,29 @@ public class AdminController : Controller
         ViewData["SelectedDepartmentId"] = departmentId;
         ViewData["IncludeInactive"] = includeInactive;
 
-        var coursesQuery = _context.Courses
-            .Include(course => course.Department)
-            .Include(course => course.Prerequisites)
-                .ThenInclude(prereq => prereq.Prerequisite)
-            .AsNoTracking()
-            .AsQueryable();
+        var courses = await _courseService.GetAllAsync();
 
         if (!includeInactive)
         {
-            coursesQuery = coursesQuery.Where(course => course.IsActive);
+            courses = courses.Where(course => course.IsActive);
         }
 
         if (departmentId.HasValue)
         {
-            coursesQuery = coursesQuery.Where(course => course.DepartmentId == departmentId.Value);
+            courses = courses.Where(course => course.DepartmentId == departmentId.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             var normalizedSearchTerm = searchTerm.Trim();
-            coursesQuery = coursesQuery.Where(course =>
-                course.Code.Contains(normalizedSearchTerm) ||
-                course.Name.Contains(normalizedSearchTerm));
+            courses = courses.Where(course =>
+                course.Code.Contains(normalizedSearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                course.Name.Contains(normalizedSearchTerm, StringComparison.OrdinalIgnoreCase));
         }
 
-        await PopulateDepartmentsFilterDropDownListAsync(departmentId);
+        courses = courses.OrderBy(course => course.Code);
 
-        var courses = await coursesQuery
-            .OrderBy(course => course.Code)
-            .ToListAsync();
+        await PopulateDepartmentsFilterDropDownListAsync(departmentId);
 
         return View("CourseIndex", courses);
     }
@@ -62,7 +75,17 @@ public class AdminController : Controller
     public IActionResult CourseIndex(string? searchTerm, int? departmentId, bool includeInactive = false)
         => RedirectToAction(nameof(Courses), new { searchTerm, departmentId, includeInactive });
 
-    public IActionResult Students() => View();
+    public async Task<IActionResult> Students(string? searchTerm, int? departmentId)
+    {
+        ViewData["SearchTerm"] = searchTerm;
+        ViewData["SelectedDepartmentId"] = departmentId;
+
+        var students = await _studentManagementService.GetStudentsAsync(searchTerm, departmentId);
+
+        await PopulateDepartmentsFilterDropDownListAsync(departmentId);
+
+        return View("Students/Index", students);
+    }
 
     public IActionResult AddCourse() => RedirectToAction(nameof(CourseCreate));
 
@@ -87,34 +110,247 @@ public class AdminController : Controller
     }
 
     public IActionResult AddStudent() => View();
-    public IActionResult EditStudent() => View();
-    public IActionResult ViewStudent() => View();
     public IActionResult Profile() => View();
+
+    // ── EditStudent ────────────────────────────────────────────────────────────
+
+    [HttpGet]
+    public async Task<IActionResult> EditStudent(string? id)
+    {
+        if (string.IsNullOrEmpty(id))
+            return RedirectToAction(nameof(Students));
+
+        var student = await _context.Users
+            .Include(u => u.Department)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (student is null)
+            return NotFound();
+
+        var vm = new EditStudentViewModel
+        {
+            Id = student.Id,
+            DisplayName = student.DisplayName,
+            Email = student.Email,
+            DepartmentId = student.DepartmentId ?? 0,
+            AcademicYear = student.AcademicYear ?? string.Empty,
+            CurrentSemester = student.CurrentSemester,
+            CurrentStanding = student.CurrentStanding
+        };
+
+        await PopulateEditStudentFormAsync(vm);
+        return View(vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditStudent(EditStudentViewModel vm)
+    {
+        if (!ModelState.IsValid)
+        {
+            await PopulateEditStudentFormAsync(vm);
+            return View(vm);
+        }
+
+        var student = await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == vm.Id);
+
+        if (student is null)
+            return NotFound();
+
+        student.DepartmentId = vm.DepartmentId;
+        student.AcademicYear = vm.AcademicYear.Trim();
+        student.CurrentSemester = vm.CurrentSemester;
+        student.CurrentStanding = vm.CurrentStanding;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            TempData["StatusMessage"] = $"{student.DisplayName}'s profile updated successfully.";
+            return RedirectToAction(nameof(StudentDetail), new { id = vm.Id });
+        }
+        catch (DbUpdateException)
+        {
+            TempData["ErrorMessage"] = "Unable to update student profile.";
+            ModelState.AddModelError(string.Empty, "A database error occurred. Please try again.");
+            await PopulateEditStudentFormAsync(vm);
+            return View(vm);
+        }
+    }
+
+    // ── Student Detail ────────────────────────────────────────────────────────
+
+    [HttpGet]
+    public async Task<IActionResult> StudentDetail(string? id)
+    {
+        if (string.IsNullOrEmpty(id))
+            return RedirectToAction(nameof(Students));
+
+        var student = await _studentManagementService.GetStudentDetailAsync(id);
+        if (student is null)
+            return NotFound();
+
+        return View("Students/Detail", student);
+    }
+
+    // ── StudentAddCourse ──────────────────────────────────────────────────────
+
+    [HttpGet]
+    public async Task<IActionResult> StudentAddCourse(string? id)
+    {
+        if (string.IsNullOrEmpty(id))
+            return RedirectToAction(nameof(Students));
+
+        var student = await _studentManagementService.GetStudentDetailAsync(id);
+        if (student is null)
+            return NotFound();
+
+        var vm = new AddCourseRecordViewModel
+        {
+            StudentId = id,
+            StudentName = student.DisplayName,
+            AcademicYear = DateTime.Today.Year + "-" + (DateTime.Today.Year + 1)
+        };
+
+        await PopulateStudentCourseFormAsync(vm, student.DepartmentId);
+        return View("Students/AddCourse", vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> StudentAddCourse(AddCourseRecordViewModel vm)
+    {
+        // ── Extra domain validation ───────────────────────────────────────────
+        if (!string.IsNullOrWhiteSpace(vm.Grade) && !IsKnownGrade(vm.Grade))
+            ModelState.AddModelError(nameof(vm.Grade), "Grade must be one of: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F.");
+
+        // Check for duplicate course record
+        if (ModelState.IsValid)
+        {
+            var duplicate = await _context.StudentCourses.AnyAsync(sc =>
+                sc.StudentId == vm.StudentId &&
+                sc.CourseId == vm.CourseId &&
+                sc.Semester == vm.Semester &&
+                sc.AcademicYear == vm.AcademicYear.Trim());
+
+            if (duplicate)
+                ModelState.AddModelError(string.Empty,
+                    "This student already has a record for the selected course in the same semester and academic year.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            var student = await _studentManagementService.GetStudentDetailAsync(vm.StudentId);
+            await PopulateStudentCourseFormAsync(vm, student?.DepartmentId);
+            return View("Students/AddCourse", vm);
+        }
+
+        try
+        {
+            await _studentManagementService.AddCourseRecordAsync(
+                vm.StudentId,
+                vm.CourseId,
+                vm.Grade,
+                StudentCourseStatus.InProgress,   // service resolves this from grade
+                vm.Semester,
+                vm.AcademicYear.Trim());
+
+            TempData["StatusMessage"] = "Course record added successfully.";
+            return RedirectToAction(nameof(StudentDetail), new { id = vm.StudentId });
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = "Unable to add course record.";
+            ModelState.AddModelError(string.Empty, ex.Message);
+            var student = await _studentManagementService.GetStudentDetailAsync(vm.StudentId);
+            await PopulateStudentCourseFormAsync(vm, student?.DepartmentId);
+            return View("Students/AddCourse", vm);
+        }
+    }
+
+    // ── StudentEditCourse ─────────────────────────────────────────────────────
+
+    [HttpGet]
+    public async Task<IActionResult> StudentEditCourse(int? id)
+    {
+        if (id is null)
+            return RedirectToAction(nameof(Students));
+
+        var record = await _context.StudentCourses
+            .Include(sc => sc.Course)
+            .Include(sc => sc.Student)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(sc => sc.Id == id.Value);
+
+        if (record is null)
+            return NotFound();
+
+        var vm = new EditCourseRecordViewModel
+        {
+            RecordId = record.Id,
+            StudentId = record.StudentId,
+            StudentName = record.Student?.DisplayName ?? "Student",
+            CourseCode = record.Course?.Code ?? string.Empty,
+            CourseName = record.Course?.Name ?? string.Empty,
+            Grade = record.Grade,
+            Status = record.Status,
+            Semester = record.Semester,
+            AcademicYear = record.AcademicYear
+        };
+
+        await PopulateStudentCourseFormAsync(vm, record.Student?.DepartmentId);
+        return View("Students/EditCourse", vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> StudentEditCourse(EditCourseRecordViewModel vm)
+    {
+        if (!string.IsNullOrWhiteSpace(vm.Grade) && !IsKnownGrade(vm.Grade))
+            ModelState.AddModelError(nameof(vm.Grade), "Grade must be one of: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F.");
+
+        if (!ModelState.IsValid)
+        {
+            var student = await _studentManagementService.GetStudentDetailAsync(vm.StudentId);
+            await PopulateStudentCourseFormAsync(vm, student?.DepartmentId);
+            return View("Students/EditCourse", vm);
+        }
+
+        try
+        {
+            await _studentManagementService.UpdateCourseRecordAsync(
+                vm.RecordId,
+                vm.Grade,
+                vm.Status);
+
+            TempData["StatusMessage"] = "Course record updated successfully.";
+            return RedirectToAction(nameof(StudentDetail), new { id = vm.StudentId });
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = "Unable to update course record.";
+            ModelState.AddModelError(string.Empty, ex.Message);
+            var student = await _studentManagementService.GetStudentDetailAsync(vm.StudentId);
+            await PopulateStudentCourseFormAsync(vm, student?.DepartmentId);
+            return View("Students/EditCourse", vm);
+        }
+    }
 
     public async Task<IActionResult> Index()
     {
-        var dashboard = new AdminDashboardViewModel
-        {
-            TotalUniversities = await _context.Universities.CountAsync(),
-            TotalGraduationRequirements = await _context.GraduationRequirements.CountAsync(),
-            TotalDepartments = await _context.Departments.CountAsync(),
-            ActiveDepartments = await _context.Departments.CountAsync(department => department.IsActive),
-            InactiveDepartments = await _context.Departments.CountAsync(department => !department.IsActive),
-            TotalCourses = await _context.Courses.CountAsync(),
-            ActiveCourses = await _context.Courses.CountAsync(course => course.IsActive),
-            InactiveCourses = await _context.Courses.CountAsync(course => !course.IsActive)
-        };
+        var dashboard = await _adminDashboardService.GetAdminDashboardAsync();
 
         return View(dashboard);
     }
 
     public async Task<IActionResult> UniversityIndex()
     {
-        var universities = await _context.Universities
-            .Include(university => university.Departments)
-            .AsNoTracking()
-            .OrderBy(university => university.Name)
-            .ToListAsync();
+        var universities = await _universityService.GetAllAsync();
 
         return View(universities);
     }
@@ -122,12 +358,12 @@ public class AdminController : Controller
     [HttpGet]
     public IActionResult UniversityCreate()
     {
-        return View(new University());
+        return View(new CreateUniversityDto());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UniversityCreate([Bind("Name")] University university)
+    public async Task<IActionResult> UniversityCreate([Bind("Name")] CreateUniversityDto university)
     {
         university.Name = university.Name?.Trim() ?? string.Empty;
 
@@ -141,11 +377,10 @@ public class AdminController : Controller
             return View(university);
         }
 
-        _context.Universities.Add(university);
 
         try
         {
-            await _context.SaveChangesAsync();
+            await _universityService.AddAsync(university);
             TempData["StatusMessage"] = "University created successfully.";
             return RedirectToAction(nameof(UniversityIndex));
         }
@@ -159,12 +394,7 @@ public class AdminController : Controller
 
     public async Task<IActionResult> DepartmentIndex()
     {
-        var departments = await _context.Departments
-            .Include(department => department.University)
-            .AsNoTracking()
-            .OrderBy(department => department.Name)
-            .ToListAsync();
-
+        var departments = await _departmentService.GetAllAsync();
         return View(departments);
     }
 
@@ -172,12 +402,12 @@ public class AdminController : Controller
     public async Task<IActionResult> DepartmentCreate()
     {
         await PopulateUniversitiesDropDownListAsync();
-        return View(new Department());
+        return View(new CreateDepartmentDto());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DepartmentCreate([Bind("Name,UniversityId,TotalCreditsRequired,MinGpaForGraduation,IsActive")] Department department)
+    public async Task<IActionResult> DepartmentCreate([Bind("Name,UniversityId,TotalCreditsRequired,MinGpaForGraduation,IsActive")] CreateDepartmentDto department)
     {
         department.Name = department.Name?.Trim() ?? string.Empty;
 
@@ -197,11 +427,9 @@ public class AdminController : Controller
             return View(department);
         }
 
-        _context.Departments.Add(department);
-
         try
         {
-            await _context.SaveChangesAsync();
+            await _departmentService.AddAsync(department);
             TempData["StatusMessage"] = "Department created successfully.";
             return RedirectToAction(nameof(DepartmentIndex));
         }
@@ -215,26 +443,31 @@ public class AdminController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> DepartmentEdit(int? id)
+    public async Task<IActionResult> DepartmentEdit(int id)
     {
-        if (id is null)
-        {
-            return NotFound();
-        }
 
-        var department = await _context.Departments.FindAsync(id);
+        var department = await _departmentService.GetByIdAsync(id);
         if (department is null)
         {
             return NotFound();
         }
 
         await PopulateUniversitiesDropDownListAsync(department.UniversityId);
-        return View(department);
+        var model = new EditDepartmentDto()
+        {
+            Id = department.Id,
+            Name = department.Name,
+            UniversityId = department.UniversityId,
+            TotalCreditsRequired = department.TotalCreditsRequired,
+            MinGpaForGraduation = department.MinGpaForGraduation,
+            IsActive = department.IsActive
+        };
+        return View(model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DepartmentEdit(int id, [Bind("Id,Name,UniversityId,TotalCreditsRequired,MinGpaForGraduation,IsActive")] Department department)
+    public async Task<IActionResult> DepartmentEdit(int id, [Bind("Id,Name,UniversityId,TotalCreditsRequired,MinGpaForGraduation,IsActive")] EditDepartmentDto department)
     {
         if (id != department.Id)
         {
@@ -261,18 +494,15 @@ public class AdminController : Controller
 
         try
         {
-            _context.Departments.Update(department);
-            await _context.SaveChangesAsync();
+            await _departmentService.UpdateAsync(department);
             TempData["StatusMessage"] = "Department updated successfully.";
             return RedirectToAction(nameof(DepartmentIndex));
         }
         catch (DbUpdateConcurrencyException)
         {
-            var exists = await _context.Departments.AnyAsync(dept => dept.Id == department.Id);
+            var exists = await _departmentService.ExistsAsync(department.Id);
             if (!exists)
-            {
                 return NotFound();
-            }
 
             throw;
         }
@@ -289,7 +519,7 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DepartmentDeactivate(int id)
     {
-        var department = await _context.Departments.FindAsync(id);
+        var department = await _departmentService.GetByIdAsync(id);
 
         if (department is null)
         {
@@ -302,8 +532,7 @@ public class AdminController : Controller
             return RedirectToAction(nameof(DepartmentIndex));
         }
 
-        department.IsActive = false;
-        await _context.SaveChangesAsync();
+        await _departmentService.ToggleActiveAsync(id);
 
         TempData["StatusMessage"] = "Department deactivated successfully.";
         return RedirectToAction(nameof(DepartmentIndex));
@@ -313,12 +542,12 @@ public class AdminController : Controller
     public async Task<IActionResult> CourseCreate()
     {
         await PopulateDepartmentsDropDownListAsync();
-        return View(new Course());
+        return View(new CreateCourseDto());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CourseCreate([Bind("Code,Name,CreditHours,CourseType,SemesterAvailability,PassingGradeThreshold,DepartmentId,IsActive")] Course course)
+    public async Task<IActionResult> CourseCreate([Bind("Code,Name,CreditHours,CourseType,SemesterAvailability,PassingGradeThreshold,DepartmentId,IsActive")] CreateCourseDto course)
     {
         course.Code = course.Code?.Trim() ?? string.Empty;
         course.Name = course.Name?.Trim() ?? string.Empty;
@@ -339,11 +568,9 @@ public class AdminController : Controller
             return View(course);
         }
 
-        _context.Courses.Add(course);
-
         try
         {
-            await _context.SaveChangesAsync();
+            await _courseService.AddAsync(course);
             TempData["StatusMessage"] = "Course created successfully.";
             return RedirectToAction(nameof(Courses));
         }
@@ -357,26 +584,35 @@ public class AdminController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> CourseEdit(int? id)
+    public async Task<IActionResult> CourseEdit(int id)
     {
-        if (id is null)
-        {
-            return NotFound();
-        }
 
-        var course = await _context.Courses.FindAsync(id);
+        var course = await _courseService.GetByIdAsync(id);
         if (course is null)
         {
             return NotFound();
         }
 
+        var model = new EditCourseDto()
+        {
+            Id = course.Id,
+            Code = course.Code,
+            Name = course.Name,
+            DepartmentId = course.DepartmentId,
+            CreditHours = course.CreditHours,
+            PassingGradeThreshold = course.PassingGradeThreshold,
+            CourseType = course.CourseType,
+            SemesterAvailability = course.SemesterAvailability,
+            IsActive = course.IsActive
+        };
+
         await PopulateDepartmentsDropDownListAsync(course.DepartmentId);
-        return View(course);
+        return View(model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CourseEdit(int id, [Bind("Id,Code,Name,CreditHours,CourseType,SemesterAvailability,PassingGradeThreshold,DepartmentId,IsActive")] Course course)
+    public async Task<IActionResult> CourseEdit(int id, [Bind("Id,Code,Name,CreditHours,CourseType,SemesterAvailability,PassingGradeThreshold,DepartmentId,IsActive")] EditCourseDto course)
     {
         if (id != course.Id)
         {
@@ -404,18 +640,15 @@ public class AdminController : Controller
 
         try
         {
-            _context.Courses.Update(course);
-            await _context.SaveChangesAsync();
+            await _courseService.UpdateAsync(course);
             TempData["StatusMessage"] = "Course updated successfully.";
             return RedirectToAction(nameof(Courses));
         }
         catch (DbUpdateConcurrencyException)
         {
-            var exists = await _context.Courses.AnyAsync(c => c.Id == course.Id);
+            var exists = await _courseService.ExistsAsync(course.Id);
             if (!exists)
-            {
                 return NotFound();
-            }
 
             throw;
         }
@@ -432,15 +665,14 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CourseDeactivate(int id, string? searchTerm, int? departmentId, bool includeInactive = false)
     {
-        var course = await _context.Courses.FindAsync(id);
+        var course = await _courseService.GetByIdAsync(id);
 
         if (course is null)
         {
             return NotFound();
         }
 
-        course.IsActive = !course.IsActive;
-        await _context.SaveChangesAsync();
+        await _courseService.ToggleActiveAsync(id);
 
         TempData["StatusMessage"] = course.IsActive
             ? "Course reactivated successfully."
@@ -449,49 +681,105 @@ public class AdminController : Controller
         return RedirectToAction(nameof(Courses), new { searchTerm, departmentId, includeInactive });
     }
 
+    // ── Form population helpers ───────────────────────────────────────────────
+
+    private static readonly string[] KnownGrades =
+        ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"];
+
+    private static bool IsKnownGrade(string? grade) =>
+        !string.IsNullOrWhiteSpace(grade) &&
+        KnownGrades.Contains(grade.Trim().ToUpper());
+
+    /// <summary>
+    /// Fills <paramref name="vm"/>'s CourseOptions, GradeOptions, and
+    /// SemesterOptions SelectLists.  Courses are filtered to the student's
+    /// department when <paramref name="departmentId"/> is supplied.
+    /// </summary>
+    private async Task PopulateStudentCourseFormAsync(
+        CourseRecordFormBase vm, int? departmentId = null)
+    {
+        // Courses — scoped to student's department, active only
+        var coursesQuery = _context.Courses
+            .Include(c => c.Department)
+            .Where(c => c.IsActive)
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (departmentId.HasValue)
+            coursesQuery = coursesQuery.Where(c => c.DepartmentId == departmentId.Value);
+
+        var courses = await coursesQuery
+            .OrderBy(c => c.Code)
+            .Select(c => new
+            {
+                c.Id,
+                Label = $"{c.Code} — {c.Name} ({c.CreditHours} cr)"
+            })
+            .ToListAsync();
+
+        vm.CourseOptions = courses.Select(c => new SelectListItem(c.Label, c.Id.ToString()));
+
+        // Grade options — blank first for InProgress
+        vm.GradeOptions =
+        [
+            new SelectListItem("— No grade (In Progress) —", ""),
+            .. KnownGrades.Select(g => new SelectListItem(g, g))
+        ];
+
+        // Semester options from enum
+        vm.SemesterOptions = Enum.GetValues<SemesterType>()
+            .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
+    }
+
+    private async Task PopulateEditStudentFormAsync(EditStudentViewModel vm)
+    {
+        var departments = await _context.Departments
+            .Include(d => d.University)
+            .AsNoTracking()
+            .OrderBy(d => d.Name)
+            .ToListAsync();
+
+        vm.DepartmentOptions = departments.Select(d => new SelectListItem(
+            d.University is null ? d.Name : $"{d.Name} ({d.University.Name})",
+            d.Id.ToString()));
+
+        vm.SemesterOptions = Enum.GetValues<SemesterType>()
+            .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
+
+        vm.StandingOptions = Enum.GetValues<AcademicStanding>()
+            .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
+    }
+
     private async Task PopulateUniversitiesDropDownListAsync(object? selectedUniversity = null)
     {
-        var universities = await _context.Universities
-            .AsNoTracking()
-            .OrderBy(university => university.Name)
-            .ToListAsync();
+        var universities = await _universityService.GetAllAsync();
 
         ViewData["UniversityId"] = new SelectList(universities, "Id", "Name", selectedUniversity);
     }
 
     private async Task PopulateDepartmentsDropDownListAsync(int? selectedDepartment = null)
     {
-        var departments = await _context.Departments
-            .Include(department => department.University)
-            .AsNoTracking()
-            .Where(department => department.IsActive)
-            .OrderBy(department => department.Name)
-            .ToListAsync();
+        var departments = (await _departmentService.GetAllAsync(isActive: true)).ToList();
 
         if (selectedDepartment.HasValue && selectedDepartment.Value > 0 &&
-            !departments.Any(department => department.Id == selectedDepartment.Value))
+            !departments.Any(d => d.Id == selectedDepartment.Value))
         {
-            var selectedInactiveDepartment = await _context.Departments
-                .Include(department => department.University)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(department => department.Id == selectedDepartment.Value);
+            var inactiveDepartment = await _departmentService.GetByIdAsync(selectedDepartment.Value);
 
-            if (selectedInactiveDepartment is not null)
+            if (inactiveDepartment is not null)
             {
-                departments.Add(selectedInactiveDepartment);
-                departments = departments
-                    .OrderBy(department => department.Name)
-                    .ToList();
+                departments.Add(inactiveDepartment);
+                departments = departments.OrderBy(d => d.Name).ToList();
             }
         }
 
         var departmentOptions = departments
-            .Select(department => new
+            .Select(d => new
             {
-                department.Id,
-                DisplayName = department.University is null
-                    ? department.Name
-                    : $"{department.Name} ({department.University.Name})"
+                d.Id,
+                DisplayName = string.IsNullOrEmpty(d.UniversityName)
+                    ? d.Name
+                    : $"{d.Name} ({d.UniversityName})"
             })
             .ToList();
 
@@ -500,19 +788,15 @@ public class AdminController : Controller
 
     private async Task PopulateDepartmentsFilterDropDownListAsync(int? selectedDepartment = null)
     {
-        var departments = await _context.Departments
-            .Include(department => department.University)
-            .AsNoTracking()
-            .OrderBy(department => department.Name)
-            .ToListAsync();
+        var departments = (await _departmentService.GetAllAsync()).ToList();
 
         var departmentOptions = departments
-            .Select(department => new
+            .Select(d => new
             {
-                department.Id,
-                DisplayName = department.University is null
-                    ? department.Name
-                    : $"{department.Name} ({department.University.Name})"
+                d.Id,
+                DisplayName = string.IsNullOrEmpty(d.UniversityName)
+                    ? d.Name
+                    : $"{d.Name} ({d.UniversityName})"
             })
             .ToList();
 
@@ -521,39 +805,16 @@ public class AdminController : Controller
 
     private Task<bool> IsCourseCodeDuplicateAsync(int departmentId, string code, int? excludedCourseId = null)
     {
-        var normalizedCode = code.ToUpper();
-
-        var query = _context.Courses.Where(course =>
-            course.DepartmentId == departmentId &&
-            course.Code.ToUpper() == normalizedCode);
-
-        if (excludedCourseId.HasValue)
-        {
-            query = query.Where(course => course.Id != excludedCourseId.Value);
-        }
-
-        return query.AnyAsync();
+        return _courseService.IsCodeDuplicateAsync(departmentId, code, excludedCourseId);
     }
 
     private Task<bool> IsDepartmentNameDuplicateAsync(int universityId, string name, int? excludedDepartmentId = null)
     {
-        var normalizedName = name.ToUpper();
-
-        var query = _context.Departments.Where(department =>
-            department.UniversityId == universityId &&
-            department.Name.ToUpper() == normalizedName);
-
-        if (excludedDepartmentId.HasValue)
-        {
-            query = query.Where(department => department.Id != excludedDepartmentId.Value);
-        }
-
-        return query.AnyAsync();
+        return _departmentService.IsNameDuplicateAsync(universityId, name, excludedDepartmentId);
     }
 
-    private Task<bool> IsUniversityNameDuplicateAsync(string name)
+    private Task<bool> IsUniversityNameDuplicateAsync(string name, int? excludeId = null)
     {
-        var normalizedName = name.ToUpper();
-        return _context.Universities.AnyAsync(university => university.Name.ToUpper() == normalizedName);
+        return _universityService.IsNameDuplicateAsync(name, excludeId);
     }
 }
