@@ -253,11 +253,6 @@ public class StudentController : Controller
     }
     public IActionResult ImpactAnalyzer() => View();
 
-    /// <summary>
-    /// AJAX endpoint for the Impact Analyzer.
-    /// Accepts a course ID and returns the list of courses blocked
-    /// by simulating that course as failed.
-    /// </summary>
     [HttpPost]
     public async Task<IActionResult> SimulateFailure([FromBody] SimulateFailureRequest request)
     {
@@ -268,10 +263,27 @@ public class StudentController : Controller
         if (user.DepartmentId is null)
             return BadRequest(new { error = "No department assigned to your account." });
 
-        var blocked = await _impactAnalysisService
-            .GetBlockedCoursesAsync(request.CourseId, user.DepartmentId.Value);
+        var cgpa = await _db.StandingHistories
+            .AsNoTracking()
+            .Where(sh => sh.StudentId == user.Id)
+            .OrderByDescending(sh => sh.AcademicYear)
+            .ThenByDescending(sh => sh.Semester)
+            .Select(sh => sh.CumulativeGpa)
+            .FirstOrDefaultAsync();
 
-        return Json(blocked);
+        var result = await _impactAnalysisService
+            .GetBlockedCoursesAsync(
+                request.CourseId,
+                user.DepartmentId.Value,
+                user.CurrentSemester,
+                user.AcademicYear,
+                user.CurrentStanding,
+                cgpa);
+
+        if (result is null)
+            return NotFound(new { error = "Selected course was not found in your department's curriculum." });
+
+        return Json(result);
     }
 
     public async Task<IActionResult> Profile()
