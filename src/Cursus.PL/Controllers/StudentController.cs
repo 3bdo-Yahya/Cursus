@@ -263,8 +263,22 @@ public class StudentController : Controller
         if (user.DepartmentId is null)
             return BadRequest(new { error = "No department assigned to your account." });
 
+        var cgpa = await _db.StandingHistories
+            .AsNoTracking()
+            .Where(sh => sh.StudentId == user.Id)
+            .OrderByDescending(sh => sh.AcademicYear)
+            .ThenByDescending(sh => sh.Semester)
+            .Select(sh => sh.CumulativeGpa)
+            .FirstOrDefaultAsync();
+
         var result = await _impactAnalysisService
-            .GetBlockedCoursesAsync(request.CourseId, user.DepartmentId.Value);
+            .GetBlockedCoursesAsync(
+                request.CourseId,
+                user.DepartmentId.Value,
+                user.CurrentSemester,
+                user.AcademicYear,
+                user.CurrentStanding,
+                cgpa);
 
         if (result is null)
             return NotFound(new { error = "Selected course was not found in your department's curriculum." });

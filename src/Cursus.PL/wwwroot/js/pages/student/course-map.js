@@ -24,6 +24,9 @@ let selectedNode   = null;
 let simActive      = false;
 let simSourceId    = null;
 let simTimeouts    = [];
+let lastImpactResult = null;
+
+const IMPACT_STORAGE_KEY = 'cursusImpactReport';
 
 
 function buildCourses(nodes, edges) {
@@ -353,6 +356,7 @@ function startSim() {
   simActive   = true;
   simSourceId = selectedNode.data().id;
   const src   = COURSES.find(c => c.id === simSourceId);
+  lastImpactResult = null;
 
   const blocked = [];
   const queue   = [simSourceId];
@@ -367,6 +371,8 @@ function startSim() {
       }
     });
   }
+
+  fetchImpactAnalysis(parseInt(simSourceId, 10), src, blocked);
 
   cy.nodes().addClass('dimmed');
   cy.edges().addClass('dimmed');
@@ -402,8 +408,34 @@ function startSim() {
 
   document.getElementById('btn-impact-toggle').style.display = '';
 
-  const drawerTId = setTimeout(() => openImpactDrawer(blocked, src), blocked.length * 220 + 350);
+  const drawerTId = setTimeout(() => openImpactDrawer(blocked, src, lastImpactResult), blocked.length * 220 + 350);
   simTimeouts.push(drawerTId);
+}
+
+async function fetchImpactAnalysis(courseId, src, blocked) {
+  try {
+    const res = await fetch('/Student/SimulateFailure', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ courseId }),
+    });
+    if (!res.ok) return;
+    const result = await res.json();
+    lastImpactResult = result;
+    sessionStorage.setItem(IMPACT_STORAGE_KEY, JSON.stringify({
+      ...result,
+      src: { id: src.code, code: src.code, name: src.name, credits: src.credits, type: src.courseType },
+    }));
+    if (document.getElementById('node-panel')?.classList.contains('cm-panel-impact')) {
+      openImpactDrawer(blocked, src, result);
+    }
+  } catch {
+    // Keep client-side cascade; delay metrics fall back until API succeeds.
+  }
+}
+
+function formatSeverity(severity) {
+  return (severity || 'Low').toUpperCase();
 }
 
 function clearSim() {
@@ -492,8 +524,13 @@ function clearSimAnimated() {
 }
 
 
-function openImpactDrawer(blocked, src) {
-  const delay = blocked.length > 3 ? 2 : 1;
+function openImpactDrawer(blocked, src, impactResult) {
+  const metrics = impactResult || lastImpactResult;
+  const delay = metrics?.graduationDelaySemesters ?? 1;
+  const semestersAffected = metrics?.semestersAffected ?? Math.min(blocked.length + 1, 3);
+  const severity = metrics ? formatSeverity(metrics.severity) : (
+    blocked.length >= 4 ? 'CRITICAL' : blocked.length >= 2 ? 'HIGH' : 'LOW'
+  );
   const panel = document.getElementById('node-panel');
   panel.classList.add('open', 'cm-panel-impact');
 
@@ -515,13 +552,13 @@ function openImpactDrawer(blocked, src) {
         <p class="fw-700 mb-0" style="font-size:14px;color:var(--c-text);">Courses Blocked</p>
         <p style="font-size:11px;color:var(--c-muted);margin:0;">by failing <strong>${src.code}</strong></p>
       </div>
-      <span class="cm-damage-badge">${blocked.length >= 4 ? 'CRITICAL' : blocked.length >= 2 ? 'HIGH' : 'LOW'}</span>
+      <span class="cm-damage-badge">${severity}</span>
     </div>
 
     <!-- Quick metrics row -->
     <div class="cm-metrics-row">
       <div class="cm-impact-metric">
-        <p class="cm-impact-metric-val" style="color:var(--c-primary);">${Math.min(blocked.length + 1, 3)}</p>
+        <p class="cm-impact-metric-val" style="color:var(--c-primary);">${semestersAffected}</p>
         <p class="cm-impact-metric-label">Semesters</p>
       </div>
       <div class="cm-impact-metric">

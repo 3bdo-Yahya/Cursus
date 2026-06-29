@@ -15,7 +15,12 @@ namespace Cursus.BLL.Services
         }
 
         public async Task<ImpactAnalysisResultDto?> GetBlockedCoursesAsync(
-            int courseId, int departmentId)
+            int courseId,
+            int departmentId,
+            SemesterType currentSemester,
+            string? academicYear,
+            AcademicStanding standing,
+            decimal cgpa)
         {
             // ── 1-4: UNCHANGED — same loading, adjacency build, BFS loop ──
             var courses = await _courseRepository.GetAll()
@@ -92,6 +97,15 @@ namespace Cursus.BLL.Services
 
             var severity = GetSeverity(creditsAtRisk, cascadeDepth);
 
+            var delay = GraduationDelayCalculator.Calculate(
+                currentSemester,
+                academicYear,
+                standing,
+                cgpa,
+                failedCourse.SemesterAvailability,
+                creditsAtRisk,
+                cascadeDepth);
+
             return new ImpactAnalysisResultDto(
                 FailedCourseId: failedCourse.Id,
                 FailedCourseCode: failedCourse.Code,
@@ -101,7 +115,14 @@ namespace Cursus.BLL.Services
                 BlockedCoursesCount: orderedBlocked.Count,
                 CascadeDepth: cascadeDepth,
                 CreditsAtRisk: creditsAtRisk,
-                Severity: severity
+                Severity: severity,
+                GraduationDelaySemesters: delay.GraduationDelaySemesters,
+                RetakeDelaySemesters: delay.RetakeDelaySemesters,
+                RecoverySemesters: delay.RecoverySemesters,
+                MaxCreditsPerSemester: delay.MaxCreditsPerSemester,
+                SemestersAffected: delay.GraduationDelaySemesters,
+                RetakeSemesterLabel: delay.RetakeSemesterLabel,
+                ProjectedGraduationLabel: delay.ProjectedGraduationLabel
             );
         }
 

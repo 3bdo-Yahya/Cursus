@@ -2,7 +2,8 @@ namespace Cursus.Domain.DTOs
 {
     /// <summary>
     /// Aggregate result of a fail-cascade simulation, including
-    /// summary metrics consumed by course-map.js and impact-analyzer.js.
+    /// summary metrics and graduation delay consumed by course-map.js
+    /// and impact-analyzer.js.
     /// </summary>
     public sealed record ImpactAnalysisResultDto(
         int FailedCourseId,
@@ -13,6 +14,13 @@ namespace Cursus.Domain.DTOs
         int BlockedCoursesCount,
         int CascadeDepth,
         int CreditsAtRisk,
-        string Severity
+        string Severity,
+        int GraduationDelaySemesters,
+        int RetakeDelaySemesters,
+        int RecoverySemesters,
+        int MaxCreditsPerSemester,
+        int SemestersAffected,
+        string RetakeSemesterLabel,
+        string ProjectedGraduationLabel
     );
 }

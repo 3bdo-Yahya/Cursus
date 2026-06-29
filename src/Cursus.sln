@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.DAL", "Cursus.DAL\Cu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.Domain", "Cursus.Domain\Cursus.Domain.csproj", "{D2745D8F-BA43-4280-8B9C-F3A73866FFAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.BLL.Tests", "..\tests\Cursus.BLL.Tests\Cursus.BLL.Tests.csproj", "{9D8C14D2-BA7B-4D28-A78A-A39D55381139}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
