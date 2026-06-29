@@ -24,7 +24,6 @@ let selectedNode   = null;
 let simActive      = false;
 let simSourceId    = null;
 let simTimeouts    = [];
-let lastImpactResult = null;
 
 const IMPACT_STORAGE_KEY = 'cursusImpactReport';
 
@@ -351,46 +350,75 @@ function pulseEdge(edge) {
   );
 }
 
-function startSim() {
-  if (!selectedNode) return;
-  simActive   = true;
-  simSourceId = selectedNode.data().id;
-  const src   = COURSES.find(c => c.id === simSourceId);
-  lastImpactResult = null;
+async function fetchImpactResult(courseId) {
+  const res = await fetch('/Student/SimulateFailure', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ courseId }),
+  });
+  if (res.status === 404) throw new Error('Selected course was not found in your curriculum.');
+  if (!res.ok) throw new Error('Unable to run the simulation right now. Please try again.');
+  return res.json();
+}
 
-  const blocked = [];
-  const queue   = [simSourceId];
-  const visited = new Set([simSourceId]);
-  while (queue.length) {
-    const cur = queue.shift();
-    COURSES.filter(c => c.prereqs.includes(cur)).forEach(dep => {
-      if (!visited.has(dep.id)) {
-        visited.add(dep.id);
-        blocked.push(dep);
-        queue.push(dep.id);
-      }
-    });
+function showSimError(message) {
+  const panel = document.getElementById('node-panel');
+  panel.classList.add('open');
+  panel.innerHTML = `
+    <div class="cm-panel-header">
+      <span class="cm-status-pill" style="background:#fee2e2;color:#b91c1c;">Error</span>
+      <button id="btn-close-sim-error" class="cm-panel-close">
+        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+      </button>
+    </div>
+    <div style="padding:16px;font-size:13px;color:var(--c-text-sub);">${message}</div>
+  `;
+  document.getElementById('btn-close-sim-error').addEventListener('click', () => {
+    if (selectedNode) openPanel(selectedNode.data());
+    else closePanel();
+  });
+}
+
+async function startSim() {
+  if (!selectedNode || simActive) return;
+  const sourceId = selectedNode.data().id;
+  const btn = document.getElementById('btn-simulate');
+  if (btn) btn.disabled = true;
+
+  let result;
+  try {
+    result = await fetchImpactResult(parseInt(sourceId, 10));
+  } catch (err) {
+    if (btn) btn.disabled = false;
+    showSimError(err.message);
+    return;
   }
+  if (btn) btn.disabled = false;
 
-  fetchImpactAnalysis(parseInt(simSourceId, 10), src, blocked);
+  simActive   = true;
+  simSourceId = sourceId;
+  sessionStorage.setItem(IMPACT_STORAGE_KEY, JSON.stringify(result));
+
+  const blocked    = result.blockedCourses || [];
+  const coveredIds = new Set([simSourceId, ...blocked.map(b => String(b.courseId))]);
 
   cy.nodes().addClass('dimmed');
   cy.edges().addClass('dimmed');
-
   cy.getElementById(simSourceId).removeClass('dimmed').addClass('cascade-source');
 
-  blocked.forEach((dep, i) => {
+  blocked.forEach(b => {
     const tId = setTimeout(() => {
-      const n = cy.getElementById(dep.id);
+      const n = cy.getElementById(String(b.courseId));
+      if (!n.length) return;
       n.removeClass('dimmed').addClass('cascade-hit');
       pulseNode(n);
       n.incomers('edge').forEach(edge => {
-        if (visited.has(edge.source().id())) {
+        if (coveredIds.has(edge.source().id())) {
           edge.removeClass('dimmed').addClass('cascade-edge');
           pulseEdge(edge);
         }
       });
-    }, (i + 1) * 220);
+    }, b.depth * 220);
     simTimeouts.push(tId);
   });
 
@@ -400,68 +428,20 @@ function startSim() {
     }
   });
 
-  document.getElementById('sim-course-label').textContent = src.code + ' ' + src.name;
+  document.getElementById('sim-course-label').textContent = result.failedCourseCode + ' ' + result.failedCourseName;
   document.getElementById('sim-banner').classList.add('show');
 
   document.getElementById('panel-simulate-wrap').style.display = 'none';
   document.getElementById('panel-clear-wrap').style.display    = '';
+  document.getElementById('btn-impact-toggle').style.display   = '';
 
-  document.getElementById('btn-impact-toggle').style.display = '';
-
-  const drawerTId = setTimeout(() => openImpactDrawer(blocked, src, lastImpactResult), blocked.length * 220 + 350);
+  const maxDepth  = blocked.length ? Math.max(...blocked.map(b => b.depth)) : 0;
+  const drawerTId = setTimeout(() => openImpactDrawer(result), maxDepth * 220 + 350);
   simTimeouts.push(drawerTId);
-}
-
-async function fetchImpactAnalysis(courseId, src, blocked) {
-  try {
-    const res = await fetch('/Student/SimulateFailure', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ courseId }),
-    });
-    if (!res.ok) return;
-    const result = await res.json();
-    lastImpactResult = result;
-    sessionStorage.setItem(IMPACT_STORAGE_KEY, JSON.stringify({
-      ...result,
-      src: { id: src.code, code: src.code, name: src.name, credits: src.credits, type: src.courseType },
-    }));
-    if (document.getElementById('node-panel')?.classList.contains('cm-panel-impact')) {
-      openImpactDrawer(blocked, src, result);
-    }
-  } catch {
-    // Keep client-side cascade; delay metrics fall back until API succeeds.
-  }
 }
 
 function formatSeverity(severity) {
   return (severity || 'Low').toUpperCase();
-}
-
-function clearSim() {
-  simTimeouts.forEach(id => clearTimeout(id));
-  simTimeouts = [];
-
-  cy.nodes().stop(true);
-  cy.edges().stop(true);
-  cy.nodes().removeStyle('width height');
-  cy.edges().removeStyle('width line-color target-arrow-color');
-
-  simActive   = false;
-  simSourceId = null;
-
-  cy.nodes().removeClass('dimmed cascade-hit cascade-source');
-  cy.edges().removeClass('dimmed cascade-edge');
-  cy.nodes().style('opacity', 1);
-
-  document.getElementById('sim-banner').classList.remove('show');
-  closeImpactDrawer();
-  document.getElementById('btn-impact-toggle').style.display = 'none';
-
-  document.getElementById('panel-simulate-wrap').style.display = '';
-  document.getElementById('panel-clear-wrap').style.display    = 'none';
-
-  if (selectedNode) openPanel(selectedNode.data());
 }
 
 function clearSimAnimated() {
@@ -524,15 +504,37 @@ function clearSimAnimated() {
 }
 
 
-function openImpactDrawer(blocked, src, impactResult) {
-  const metrics = impactResult || lastImpactResult;
-  const delay = metrics?.graduationDelaySemesters ?? 1;
-  const semestersAffected = metrics?.semestersAffected ?? Math.min(blocked.length + 1, 3);
-  const severity = metrics ? formatSeverity(metrics.severity) : (
-    blocked.length >= 4 ? 'CRITICAL' : blocked.length >= 2 ? 'HIGH' : 'LOW'
-  );
-  const panel = document.getElementById('node-panel');
+function openImpactDrawer(result) {
+  const blocked  = result.blockedCourses || [];
+  const severity = formatSeverity(result.severity);
+  const panel    = document.getElementById('node-panel');
   panel.classList.add('open', 'cm-panel-impact');
+
+  if (blocked.length === 0) {
+    panel.innerHTML = `
+      <div class="cm-impact-header">
+        <div class="d-flex align-items-center gap-2">
+          <span class="material-symbols-outlined" style="font-size:19px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+          <h3 class="fw-800 mb-0" style="font-size:.95rem;color:var(--c-text);">Simulation Result</h3>
+        </div>
+        <button id="btn-close-impact" class="cm-panel-close">
+          <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+        </button>
+      </div>
+      <div class="cm-panel-section">
+        <p style="font-size:13px;color:var(--c-text-sub);">No downstream courses are affected by failing <strong>${result.failedCourseCode}</strong>.</p>
+      </div>
+      <div class="cm-panel-action">
+        <button id="btn-clear-impact" class="cm-btn-clear w-100">
+          <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">refresh</span>
+          Clear Simulation
+        </button>
+      </div>
+    `;
+    document.getElementById('btn-close-impact').addEventListener('click', () => { closePanel(); clearSimAnimated(); });
+    document.getElementById('btn-clear-impact').addEventListener('click', clearSimAnimated);
+    return;
+  }
 
   panel.innerHTML = `
     <div class="cm-impact-header">
@@ -545,29 +547,26 @@ function openImpactDrawer(blocked, src, impactResult) {
       </button>
     </div>
 
-    <!-- Damage headline -->
     <div class="cm-damage-headline">
-      <div class="cm-damage-number">${blocked.length}</div>
+      <div class="cm-damage-number">${result.blockedCoursesCount}</div>
       <div>
         <p class="fw-700 mb-0" style="font-size:14px;color:var(--c-text);">Courses Blocked</p>
-        <p style="font-size:11px;color:var(--c-muted);margin:0;">by failing <strong>${src.code}</strong></p>
+        <p style="font-size:11px;color:var(--c-muted);margin:0;">by failing <strong>${result.failedCourseCode}</strong></p>
       </div>
       <span class="cm-damage-badge">${severity}</span>
     </div>
 
-    <!-- Quick metrics row -->
     <div class="cm-metrics-row">
       <div class="cm-impact-metric">
-        <p class="cm-impact-metric-val" style="color:var(--c-primary);">${semestersAffected}</p>
+        <p class="cm-impact-metric-val" style="color:var(--c-primary);">${result.semestersAffected}</p>
         <p class="cm-impact-metric-label">Semesters</p>
       </div>
       <div class="cm-impact-metric">
-        <p class="cm-impact-metric-val" style="color:#ef4444;">+${delay} sem</p>
+        <p class="cm-impact-metric-val" style="color:#ef4444;">+${result.graduationDelaySemesters} sem</p>
         <p class="cm-impact-metric-label">Grad Delay</p>
       </div>
     </div>
 
-    <!-- Blocked list (compact) -->
     <div class="cm-panel-section">
       <p class="cm-panel-section-title">Blocked Courses</p>
       <div class="d-flex flex-column gap-1">
@@ -576,14 +575,13 @@ function openImpactDrawer(blocked, src, impactResult) {
             <span class="material-symbols-outlined" style="font-size:15px;color:#ef4444;font-variation-settings:'FILL' 1,'wght' 400">error</span>
             <div class="flex-fill">
               <p class="fw-700 mb-0" style="font-size:12px;color:var(--c-text);">${b.code} — ${b.name}</p>
-              <p style="font-size:10.5px;color:var(--c-muted);margin:0;">${b.prereqs.includes(src.id)?'Direct':'Chain'} dependency</p>
+              <p style="font-size:10.5px;color:var(--c-muted);margin:0;">${b.depth === 1 ? 'Direct' : 'Chain'} dependency</p>
             </div>
           </div>
         `).join('')}
       </div>
     </div>
 
-    <!-- Action buttons -->
     <div class="cm-panel-action d-flex flex-column gap-2">
       <a href="/Student/ImpactAnalyzer" class="cm-btn-view-report text-decoration-none d-flex align-items-center justify-content-center gap-2">
         <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">open_in_new</span>
