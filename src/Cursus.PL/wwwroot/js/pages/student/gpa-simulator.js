@@ -11,6 +11,7 @@ const GRADE_OPTIONS = ['—', ...Object.keys(GRADE_SCALE)];
 const COMPLETED_CREDITS = window.STUDENT_DATA?.completedCredits ?? 0;
 const COMPLETED_QP = window.STUDENT_DATA?.completedQp ?? 0;
 const CURRENT_CGPA = window.STUDENT_DATA?.currentCgpa ?? 0;
+const MAX_GPA = 4.0;
 
 const CURRENT_COURSES = window.STUDENT_DATA?.currentCourses ?? [];
 const IMPROVABLE_COURSES = window.STUDENT_DATA?.improvableCourses ?? [];
@@ -308,7 +309,7 @@ function updateTargetResult() {
 
   const requiredSemQP   = target * (COMPLETED_CREDITS + semTotal) - COMPLETED_QP;
   const requiredSGPA    = requiredSemQP / semTotal;
-  const maxPossibleCGPA = (COMPLETED_QP + semTotal * 4.0) / (COMPLETED_CREDITS + semTotal);
+    const maxPossibleCGPA =(COMPLETED_QP + semTotal * MAX_GPA) / (COMPLETED_CREDITS + semTotal);
 
   resultEl.className = 'target-result';
 

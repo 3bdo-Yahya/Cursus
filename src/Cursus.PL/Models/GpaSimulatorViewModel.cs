@@ -15,6 +15,8 @@ public class GpaSimulatorViewModel
     public int CompletedCredits { get; init; }
     public double CompletedQp { get; init; }
     public int GpaHours { get; init; }
+    public required string StandingCssClass { get; init; }
+    public double MaxGpa { get; init; } = 4.0;
 
     public required List<SimulatedCourseViewModel> CurrentCourses { get; init; }
     public required List<ImprovableCourseViewModel> ImprovableCourses { get; init; }
@@ -38,4 +40,5 @@ public class ImprovableCourseViewModel
     public int Credits { get; init; }
     public required string OriginalGrade { get; init; }
     public double OriginalPoints { get; init; }
+    
 }
