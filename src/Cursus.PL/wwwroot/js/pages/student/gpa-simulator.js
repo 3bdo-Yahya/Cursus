@@ -11,6 +11,7 @@ const GRADE_OPTIONS = ['—', ...Object.keys(GRADE_SCALE)];
 const COMPLETED_CREDITS = window.STUDENT_DATA?.completedCredits ?? 0;
 const COMPLETED_QP = window.STUDENT_DATA?.completedQp ?? 0;
 const CURRENT_CGPA = window.STUDENT_DATA?.currentCgpa ?? 0;
+const MAX_GPA = window.STUDENT_DATA?.maxGpa ?? 4.0;
 
 const CURRENT_COURSES = window.STUDENT_DATA?.currentCourses ?? [];
 const IMPROVABLE_COURSES = window.STUDENT_DATA?.improvableCourses ?? [];
@@ -308,7 +309,7 @@ function updateTargetResult() {
 
   const requiredSemQP   = target * (COMPLETED_CREDITS + semTotal) - COMPLETED_QP;
   const requiredSGPA    = requiredSemQP / semTotal;
-  const maxPossibleCGPA = (COMPLETED_QP + semTotal * 4.0) / (COMPLETED_CREDITS + semTotal);
+    const maxPossibleCGPA =(COMPLETED_QP + semTotal * MAX_GPA) / (COMPLETED_CREDITS + semTotal);
 
   resultEl.className = 'target-result';
 
@@ -318,7 +319,7 @@ function updateTargetResult() {
     return;
   }
 
-  if (requiredSGPA > 4.0) {
+  if (requiredSGPA > MAX_GPA) {
     resultEl.classList.add('unreachable');
     resultEl.innerHTML = `<span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 400">warning</span> A CGPA of <strong>${target.toFixed(2)}</strong> is <strong>not achievable</strong> this semester.<br>
       Your maximum possible CGPA this semester is <strong>${maxPossibleCGPA.toFixed(2)}</strong>.`;
