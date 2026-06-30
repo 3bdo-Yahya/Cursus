@@ -1,3 +1,5 @@
+@model StudentPageContextViewModel
+
 @{
     ViewData["Title"] = "Impact Analyzer";
 }
@@ -5,6 +7,11 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/student/impact-analyzer.css" asp-append-version="true"/>
 }
+
+<script>
+    window.STUDENT_CONTEXT = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.JsContext));
+    window.COURSE_MAP_DATA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CourseMapNodes));
+</script>
 
 <!-- ─── End Nav ───────────────────────────────────────── -->
 

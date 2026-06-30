@@ -1,3 +1,5 @@
+@model StudentGpaSimulatorViewModel
+
 @{
     ViewData["Title"] = "GPA Simulator";
 }
@@ -12,7 +14,7 @@
   <section class="anim-fade-up">
     <div class="mb-1">
       <h1 class="fw-900 mb-1" style="font-size:1.55rem;letter-spacing:-.4px;color:var(--c-text);">Progress &amp; Planning</h1>
-      <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Ahmed Kamal · Computer Science · Year 3 · Spring 2026</p>
+      <p class="mb-0" style="font-size:13px;color:var(--c-muted);">@Model.Subtitle</p>
     </div>
     <div class="page-tabs mt-3">
       <a href="/Student/Progress" class="page-tab">Progress Tracker</a>
@@ -28,11 +30,11 @@
       <div class="status-bar-card">
         <div class="d-flex">
           <div class="status-bar-item">
-            <div class="status-bar-value" id="current-cgpa-display">3.24</div>
+            <div class="status-bar-value" id="current-cgpa-display">@Model.CurrentCgpa.ToString("F2")</div>
             <div class="status-bar-label">Current CGPA</div>
           </div>
           <div class="status-bar-item">
-            <div class="status-bar-value" id="last-sgpa-display">2.85</div>
+            <div class="status-bar-value" id="last-sgpa-display">@Model.LastSemesterGpa.ToString("F2")</div>
             <div class="status-bar-label">Last SGPA</div>
           </div>
           <div class="status-bar-item">
@@ -40,7 +42,7 @@
               <span class="d-inline-flex align-items-center gap-1 rounded-pill px-3 py-1 fw-700"
                     style="font-size:12px;background:var(--standing-bg);color:var(--standing-text);border:1px solid var(--standing-bd);">
                 <span class="rounded-circle" style="width:6px;height:6px;background:currentColor;display:inline-block;flex-shrink:0;"></span>
-                Good Standing
+                @Model.StandingLabel
               </span>
             </div>
           </div>
@@ -157,5 +159,16 @@
   </div>
 </div>
 @section Scripts {
+    <script>
+        window.GPA_SIMULATOR_DATA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new {
+            currentCgpa = Model.CurrentCgpa,
+            lastSemesterGpa = Model.LastSemesterGpa,
+            minGpaForGraduation = Model.MinGpaForGraduation,
+            completedCredits = Model.CompletedCredits,
+            completedQualityPoints = Model.CompletedQualityPoints,
+            currentCourses = Model.CurrentCourses,
+            improvableCourses = Model.ImprovableCourses
+        }));
+    </script>
     <script src="~/js/pages/student/gpa-simulator.js" asp-append-version="true"></script>
 }

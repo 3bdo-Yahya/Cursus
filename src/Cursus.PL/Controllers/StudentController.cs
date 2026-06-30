@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Constants;
 using Cursus.PL.Models;
-using Cursus.Domain.Constants;
+using Cursus.BLL.Interfaces;
 
 namespace Cursus.PL.Controllers;
 
@@ -12,58 +12,103 @@ namespace Cursus.PL.Controllers;
 public class StudentController : Controller
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly IStudentPortalService _studentPortalService;
 
-    public StudentController(UserManager<AppUser> userManager)
+    public StudentController(UserManager<AppUser> userManager, IStudentPortalService studentPortalService)
     {
         _userManager = userManager;
+        _studentPortalService = studentPortalService;
     }
 
     public async Task<IActionResult> Dashboard()
     {
         var user = await _userManager.GetUserAsync(User);
-        var username = user?.UserName?.Split('@').FirstOrDefault() ?? "Student";
-
-        var model = new StudentDashboardViewModel
+        if (user is null)
         {
-            StudentName = username,
-            Initials = GetInitials(username),
-            Department = "Computer Science",
-            Year = 3,
-            Semester = "Spring 2026",
-            AcademicStanding = "Good Standing",
+            return NotFound();
+        }
 
-            Cgpa = 3.24,
-            CgpaChange = +0.12,
+        var snapshot = await _studentPortalService.GetSnapshotAsync(user.Id);
+        if (snapshot is null)
+        {
+            return NotFound();
+        }
 
-            CreditsEarned = 84,
-            CreditsRequired = 132,
-
-            CoursesRemaining = 16,
-            CoreCoursesRemaining = 12,
-            ElectiveCoursesRemaining = 4,
-
-            GraduationSemester = "Spring 2027",
-            SemestersCompleted = 5,
-            TotalSemesters = 8,
-
-            CurrentCourses =
-            [
-                new() { Code = "CS301", Name = "Operating Systems", Schedule = "Mon, Wed 10:00 · Room 402", CreditHours = 3 },
-                new() { Code = "CS304", Name = "Database Systems", Schedule = "Tue, Thu 14:00 · Online", CreditHours = 4 },
-                new() { Code = "MATH301", Name = "Linear Algebra", Schedule = "Sun, Tue 09:00 · Room 210", CreditHours = 3 },
-                new() { Code = "CS3XX", Name = "Free Elective", Schedule = "Wed 13:00 · TBD", CreditHours = 3, IsElective = true }
-            ]
-        };
-
+        var model = StudentPortalViewModelMapper.ToDashboard(snapshot);
         return View(model);
     }
 
-    public IActionResult CourseMap() => View();
-    public IActionResult Planner() => View();
-    public IActionResult Progress() => View();
-    public IActionResult AiAdvisor() => View();
-    public IActionResult GpaSimulator() => View();
-    public IActionResult ImpactAnalyzer() => View();
+    public async Task<IActionResult> CourseMap()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null) return NotFound();
+
+        var snapshot = await _studentPortalService.GetSnapshotAsync(user.Id);
+        if (snapshot is null) return NotFound();
+
+        var model = StudentPortalViewModelMapper.ToPageContext(snapshot, includeCourseMap: true);
+        return View(model);
+    }
+
+    public async Task<IActionResult> Planner()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null) return NotFound();
+
+        var snapshot = await _studentPortalService.GetSnapshotAsync(user.Id);
+        if (snapshot is null) return NotFound();
+
+        var model = StudentPortalViewModelMapper.ToPageContext(snapshot);
+        return View(model);
+    }
+
+    public async Task<IActionResult> Progress()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null) return NotFound();
+
+        var snapshot = await _studentPortalService.GetSnapshotAsync(user.Id);
+        if (snapshot is null) return NotFound();
+
+        var model = StudentPortalViewModelMapper.ToProgress(snapshot);
+        return View(model);
+    }
+
+    public async Task<IActionResult> AiAdvisor()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null) return NotFound();
+
+        var snapshot = await _studentPortalService.GetSnapshotAsync(user.Id);
+        if (snapshot is null) return NotFound();
+
+        var model = StudentPortalViewModelMapper.ToPageContext(snapshot);
+        return View(model);
+    }
+
+    public async Task<IActionResult> GpaSimulator()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null) return NotFound();
+
+        var snapshot = await _studentPortalService.GetSnapshotAsync(user.Id);
+        if (snapshot is null) return NotFound();
+
+        var model = StudentPortalViewModelMapper.ToGpaSimulator(snapshot);
+        return View(model);
+    }
+
+    public async Task<IActionResult> ImpactAnalyzer()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null) return NotFound();
+
+        var snapshot = await _studentPortalService.GetSnapshotAsync(user.Id);
+        if (snapshot is null) return NotFound();
+
+        var model = StudentPortalViewModelMapper.ToPageContext(snapshot);
+        return View(model);
+    }
 
     public async Task<IActionResult> Profile()
     {

@@ -1,3 +1,5 @@
+@model StudentProgressViewModel
+
 @{
     ViewData["Title"] = "Progress Tracker";
 }
@@ -13,13 +15,16 @@
     <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-1">
       <div>
         <h1 class="fw-900 mb-1" style="font-size:1.55rem;letter-spacing:-.4px;color:var(--c-text);">Progress &amp; Planning</h1>
-        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Ahmed Kamal · Computer Science · Year 3 · Spring 2026</p>
+        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">@Model.Subtitle</p>
       </div>
       <!-- Overload badge -->
+      @if (Model.IsOverloadEligible)
+      {
       <span class="overload-badge">
         <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 500">bolt</span>
         Overload Eligible — GPA ≥ 3.0
       </span>
+      }
     </div>
 
     <!-- Tabs -->
@@ -35,43 +40,44 @@
       <div class="row align-items-center g-4">
         <div class="col-12 col-md-7">
           <p class="fw-700 mb-1 text-uppercase" style="font-size:10px;letter-spacing:.09em;color:var(--c-muted);">Overall Graduation Progress</p>
-          <p class="hero-credits-text">84 <span style="font-weight:400;color:var(--c-muted);font-size:1rem;">of</span> 132 credits completed</p>
-          <p class="hero-sub-text">48 credits remaining across all categories</p>
+          <p class="hero-credits-text">@Model.CreditsEarned <span style="font-weight:400;color:var(--c-muted);font-size:1rem;">of</span> @Model.CreditsRequired credits completed</p>
+          <p class="hero-sub-text">@Model.CreditsRemaining credits remaining across all categories</p>
 
           <div class="hero-bar-track">
-            <div class="hero-bar-fill" style="--bar-w:63.6%;"></div>
+            <div class="hero-bar-fill" style="--bar-w:@Model.CreditPercentage%;"></div>
           </div>
 
           <div class="d-flex flex-wrap gap-2 mt-3">
             <span class="proj-badge proj-badge-primary">
               <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 500">calendar_month</span>
-              Grad: Spring 2027
+              Grad: @Model.GraduationSemester
             </span>
+            @if (Model.IsOverloadEligible)
+            {
             <span class="proj-badge">
               <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 500">bolt</span>
-              With overload: Fall 2026
+              With overload: @Model.OverloadGraduationSemester
             </span>
+            }
             <span class="proj-badge">
               <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400">school</span>
-              Min GPA 2.0 — reachable ✓
+              Min GPA @Model.MinGpaForGraduation.ToString("F2") — @(Model.MeetsMinGpa ? "reachable ✓" : "not reachable")
             </span>
           </div>
         </div>
         <div class="col-12 col-md-5 d-flex justify-content-md-end">
           <div class="text-center text-md-end">
-            <div class="hero-percentage">63.6%</div>
+            <div class="hero-percentage">@Model.CreditPercentage.ToString("F1")%</div>
             <p class="mb-0 fw-600" style="font-size:12px;color:var(--c-muted);margin-top:2px;">degree complete</p>
 
             <!-- Mini semester pips -->
             <div class="d-flex gap-1 mt-3 justify-content-md-end" style="max-width:220px;margin-left:auto;">
-              <div title="Year 1 Fall"   style="flex:1;height:5px;border-radius:99px;background:#4F46E5;"></div>
-              <div title="Year 1 Spring" style="flex:1;height:5px;border-radius:99px;background:#4F46E5;"></div>
-              <div title="Year 2 Fall"   style="flex:1;height:5px;border-radius:99px;background:#4F46E5;"></div>
-              <div title="Year 2 Spring" style="flex:1;height:5px;border-radius:99px;background:#4F46E5;"></div>
-              <div title="Year 3 Spring (current)" style="flex:1;height:5px;border-radius:99px;background:linear-gradient(90deg,#4F46E5 60%,var(--c-border) 60%);"></div>
-              <div title="Year 3 Fall remaining" style="flex:1;height:5px;border-radius:99px;background:var(--c-border);"></div>
-              <div title="Year 4 Spring" style="flex:1;height:5px;border-radius:99px;background:var(--c-border);"></div>
-              <div title="Year 4 Fall"   style="flex:1;height:5px;border-radius:99px;background:var(--c-border);"></div>
+              @for (int i = 0; i < Model.TotalSemesters; i++)
+              {
+                var completed = i < Model.SemestersCompleted;
+                var current = i == Model.SemestersCompleted;
+                <div title=@($"Semester {i + 1}") style="flex:1;height:5px;border-radius:99px;background:@(completed ? "#4F46E5" : current ? "linear-gradient(90deg,#4F46E5 60%,var(--c-border) 60%)" : "var(--c-border)");"></div>
+              }
             </div>
             <p class="mb-0 mt-1" style="font-size:10.5px;color:var(--c-muted);">Semester progress pips</p>
           </div>
@@ -84,273 +90,84 @@
   <section class="anim-fade-up-2">
     <div class="d-flex align-items-center justify-content-between mb-3">
       <h2 class="fw-800 mb-0" style="font-size:15px;color:var(--c-text);">Requirements by Category</h2>
-      <span style="font-size:12px;color:var(--c-muted);">4 categories · 132 total credits</span>
+      <span style="font-size:12px;color:var(--c-muted);">@Model.Categories.Count categories · @Model.CreditsRequired total credits</span>
     </div>
 
     <div class="row g-3" data-scroll-group>
-
-      <!-- ── Card 1 ─────────────────────── -->
-      <div class="col-12 col-md-6">
-        <div class="category-card h-100">
-          <div class="category-card-header">
-            <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
-              <div class="category-icon-box" style="background:var(--icon-blue-bg);">
-                <span class="material-symbols-outlined" style="font-size:19px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 500">menu_book</span>
+      @foreach (var category in Model.Categories)
+      {
+        <div class="col-12 col-md-6">
+          <div class="category-card h-100">
+            <div class="category-card-header">
+              <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
+                <div class="category-icon-box" style="@category.IconStyle">
+                  <span class="material-symbols-outlined" style="font-size:19px;color:@category.IconColor;font-variation-settings:'FILL' 1,'wght' 500">menu_book</span>
+                </div>
+                <div class="min-w-0">
+                  <div class="category-title">@category.Name</div>
+                  <div class="category-sub">@category.Subtitle</div>
+                </div>
               </div>
-              <div class="min-w-0">
-                <div class="category-title">Core Courses</div>
-                <div class="category-sub">Mandatory foundation courses</div>
-              </div>
-            </div>
-            <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
-              <span class="cr-badge cr-badge-blue">48 / 60 cr</span>
-              <div style="font-size:10.5px;color:var(--c-muted);">80%</div>
-            </div>
-          </div>
-          <div class="px-4 pb-2">
-            <div class="cat-bar-track">
-              <div class="cat-bar-fill cat-bar-blue" style="--bar-w:80%;--bar-delay:0.5s;"></div>
-            </div>
-          </div>
-          <div class="cat-course-list">
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">CS101</span>
-              <span class="course-name-text">Intro to Programming</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-a">A</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">CS201</span>
-              <span class="course-name-text">Data Structures</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-b">B+</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">CS202</span>
-              <span class="course-name-text">Discrete Mathematics</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-b">B</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-progress"><span class="material-symbols-outlined" style="font-size:14px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 500">cached</span></div>
-              <span class="course-code-badge">CS301</span>
-              <span class="course-name-text">Operating Systems</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);">In Progress</span>
-            </div>
-
-            <!-- Hidden -->
-            <div class="cat-course-item d-none extra-item">
-              <div class="course-status-icon status-open"><span class="material-symbols-outlined" style="font-size:14px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">circle</span></div>
-              <span class="course-code-badge">CS401</span>
-              <span class="course-name-text">Compiler Design</span>
-              <span class="course-credits-pill">3 cr</span>
-            </div>
-
-            <div class="cat-course-item d-none extra-item">
-              <div class="course-status-icon status-locked"><span class="material-symbols-outlined" style="font-size:14px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">lock</span></div>
-              <span class="course-code-badge">CS499</span>
-              <span class="course-name-text course-name-locked">Senior Capstone (Locked)</span>
-              <span class="course-credits-pill">6 cr</span>
-            </div>
-
-          </div>
-          <button class="show-more-btn" onclick="toggleExpand(this)">
-            <span>Show 2 more</span>
-            <span class="material-symbols-outlined chevron" style="font-variation-settings:'FILL' 0,'wght' 400">expand_more</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- ── Card 2 ──────────────── -->
-      <div class="col-12 col-md-6">
-        <div class="category-card h-100">
-          <div class="category-card-header">
-            <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
-              <div class="category-icon-box" style="background:var(--icon-purple-bg);">
-                <span class="material-symbols-outlined" style="font-size:19px;color:#7c3aed;font-variation-settings:'FILL' 1,'wght' 500">hub</span>
-              </div>
-              <div class="min-w-0">
-                <div class="category-title">Department Elective</div>
-                <div class="category-sub">Choose from approved electives</div>
+              <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
+                <span class="@category.BadgeClass">@category.EarnedCredits / @category.RequiredCredits cr</span>
+                <div style="font-size:10.5px;color:var(--c-muted);">@category.Percentage.ToString("F0")%</div>
               </div>
             </div>
-            <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
-              <span class="cr-badge cr-badge-purple">12 / 18 cr</span>
-              <div style="font-size:10.5px;color:var(--c-muted);">67%</div>
+            <div class="px-4 pb-2">
+              <div class="cat-bar-track">
+                <div class="@category.BarClass" style="--bar-w:@category.Percentage%;--bar-delay:0.5s;"></div>
+              </div>
             </div>
-          </div>
-          <div class="px-4 pb-2">
-            <div class="cat-bar-track">
-              <div class="cat-bar-fill cat-bar-purple" style="--bar-w:67%;--bar-delay:0.6s;"></div>
+            <div class="cat-course-list">
+              @foreach (var course in category.Courses)
+              {
+                <div class="cat-course-item @(course.IsHiddenByDefault ? "d-none extra-item" : "")">
+                  <div class="course-status-icon status-@course.Status">
+                    @if (course.Status == "done")
+                    {
+                      <span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span>
+                    }
+                    else if (course.Status == "progress")
+                    {
+                      <span class="material-symbols-outlined" style="font-size:14px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 500">cached</span>
+                    }
+                    else if (course.Status == "locked")
+                    {
+                      <span class="material-symbols-outlined" style="font-size:14px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">lock</span>
+                    }
+                    else
+                    {
+                      <span class="material-symbols-outlined" style="font-size:14px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">circle</span>
+                    }
+                  </div>
+                  <span class="course-code-badge">@course.Code</span>
+                  <span class="course-name-text @(course.Status == "locked" ? "course-name-locked" : "")">@course.Name</span>
+                  <span class="course-credits-pill">@course.CreditHours cr</span>
+                  @if (!string.IsNullOrEmpty(course.Grade))
+                  {
+                    <span class="course-grade-pill @course.GradeClass">@course.Grade</span>
+                  }
+                  else if (course.Status == "progress")
+                  {
+                    <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);">In Progress</span>
+                  }
+                  else if (course.Status == "open")
+                  {
+                    <span style="font-size:10.5px;color:var(--c-muted);">Available</span>
+                  }
+                </div>
+              }
             </div>
-          </div>
-          <div class="cat-course-list">
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">AI402</span>
-              <span class="course-name-text">Machine Learning</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-a">A-</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">WEB200</span>
-              <span class="course-name-text">Modern Frontend Dev</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-b">B+</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-open"><span class="material-symbols-outlined" style="font-size:14px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">circle</span></div>
-              <span class="course-code-badge">DS305</span>
-              <span class="course-name-text">Database Systems</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span style="font-size:10.5px;color:var(--c-muted);">Available</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-open"><span class="material-symbols-outlined" style="font-size:14px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">circle</span></div>
-              <span class="course-code-badge">NET410</span>
-              <span class="course-name-text">Cloud Computing</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span style="font-size:10.5px;color:var(--c-muted);">Available</span>
-            </div>
-
+            @if (category.HiddenCourseCount > 0)
+            {
+              <button class="show-more-btn" onclick="toggleExpand(this)">
+                <span>Show @category.HiddenCourseCount more</span>
+                <span class="material-symbols-outlined chevron" style="font-variation-settings:'FILL' 0,'wght' 400">expand_more</span>
+              </button>
+            }
           </div>
         </div>
-      </div>
-
-      <!-- ── Card 3  ─────────────────────── -->
-      <div class="col-12 col-md-6">
-        <div class="category-card h-100">
-          <div class="category-card-header">
-            <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
-              <div class="category-icon-box" style="background:var(--icon-amber-bg);">
-                <span class="material-symbols-outlined" style="font-size:19px;color:#b45309;font-variation-settings:'FILL' 1,'wght' 500">auto_awesome</span>
-              </div>
-              <div class="min-w-0">
-                <div class="category-title">Free Elective</div>
-                <div class="category-sub">Any approved course university-wide</div>
-              </div>
-            </div>
-            <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
-              <span class="cr-badge cr-badge-amber">9 / 12 cr</span>
-              <div style="font-size:10.5px;color:var(--c-muted);">75%</div>
-            </div>
-          </div>
-          <div class="px-4 pb-2">
-            <div class="cat-bar-track">
-              <div class="cat-bar-fill cat-bar-amber" style="--bar-w:75%;--bar-delay:0.7s;"></div>
-            </div>
-          </div>
-          <div class="cat-course-list">
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">MUS101</span>
-              <span class="course-name-text">Music Appreciation</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-a">A</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">ART200</span>
-              <span class="course-name-text">Digital Art Fundamentals</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-b">B</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-open"><span class="material-symbols-outlined" style="font-size:14px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">circle</span></div>
-              <span class="course-code-badge">PSYC101</span>
-              <span class="course-name-text">Intro to Psychology</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span style="font-size:10.5px;color:var(--c-muted);">Available</span>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- ── Card 4 ──────────── -->
-      <div class="col-12 col-md-6">
-        <div class="category-card h-100">
-          <div class="category-card-header">
-            <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
-              <div class="category-icon-box" style="background:rgba(16,185,129,.12);">
-                <span class="material-symbols-outlined" style="font-size:19px;color:#047857;font-variation-settings:'FILL' 1,'wght' 500">account_balance</span>
-              </div>
-              <div class="min-w-0">
-                <div class="category-title">University Requirements</div>
-                <div class="category-sub">Required by all graduates</div>
-              </div>
-            </div>
-            <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
-              <span class="cr-badge cr-badge-green">15 / 18 cr</span>
-              <div style="font-size:10.5px;color:var(--c-muted);">83%</div>
-            </div>
-          </div>
-          <div class="px-4 pb-2">
-            <div class="cat-bar-track">
-              <div class="cat-bar-fill cat-bar-green" style="--bar-w:83%;--bar-delay:0.8s;"></div>
-            </div>
-          </div>
-          <div class="cat-course-list">
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">ENG102</span>
-              <span class="course-name-text">Academic Writing</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-b">B+</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">HIST201</span>
-              <span class="course-name-text">World History</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-a">A-</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">PHYS101</span>
-              <span class="course-name-text">Physics I</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-b">B</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-done"><span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 500">check</span></div>
-              <span class="course-code-badge">MATH101</span>
-              <span class="course-name-text">Calculus I</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span class="course-grade-pill grade-b">B-</span>
-            </div>
-
-            <div class="cat-course-item">
-              <div class="course-status-icon status-open"><span class="material-symbols-outlined" style="font-size:14px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">circle</span></div>
-              <span class="course-code-badge">PHIL105</span>
-              <span class="course-name-text">Ethics in Tech</span>
-              <span class="course-credits-pill">3 cr</span>
-              <span style="font-size:10.5px;color:var(--c-muted);">Available</span>
-            </div>
-
-          </div>
-        </div>
-      </div>
+      }
     </div>
   </section>
 
@@ -362,7 +179,7 @@
       </div>
       <div class="flex-1">
         <p class="fw-800 mb-0" style="font-size:13.5px;color:var(--alert-ok-title);">You're on track to graduate.</p>
-        <p class="mb-0" style="font-size:12px;color:var(--alert-ok-text);">At your current pace, you'll complete all 132 credits by Spring 2027. With overload registration (eligible at 3.24 GPA), you could finish by Fall 2026.</p>
+        <p class="mb-0" style="font-size:12px;color:var(--alert-ok-text);">At your current pace, you'll complete all @Model.CreditsRequired credits by @Model.GraduationSemester. With overload registration (eligible at @Model.Cgpa.ToString("F2") GPA), you could finish by @Model.OverloadGraduationSemester.</p>
       </div>
       <a href="/Student/GpaSimulator" class="btn btn-sm fw-700 d-none d-sm-inline-flex align-items-center gap-1 flex-shrink-0"
          style="border-radius:10px;font-size:12px;background:var(--alert-ok-icon);border:1px solid var(--alert-ok-bd);color:var(--alert-ok-title);text-decoration:none;">
@@ -373,5 +190,8 @@
   </section>
 </div>
 @section Scripts {
+    <script>
+        window.PROGRESS_DATA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+    </script>
     <script src="~/js/pages/student/progress-tracker.js" asp-append-version="true"></script>
 }

@@ -30,6 +30,7 @@ public class StudentDashboardViewModel
 
     public List<EnrolledCourseViewModel> CurrentCourses { get; init; } = [];
     public int TotalCurrentCredits => CurrentCourses.Sum(c => c.CreditHours);
+    public bool IsOverloadEligible { get; init; }
 }
 
 public class EnrolledCourseViewModel

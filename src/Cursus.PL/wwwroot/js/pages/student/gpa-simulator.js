@@ -8,22 +8,42 @@ const GRADE_SCALE = {
 const GRADE_OPTIONS = ['—', 'A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
 
 /* ── Student Data ───────────────────────────────────────── */
-const COMPLETED_CREDITS = 84;
-const COMPLETED_QP      = 272.16;   // 84 × 3.24
-const CURRENT_CGPA      = 3.24;
+const DATA = window.GPA_SIMULATOR_DATA || {
+  currentCgpa: 3.24,
+  lastSemesterGpa: 2.85,
+  minGpaForGraduation: 2.0,
+  completedCredits: 84,
+  completedQualityPoints: 272.16,
+  currentCourses: [
+    { id: 'CS202',  name: 'Discrete Mathematics', credits: 3 },
+    { id: 'MTH201', name: 'Linear Algebra',        credits: 3 },
+    { id: 'CS301',  name: 'Operating Systems',     credits: 3 },
+    { id: 'ENG201', name: 'Technical Writing',     credits: 2 },
+    { id: 'CS303',  name: 'Computer Networks',     credits: 3 },
+  ],
+  improvableCourses: [
+    { id: 'MTH102', name: 'Calculus II',    credits: 3, originalGrade: 'D',  originalPoints: 1.00 },
+    { id: 'CS102',  name: 'Programming I',  credits: 3, originalGrade: 'D+', originalPoints: 1.33 },
+  ]
+};
 
-const CURRENT_COURSES = [
-  { id: 'CS202',  name: 'Discrete Mathematics', credits: 3 },
-  { id: 'MTH201', name: 'Linear Algebra',        credits: 3 },
-  { id: 'CS301',  name: 'Operating Systems',     credits: 3 },
-  { id: 'ENG201', name: 'Technical Writing',     credits: 2 },
-  { id: 'CS303',  name: 'Computer Networks',     credits: 3 },
-];
+const COMPLETED_CREDITS = DATA.completedCredits;
+const COMPLETED_QP      = DATA.completedQualityPoints;
+const CURRENT_CGPA      = DATA.currentCgpa;
 
-const IMPROVABLE_COURSES = [
-  { id: 'MTH102', name: 'Calculus II',    credits: 3, originalGrade: 'D',  originalPoints: 1.00 },
-  { id: 'CS102',  name: 'Programming I',  credits: 3, originalGrade: 'D+', originalPoints: 1.33 },
-];
+const CURRENT_COURSES = DATA.currentCourses.map(c => ({
+  id: c.Id,
+  name: c.Name,
+  credits: c.Credits
+}));
+
+const IMPROVABLE_COURSES = DATA.improvableCourses.map(c => ({
+  id: c.Id,
+  name: c.Name,
+  credits: c.Credits,
+  originalGrade: c.OriginalGrade,
+  originalPoints: c.OriginalPoints
+}));
 
 /* ── Custom grade dropdown ───────────────────── */
 function buildCustomSelect(grades, idx, type) {

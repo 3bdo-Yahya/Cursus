@@ -1,20 +1,17 @@
 /* ── Student context ─ */
-const STUDENT_CONTEXT = {
-  name:        'Ahmed Kamal',
-  department:  'Computer Science',
-  year:        3,
-  semester:    'Spring 2026',
-  cgpa:        3.24,
+const STUDENT_CONTEXT = window.STUDENT_CONTEXT || {
+  name:        'Student',
+  department:  'Undeclared',
+  year:        1,
+  semester:    'Fall',
+  cgpa:        0,
   standing:    'Good Standing',
-  completed:   84,
-  total:       132,
-  graduation:  'Spring 2027',
-  completed_courses: [
-    'CS101 (A), CS201 (B+), CS202 (B), AI402 (A-), WEB200 (B+)',
-    'MUS101 (A), ART200 (B), ENG102 (B+), HIST201 (A-), PHYS101 (B)'
-  ].join(', '),
-  in_progress: 'CS301 Operating Systems, MTH201 Linear Algebra, ENG201 Technical Writing, CS303 Computer Networks, CS202 Discrete Mathematics',
-  failed:      'MTH102 (D), CS102 (D+)',
+  completed:   0,
+  total:       0,
+  graduation:  '—',
+  completed_courses: '',
+  in_progress: '',
+  failed:      '',
 };
 
 /* ── Chat state ─────────────────────────────────────────── */

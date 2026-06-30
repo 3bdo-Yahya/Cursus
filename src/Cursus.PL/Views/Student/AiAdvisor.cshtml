@@ -1,3 +1,5 @@
+@model StudentPageContextViewModel
+
 @{
     ViewData["Title"] = "AI Advisor";
 }
@@ -10,6 +12,9 @@
 <div class="ai-advisor-page">
 <div class="advisor-shell">
   <div class="chat-wrap">
+    <script>
+        window.STUDENT_CONTEXT = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.JsContext));
+    </script>
 
     <!-- Chat Header -->
     <div class="chat-header anim-fade-up">

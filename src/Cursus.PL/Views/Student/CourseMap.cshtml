@@ -1,3 +1,5 @@
+@model StudentPageContextViewModel
+
 @{
     ViewData["Title"] = "Course Map";
 }
@@ -131,5 +133,9 @@
 </div>
 @section Scripts {
     <script src="~/lib/cytoscape/dist/cytoscape.min.js" asp-append-version="true"></script>
+    <script>
+        window.COURSE_MAP_DATA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CourseMapNodes));
+        window.STUDENT_CONTEXT = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.JsContext));
+    </script>
     <script src="~/js/pages/student/course-map.js" asp-append-version="true"></script>
 }

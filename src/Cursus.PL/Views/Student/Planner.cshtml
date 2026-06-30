@@ -1,3 +1,5 @@
+@model StudentPageContextViewModel
+
 @{
     ViewData["Title"] = "Semester Planner";
 }
@@ -13,7 +15,7 @@
     <div class="d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
       <div>
         <h1 class="fw-900 mb-1" style="font-size:1.55rem;letter-spacing:-.4px;color:var(--c-text);">Semester Planner</h1>
-        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Plan your upcoming semester — drag &amp; drop courses, check prerequisites, and stay within your credit limits.</p>
+        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">@Model.Subtitle</p>
       </div>
       <!-- Semester selector -->
       <div class="semester-tabs flex-shrink-0">

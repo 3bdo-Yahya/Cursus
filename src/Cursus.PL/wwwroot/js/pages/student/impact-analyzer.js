@@ -7,6 +7,9 @@ const DEMO_BLOCKED = [
   { id:'CS491',  name:'Senior Project I',             credits:3, prereqs:['CS391'], avail:'Fall & Spring' },
 ];
 
+// Use course map data from backend if available
+const COURSE_DATA = window.COURSE_MAP_DATA || [];
+
 window.addEventListener('DOMContentLoaded', () => {
   const hasReport = true;
   if (hasReport) {

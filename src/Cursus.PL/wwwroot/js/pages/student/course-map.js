@@ -1,27 +1,19 @@
 (function () {
 
-const COURSES = [
-  // Year 1
-  { id:'CS121', name:'Computer Science Fundamentals', credits:3, type:'Core',        avail:'Fall',        dept:'CS', passing:'D', status:'passed',      grade:'A',  prereqs:[], year:1 },
-  { id:'CS141', name:'Programming Fundamentals',       credits:3, type:'Core',        avail:'Spring',      dept:'CS', passing:'D', status:'passed',      grade:'B+', prereqs:[], year:1 },
-  { id:'MA113', name:'Calculus I',                     credits:3, type:'Core',        avail:'Fall',        dept:'Math', passing:'D', status:'passed',    grade:'B',  prereqs:[], year:1 },
-  { id:'HU111', name:'English Language I',             credits:2, type:'Univ. Req.',  avail:'Fall & Spring',dept:'HU',  passing:'D', status:'passed',    grade:'A-', prereqs:[], year:1 },
-  // Year 2
-  { id:'CS241', name:'Object Oriented Programming',    credits:3, type:'Core',        avail:'Fall',        dept:'CS', passing:'D', status:'passed',      grade:'A',  prereqs:['CS141'], year:2 },
-  { id:'CS211', name:'Data Structures I',              credits:3, type:'Core',        avail:'Spring',      dept:'CS', passing:'D', status:'passed',      grade:'B',  prereqs:['CS241'], year:2 },
-  { id:'MA222', name:'Probability & Statistics',       credits:3, type:'Core',        avail:'Spring',      dept:'Math', passing:'D', status:'passed',    grade:'C+', prereqs:['MA113'], year:2 },
-  { id:'EE201', name:'Logic Design',                   credits:3, type:'Core',        avail:'Fall',        dept:'EE',  passing:'D', status:'passed',      grade:'B-', prereqs:[], year:2 },
-  // Year 3 (current)
-  { id:'CS311', name:'Algorithms Analysis & Design',   credits:3, type:'Core',        avail:'Fall',        dept:'CS', passing:'D', status:'in-progress', grade:null, prereqs:['CS211'], year:3 },
-  { id:'CS312', name:'Data Structures II',             credits:3, type:'Core',        avail:'Fall',        dept:'CS', passing:'D', status:'in-progress', grade:null, prereqs:['CS211'], year:3 },
-  { id:'CS321', name:'Operating Systems I',            credits:3, type:'Core',        avail:'Fall',        dept:'CS', passing:'D', status:'remaining',   grade:null, prereqs:['CS121'], year:3 },
-  { id:'CS391', name:'Software Engineering',           credits:3, type:'Core',        avail:'Fall & Spring',dept:'CS', passing:'D', status:'remaining',  grade:null, prereqs:[], year:3 },
-  // Year 4
-  { id:'AI301', name:'Artificial Intelligence',        credits:3, type:'Core',        avail:'Fall',        dept:'CS', passing:'D', status:'blocked',     grade:null, prereqs:['CS311'], year:4 },
-  { id:'AI413', name:'Machine Learning',               credits:3, type:'Core',        avail:'Fall',        dept:'CS', passing:'D', status:'blocked',     grade:null, prereqs:['MA222','CS311'], year:4 },
-  { id:'CS401', name:'Natural Language Processing',    credits:3, type:'Elective',    avail:'All',         dept:'CS', passing:'D', status:'blocked',     grade:null, prereqs:['CS311'], year:4 },
-  { id:'CS491', name:'Senior Project I',               credits:3, type:'Core',        avail:'Fall & Spring',dept:'CS', passing:'C', status:'blocked',    grade:null, prereqs:['CS391','CS321'], year:4 },
-];
+// Map backend DTO structure to frontend format
+const COURSES = (window.COURSE_MAP_DATA || []).map(node => ({
+  id: node.Id,
+  name: node.Name,
+  credits: node.Credits,
+  type: node.Type,
+  avail: node.Avail,
+  dept: node.Dept,
+  passing: node.Passing,
+  status: node.Status,
+  grade: node.Grade,
+  prereqs: node.Prereqs || [],
+  year: node.Year
+}));
 
 const STATUS_STYLE = {
   'passed':      { bg:'#10b981', border:'#059669', text:'#fff',     label:'Passed'      },
