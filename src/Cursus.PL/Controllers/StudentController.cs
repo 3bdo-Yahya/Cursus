@@ -138,7 +138,6 @@ public class StudentController : Controller
             .Include(u => u.Department)
             .Include(u => u.StudentCourses)
                 .ThenInclude(sc => sc.Course)
-            .Include(u => u.StandingHistories)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == user.Id);
 
@@ -215,16 +214,7 @@ public class StudentController : Controller
         var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScaleDecimal);
         var termGpas = _academicMetricsService.CalculateSgpaByTerm(studentCourses, gradeScaleDecimal);
 
-        var currentTerm = termGpas.FirstOrDefault(t => 
-            string.Equals(t.AcademicYear, student.AcademicYear, StringComparison.OrdinalIgnoreCase) && 
-            t.Semester == student.CurrentSemester);
-        var sgpa = currentTerm?.SemesterGpa ?? 0m;
-
-        var previousTerm = termGpas
-            .Where(t => !(string.Equals(t.AcademicYear, student.AcademicYear, StringComparison.OrdinalIgnoreCase) && t.Semester == student.CurrentSemester))
-            .OrderByDescending(t => t.AcademicYear)
-            .ThenByDescending(t => t.Semester)
-            .FirstOrDefault();
+        var previousTerm = _academicMetricsService.GetPreviousTerm(termGpas, student.AcademicYear, student.CurrentSemester);
         var lastSgpa = previousTerm?.SemesterGpa ?? 0m;
 
         var model = new GpaSimulatorViewModel
@@ -259,13 +249,17 @@ public class StudentController : Controller
         if (user.DepartmentId is null)
             return BadRequest(new { error = "No department assigned to your account." });
 
+        var department = await _db.Departments
+            .AsNoTracking()
+            .FirstOrDefaultAsync(d => d.Id == user.DepartmentId.Value);
+
         var studentCourses = await _db.StudentCourses
             .Include(sc => sc.Course)
             .Where(sc => sc.StudentId == user.Id)
             .AsNoTracking()
             .ToListAsync();
 
-        var gradeScale = await _academicMetricsService.GetGradeScaleAsync(user.DepartmentId);
+        var gradeScale = await _academicMetricsService.GetGradeScaleAsync(department?.UniversityId);
         var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
         var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScale);
 
