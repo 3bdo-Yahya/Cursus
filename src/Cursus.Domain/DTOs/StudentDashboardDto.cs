@@ -29,6 +29,16 @@ public sealed class StudentDashboardDto
     public int TotalSemesters { get; init; }
 
     public required IReadOnlyList<EnrolledCourseDto> CurrentCourses { get; init; }
+
+    public required string UniversityName { get; init; }
+    public decimal HighestSgpa { get; init; }
+    public required IReadOnlyList<GpaHistoryPointDto> GpaHistory { get; init; }
+}
+
+public sealed class GpaHistoryPointDto
+{
+    public required string SemLabel { get; init; }
+    public decimal Sgpa { get; init; }
 }
 
 public sealed class EnrolledCourseDto
