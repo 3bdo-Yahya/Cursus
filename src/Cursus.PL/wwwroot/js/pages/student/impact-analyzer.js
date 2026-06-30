@@ -1,22 +1,46 @@
 const IMPACT_STORAGE_KEY = 'cursusImpactReport';
 
 window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btn-new-sim')?.addEventListener('click', () => { location.href = '/Student/CourseMap'; });
+  document.getElementById('btn-new-sim-2')?.addEventListener('click', () => { location.href = '/Student/CourseMap'; });
+
   const stored = sessionStorage.getItem(IMPACT_STORAGE_KEY);
   if (stored) {
     try {
-      const report = JSON.parse(stored);
-      document.getElementById('ia-idle').classList.add('d-none');
-      document.getElementById('ia-report').classList.remove('d-none');
-      loadReport(report);
+      showReport(JSON.parse(stored));
       return;
     } catch {
       sessionStorage.removeItem(IMPACT_STORAGE_KEY);
     }
   }
 
-  document.getElementById('btn-new-sim')?.addEventListener('click', () => { location.href = '/Student/CourseMap'; });
-  document.getElementById('btn-new-sim-2')?.addEventListener('click', () => { location.href = '/Student/CourseMap'; });
+  const courseId = new URLSearchParams(window.location.search).get('courseId');
+  if (courseId) {
+    fetchAndShowReport(parseInt(courseId, 10));
+  }
 });
+
+function showReport(report) {
+  document.getElementById('ia-idle').classList.add('d-none');
+  document.getElementById('ia-report').classList.remove('d-none');
+  loadReport(report);
+}
+
+async function fetchAndShowReport(courseId) {
+  try {
+    const res = await fetch('/Student/SimulateFailure', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ courseId }),
+    });
+    if (!res.ok) return;
+    const report = await res.json();
+    sessionStorage.setItem(IMPACT_STORAGE_KEY, JSON.stringify(report));
+    showReport(report);
+  } catch {
+    
+  }
+}
 
 function loadReport(report) {
   const src = report.src || {
