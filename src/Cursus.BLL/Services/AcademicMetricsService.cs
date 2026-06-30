@@ -149,6 +149,24 @@ public class AcademicMetricsService : IAcademicMetricsService
         return result;
     }
 
+    public TermGpaDto? GetPreviousTerm(IReadOnlyList<TermGpaDto> terms, string? academicYear, SemesterType semester)
+    {
+        if (terms.Count == 0)
+            return null;
+
+        for (var i = 0; i < terms.Count; i++)
+        {
+            if (MatchesTerm(terms[i], academicYear, semester))
+                return i > 0 ? terms[i - 1] : null;
+        }
+
+        return null;
+    }
+
+    private static bool MatchesTerm(TermGpaDto term, string? academicYear, SemesterType semester) =>
+        string.Equals(term.AcademicYear, academicYear, StringComparison.OrdinalIgnoreCase)
+        && term.Semester == semester;
+
     private static string FormatSemesterAbbrev(SemesterType semester, string academicYear)
     {
         var semName = semester switch
@@ -175,7 +193,7 @@ public class AcademicMetricsService : IAcademicMetricsService
         };
     }
 
-    public async Task<bool> CanEnrollInCourseAsync(string studentId, int courseId)
+    public async Task<(bool CanEnroll, string? BlockReason)> CanEnrollInCourseAsync(string studentId, int courseId)
     {
         var attempts = await _db.StudentCourses
             .AsNoTracking()
@@ -183,24 +201,24 @@ public class AcademicMetricsService : IAcademicMetricsService
             .ToListAsync();
 
         if (attempts.Count == 0)
-            return true;
+            return (true, null);
 
         if (attempts.Any(sc => sc.Status == StudentCourseStatus.InProgress))
-            return false;
+            return (false, "Student is already enrolled in this course.");
 
         var completedAttempts = attempts.Where(sc => sc.Status == StudentCourseStatus.Completed).ToList();
         if (completedAttempts.Count > 0)
         {
             var nonPassingGrades = new HashSet<string> { "D+", "D", "D-", "F" };
 
-            bool hasPassedWithPassingGrade = completedAttempts.Any(sc =>
+            var hasPassedWithPassingGrade = completedAttempts.Any(sc =>
                 !string.IsNullOrWhiteSpace(sc.Grade) &&
                 !nonPassingGrades.Contains(sc.Grade.Trim().ToUpper()));
 
             if (hasPassedWithPassingGrade)
-                return false;
+                return (false, "Student has already passed this course.");
         }
 
-        return true;
+        return (true, null);
     }
 }

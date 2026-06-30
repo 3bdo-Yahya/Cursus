@@ -10,6 +10,7 @@ public interface IAcademicMetricsService
     List<StudentCourse> ResolveBestAttempts(IEnumerable<StudentCourse> studentCourses);
     decimal CalculateCgpa(IEnumerable<StudentCourse> bestAttempts, Dictionary<string, decimal> gradeScale);
     List<TermGpaDto> CalculateSgpaByTerm(IEnumerable<StudentCourse> studentCourses, Dictionary<string, decimal> gradeScale);
+    TermGpaDto? GetPreviousTerm(IReadOnlyList<TermGpaDto> terms, string? academicYear, SemesterType semester);
     int GetCreditLimits(AcademicStanding standing, decimal cgpa);
-    Task<bool> CanEnrollInCourseAsync(string studentId, int courseId);
+    Task<(bool CanEnroll, string? BlockReason)> CanEnrollInCourseAsync(string studentId, int courseId);
 }
