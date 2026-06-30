@@ -8,6 +8,7 @@ namespace Cursus.BLL.Services
     public class StudentManagementService : IStudentManagementService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAcademicMetricsService _academicMetricsService;
 
         // Standard letter-grade ordering — lower index = higher grade.
         // Extend this list if additional grades are used in the institution.
@@ -20,9 +21,10 @@ namespace Cursus.BLL.Services
             "F"
         };
 
-        public StudentManagementService(ApplicationDbContext context)
+        public StudentManagementService(ApplicationDbContext context, IAcademicMetricsService academicMetricsService)
         {
             _context = context;
+            _academicMetricsService = academicMetricsService;
         }
 
         // ── GetStudentsAsync (existing, used by the Admin list page) ─────────
@@ -117,6 +119,12 @@ namespace Cursus.BLL.Services
             SemesterType semester,
             string academicYear)
         {
+            var (canEnroll, blockReason) = await _academicMetricsService.CanEnrollInCourseAsync(studentId, courseId);
+            if (!canEnroll)
+            {
+                throw new InvalidOperationException(blockReason ?? "Student is not eligible to enroll in this course.");
+            }
+
             var resolvedStatus = ResolveStatus(grade, status, courseId);
 
             var record = new StudentCourse
