@@ -1,49 +1,20 @@
 /* ── Grade Scale ────────────────────────────────────────── */
-const GRADE_SCALE = {
-  'A+': 4.00, 'A': 4.00, 'A-': 3.67,
-  'B+': 3.33, 'B': 3.00, 'B-': 2.67,
-  'C+': 2.33, 'C': 2.00, 'C-': 1.67,
-  'D+': 1.33, 'D': 1.00, 'F':  0.00,
+const GRADE_SCALE = window.STUDENT_DATA?.gradeScale || {
+    'A+': 4.00, 'A': 4.00, 'A-': 3.67,
+    'B+': 3.33, 'B': 3.00, 'B-': 2.67,
+    'C+': 2.33, 'C': 2.00, 'C-': 1.67,
+    'D+': 1.33, 'D': 1.00, 'F': 0.00,
 };
-const GRADE_OPTIONS = ['—', 'A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
+const GRADE_OPTIONS = ['—', ...Object.keys(GRADE_SCALE)];
 
 /* ── Student Data ───────────────────────────────────────── */
-const DATA = window.GPA_SIMULATOR_DATA || {
-  currentCgpa: 3.24,
-  lastSemesterGpa: 2.85,
-  minGpaForGraduation: 2.0,
-  completedCredits: 84,
-  completedQualityPoints: 272.16,
-  currentCourses: [
-    { id: 'CS202',  name: 'Discrete Mathematics', credits: 3 },
-    { id: 'MTH201', name: 'Linear Algebra',        credits: 3 },
-    { id: 'CS301',  name: 'Operating Systems',     credits: 3 },
-    { id: 'ENG201', name: 'Technical Writing',     credits: 2 },
-    { id: 'CS303',  name: 'Computer Networks',     credits: 3 },
-  ],
-  improvableCourses: [
-    { id: 'MTH102', name: 'Calculus II',    credits: 3, originalGrade: 'D',  originalPoints: 1.00 },
-    { id: 'CS102',  name: 'Programming I',  credits: 3, originalGrade: 'D+', originalPoints: 1.33 },
-  ]
-};
+const COMPLETED_CREDITS = window.STUDENT_DATA?.completedCredits ?? 0;
+const COMPLETED_QP = window.STUDENT_DATA?.completedQp ?? 0;
+const CURRENT_CGPA = window.STUDENT_DATA?.currentCgpa ?? 0;
+const MAX_GPA = window.STUDENT_DATA?.maxGpa ?? 4.0;
 
-const COMPLETED_CREDITS = DATA.completedCredits;
-const COMPLETED_QP      = DATA.completedQualityPoints;
-const CURRENT_CGPA      = DATA.currentCgpa;
-
-const CURRENT_COURSES = DATA.currentCourses.map(c => ({
-  id: c.Id,
-  name: c.Name,
-  credits: c.Credits
-}));
-
-const IMPROVABLE_COURSES = DATA.improvableCourses.map(c => ({
-  id: c.Id,
-  name: c.Name,
-  credits: c.Credits,
-  originalGrade: c.OriginalGrade,
-  originalPoints: c.OriginalPoints
-}));
+const CURRENT_COURSES = window.STUDENT_DATA?.currentCourses ?? [];
+const IMPROVABLE_COURSES = window.STUDENT_DATA?.improvableCourses ?? [];
 
 /* ── Custom grade dropdown ───────────────────── */
 function buildCustomSelect(grades, idx, type) {
@@ -101,8 +72,9 @@ function renderImprovementTable() {
   body.innerHTML = '';
 
   IMPROVABLE_COURSES.forEach((c, i) => {
+    // Only show grades strictly better than F (i.e. D+ and above)
     const eligibleGrades = ['—', ...Object.keys(GRADE_SCALE).filter(
-      g => GRADE_SCALE[g] > c.originalPoints
+      g => GRADE_SCALE[g] > 0.00
     )];
 
     const row = document.createElement('div');
@@ -189,19 +161,28 @@ function calculate() {
   let anySelected = false;
 
   // ── Current semester courses
+  let retakeQPDelta = 0;
+  let retakeCreditsDelta = 0;
+
   courseSelects.forEach((sel, i) => {
     const grade = sel.dataset.currentVal || '—';
     if (grade === '—') return;
     anySelected = true;
-    const credits = CURRENT_COURSES[i].credits;
-    semCredits += credits;
-    semQP      += credits * GRADE_SCALE[grade];
+    const c = CURRENT_COURSES[i];
+    semCredits += c.credits;
+    semQP      += c.credits * GRADE_SCALE[grade];
+
+    if (c.isRetake) {
+      retakeQPDelta     -= c.originalPoints * c.credits;
+      retakeCreditsDelta -= c.credits;
+    }
   });
 
   let improveQPDelta = 0;
   improveSelects.forEach((sel, i) => {
     const grade = sel.dataset.currentVal || '—';
     if (grade === '—') return;
+    anySelected = true;
     const c = IMPROVABLE_COURSES[i];
     improveQPDelta += c.credits * (GRADE_SCALE[grade] - c.originalPoints);
   });
@@ -216,8 +197,8 @@ function calculate() {
   }
 
   const sgpa = semCredits > 0 ? (semQP / semCredits) : 0;
-  const totalQP = COMPLETED_QP + semQP + improveQPDelta;
-  const totalCr = COMPLETED_CREDITS + semCredits;
+  const totalQP = COMPLETED_QP + retakeQPDelta + semQP + improveQPDelta;
+  const totalCr = COMPLETED_CREDITS + retakeCreditsDelta + semCredits;
   const cgpa    = totalCr > 0 ? (totalQP / totalCr) : 0;
   const delta   = cgpa - CURRENT_CGPA;
 
@@ -328,7 +309,7 @@ function updateTargetResult() {
 
   const requiredSemQP   = target * (COMPLETED_CREDITS + semTotal) - COMPLETED_QP;
   const requiredSGPA    = requiredSemQP / semTotal;
-  const maxPossibleCGPA = (COMPLETED_QP + semTotal * 4.0) / (COMPLETED_CREDITS + semTotal);
+    const maxPossibleCGPA =(COMPLETED_QP + semTotal * MAX_GPA) / (COMPLETED_CREDITS + semTotal);
 
   resultEl.className = 'target-result';
 
@@ -338,7 +319,7 @@ function updateTargetResult() {
     return;
   }
 
-  if (requiredSGPA > 4.0) {
+  if (requiredSGPA > MAX_GPA) {
     resultEl.classList.add('unreachable');
     resultEl.innerHTML = `<span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 400">warning</span> A CGPA of <strong>${target.toFixed(2)}</strong> is <strong>not achievable</strong> this semester.<br>
       Your maximum possible CGPA this semester is <strong>${maxPossibleCGPA.toFixed(2)}</strong>.`;

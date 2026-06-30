@@ -1,51 +1,109 @@
-/* ── Demo ─────────────────────── */
-const DEMO_SRC = { id:'CS311', name:'Algorithms Analysis & Design', credits:3, avail:'Fall', type:'Core', dept:'CS' };
-const DEMO_BLOCKED = [
-  { id:'AI301',  name:'Artificial Intelligence',      credits:3, prereqs:['CS311'], avail:'Fall'  },
-  { id:'AI413',  name:'Machine Learning',             credits:3, prereqs:['CS311'], avail:'Fall'  },
-  { id:'CS401',  name:'Natural Language Processing',  credits:3, prereqs:['CS311'], avail:'All'   },
-  { id:'CS491',  name:'Senior Project I',             credits:3, prereqs:['CS391'], avail:'Fall & Spring' },
-];
+const IMPACT_STORAGE_KEY = 'cursusImpactReport';
 
 // Use course map data from backend if available
 const COURSE_DATA = window.COURSE_MAP_DATA || [];
 
 window.addEventListener('DOMContentLoaded', () => {
-  const hasReport = true;
-  if (hasReport) {
-    document.getElementById('ia-idle').classList.add('d-none');
-    document.getElementById('ia-report').classList.remove('d-none');
-    loadReport(DEMO_SRC, DEMO_BLOCKED);
-  }
-
   document.getElementById('btn-new-sim')?.addEventListener('click', () => { location.href = '/Student/CourseMap'; });
   document.getElementById('btn-new-sim-2')?.addEventListener('click', () => { location.href = '/Student/CourseMap'; });
+
+  const stored = sessionStorage.getItem(IMPACT_STORAGE_KEY);
+  if (stored) {
+    try {
+      showReport(JSON.parse(stored));
+      return;
+    } catch {
+      sessionStorage.removeItem(IMPACT_STORAGE_KEY);
+    }
+  }
+
+  const courseId = new URLSearchParams(window.location.search).get('courseId');
+  if (courseId) {
+    const parsedId = parseInt(courseId, 10);
+    if (!isNaN(parsedId)) {
+      fetchAndShowReport(parsedId);
+    }
+  }
 });
 
-function loadReport(src, blocked) {
-  const delay = blocked.length > 3 ? 2 : 1;
-  const semAff = Math.min(blocked.length + 1, 3);
-  const severity = blocked.length >= 4 ? 'CRITICAL' : blocked.length >= 2 ? 'HIGH' : 'LOW';
+function showReport(report) {
+  document.getElementById('ia-idle').classList.add('d-none');
+  document.getElementById('ia-report').classList.remove('d-none');
+  loadReport(report);
+}
+
+async function fetchAndShowReport(courseId) {
+  try {
+    const res = await fetch('/Student/SimulateFailure', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ courseId }),
+    });
+    if (!res.ok) {
+      showFetchError('Unable to load the simulation report. Please run a simulation from the Course Map.');
+      return;
+    }
+    const report = await res.json();
+    sessionStorage.setItem(IMPACT_STORAGE_KEY, JSON.stringify(report));
+    showReport(report);
+  } catch {
+    showFetchError('A network error occurred. Please check your connection and try again.');
+  }
+}
+
+function showFetchError(message) {
+  const idle = document.getElementById('ia-idle');
+  if (idle) {
+    const notice = idle.querySelector('.ia-error-notice') || document.createElement('p');
+    notice.className = 'ia-error-notice';
+    notice.style.cssText = 'margin-top:12px;font-size:13px;color:#b91c1c;';
+    notice.textContent = message;
+    idle.appendChild(notice);
+  }
+}
+
+function loadReport(report) {
+  const src = report.src || {
+    id: report.failedCourseCode,
+    name: report.failedCourseName,
+    credits: report.failedCourseCredits,
+    avail: report.retakeSemesterLabel || 'See schedule',
+    type: 'Core',
+  };
+  const blocked = (report.blockedCourses || []).map(b => ({
+    id: b.code,
+    name: b.name,
+    credits: b.creditHours,
+    depth: b.depth,
+    avail: '',
+  }));
+
+  const delay = report.graduationDelaySemesters ?? 1;
+  const semAff = report.semestersAffected ?? delay;
+  const severity = (report.severity || 'Low').toUpperCase();
+  const projectedGrad = report.projectedGraduationLabel || ('Fall 20' + (27 + (delay - 1)));
+  const retakeLabel = report.retakeSemesterLabel || ('Next ' + (src.avail || 'term'));
+  const creditsAtRisk = report.creditsAtRisk ?? blocked.reduce((s, b) => s + b.credits, 0);
 
   document.getElementById('report-severity').textContent = severity;
   document.getElementById('report-severity').className = 'ia-severity-badge ia-sev-' + severity.toLowerCase();
   document.getElementById('report-subtitle').textContent = 'Simulating failure of ' + src.id + ' — ' + src.name;
 
-  animCount('kpi-blocked',   blocked.length);
+  animCount('kpi-blocked', report.blockedCoursesCount ?? blocked.length);
   animCount('kpi-semesters', semAff);
   document.getElementById('kpi-delay').textContent    = '+' + delay + ' sem';
-  document.getElementById('kpi-new-grad').textContent = 'Fall 20' + (27 + (delay-1));
+  document.getElementById('kpi-new-grad').textContent = projectedGrad;
 
   document.getElementById('fc-code').textContent    = src.id;
   document.getElementById('fc-name').textContent    = src.name;
   document.getElementById('fc-credits').textContent = src.credits + ' credit hours';
-  document.getElementById('fc-avail').textContent   = src.avail;
-  document.getElementById('fc-type').textContent    = src.type;
+  document.getElementById('fc-avail').textContent   = src.avail || retakeLabel;
+  document.getElementById('fc-type').textContent    = src.type || 'Core';
 
   const listEl = document.getElementById('blocked-list');
   listEl.innerHTML = '';
   blocked.forEach((b, i) => {
-    const isDirect = b.prereqs.includes(src.id);
+    const isDirect = (b.depth ?? 1) === 1;
     const row = document.createElement('div');
     row.className = 'ia-blocked-row';
     row.style.animationDelay = (i * 70) + 'ms';
@@ -55,7 +113,7 @@ function loadReport(src, blocked) {
         <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">${b.id}
           <span style="font-weight:500;color:var(--c-text-sub);">— ${b.name}</span>
         </p>
-        <p style="font-size:11px;color:var(--c-muted);margin:2px 0 0;">${isDirect ? 'Direct dependency' : 'Chain dependency'} · ${b.credits} cr · ${b.avail}</p>
+        <p style="font-size:11px;color:var(--c-muted);margin:2px 0 0;">${isDirect ? 'Direct dependency' : 'Chain dependency'} · ${b.credits} cr${b.avail ? ' · ' + b.avail : ''}</p>
       </div>
       <span class="ia-dep-tag ${isDirect ? 'ia-dep-direct' : 'ia-dep-chain'}">${isDirect ? 'Direct' : 'Chain'}</span>
     `;
@@ -63,10 +121,9 @@ function loadReport(src, blocked) {
   });
   document.getElementById('blocked-count-badge').textContent = blocked.length + ' courses';
 
-  const totalBlocked = blocked.reduce((s,b) => s+b.credits, 0);
-  document.getElementById('risk-avail').textContent    = 'Next ' + src.avail + ' 2026';
-  document.getElementById('risk-credits').textContent  = totalBlocked + ' cr';
-  document.getElementById('risk-cgpa').textContent     = '−0.' + (delay*18);
+  document.getElementById('risk-avail').textContent    = retakeLabel;
+  document.getElementById('risk-credits').textContent  = creditsAtRisk + ' cr';
+  document.getElementById('risk-cgpa').textContent     = delay > 0 ? 'See Advisor' : 'Minimal';
   document.getElementById('risk-standing').textContent = blocked.length > 4 ? 'Warning Risk' : 'Good Standing';
   document.getElementById('risk-standing').style.color = blocked.length > 4 ? '#d97706' : '#10b981';
 
@@ -74,15 +131,15 @@ function loadReport(src, blocked) {
   tlEl.innerHTML = '';
   const steps = [
     { color:'#ef4444', icon:'bolt',       sem:'Now',          label:`<strong>${src.id}</strong> failure cascades — ${blocked.length} courses blocked`, type:'fail'     },
-    { color:'#d97706', icon:'refresh',    sem:'Fall 2026',    label:`Retake <strong>${src.id}</strong> · ${src.avail} offering`,                       type:'retake'   },
-    ...blocked.slice(0,2).map((b,i) => ({
+    { color:'#d97706', icon:'refresh',    sem:retakeLabel,    label:`Retake <strong>${src.id}</strong> · ${retakeLabel}`, type:'retake'   },
+    ...blocked.slice(0, 2).map((b, i) => ({
       color: '#10b981',
       icon:  'lock_open',
-      sem:   i===0 ? 'Spring 2027' : 'Fall 2027',
+      sem:   i === 0 ? 'After retake' : 'Following term',
       label: `<strong>${b.id}</strong> — ${b.name} unlocks`,
       type:  'unlock',
     })),
-    { color:'var(--c-primary)', icon:'school', sem:'New Graduation', label:`<strong>Fall 20${27+(delay-1)}</strong> — delayed ${delay} semester${delay>1?'s':''}`, type:'grad' },
+    { color:'var(--c-primary)', icon:'school', sem:'New Graduation', label:`<strong>${projectedGrad}</strong> — delayed ${delay} semester${delay > 1 ? 's' : ''}`, type:'grad' },
   ];
   steps.forEach((s, i) => {
     const el = document.createElement('div');
@@ -103,7 +160,7 @@ function loadReport(src, blocked) {
 
   const recEl = document.getElementById('ia-recommendations');
   const recs = [
-    { icon:'priority_high', color:'#ef4444', text:`Prioritize <strong>${src.id}</strong> — register for Fall 2026 immediately.` },
+    { icon:'priority_high', color:'#ef4444', text:`Prioritize <strong>${src.id}</strong> — register for ${retakeLabel} immediately.` },
     { icon:'school',         color:'#d97706', text:`Speak to your advisor about the ${delay}-semester delay impact.` },
     { icon:'auto_awesome',   color:'var(--c-primary)', text:`Use the GPA Simulator to see how the retake affects your CGPA.` },
   ];

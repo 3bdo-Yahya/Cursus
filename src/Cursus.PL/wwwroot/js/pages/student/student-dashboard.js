@@ -19,8 +19,9 @@ if (greetingEl) {
 const gpaRing = document.getElementById('gpa-ring');
 
 if (gpaRing) {
-  const gpa = 3.2;
-  const ratio = Math.min(gpa / 4.0, 1);
+  const gpa = parseFloat(gpaRing.dataset.cgpa) || 0;
+  const maxGpa = parseFloat(gpaRing.dataset.maxGpa) || 4.0;
+  const ratio = Math.min(gpa / maxGpa, 1);
 
   const run = () => {
     gpaRing.style.strokeDashoffset = (2 * Math.PI * 19) * (1 - ratio);
@@ -44,8 +45,8 @@ function updateGpaDisplay(sgpa, cgpa) {
   if (ring && !isNaN(value)) {
     const radius = 19; 
     const circumference = 2 * Math.PI * radius;
-    const ratio = Math.min(value / 4.0, 1);
-
+      const maxGpa = parseFloat(ring.dataset.maxGpa) || 4.0;
+      const ratio = Math.min(value / maxGpa, 1);
     ring.style.strokeDashoffset = circumference * (1 - ratio);
   }
 }

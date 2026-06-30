@@ -1,7 +1,13 @@
-@model StudentProgressViewModel
+@model Cursus.PL.Models.ProgressViewModel
+@using Cursus.Domain.DTOs
+@using Cursus.Domain.Enums
 
 @{
     ViewData["Title"] = "Progress Tracker";
+    var audit = Model.Audit;
+    // Describe current position for the page subtitle
+    var semLabel = audit.CurrentSemester.ToString();
+    var yearLabel = audit.AcademicYear;
 }
 
 @section Styles {
@@ -10,51 +16,70 @@
 
 <div class="d-flex flex-column gap-4">
 
-  <!-- Page header -->
+  <!-- ── Page header ──────────────────────────────────────────────── -->
   <section class="anim-fade-up">
     <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-1">
       <div>
         <h1 class="fw-900 mb-1" style="font-size:1.55rem;letter-spacing:-.4px;color:var(--c-text);">Progress &amp; Planning</h1>
-        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">@Model.Subtitle</p>
+        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">
+          @audit.StudentName &middot; @audit.DepartmentName &middot; @semLabel @yearLabel
+        </p>
       </div>
-      <!-- Overload badge -->
-      @if (Model.IsOverloadEligible)
+
+      @if (audit.IsOverloadEligible)
       {
-      <span class="overload-badge">
-        <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 500">bolt</span>
-        Overload Eligible — GPA ≥ 3.0
-      </span>
+        <span class="overload-badge">
+          <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 500">bolt</span>
+          Overload Eligible &mdash; GPA &ge; 3.0
+        </span>
+>>>>>>> origin/develop
       }
     </div>
 
     <!-- Tabs -->
     <div class="page-tabs mt-3">
-      <a href="/Student/Progress" class="page-tab active">Progress Tracker</a>
-      <a href="/Student/GpaSimulator"    class="page-tab">GPA Simulator</a>
+      <a href="/Student/Progress"      class="page-tab active">Progress Tracker</a>
+      <a href="/Student/GpaSimulator"  class="page-tab">GPA Simulator</a>
     </div>
   </section>
 
-  <!-- Hero Progress Card -->
+  <!-- ── Hero Progress Card ──────────────────────────────────────── -->
   <section class="anim-fade-up-1">
     <div class="hero-progress-card">
       <div class="row align-items-center g-4">
+
         <div class="col-12 col-md-7">
           <p class="fw-700 mb-1 text-uppercase" style="font-size:10px;letter-spacing:.09em;color:var(--c-muted);">Overall Graduation Progress</p>
+<<<<<<< HEAD
           <p class="hero-credits-text">@Model.CreditsEarned <span style="font-weight:400;color:var(--c-muted);font-size:1rem;">of</span> @Model.CreditsRequired credits completed</p>
           <p class="hero-sub-text">@Model.CreditsRemaining credits remaining across all categories</p>
 
           <div class="hero-bar-track">
             <div class="hero-bar-fill" style="--bar-w:@Model.CreditPercentage%;"></div>
+=======
+          <p class="hero-credits-text">
+            @audit.TotalCreditsEarned <span style="font-weight:400;color:var(--c-muted);font-size:1rem;">of</span> @audit.TotalCreditsRequired credits completed
+          </p>
+          <p class="hero-sub-text">@audit.CreditsRemaining credits remaining across all categories</p>
+
+          <div class="hero-bar-track">
+            <div class="hero-bar-fill" style="--bar-w:@(audit.OverallPercentage)%;"></div>
+>>>>>>> origin/develop
           </div>
 
           <div class="d-flex flex-wrap gap-2 mt-3">
             <span class="proj-badge proj-badge-primary">
               <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 500">calendar_month</span>
+<<<<<<< HEAD
               Grad: @Model.GraduationSemester
+=======
+              Grad: @audit.EstimatedGradSemester
+>>>>>>> origin/develop
             </span>
             @if (Model.IsOverloadEligible)
             {
             <span class="proj-badge">
+<<<<<<< HEAD
               <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 500">bolt</span>
               With overload: @Model.OverloadGraduationSemester
             </span>
@@ -62,11 +87,18 @@
             <span class="proj-badge">
               <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400">school</span>
               Min GPA @Model.MinGpaForGraduation.ToString("F2") — @(Model.MeetsMinGpa ? "reachable ✓" : "not reachable")
+=======
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 400">school</span>
+              Min GPA @audit.MinGpaForGraduation.ToString("0.0") &mdash;
+              @(audit.Cgpa >= audit.MinGpaForGraduation ? "reachable ✓" : "at risk ⚠")
+>>>>>>> origin/develop
             </span>
           </div>
         </div>
+
         <div class="col-12 col-md-5 d-flex justify-content-md-end">
           <div class="text-center text-md-end">
+<<<<<<< HEAD
             <div class="hero-percentage">@Model.CreditPercentage.ToString("F1")%</div>
             <p class="mb-0 fw-600" style="font-size:12px;color:var(--c-muted);margin-top:2px;">degree complete</p>
 
@@ -80,16 +112,25 @@
               }
             </div>
             <p class="mb-0 mt-1" style="font-size:10.5px;color:var(--c-muted);">Semester progress pips</p>
+=======
+            <div class="hero-percentage">@audit.OverallPercentage%</div>
+            <p class="mb-0 fw-600" style="font-size:12px;color:var(--c-muted);margin-top:2px;">degree complete</p>
+            <p class="mb-0 mt-1" style="font-size:10.5px;color:var(--c-muted);">
+              CGPA: @audit.Cgpa.ToString("0.00")
+            </p>
+>>>>>>> origin/develop
           </div>
         </div>
+
       </div>
     </div>
   </section>
 
-  <!-- Category Cards -->
+  <!-- ── Category Cards ──────────────────────────────────────────── -->
   <section class="anim-fade-up-2">
     <div class="d-flex align-items-center justify-content-between mb-3">
       <h2 class="fw-800 mb-0" style="font-size:15px;color:var(--c-text);">Requirements by Category</h2>
+<<<<<<< HEAD
       <span style="font-size:12px;color:var(--c-muted);">@Model.Categories.Count categories · @Model.CreditsRequired total credits</span>
     </div>
 
@@ -165,30 +206,223 @@
                 <span class="material-symbols-outlined chevron" style="font-variation-settings:'FILL' 0,'wght' 400">expand_more</span>
               </button>
             }
+=======
+      <span style="font-size:12px;color:var(--c-muted);">
+        @audit.Categories.Count categories &middot; @audit.TotalCreditsRequired total credits
+      </span>
+    </div>
+
+    <div class="row g-3" data-scroll-group>
+      @{
+        // Animation delay index so cards stagger in.
+        double delayBase = 0.5;
+      }
+
+      @foreach (var cat in audit.Categories)
+      {
+        var color     = ProgressViewModel.GetCategoryColorSuffix(cat.CourseType);
+        var icon      = ProgressViewModel.GetCategoryIcon(cat.CourseType);
+        var iconColor = ProgressViewModel.GetCategoryIconColor(cat.CourseType);
+        var iconBg    = ProgressViewModel.GetCategoryIconBg(cat.CourseType);
+        var delay     = delayBase.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + "s";
+        delayBase    += 0.1;
+
+        // Split courses: first 4 visible, rest hidden behind "Show more".
+        var visibleCourses = cat.Courses.Take(4).ToList();
+        var hiddenCourses  = cat.Courses.Skip(4).ToList();
+        var hiddenCount    = hiddenCourses.Count;
+
+        <div class="col-12 col-md-6">
+          <div class="category-card h-100">
+
+            <!-- Card header -->
+            <div class="category-card-header">
+              <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
+                <div class="category-icon-box" style="background:@iconBg;">
+                  <span class="material-symbols-outlined"
+                        style="font-size:19px;color:@iconColor;font-variation-settings:'FILL' 1,'wght' 500">@icon</span>
+                </div>
+                <div class="min-w-0">
+                  <div class="category-title">@cat.Label</div>
+                  <div class="category-sub">@cat.Description</div>
+                </div>
+              </div>
+              <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
+                @if (cat.RequiredCredits > 0)
+                {
+                  <span class="cr-badge cr-badge-@color">@cat.EarnedCredits / @cat.RequiredCredits cr</span>
+                  <div style="font-size:10.5px;color:var(--c-muted);">@cat.Percentage%</div>
+                }
+                else
+                {
+                  <span class="cr-badge cr-badge-@color">@cat.EarnedCredits cr earned</span>
+                }
+              </div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="px-4 pb-2">
+              <div class="cat-bar-track">
+                <div class="cat-bar-fill cat-bar-@color" style="--bar-w:@(cat.Percentage)%;--bar-delay:@delay;"></div>
+              </div>
+            </div>
+
+            <!-- Course list -->
+            <div class="cat-course-list">
+              @foreach (var course in visibleCourses)
+              {
+                var statusCss   = ProgressViewModel.GetStatusCssClass(course.Status);
+                var statusIcon  = ProgressViewModel.GetStatusIconName(course.Status);
+                var statusColor = ProgressViewModel.GetStatusIconColor(course.Status);
+                var statusVar   = ProgressViewModel.GetStatusIconVariation(course.Status);
+
+                <div class="cat-course-item">
+                  <div class="course-status-icon @statusCss">
+                    <span class="material-symbols-outlined"
+                          style="font-size:14px;color:@statusColor;font-variation-settings:@statusVar">@statusIcon</span>
+                  </div>
+                  <span class="course-code-badge">@course.Code</span>
+                  <span class="course-name-text @(course.Status == CourseAuditStatus.Locked ? "course-name-locked" : "")">
+                    @course.Name @(course.Status == CourseAuditStatus.Locked ? "(Locked)" : "")
+                  </span>
+                  <span class="course-credits-pill">@course.CreditHours cr</span>
+
+                  @switch (course.Status)
+                  {
+                    case CourseAuditStatus.Completed:
+                      <span class="course-grade-pill @ProgressViewModel.GetGradePillClass(course.Grade)">@course.Grade</span>
+                      break;
+                    case CourseAuditStatus.InProgress:
+                      <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);">In Progress</span>
+                      break;
+                    case CourseAuditStatus.Failed:
+                      <span style="font-size:10.5px;font-weight:700;color:#ef4444;">Failed</span>
+                      break;
+                    default:
+                      <span style="font-size:10.5px;color:var(--c-muted);">@course.Status</span>
+                      break;
+                  }
+                </div>
+              }
+
+              @foreach (var course in hiddenCourses)
+              {
+                var statusCss   = ProgressViewModel.GetStatusCssClass(course.Status);
+                var statusIcon  = ProgressViewModel.GetStatusIconName(course.Status);
+                var statusColor = ProgressViewModel.GetStatusIconColor(course.Status);
+                var statusVar   = ProgressViewModel.GetStatusIconVariation(course.Status);
+
+                <div class="cat-course-item d-none extra-item">
+                  <div class="course-status-icon @statusCss">
+                    <span class="material-symbols-outlined"
+                          style="font-size:14px;color:@statusColor;font-variation-settings:@statusVar">@statusIcon</span>
+                  </div>
+                  <span class="course-code-badge">@course.Code</span>
+                  <span class="course-name-text @(course.Status == CourseAuditStatus.Locked ? "course-name-locked" : "")">
+                    @course.Name @(course.Status == CourseAuditStatus.Locked ? "(Locked)" : "")
+                  </span>
+                  <span class="course-credits-pill">@course.CreditHours cr</span>
+
+                  @switch (course.Status)
+                  {
+                    case CourseAuditStatus.Completed:
+                      <span class="course-grade-pill @ProgressViewModel.GetGradePillClass(course.Grade)">@course.Grade</span>
+                      break;
+                    case CourseAuditStatus.InProgress:
+                      <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);">In Progress</span>
+                      break;
+                    case CourseAuditStatus.Failed:
+                      <span style="font-size:10.5px;font-weight:700;color:#ef4444;">Failed</span>
+                      break;
+                    default:
+                      <span style="font-size:10.5px;color:var(--c-muted);">@course.Status</span>
+                      break;
+                  }
+                </div>
+              }
+            </div><!-- /cat-course-list -->
+
+            @if (hiddenCount > 0)
+            {
+              <button class="show-more-btn" onclick="toggleExpand(this)">
+                <span>Show @hiddenCount more</span>
+                <span class="material-symbols-outlined chevron" style="font-variation-settings:'FILL' 0,'wght' 400">expand_more</span>
+              </button>
+            }
+
+>>>>>>> origin/develop
           </div>
         </div>
       }
     </div>
   </section>
 
-  <!-- Status Banner -->
+  <!-- ── Status Banner ───────────────────────────────────────────── -->
   <section data-scroll="fade-up">
-    <div class="status-banner status-banner-ok">
-      <div class="status-banner-icon" style="background:var(--alert-ok-icon);">
-        <span class="material-symbols-outlined" style="font-size:20px;color:#047857;font-variation-settings:'FILL' 1,'wght' 500">verified</span>
+    @if (audit.IsOnTrack)
+    {
+      <div class="status-banner status-banner-ok">
+        <div class="status-banner-icon" style="background:var(--alert-ok-icon);">
+          <span class="material-symbols-outlined" style="font-size:20px;color:#047857;font-variation-settings:'FILL' 1,'wght' 500">verified</span>
+        </div>
+        <div class="flex-1">
+          <p class="fw-800 mb-0" style="font-size:13.5px;color:var(--alert-ok-title);">You're on track to graduate.</p>
+          <p class="mb-0" style="font-size:12px;color:var(--alert-ok-text);">
+            At your current pace, you'll complete all @audit.TotalCreditsRequired credits by @audit.EstimatedGradSemester.
+            @if (audit.IsOverloadEligible)
+            {
+              <text>With overload registration (eligible at @audit.Cgpa.ToString("0.00") GPA), you may finish even sooner.</text>
+            }
+          </p>
+        </div>
+        <a href="/Student/GpaSimulator"
+           class="btn btn-sm fw-700 d-none d-sm-inline-flex align-items-center gap-1 flex-shrink-0"
+           style="border-radius:10px;font-size:12px;background:var(--alert-ok-icon);border:1px solid var(--alert-ok-bd);color:var(--alert-ok-title);text-decoration:none;">
+          Simulate GPA
+          <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
+        </a>
       </div>
+<<<<<<< HEAD
       <div class="flex-1">
         <p class="fw-800 mb-0" style="font-size:13.5px;color:var(--alert-ok-title);">You're on track to graduate.</p>
         <p class="mb-0" style="font-size:12px;color:var(--alert-ok-text);">At your current pace, you'll complete all @Model.CreditsRequired credits by @Model.GraduationSemester. With overload registration (eligible at @Model.Cgpa.ToString("F2") GPA), you could finish by @Model.OverloadGraduationSemester.</p>
+=======
+    }
+    else
+    {
+      <div class="status-banner status-banner-warn">
+        <div class="status-banner-icon" style="background:rgba(245,158,11,.15);">
+          <span class="material-symbols-outlined" style="font-size:20px;color:#b45309;font-variation-settings:'FILL' 1,'wght' 500">warning</span>
+        </div>
+        <div class="flex-1">
+          <p class="fw-800 mb-0" style="font-size:13.5px;color:#92400e;">Action required to stay on track.</p>
+          <p class="mb-0" style="font-size:12px;color:#78350f;">
+            @{
+              var unsatisfied = audit.Categories.Where(c => !c.IsSatisfied).ToList();
+            }
+            @if (unsatisfied.Count > 0)
+            {
+              <text>Incomplete categories: @string.Join(", ", unsatisfied.Select(c => c.Label)).</text>
+            }
+            @if (audit.Cgpa < audit.MinGpaForGraduation)
+            {
+              <text> Your CGPA (@audit.Cgpa.ToString("0.00")) is below the minimum of @audit.MinGpaForGraduation.ToString("0.0") required for graduation.</text>
+            }
+          </p>
+        </div>
+        <a href="/Student/GpaSimulator"
+           class="btn btn-sm fw-700 d-none d-sm-inline-flex align-items-center gap-1 flex-shrink-0"
+           style="border-radius:10px;font-size:12px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#92400e;text-decoration:none;">
+          Simulate GPA
+          <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
+        </a>
+>>>>>>> origin/develop
       </div>
-      <a href="/Student/GpaSimulator" class="btn btn-sm fw-700 d-none d-sm-inline-flex align-items-center gap-1 flex-shrink-0"
-         style="border-radius:10px;font-size:12px;background:var(--alert-ok-icon);border:1px solid var(--alert-ok-bd);color:var(--alert-ok-title);text-decoration:none;">
-        Simulate GPA
-        <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
-      </a>
-    </div>
+    }
   </section>
+
 </div>
+
 @section Scripts {
     <script>
         window.PROGRESS_DATA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));

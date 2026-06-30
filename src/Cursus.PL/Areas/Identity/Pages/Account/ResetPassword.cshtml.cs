@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using Cursus.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Cursus.PL.Areas.Identity.Pages.Account;
 
@@ -39,41 +41,39 @@ public class ResetPasswordModel : PageModel
         public string Code { get; set; } = string.Empty;
     }
 
-    public IActionResult OnGet(string? code = null)
+    public IActionResult OnGet(string? code = null, string? email = null)
     {
-        if (code is null)
-        {
-            return BadRequest("A password reset code must be supplied.");
-        }
+        if (code is null || email is null)
+            return BadRequest("Invalid password reset link.");
 
-        Input = new InputModel { Code = code };
+        Input = new InputModel
+        {
+            Code = code,
+            Email = email
+        };
+
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
-        {
             return Page();
-        }
 
         var user = await _userManager.FindByEmailAsync(Input.Email);
-        if (user is null)
-        {
-            // Don't reveal that the user does not exist
-            return RedirectToPage("./ResetPasswordConfirmation");
-        }
 
-        var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
-        if (result.Succeeded)
-        {
+        if (user is null)
             return RedirectToPage("./ResetPasswordConfirmation");
-        }
+
+        var token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Input.Code));
+
+        var result = await _userManager.ResetPasswordAsync(user, token, Input.Password);
+
+        if (result.Succeeded)
+            return RedirectToPage("./ResetPasswordConfirmation");
 
         foreach (var error in result.Errors)
-        {
             ModelState.AddModelError(string.Empty, error.Description);
-        }
 
         return Page();
     }

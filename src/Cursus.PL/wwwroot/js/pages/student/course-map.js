@@ -1,19 +1,8 @@
 (function () {
 
-// Map backend DTO structure to frontend format
-const COURSES = (window.COURSE_MAP_DATA || []).map(node => ({
-  id: node.Id,
-  name: node.Name,
-  credits: node.Credits,
-  type: node.Type,
-  avail: node.Avail,
-  dept: node.Dept,
-  passing: node.Passing,
-  status: node.Status,
-  grade: node.Grade,
-  prereqs: node.Prereqs || [],
-  year: node.Year
-}));
+const API_URL = '/api/CourseMap/get-all';
+
+const STATUS_BY_CODE = { 0:'passed', 1:'failed', 2:'in-progress' };
 
 const STATUS_STYLE = {
   'passed':      { bg:'#10b981', border:'#059669', text:'#fff',     label:'Passed'      },
@@ -24,43 +13,114 @@ const STATUS_STYLE = {
   'cascade':     { bg:'#ef4444', border:'#b91c1c', text:'#fff',     label:'Blocked'     },
 };
 
-const elements = [];
+const cyContainer = document.getElementById('cy');
+if (!cyContainer || typeof cytoscape === 'undefined') {
+  return;
+}
 
-const yearX = { 1:120, 2:380, 3:640, 4:900 };
+let COURSES = [];
+let cy = null;
+let selectedNode   = null;
+let simActive      = false;
+let simSourceId    = null;
+let simTimeouts    = [];
 
-const perYear = {};
-COURSES.forEach(c => { perYear[c.year] = (perYear[c.year]||0) + 1; });
-const yearIdx = {};
-COURSES.forEach(c => {
-  if (!yearIdx[c.year]) yearIdx[c.year] = 0;
-  const i = yearIdx[c.year]++;
-  const total = perYear[c.year];
-  const s = STATUS_STYLE[c.status];
-  elements.push({
-    data: {
-      id: c.id, label: c.id + '\n' + c.name,
-      ...c,
-      bgColor: s.bg, borderColor: s.border, textColor: s.text,
-      originalStatus: c.status,
-    },
-    position: { x: yearX[c.year], y: -((total-1)*60) + i*120 },
-    classes: c.status,
+const IMPACT_STORAGE_KEY = 'cursusImpactReport';
+
+
+function buildCourses(nodes, edges) {
+  const prereqsById = {};
+  edges.forEach(e => {
+    const tId = String(e.targetCourseId);
+    (prereqsById[tId] = prereqsById[tId] || []).push(String(e.sourceCourseId));
   });
-});
 
-COURSES.forEach(c => {
-  c.prereqs.forEach(p => {
-    elements.push({ data:{ id:`${p}->${c.id}`, source:p, target:c.id } });
+  const knownStatus = {};
+  nodes.forEach(n => {
+    knownStatus[String(n.id)] = (n.status === null || n.status === undefined) ? null : STATUS_BY_CODE[n.status];
   });
-});
 
-  const cyContainer = document.getElementById('cy');
-  if (!cyContainer || typeof cytoscape === 'undefined') {
+  return nodes.map(n => {
+    const id = String(n.id);
+    const prereqs = prereqsById[id] || [];
+    let status = knownStatus[id];
+    if (!status) {
+      const prereqsMet = prereqs.every(p => knownStatus[p] === 'passed');
+      status = prereqsMet ? 'remaining' : 'blocked';
+    }
+    return {
+      id,
+      code: n.code,
+      name: n.name,
+      credits: n.creditHours,
+      status,
+      grade: n.grade || null,
+      prereqs,
+      courseType: n.courseType,
+    };
+  });
+}
+
+function buildElements(courses) {
+  const elements = [];
+  const courseIdSet = new Set(courses.map(c => c.id));
+
+  courses.forEach(c => {
+    const s = STATUS_STYLE[c.status] || STATUS_STYLE['remaining'];
+    elements.push({
+      data: {
+        id: c.id, label: c.code + '\n' + c.name,
+        ...c,
+        bgColor: s.bg, borderColor: s.border, textColor: s.text,
+        originalStatus: c.status,
+      },
+      classes: c.status,
+    });
+  });
+  courses.forEach(c => {
+    c.prereqs.forEach(p => {
+      if (courseIdSet.has(p)) {
+        elements.push({ data:{ id:`${p}->${c.id}`, source:p, target:c.id } });
+      }
+    });
+  });
+  return elements;
+}
+
+function showMessage(message) {
+  cyContainer.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;font-size:13px;color:var(--c-muted);">${message}</div>`;
+}
+
+init();
+
+async function init() {
+  let graph;
+  try {
+    const res = await fetch(API_URL, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) {
+      let message = 'Unable to load your course map. Please try again later.';
+      const body = await res.json().catch(() => null);
+      if (body && body.error) message = body.error;
+      showMessage(message);
+      return;
+    }
+    graph = await res.json();
+  } catch (err) {
+    showMessage('Unable to load your course map. Please try again later.');
     return;
   }
 
+  const nodes = graph.nodes || [];
+  if (!nodes.length) {
+    showMessage('No courses are available for your department yet.');
+    return;
+  }
+
+  COURSES = buildCourses(nodes, graph.edges || []);
+  const elements = buildElements(COURSES);
+
 /* Init Cytoscape */
-const cy = cytoscape({
+cy = cytoscape({
   container: cyContainer,
   elements,
   style: [
@@ -148,19 +208,15 @@ const cy = cytoscape({
       },
     },
   ],
-  layout:            { name:'preset' },
-  minZoom:           0.35,
-  maxZoom:           2.5,
+  layout: { name:'breadthfirst', directed:true, padding:40, spacingFactor:1.3 },
+  minZoom: 0.35,
+  maxZoom: 2.5,
   userZoomingEnabled:true,
   userPanningEnabled:true,
   boxSelectionEnabled:false,
 });
 
 cy.fit(undefined, 60);
-
-let selectedNode   = null;
-let simActive      = false;
-let simSourceId    = null;
 
 cy.on('tap', 'node', e => {
   const n = e.target;
@@ -177,6 +233,10 @@ cy.on('tap', e => {
 cy.on('mouseover', 'node', () => document.getElementById('cy').style.cursor = 'pointer');
 cy.on('mouseout',  'node', () => document.getElementById('cy').style.cursor = 'default');
 
+  wireStaticControls();
+  wireFilterControls();
+}
+
 function openPanel(d) {
   const panel  = document.getElementById('node-panel');
   const st     = d.originalStatus || d.status;
@@ -186,7 +246,7 @@ function openPanel(d) {
   pill.textContent = style.label;
   pill.className   = 'cm-status-pill cm-status-' + st;
 
-  document.getElementById('panel-code').textContent    = d.id;
+  document.getElementById('panel-code').textContent    = d.code;
   document.getElementById('panel-name').textContent    = d.name;
   document.getElementById('panel-credits').textContent = d.credits + ' credit hours';
 
@@ -198,10 +258,10 @@ function openPanel(d) {
   document.getElementById('panel-status-text').textContent = style.label;
   document.getElementById('panel-grade-text').textContent  = d.grade ? 'Grade: ' + d.grade : (st === 'in-progress' ? 'Awaiting final grade' : '');
 
-  document.getElementById('panel-type').textContent  = d.type;
-  document.getElementById('panel-avail').textContent = d.avail;
-  document.getElementById('panel-pass').textContent  = d.passing;
-  document.getElementById('panel-dept').textContent  = d.dept;
+  document.getElementById('panel-type').textContent  = d.type || '—';
+  document.getElementById('panel-avail').textContent = d.avail || '—';
+  document.getElementById('panel-pass').textContent  = d.passing || '—';
+  document.getElementById('panel-dept').textContent  = d.dept || '—';
 
   const preEl = document.getElementById('panel-prereqs');
   preEl.innerHTML = '';
@@ -212,7 +272,7 @@ function openPanel(d) {
       const row = document.createElement('div');
       row.className = 'cm-prereq-row ' + (passed ? 'cm-prereq-passed' : 'cm-prereq-pending');
       row.innerHTML = `<span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1,'wght' 400">${passed?'check_circle':'radio_button_unchecked'}</span>
-        <span class="flex-fill" style="font-size:12px;">${pid}: ${pc?pc.name:''}</span>`;
+        <span class="flex-fill" style="font-size:12px;">${pc ? pc.code : pid}: ${pc?pc.name:''}</span>`;
       row.addEventListener('click', () => {
         const n = cy.getElementById(pid);
         if (n.length) { cy.animate({ center:{ eles:n }, duration:300 }); n.emit('tap'); }
@@ -230,7 +290,7 @@ function openPanel(d) {
     dependents.forEach(dep => {
       const chip = document.createElement('span');
       chip.className = 'cm-unlock-chip';
-      chip.textContent = dep.id;
+      chip.textContent = dep.code;
       chip.addEventListener('click', () => {
         const n = cy.getElementById(dep.id);
         if (n.length) { cy.animate({ center:{ eles:n }, duration:300 }); n.emit('tap'); }
@@ -239,7 +299,7 @@ function openPanel(d) {
     });
   } else {
     unlockEl.innerHTML = '<span style="font-size:12px;color:var(--c-muted);font-style:italic;">Terminal course</span>';
-  }
+  } 
 
   const canSim = (st === 'passed' || st === 'in-progress') && !simActive;
   document.getElementById('panel-simulate-wrap').style.display = canSim ? '' : 'none';
@@ -253,57 +313,113 @@ function closePanel() {
   if (selectedNode) { selectedNode.removeClass('selected-node'); selectedNode = null; }
 }
 
-document.getElementById('btn-close-panel').addEventListener('click', closePanel);
+function wireStaticControls() {
+  document.getElementById('btn-close-panel').addEventListener('click', closePanel);
 
-/* Zoom / Fit */
-document.getElementById('btn-zoom-in').addEventListener('click', () =>
-  cy.zoom({ level: cy.zoom() * 1.3, renderedPosition:{ x:cy.width()/2, y:cy.height()/2 } }));
-document.getElementById('btn-zoom-out').addEventListener('click', () =>
-  cy.zoom({ level: cy.zoom() / 1.3, renderedPosition:{ x:cy.width()/2, y:cy.height()/2 } }));
-document.getElementById('btn-fit').addEventListener('click', () =>
-  cy.animate({ fit:{ padding:60 }, duration:400, easing:'ease-out-cubic' }));
+  document.getElementById('btn-zoom-in').addEventListener('click', () =>
+    cy.zoom({ level: cy.zoom() * 1.3, renderedPosition:{ x:cy.width()/2, y:cy.height()/2 } }));
+  document.getElementById('btn-zoom-out').addEventListener('click', () =>
+    cy.zoom({ level: cy.zoom() / 1.3, renderedPosition:{ x:cy.width()/2, y:cy.height()/2 } }));
+  document.getElementById('btn-fit').addEventListener('click', () =>
+    cy.animate({ fit:{ padding:60 }, duration:400, easing:'ease-out-cubic' }));
 
-/* Impact Simulation */
-document.getElementById('btn-simulate').addEventListener('click', startSim);
-document.getElementById('btn-clear-banner').addEventListener('click', clearSim);
-document.getElementById('btn-clear-panel').addEventListener('click', clearSim);
+  document.getElementById('btn-simulate').addEventListener('click', startSim);
+  document.getElementById('btn-clear-banner').addEventListener('click', clearSimAnimated);
+  document.getElementById('btn-clear-panel').addEventListener('click', clearSimAnimated);
+}
 
-function startSim() {
-  if (!selectedNode) return;
-  simActive   = true;
-  simSourceId = selectedNode.data().id;
-  const src   = COURSES.find(c => c.id === simSourceId);
+function pulseNode(node) {
+  node.animate(
+    { style: { 'width': 184, 'height': 66 } },
+    {
+      duration: 260,
+      easing: 'ease-out-sine',
+      complete: () => node.removeStyle('width height'),
+    }
+  );
+}
 
-  /* BFS */
-  const blocked = [];
-  const queue   = [simSourceId];
-  const visited = new Set([simSourceId]);
-  while (queue.length) {
-    const cur = queue.shift();
-    COURSES.filter(c => c.prereqs.includes(cur)).forEach(dep => {
-      if (!visited.has(dep.id)) {
-        visited.add(dep.id);
-        blocked.push(dep);
-        queue.push(dep.id);
-      }
-    });
+function pulseEdge(edge) {
+  edge.animate(
+    { style: { 'width': 5, 'line-color': '#dc2626', 'target-arrow-color': '#dc2626' } },
+    {
+      duration: 260,
+      easing: 'ease-out-sine',
+      complete: () => edge.removeStyle('width line-color target-arrow-color'),
+    }
+  );
+}
+
+async function fetchImpactResult(courseId) {
+  const res = await fetch('/Student/SimulateFailure', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ courseId }),
+  });
+  if (res.status === 404) throw new Error('Selected course was not found in your curriculum.');
+  if (!res.ok) throw new Error('Unable to run the simulation right now. Please try again.');
+  return res.json();
+}
+
+function showSimError(message) {
+  const panel = document.getElementById('node-panel');
+  panel.classList.add('open');
+  panel.innerHTML = `
+    <div class="cm-panel-header">
+      <span class="cm-status-pill" style="background:#fee2e2;color:#b91c1c;">Error</span>
+      <button id="btn-close-sim-error" class="cm-panel-close">
+        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+      </button>
+    </div>
+    <div style="padding:16px;font-size:13px;color:var(--c-text-sub);">${message}</div>
+  `;
+  document.getElementById('btn-close-sim-error').addEventListener('click', () => {
+    if (selectedNode) openPanel(selectedNode.data());
+    else closePanel();
+  });
+}
+
+async function startSim() {
+  if (!selectedNode || simActive) return;
+  const sourceId = selectedNode.data().id;
+  const btn = document.getElementById('btn-simulate');
+  if (btn) btn.disabled = true;
+
+  let result;
+  try {
+    result = await fetchImpactResult(parseInt(sourceId, 10));
+  } catch (err) {
+    if (btn) btn.disabled = false;
+    showSimError(err.message);
+    return;
   }
+  if (btn) btn.disabled = false;
+
+  simActive   = true;
+  simSourceId = sourceId;
+  sessionStorage.setItem(IMPACT_STORAGE_KEY, JSON.stringify(result));
+
+  const blocked    = result.blockedCourses || [];
+  const coveredIds = new Set([simSourceId, ...blocked.map(b => String(b.courseId))]);
 
   cy.nodes().addClass('dimmed');
   cy.edges().addClass('dimmed');
-
   cy.getElementById(simSourceId).removeClass('dimmed').addClass('cascade-source');
 
-  blocked.forEach((dep, i) => {
-    setTimeout(() => {
-      const n = cy.getElementById(dep.id);
+  blocked.forEach(b => {
+    const tId = setTimeout(() => {
+      const n = cy.getElementById(String(b.courseId));
+      if (!n.length) return;
       n.removeClass('dimmed').addClass('cascade-hit');
+      pulseNode(n);
       n.incomers('edge').forEach(edge => {
-        if (visited.has(edge.source().id())) {
+        if (coveredIds.has(edge.source().id())) {
           edge.removeClass('dimmed').addClass('cascade-edge');
+          pulseEdge(edge);
         }
       });
-    }, (i + 1) * 220);
+    }, b.depth * 220);
+    simTimeouts.push(tId);
   });
 
   COURSES.filter(c => c.status === 'passed' || c.status === 'in-progress').forEach(c => {
@@ -312,40 +428,113 @@ function startSim() {
     }
   });
 
-  document.getElementById('sim-course-label').textContent = simSourceId + ' ' + src.name;
+  document.getElementById('sim-course-label').textContent = result.failedCourseCode + ' ' + result.failedCourseName;
   document.getElementById('sim-banner').classList.add('show');
 
   document.getElementById('panel-simulate-wrap').style.display = 'none';
   document.getElementById('panel-clear-wrap').style.display    = '';
+  document.getElementById('btn-impact-toggle').style.display   = '';
 
-  document.getElementById('btn-impact-toggle').style.display = '';
-
-  setTimeout(() => openImpactDrawer(blocked, src), blocked.length * 220 + 350);
+  const maxDepth  = blocked.length ? Math.max(...blocked.map(b => b.depth)) : 0;
+  const drawerTId = setTimeout(() => openImpactDrawer(result), maxDepth * 220 + 350);
+  simTimeouts.push(drawerTId);
 }
 
-function clearSim() {
-  simActive   = false;
-  simSourceId = null;
-
-  cy.nodes().removeClass('dimmed cascade-hit cascade-source');
-  cy.edges().removeClass('dimmed cascade-edge');
-  cy.nodes().style('opacity', 1);
-
-  document.getElementById('sim-banner').classList.remove('show');
-  closeImpactDrawer();
-  document.getElementById('btn-impact-toggle').style.display = 'none';
-
-  document.getElementById('panel-simulate-wrap').style.display = '';
-  document.getElementById('panel-clear-wrap').style.display    = 'none';
-
-  if (selectedNode) openPanel(selectedNode.data());
+function formatSeverity(severity) {
+  return (severity || 'Low').toUpperCase();
 }
 
-/* ── Impact Drawer ── */
-function openImpactDrawer(blocked, src) {
-  const delay = blocked.length > 3 ? 2 : 1;
-  const panel = document.getElementById('node-panel');
+function clearSimAnimated() {
+  simTimeouts.forEach(id => clearTimeout(id));
+  simTimeouts = [];
+
+  cy.nodes().stop(true);
+  cy.edges().stop(true);
+
+  // Reverse the blocked order so last-hit clears first
+  const cascadeNodes = cy.nodes('.cascade-hit').toArray().reverse();
+  const cascadeEdges = cy.edges('.cascade-edge').toArray().reverse();
+
+  cascadeNodes.forEach((n, i) => {
+    const tId = setTimeout(() => {
+      n.animate(
+        { style: { opacity: 0.15 } },
+        {
+          duration: 180,
+          complete: () => {
+            n.removeClass('cascade-hit dimmed');
+            n.removeStyle('opacity width height');
+          }
+        }
+      );
+    }, i * 120);
+    simTimeouts.push(tId);
+  });
+
+  cascadeEdges.forEach((e, i) => {
+    const tId = setTimeout(() => {
+      e.removeClass('cascade-edge dimmed');
+      e.removeStyle('width line-color target-arrow-color');
+    }, i * 120);
+    simTimeouts.push(tId);
+  });
+
+  const totalDuration = cascadeNodes.length * 120 + 250;
+
+  const finalTId = setTimeout(() => {
+    simTimeouts = [];
+    cy.nodes().stop(true).removeStyle('width height opacity');
+    cy.nodes().removeClass('dimmed cascade-hit cascade-source');
+    cy.edges().removeClass('dimmed cascade-edge');
+    cy.nodes().style('opacity', 1);
+
+    simActive   = false;
+    simSourceId = null;
+
+    document.getElementById('sim-banner').classList.remove('show');
+    closeImpactDrawer();
+    document.getElementById('btn-impact-toggle').style.display = 'none';
+    document.getElementById('panel-simulate-wrap').style.display = '';
+    document.getElementById('panel-clear-wrap').style.display    = 'none';
+
+    if (selectedNode) openPanel(selectedNode.data());
+  }, totalDuration);
+
+  simTimeouts.push(finalTId);
+}
+
+
+function openImpactDrawer(result) {
+  const blocked  = result.blockedCourses || [];
+  const severity = formatSeverity(result.severity);
+  const panel    = document.getElementById('node-panel');
   panel.classList.add('open', 'cm-panel-impact');
+
+  if (blocked.length === 0) {
+    panel.innerHTML = `
+      <div class="cm-impact-header">
+        <div class="d-flex align-items-center gap-2">
+          <span class="material-symbols-outlined" style="font-size:19px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+          <h3 class="fw-800 mb-0" style="font-size:.95rem;color:var(--c-text);">Simulation Result</h3>
+        </div>
+        <button id="btn-close-impact" class="cm-panel-close">
+          <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+        </button>
+      </div>
+      <div class="cm-panel-section">
+        <p style="font-size:13px;color:var(--c-text-sub);">No downstream courses are affected by failing <strong>${result.failedCourseCode}</strong>.</p>
+      </div>
+      <div class="cm-panel-action">
+        <button id="btn-clear-impact" class="cm-btn-clear w-100">
+          <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">refresh</span>
+          Clear Simulation
+        </button>
+      </div>
+    `;
+    document.getElementById('btn-close-impact').addEventListener('click', () => { closePanel(); clearSimAnimated(); });
+    document.getElementById('btn-clear-impact').addEventListener('click', clearSimAnimated);
+    return;
+  }
 
   panel.innerHTML = `
     <div class="cm-impact-header">
@@ -358,29 +547,26 @@ function openImpactDrawer(blocked, src) {
       </button>
     </div>
 
-    <!-- Damage headline -->
     <div class="cm-damage-headline">
-      <div class="cm-damage-number">${blocked.length}</div>
+      <div class="cm-damage-number">${result.blockedCoursesCount}</div>
       <div>
         <p class="fw-700 mb-0" style="font-size:14px;color:var(--c-text);">Courses Blocked</p>
-        <p style="font-size:11px;color:var(--c-muted);margin:0;">by failing <strong>${src.id}</strong></p>
+        <p style="font-size:11px;color:var(--c-muted);margin:0;">by failing <strong>${result.failedCourseCode}</strong></p>
       </div>
-      <span class="cm-damage-badge">${blocked.length >= 4 ? 'CRITICAL' : blocked.length >= 2 ? 'HIGH' : 'LOW'}</span>
+      <span class="cm-damage-badge">${severity}</span>
     </div>
 
-    <!-- Quick metrics row -->
     <div class="cm-metrics-row">
       <div class="cm-impact-metric">
-        <p class="cm-impact-metric-val" style="color:var(--c-primary);">${Math.min(blocked.length + 1, 3)}</p>
+        <p class="cm-impact-metric-val" style="color:var(--c-primary);">${result.semestersAffected}</p>
         <p class="cm-impact-metric-label">Semesters</p>
       </div>
       <div class="cm-impact-metric">
-        <p class="cm-impact-metric-val" style="color:#ef4444;">+${delay} sem</p>
+        <p class="cm-impact-metric-val" style="color:#ef4444;">+${result.graduationDelaySemesters} sem</p>
         <p class="cm-impact-metric-label">Grad Delay</p>
       </div>
     </div>
 
-    <!-- Blocked list (compact) -->
     <div class="cm-panel-section">
       <p class="cm-panel-section-title">Blocked Courses</p>
       <div class="d-flex flex-column gap-1">
@@ -388,17 +574,16 @@ function openImpactDrawer(blocked, src) {
           <div class="cm-blocked-row" style="animation-delay:${i*60}ms">
             <span class="material-symbols-outlined" style="font-size:15px;color:#ef4444;font-variation-settings:'FILL' 1,'wght' 400">error</span>
             <div class="flex-fill">
-              <p class="fw-700 mb-0" style="font-size:12px;color:var(--c-text);">${b.id} — ${b.name}</p>
-              <p style="font-size:10.5px;color:var(--c-muted);margin:0;">${b.prereqs.includes(src.id)?'Direct':'Chain'} dependency</p>
+              <p class="fw-700 mb-0" style="font-size:12px;color:var(--c-text);">${b.code} — ${b.name}</p>
+              <p style="font-size:10.5px;color:var(--c-muted);margin:0;">${b.depth === 1 ? 'Direct' : 'Chain'} dependency</p>
             </div>
           </div>
         `).join('')}
       </div>
     </div>
 
-    <!-- Action buttons -->
     <div class="cm-panel-action d-flex flex-column gap-2">
-      <a href="/Student/ImpactAnalyzer" class="cm-btn-view-report text-decoration-none d-flex align-items-center justify-content-center gap-2">
+      <a href="/Student/ImpactAnalyzer?courseId=${result.failedCourseId}" class="cm-btn-view-report text-decoration-none d-flex align-items-center justify-content-center gap-2">
         <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">open_in_new</span>
         View Full Impact Report
       </a>
@@ -415,8 +600,8 @@ function openImpactDrawer(blocked, src) {
     </div>
   `;
 
-  document.getElementById('btn-close-impact').addEventListener('click', () => { closePanel(); clearSim(); });
-  document.getElementById('btn-clear-impact').addEventListener('click', clearSim);
+  document.getElementById('btn-close-impact').addEventListener('click', () => { closePanel(); clearSimAnimated(); });
+  document.getElementById('btn-clear-impact').addEventListener('click', clearSimAnimated);
 }
 
 function closeImpactDrawer() {
@@ -471,7 +656,54 @@ function closeImpactDrawer() {
 
   document.getElementById('btn-close-panel').addEventListener('click', closePanel);
   document.getElementById('btn-simulate').addEventListener('click', startSim);
-  document.getElementById('btn-clear-panel').addEventListener('click', clearSim);
+  document.getElementById('btn-clear-panel').addEventListener('click', clearSimAnimated);
+}
+
+function updateGraphFilter(filterType) {
+  if (simActive) {
+    clearSimAnimated();
+  }
+
+  let filteredCourses = COURSES;
+  if (filterType === 'core') {
+    filteredCourses = COURSES.filter(c => c.courseType === 0);
+  } else if (filterType === 'elective') {
+    filteredCourses = COURSES.filter(c => c.courseType === 1 || c.courseType === 2);
+  } else if (filterType === 'uni') {
+    filteredCourses = COURSES.filter(c => c.courseType === 3);
+  }
+
+  const elements = buildElements(filteredCourses);
+
+  cy.elements().remove();
+  cy.add(elements);
+
+  const layout = cy.layout({
+    name: 'breadthfirst',
+    directed: true,
+    padding: 40,
+    spacingFactor: 1.3,
+    animate: true,
+    animationDuration: 400,
+    animationEasing: 'ease-out-cubic'
+  });
+  layout.run();
+
+  setTimeout(() => {
+    cy.animate({ fit: { padding: 60 }, duration: 300, easing: 'ease-out-sine' });
+  }, 450);
+}
+
+function wireFilterControls() {
+  const chips = document.querySelectorAll('.cm-filter-chip');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const filterType = chip.getAttribute('data-type');
+      updateGraphFilter(filterType);
+    });
+  });
 }
 
 })();

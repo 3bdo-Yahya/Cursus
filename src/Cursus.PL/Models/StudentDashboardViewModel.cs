@@ -8,7 +8,9 @@ public class StudentDashboardViewModel
     public int Year { get; init; }
     public required string Semester { get; init; }
     public required string AcademicStanding { get; init; }
-
+    public required string StandingCssClass { get; init; }
+    public required string StandingAlertMessage { get; init; }
+    public bool ShowStandingAlert { get; init; }
     public double Cgpa { get; init; }
     public double MaxGpa { get; init; } = 4.0;
     public double CgpaChange { get; init; }
@@ -23,6 +25,7 @@ public class StudentDashboardViewModel
     public int CoursesRemaining { get; init; }
     public int CoreCoursesRemaining { get; init; }
     public int ElectiveCoursesRemaining { get; init; }
+    public int UniversityRequiredCoursesRemaining { get; init; }
 
     public required string GraduationSemester { get; init; }
     public int SemestersCompleted { get; init; }
@@ -31,6 +34,16 @@ public class StudentDashboardViewModel
     public List<EnrolledCourseViewModel> CurrentCourses { get; init; } = [];
     public int TotalCurrentCredits => CurrentCourses.Sum(c => c.CreditHours);
     public bool IsOverloadEligible { get; init; }
+
+    public required string UniversityName { get; init; }
+    public double HighestSgpa { get; init; }
+    public List<GpaHistoryPointViewModel> GpaHistory { get; init; } = [];
+}
+
+public class GpaHistoryPointViewModel
+{
+    public required string SemLabel { get; init; }
+    public double Sgpa { get; init; }
 }
 
 public class EnrolledCourseViewModel

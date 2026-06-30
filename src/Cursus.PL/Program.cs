@@ -7,6 +7,11 @@ using System;
 using Cursus.Domain.Constants;
 using Cursus.DAL.Database;
 using Microsoft.EntityFrameworkCore;
+using Cursus.Domain.DTOs;
+using Cursus.Domain.Interfaces.Services;
+using Cursus.BLL.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Cursus.PL.Services;
 
 namespace Cursus.PL;
 
@@ -17,6 +22,15 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddApplicationServices(builder.Configuration);
+
+        // Email Settings
+        builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+        builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<IEmailSender, IdentityEmailSender>();
+        builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromMinutes(5);
+        });
 
         var app = builder.Build();
 
@@ -124,7 +138,7 @@ public class Program
                         $"Unable to create default admin user: {string.Join(", ", createResult.Errors.Select(error => error.Description))}");
             }
         }
-        
+
         // Ensure admin UniversityId is set to the configured university
         if (adminUser.UniversityId != adminUniversity.Id)
         {
@@ -144,7 +158,7 @@ public class Program
                 throw new InvalidOperationException(
                     $"Unable to assign 'Admin' role to seeded admin user: {string.Join(", ", addRoleResult.Errors.Select(error => error.Description))}");
         }
-        
+
         Console.WriteLine($"[Seeding] Admin user seeded and linked to {adminUniversity.Name} university");
     }
 

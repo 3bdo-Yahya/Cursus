@@ -1,28 +1,14 @@
-/* ── Student context ─ */
-const STUDENT_CONTEXT = window.STUDENT_CONTEXT || {
-  name:        'Student',
-  department:  'Undeclared',
-  year:        1,
-  semester:    'Fall',
-  cgpa:        0,
-  standing:    'Good Standing',
-  completed:   0,
-  total:       0,
-  graduation:  '—',
-  completed_courses: '',
-  in_progress: '',
-  failed:      '',
-};
-
 /* ── Chat state ─────────────────────────────────────────── */
-let chatHistory = [];        
+let chatHistory = [];
 let isAwaitingResponse = false;
 
 const messagesArea = document.getElementById('messages-area');
-const emptyState   = document.getElementById('empty-state');
-const chipsRow     = document.getElementById('chips-row');
-const chatInput    = document.getElementById('chat-input');
-const sendBtn      = document.getElementById('send-btn');
+const emptyState = document.getElementById('empty-state');
+const chipsRow = document.getElementById('chips-row');
+const chatInput = document.getElementById('chat-input');
+const sendBtn = document.getElementById('send-btn');
+const advisorPage = document.querySelector('.ai-advisor-page');
+const userInitials = advisorPage?.dataset.initials ?? 'U';
 
 /* ── Enable / disable send button ──────────────────────── */
 chatInput.addEventListener('input', () => {
@@ -53,7 +39,7 @@ function sendSuggestion(btn) {
 function activateChat() {
   if (emptyState && !emptyState.classList.contains('d-none')) {
     emptyState.style.animation = 'none';
-    emptyState.style.opacity   = '0';
+    emptyState.style.opacity = '0';
     emptyState.style.transition = 'opacity 0.2s ease';
     setTimeout(() => emptyState.classList.add('d-none'), 200);
   }
@@ -80,8 +66,7 @@ function appendMessage(role, text) {
   if (isAI) {
     av.innerHTML = `<span class="material-symbols-outlined">smart_toy</span>`;
   } else {
-    av.textContent = 'AK';
-  }
+      av.textContent = userInitials;  }
 
   const body = document.createElement('div');
   body.className = 'msg-body';
@@ -94,7 +79,7 @@ function appendMessage(role, text) {
   bubble.className = `msg-bubble ${isAI ? 'ai' : 'user'}`;
   bubble.innerHTML = isAI
     ? text.replace(/\b([A-Z]{2,4}\d{3}[A-Z]?)\b/g, '<span class="course-ref">$1</span>')
-           .replace(/\n/g, '<br>')
+      .replace(/\n/g, '<br>')
     : escapeHTML(text).replace(/\n/g, '<br>');
 
   body.appendChild(sender);
@@ -117,7 +102,7 @@ function appendMessage(role, text) {
 function appendTyping() {
   const row = document.createElement('div');
   row.className = 'msg-row';
-  row.id        = 'typing-row';
+  row.id = 'typing-row';
 
   const av = document.createElement('div');
   av.className = 'msg-avatar ai-av';
@@ -176,48 +161,38 @@ function scrollToBottom() {
 
 /* ── Escape HTML ────────────────────────────────────────── */
 function escapeHTML(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-/** Local demo only — replace with `fetch('/api/ai-advisor/chat', …)` once the backend exists. */
-async function mockAdvisorReply(userText) {
-  await new Promise((r) => setTimeout(r, 600 + Math.random() * 400));
-  const lower = userText.toLowerCase();
-  if (/fail|drop|withdraw/i.test(lower)) {
-    return 'If you are considering a withdrawal, open the **Impact Analyzer** to see which downstream courses become blocked and whether your graduation term shifts. I can also walk through recovery options once you share the course code.';
+/* ── Get CSRF token from hidden input ───────────────────── */
+function getAntiForgeryToken() {
+  const input = document.querySelector('input[name="__RequestVerificationToken"]');
+  return input ? input.value : '';
+}
+
+/* ── Real backend call ───────────────────────────────────── */
+async function fetchAdvisorReply(userText) {
+  const historyToSend = chatHistory.slice(0, -1);
+
+  const response = await fetch('/Student/AiAdvisorChat', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'RequestVerificationToken': getAntiForgeryToken()
+    },
+    body: JSON.stringify({
+      message: userText,
+      history: historyToSend
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error('Request failed: ' + response.status);
   }
-  if (/gpa|grade|standing/i.test(lower)) {
-    return `Your current CGPA is **${STUDENT_CONTEXT.cgpa}** (${STUDENT_CONTEXT.standing}). Check the **GPA Simulator** to model "what-if" grades for this semester.`;
-  }
-  return `Thanks for your question. With your **${STUDENT_CONTEXT.completed}** of **${STUDENT_CONTEXT.total}** credits completed, focus on clearing prerequisites for **${STUDENT_CONTEXT.in_progress.split(',')[0].trim() || 'your in-progress courses'}**. For anything that depends on failing a course, use the **Course Map** cascade view.`;
+
+  const data = await response.json();
+  return data.reply;
 }
-
-/* ── Build system prompt with student context ───────────── */
-function buildSystemPrompt() {
-  return `You are a friendly and supportive academic advisor at a credit-hour university using the Cursus platform.
-You help students understand their academic situation and make informed decisions.
-
-Student Data:
-- Name: ${STUDENT_CONTEXT.name}
-- Department: ${STUDENT_CONTEXT.department}
-- Academic Year: ${STUDENT_CONTEXT.year}, Current Semester: ${STUDENT_CONTEXT.semester}
-- Cumulative GPA: ${STUDENT_CONTEXT.cgpa}
-- Academic Standing: ${STUDENT_CONTEXT.standing}
-- Credits Completed: ${STUDENT_CONTEXT.completed}/${STUDENT_CONTEXT.total}
-- Projected Graduation: ${STUDENT_CONTEXT.graduation}
-- Completed Courses: ${STUDENT_CONTEXT.completed_courses}
-- In-Progress Courses: ${STUDENT_CONTEXT.in_progress}
-- Failed/Low-Grade Courses (eligible for improvement): ${STUDENT_CONTEXT.failed}
-
-Guidelines:
-- Be supportive and encouraging, but honest about academic risks.
-- Always reference specific course codes and names when relevant.
-- If the student asks about consequences of failing a course, suggest they use the Impact Analyzer for detailed cascade analysis.
-- Keep responses concise (3–5 short paragraphs maximum).
-- Do not make up course names or requirements not in the data above.
-- Format course codes clearly (e.g. CS301).`;
-}
-
 /* ── Main send function ─────────────────────────────────── */
 async function sendMessage() {
   const text = chatInput.value.trim();
@@ -241,7 +216,7 @@ async function sendMessage() {
   try {
     // Do not call third-party LLM APIs from the browser (keys would be exposed). Production will use a
     // server endpoint, e.g. POST /api/ai-advisor/chat, with the key stored only on the server.
-    const reply = await mockAdvisorReply(text);
+    const reply = await fetchAdvisorReply(text);
 
     removeTyping();
     appendMessage('ai', reply);
@@ -251,7 +226,7 @@ async function sendMessage() {
     removeTyping();
     appendErrorBanner();
     chatInput.value = text;
-    chatHistory.pop(); 
+    chatHistory.pop();
     autoResize(chatInput);
   } finally {
     isAwaitingResponse = false;
