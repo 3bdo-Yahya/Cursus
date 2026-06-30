@@ -7,6 +7,8 @@ const emptyState = document.getElementById('empty-state');
 const chipsRow = document.getElementById('chips-row');
 const chatInput = document.getElementById('chat-input');
 const sendBtn = document.getElementById('send-btn');
+const advisorPage = document.querySelector('.ai-advisor-page');
+const userInitials = advisorPage?.dataset.initials ?? 'U';
 
 /* ── Enable / disable send button ──────────────────────── */
 chatInput.addEventListener('input', () => {
@@ -64,8 +66,7 @@ function appendMessage(role, text) {
   if (isAI) {
     av.innerHTML = `<span class="material-symbols-outlined">smart_toy</span>`;
   } else {
-    av.textContent = 'AK';
-  }
+      av.textContent = userInitials;  }
 
   const body = document.createElement('div');
   body.className = 'msg-body';
