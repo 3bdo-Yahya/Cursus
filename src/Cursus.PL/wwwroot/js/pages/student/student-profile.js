@@ -1,4 +1,4 @@
-const GPA_DATA = [
+const GPA_DATA = (window.GPA_HISTORY && window.GPA_HISTORY.length > 0) ? window.GPA_HISTORY : [
   { sem:'Fall\n\'22',  sgpa:2.90 },
   { sem:'Spr\n\'23',  sgpa:3.10 },
   { sem:'Fall\n\'23',  sgpa:3.20 },

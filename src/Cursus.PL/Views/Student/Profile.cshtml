@@ -1,15 +1,40 @@
+@model StudentDashboardViewModel
 @{
     ViewData["Title"] = "My Profile";
-    var studentName = ViewData["StudentName"]?.ToString() ?? "Student";
+    var studentName = Model.StudentName;
     var studentEmail = ViewData["StudentEmail"]?.ToString() ?? "";
-    var initials = ViewData["Initials"]?.ToString() ?? "?";
+    var initials = Model.Initials;
+
+    var dotColor = Model.StandingCssClass switch
+    {
+        "warning" => "#d97706",
+        "danger" => "#dc2626",
+        _ => "#22c55e"
+    };
+    var bgLight = Model.StandingCssClass switch
+    {
+        "warning" => "rgba(217,119,6,0.1)",
+        "danger" => "rgba(220,38,38,0.1)",
+        _ => "rgba(16,185,129,0.1)"
+    };
+    var textColor = Model.StandingCssClass switch
+    {
+        "warning" => "#b45309",
+        "danger" => "#b91c1c",
+        _ => "#047857"
+    };
+    var borderLight = Model.StandingCssClass switch
+    {
+        "warning" => "rgba(217,119,6,0.2)",
+        "danger" => "rgba(220,38,38,0.2)",
+        _ => "rgba(16,185,129,0.2)"
+    };
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/student/student-profile.css" asp-append-version="true"/>
 }
 
-<!-- ── Profile Hero ──────────────────────────────────── -->
   <section class="sp-hero anim-fade-up">
     <div class="sp-hero-bg"></div>
     <div class="sp-hero-content">
@@ -23,21 +48,21 @@
         <h1 class="fw-900 mb-1" style="font-size:1.6rem;letter-spacing:-.4px;color:var(--c-text);">@studentName</h1>
         <p style="font-size:13.5px;color:var(--c-muted);margin:0 0 12px;">@(string.IsNullOrEmpty(studentEmail) ? "—" : studentEmail)</p>
         <div class="d-flex flex-wrap gap-2">
-          <span class="sp-tag sp-tag-primary">
+          <span class="sp-tag" style="background:@bgLight; border-color:@borderLight; color:@textColor">
             <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400">verified</span>
-            Good Standing
+            @Model.AcademicStanding
           </span>
           <span class="sp-tag">
             <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">school</span>
-            Computer Science
+            @Model.Department
           </span>
           <span class="sp-tag">
             <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">calendar_today</span>
-            Year 3 · Spring 2026
+            Year @Model.Year · @Model.Semester
           </span>
           <span class="sp-tag">
             <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">auto_stories</span>
-            84 / 132 credits
+            @Model.CreditsEarned / @Model.CreditsRequired credits
           </span>
         </div>
       </div>
@@ -50,25 +75,24 @@
     </div>
   </section>
 
-  <!-- ── Stats strip ────────────────────────────────────── -->
   <section class="sp-stats anim-fade-up-1">
     <div class="sp-stat">
-      <p class="sp-stat-val">3.24</p>
+      <p class="sp-stat-val">@Model.Cgpa.ToString("F2")</p>
       <p class="sp-stat-label">CGPA</p>
     </div>
     <div class="sp-stat-div"></div>
     <div class="sp-stat">
-      <p class="sp-stat-val">84</p>
+      <p class="sp-stat-val">@Model.CreditsEarned</p>
       <p class="sp-stat-label">Credits Done</p>
     </div>
     <div class="sp-stat-div"></div>
     <div class="sp-stat">
-      <p class="sp-stat-val">5</p>
+      <p class="sp-stat-val">@Model.CurrentCourses.Count</p>
       <p class="sp-stat-label">In Progress</p>
     </div>
     <div class="sp-stat-div"></div>
     <div class="sp-stat">
-      <p class="sp-stat-val">Spring '27</p>
+      <p class="sp-stat-val">@Model.GraduationSemester</p>
       <p class="sp-stat-label">Graduation</p>
     </div>
   </section>
@@ -130,19 +154,19 @@
         <div class="sp-field-grid">
           <div class="sp-field">
             <p class="sp-field-label">University</p>
-            <p class="sp-field-value">South Valley University</p>
+            <p class="sp-field-value">@ViewData["UniversityName"]</p>
           </div>
           <div class="sp-field">
             <p class="sp-field-label">Department</p>
-            <p class="sp-field-value">Computer Science</p>
+            <p class="sp-field-value">@Model.Department</p>
           </div>
           <div class="sp-field">
             <p class="sp-field-label">Academic Year</p>
-            <p class="sp-field-value">Year 3 (2024–2025)</p>
+            <p class="sp-field-value">Year @Model.Year</p>
           </div>
           <div class="sp-field">
             <p class="sp-field-label">Current Semester</p>
-            <p class="sp-field-value">Spring 2026</p>
+            <p class="sp-field-value">@Model.Semester</p>
           </div>
           <div class="sp-field">
             <p class="sp-field-label">Enrollment Date</p>
@@ -150,14 +174,14 @@
           </div>
           <div class="sp-field">
             <p class="sp-field-label">Expected Graduation</p>
-            <p class="sp-field-value">Spring 2027</p>
+            <p class="sp-field-value">@Model.GraduationSemester</p>
           </div>
           <div class="sp-field">
             <p class="sp-field-label">Academic Standing</p>
             <p class="sp-field-value">
-              <span class="sp-standing-badge">
-                <span class="rounded-circle" style="width:6px;height:6px;background:#22c55e;display:inline-block;flex-shrink:0;"></span>
-                Good Standing
+              <span class="sp-standing-badge" style="background:@bgLight; border-color:@borderLight; color:@textColor">
+                <span class="rounded-circle" style="width:6px;height:6px;background:@dotColor;display:inline-block;flex-shrink:0;"></span>
+                @Model.AcademicStanding
               </span>
             </p>
           </div>
@@ -229,17 +253,19 @@
           <div class="sp-gpa-summary">
             <div class="sp-gpa-summary-item">
               <p class="sp-field-label">Highest SGPA</p>
-              <p class="fw-800 mb-0" style="font-size:15px;color:#10b981;">3.58</p>
+              <p class="fw-800 mb-0" style="font-size:15px;color:#10b981;">@ViewData["HighestSgpa"]</p>
             </div>
             <div class="sp-gpa-summary-div"></div>
             <div class="sp-gpa-summary-item">
               <p class="sp-field-label">Current CGPA</p>
-              <p class="fw-800 mb-0" style="font-size:15px;color:var(--c-primary);">3.24</p>
+              <p class="fw-800 mb-0" style="font-size:15px;color:var(--c-primary);">@Model.Cgpa.ToString("F2")</p>
             </div>
             <div class="sp-gpa-summary-div"></div>
             <div class="sp-gpa-summary-item">
               <p class="sp-field-label">Trend</p>
-              <p class="fw-800 mb-0" style="font-size:15px;color:#10b981;">↑ +0.12</p>
+              <p class="fw-800 mb-0" style="font-size:15px;color:@(Model.CgpaChange >= 0 ? "#10b981" : "#dc3545");">
+                @(Model.CgpaChange >= 0 ? "↑ +" : "↓ -")@Math.Abs(Model.CgpaChange).ToString("F2")
+              </p>
             </div>
           </div>
         </div>
@@ -330,5 +356,8 @@
 </div>
 
 @section Scripts {
+    <script>
+        window.GPA_HISTORY = @Html.Raw(ViewData["GpaHistoryJson"]);
+    </script>
     <script src="~/js/pages/student/student-profile.js" asp-append-version="true"></script>
 }

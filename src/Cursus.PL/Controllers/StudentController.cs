@@ -289,11 +289,58 @@ public class StudentController : Controller
     public async Task<IActionResult> Profile()
     {
         var user = await _userManager.GetUserAsync(User);
-        var username = user?.UserName?.Split('@').FirstOrDefault() ?? "Student";
-        ViewData["StudentName"] = username;
-        ViewData["StudentEmail"] = user?.Email ?? "";
-        ViewData["Initials"] = GetInitials(username);
-        return View();
+        if (user is null)
+            return RedirectToAction("Login", "Account");
+
+        var dto = await _dashboardService.GetDashboardDataAsync(user.Id);
+        if (dto is null)
+            return RedirectToAction("Login", "Account");
+
+        var model = MapToViewModel(dto);
+
+        // Fetch user's GPA History (StandingHistories)
+        var histories = await _db.StandingHistories
+            .AsNoTracking()
+            .Where(h => h.StudentId == user.Id)
+            .OrderBy(h => h.AcademicYear)
+            .ThenBy(h => h.Semester)
+            .ToListAsync();
+
+        var historyDtos = histories.Select(h => new
+        {
+            sem = FormatSemesterAbbrev(h.Semester, h.AcademicYear),
+            sgpa = (double)h.SemesterGpa
+        }).ToList();
+
+        var userWithUniv = await _db.Users
+            .Include(u => u.University)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+        ViewData["StudentName"] = dto.DisplayName;
+        ViewData["StudentEmail"] = user.Email ?? "";
+        ViewData["Initials"] = GetInitials(dto.DisplayName);
+        ViewData["UniversityName"] = userWithUniv?.University?.Name ?? "South Valley National University";
+        ViewData["HighestSgpa"] = histories.Any() ? (double)histories.Max(h => h.SemesterGpa) : 0.0;
+        ViewData["GpaHistoryJson"] = System.Text.Json.JsonSerializer.Serialize(historyDtos);
+
+        return View(model);
+    }
+
+    private static string FormatSemesterAbbrev(SemesterType semester, string academicYear)
+    {
+        var semName = semester switch
+        {
+            SemesterType.Fall => "Fall",
+            SemesterType.Spring => "Spr",
+            _ => "Sum"
+        };
+
+        var year = academicYear.Split('-').FirstOrDefault() ?? "";
+        if (year.Length >= 4)
+            year = year[2..];
+
+        return $"{semName}\n'{year}";
     }
 
     private static StudentDashboardViewModel MapToViewModel(StudentDashboardDto dto)
