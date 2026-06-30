@@ -104,12 +104,27 @@ namespace Cursus.BLL.Services
             var creditsAtRisk = orderedBlocked.Sum(b => b.CreditHours);
             var severity = GetSeverity(creditsAtRisk, cascadeDepth);
 
-            // Fetch student's completed courses
-            var completedCourseIds = await _db.StudentCourses
+            // Fetch student's completed courses with category metadata.
+            var completedCourseRows = await _db.StudentCourses
                 .AsNoTracking()
-                .Where(sc => sc.StudentId == studentId && sc.Status == StudentCourseStatus.Completed)
-                .Select(sc => sc.CourseId)
-                .ToHashSetAsync();
+                .Where(sc => sc.StudentId == studentId
+                             && sc.Status == StudentCourseStatus.Completed
+                             && sc.Course != null)
+                .Select(sc => new
+                {
+                    sc.CourseId,
+                    sc.Course!.CourseType,
+                    sc.Course.CreditHours
+                })
+                .ToListAsync();
+
+            var completedCourseIds = completedCourseRows
+                .Select(x => x.CourseId)
+                .ToHashSet();
+
+            var completedCreditsByType = completedCourseRows
+                .GroupBy(x => x.CourseType)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.CreditHours));
 
             // Fetch graduation requirements to simulate remaining degree path
             var requirements = await _db.GraduationRequirements
@@ -151,9 +166,9 @@ namespace Cursus.BLL.Services
                 if (req.CategoryType == CourseType.Core)
                     continue;
 
-                int completedCredits = courses
-                    .Where(c => completedCourseIds.Contains(c.Id) && c.CourseType == req.CategoryType)
-                    .Sum(c => c.CreditHours);
+                int completedCredits = completedCreditsByType.TryGetValue(req.CategoryType, out var credits)
+                    ? credits
+                    : 0;
 
                 int remainingCredits = Math.Max(0, req.RequiredCredits - completedCredits);
                 int coursesNeeded = (int)Math.Ceiling(remainingCredits / 3.0);
