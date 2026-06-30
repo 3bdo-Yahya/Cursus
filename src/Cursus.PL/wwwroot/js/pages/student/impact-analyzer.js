@@ -16,7 +16,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const courseId = new URLSearchParams(window.location.search).get('courseId');
   if (courseId) {
-    fetchAndShowReport(parseInt(courseId, 10));
+    const parsedId = parseInt(courseId, 10);
+    if (!isNaN(parsedId)) {
+      fetchAndShowReport(parsedId);
+    }
   }
 });
 
@@ -33,12 +36,26 @@ async function fetchAndShowReport(courseId) {
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ courseId }),
     });
-    if (!res.ok) return;
+    if (!res.ok) {
+      showFetchError('Unable to load the simulation report. Please run a simulation from the Course Map.');
+      return;
+    }
     const report = await res.json();
     sessionStorage.setItem(IMPACT_STORAGE_KEY, JSON.stringify(report));
     showReport(report);
   } catch {
-    
+    showFetchError('A network error occurred. Please check your connection and try again.');
+  }
+}
+
+function showFetchError(message) {
+  const idle = document.getElementById('ia-idle');
+  if (idle) {
+    const notice = idle.querySelector('.ia-error-notice') || document.createElement('p');
+    notice.className = 'ia-error-notice';
+    notice.style.cssText = 'margin-top:12px;font-size:13px;color:#b91c1c;';
+    notice.textContent = message;
+    idle.appendChild(notice);
   }
 }
 
@@ -47,7 +64,7 @@ function loadReport(report) {
     id: report.failedCourseCode,
     name: report.failedCourseName,
     credits: report.failedCourseCredits,
-    avail: 'See schedule',
+    avail: report.retakeSemesterLabel || 'See schedule',
     type: 'Core',
   };
   const blocked = (report.blockedCourses || []).map(b => ({
@@ -103,7 +120,7 @@ function loadReport(report) {
 
   document.getElementById('risk-avail').textContent    = retakeLabel;
   document.getElementById('risk-credits').textContent  = creditsAtRisk + ' cr';
-  document.getElementById('risk-cgpa').textContent     = '−0.' + (delay * 18);
+  document.getElementById('risk-cgpa').textContent     = delay > 0 ? 'See Advisor' : 'Minimal';
   document.getElementById('risk-standing').textContent = blocked.length > 4 ? 'Warning Risk' : 'Good Standing';
   document.getElementById('risk-standing').style.color = blocked.length > 4 ? '#d97706' : '#10b981';
 
@@ -154,9 +171,6 @@ function loadReport(report) {
     `;
     recEl.appendChild(el);
   });
-
-  document.getElementById('btn-new-sim')?.addEventListener('click', () => { location.href = '/Student/CourseMap'; });
-  document.getElementById('btn-new-sim-2')?.addEventListener('click', () => { location.href = '/Student/CourseMap'; });
 }
 
 function animCount(id, target) {
