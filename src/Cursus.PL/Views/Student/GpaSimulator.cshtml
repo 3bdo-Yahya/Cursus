@@ -11,6 +11,7 @@
         completedCredits: @Model.GpaHours,
         completedQp: @Model.CompletedQp,
         currentCgpa: @Model.CurrentCgpa,
+        maxGpa: @Model.MaxGpa,
 
         currentCourses: @Html.Raw(
                         System.Text.Json.JsonSerializer.Serialize(Model.CurrentCourses)

@@ -59,6 +59,35 @@
   margin-top:   4px;
 }
 
+/* ── Status Bar Standing Pill ───────────────────────────── */
+.status-bar-item span.good {
+  background: rgba(16,185,129,.12);
+  color:      #065f46;
+  border:     1px solid rgba(16,185,129,.25);
+}
+html.dark .status-bar-item span.good {
+  background: rgba(16,185,129,.14);
+  color:      #6ee7b7;
+}
+.status-bar-item span.warning {
+  background: rgba(245,158,11,.12);
+  color:      #92400e;
+  border:     1px solid rgba(245,158,11,.25);
+}
+html.dark .status-bar-item span.warning {
+  background: rgba(245,158,11,.14);
+  color:      #fcd34d;
+}
+.status-bar-item span.danger {
+  background: rgba(239,68,68,.1);
+  color:      #991b1b;
+  border:     1px solid rgba(239,68,68,.2);
+}
+html.dark .status-bar-item span.danger {
+  background: rgba(239,68,68,.13);
+  color:      #fca5a5;
+}
+
 /* ── Grade Prediction Table ─────────────────────────────── */
 .grade-table-card {
   background:    var(--c-surface);
