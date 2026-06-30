@@ -193,11 +193,15 @@ public class AcademicMetricsService : IAcademicMetricsService
         };
     }
 
-    public async Task<(bool CanEnroll, string? BlockReason)> CanEnrollInCourseAsync(string studentId, int courseId)
+    public async Task<(bool CanEnroll, string? BlockReason)> CanEnrollInCourseAsync(
+        string studentId,
+        int courseId,
+        int? excludeStudentCourseId = null)
     {
         var attempts = await _db.StudentCourses
             .AsNoTracking()
             .Where(sc => sc.StudentId == studentId && sc.CourseId == courseId)
+            .Where(sc => excludeStudentCourseId == null || sc.Id != excludeStudentCourseId.Value)
             .ToListAsync();
 
         if (attempts.Count == 0)
