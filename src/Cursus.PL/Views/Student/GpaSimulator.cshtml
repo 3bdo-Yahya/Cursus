@@ -1,6 +1,6 @@
 
 @model Cursus.PL.Models.GpaSimulatorViewModel
-
+@using Cursus.PL
 
 @{
     ViewData["Title"] = "GPA Simulator";
@@ -13,17 +13,11 @@
         currentCgpa: @Model.CurrentCgpa,
         maxGpa: @Model.MaxGpa,
 
-        currentCourses: @Html.Raw(
-                        System.Text.Json.JsonSerializer.Serialize(Model.CurrentCourses)
-                ),
+        currentCourses: @Html.Raw(ViewJson.Serialize(Model.CurrentCourses)),
 
-        improvableCourses: @Html.Raw(
-                        System.Text.Json.JsonSerializer.Serialize(Model.ImprovableCourses)
-                ),
+        improvableCourses: @Html.Raw(ViewJson.Serialize(Model.ImprovableCourses)),
 
-        gradeScale: @Html.Raw(
-                        System.Text.Json.JsonSerializer.Serialize(Model.GradeScale)
-                )
+        gradeScale: @Html.Raw(ViewJson.Serialize(Model.GradeScale))
     };
 </script>
 
