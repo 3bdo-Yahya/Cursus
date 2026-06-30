@@ -155,8 +155,30 @@ namespace Cursus.BLL.Services
                 ?? throw new KeyNotFoundException(
                     $"StudentCourse record with id {recordId} was not found.");
 
-            record.Grade = NormalizeGrade(grade);
-            record.Status = await ResolveStatus(grade, status, record.CourseId);
+            var resolvedStatus = await ResolveStatus(grade, status, record.CourseId);
+            var normalizedGrade = NormalizeGrade(grade);
+
+            var needsEnrollmentCheck = resolvedStatus == StudentCourseStatus.InProgress
+                || (resolvedStatus == StudentCourseStatus.Completed
+                    && !string.IsNullOrEmpty(normalizedGrade)
+                    && !IsRetakeEligibleGrade(normalizedGrade));
+
+            if (needsEnrollmentCheck)
+            {
+                var (canEnroll, blockReason) = await _academicMetricsService.CanEnrollInCourseAsync(
+                    record.StudentId,
+                    record.CourseId,
+                    excludeStudentCourseId: recordId);
+
+                if (!canEnroll)
+                {
+                    throw new InvalidOperationException(
+                        blockReason ?? "Student is not eligible to enroll in this course.");
+                }
+            }
+
+            record.Grade = normalizedGrade;
+            record.Status = resolvedStatus;
 
             await _context.SaveChangesAsync();
             return record;
@@ -235,5 +257,8 @@ namespace Cursus.BLL.Services
 
         private static string? NormalizeGrade(string? grade) =>
             string.IsNullOrWhiteSpace(grade) ? null : grade.Trim().ToUpper();
+
+        private static bool IsRetakeEligibleGrade(string grade) =>
+            grade is "D+" or "D" or "D-" or "F";
     }
 }

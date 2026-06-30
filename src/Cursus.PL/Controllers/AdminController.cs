@@ -323,6 +323,31 @@ public class AdminController : Controller
         if (!string.IsNullOrWhiteSpace(vm.Grade) && !IsKnownGrade(vm.Grade))
             ModelState.AddModelError(nameof(vm.Grade), "Grade must be one of: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F.");
 
+        if (ModelState.IsValid)
+        {
+            var existingRecord = await _context.StudentCourses
+                .AsNoTracking()
+                .FirstOrDefaultAsync(sc => sc.Id == vm.RecordId);
+
+            if (existingRecord is not null)
+            {
+                var (canEnroll, blockReason) = await _academicMetricsService.CanEnrollInCourseAsync(
+                    existingRecord.StudentId,
+                    existingRecord.CourseId,
+                    excludeStudentCourseId: vm.RecordId);
+
+                var settingInProgress = string.IsNullOrWhiteSpace(vm.Grade)
+                    || vm.Status == StudentCourseStatus.InProgress;
+                var settingPassingGrade = !string.IsNullOrWhiteSpace(vm.Grade)
+                    && !new[] { "D+", "D", "D-", "F" }.Contains(vm.Grade.Trim().ToUpper());
+
+                if ((settingInProgress || settingPassingGrade) && !canEnroll)
+                {
+                    ModelState.AddModelError(string.Empty, blockReason ?? "Student is not eligible for this course state.");
+                }
+            }
+        }
+
         if (!ModelState.IsValid)
         {
             var student = await _studentManagementService.GetStudentDetailAsync(vm.StudentId);
