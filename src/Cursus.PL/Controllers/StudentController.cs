@@ -22,6 +22,7 @@ public class StudentController : Controller
     private readonly IStudentDashboardService _dashboardService;
     private readonly IImpactAnalysisService _impactAnalysisService;
     private readonly IGeminiService _geminiService;
+    private readonly IAcademicMetricsService _academicMetricsService;
 
     public StudentController(
         UserManager<AppUser> userManager,
@@ -29,7 +30,8 @@ public class StudentController : Controller
         IProgressService progressService,
         IStudentDashboardService dashboardService,
         IImpactAnalysisService impactAnalysisService,
-        IGeminiService geminiService)
+        IGeminiService geminiService,
+        IAcademicMetricsService academicMetricsService)
     {
         _userManager = userManager;
         _db = db;
@@ -37,6 +39,7 @@ public class StudentController : Controller
         _dashboardService = dashboardService;
         _impactAnalysisService = impactAnalysisService;
         _geminiService = geminiService;
+        _academicMetricsService = academicMetricsService;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -142,49 +145,13 @@ public class StudentController : Controller
         if (student is null)
             return NotFound();
 
-        // Resolve Grade Scale for their university, safe from null department
-        var gradeScale = student.Department is not null
-            ? await _db.GradeScales
-                .AsNoTracking()
-                .Where(gs => gs.UniversityId == student.Department.UniversityId)
-                .ToDictionaryAsync(gs => gs.LetterGrade.ToUpper(), gs => (double)gs.PointValue)
-            : new Dictionary<string, double>();
-
-        if (gradeScale.Count == 0) // Default fallback
-        {
-            gradeScale = new Dictionary<string, double>
-            {
-                ["A+"] = 4.0,
-                ["A"] = 4.0,
-                ["A-"] = 3.7,
-                ["B+"] = 3.3,
-                ["B"] = 3.0,
-                ["B-"] = 2.7,
-                ["C+"] = 2.3,
-                ["C"] = 2.0,
-                ["C-"] = 1.7,
-                ["D+"] = 1.3,
-                ["D"] = 1.0,
-                ["F"] = 0.0
-            };
-        }
+        var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
+        var gradeScale = gradeScaleDecimal.ToDictionary(kvp => kvp.Key, kvp => (double)kvp.Value);
 
         var studentCourses = student.StudentCourses.ToList();
 
-        // Group by CourseId to filter out duplicates / retakes (Completed > InProgress > Failed)
-        var studentCourseMap = studentCourses
-            .GroupBy(sc => sc.CourseId)
-            .ToDictionary(
-                g => g.Key,
-                g => g.OrderBy(sc => sc.Status switch
-                {
-                    StudentCourseStatus.Completed => 0,
-                    StudentCourseStatus.Failed => 1,
-                    StudentCourseStatus.InProgress => 2,
-                    _ => 3
-                }).First());
-
-        var bestAttempts = studentCourseMap.Values.ToList();
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
+        var studentCourseMap = bestAttempts.ToDictionary(sc => sc.CourseId);
 
         // Completed Courses (only status == Completed)
         var completedCourses = bestAttempts
@@ -231,12 +198,10 @@ public class StudentController : Controller
             .Select(sc => sc.CourseId)
             .ToHashSet();
 
-
         var improvableCourses = bestAttempts
             .Where(sc => (sc.Status == StudentCourseStatus.Failed || sc.Grade == "D" || sc.Grade == "D+")
                 && sc.Course is not null
                 && !inProgressCourseIds.Contains(sc.CourseId))
-
             .Select(sc => new ImprovableCourseViewModel
             {
                 Id = sc.Course!.Code,
@@ -247,21 +212,28 @@ public class StudentController : Controller
             })
             .ToList();
 
-        var latestStanding = student.StandingHistories
-            .OrderByDescending(h => h.AcademicYear)
-            .ThenByDescending(h => h.Semester)
-            .FirstOrDefault();
+        var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScaleDecimal);
+        var termGpas = _academicMetricsService.CalculateSgpaByTerm(studentCourses, gradeScaleDecimal);
 
-        var lastSgpa = latestStanding?.SemesterGpa ?? 0m;
-        var currentCgpa = latestStanding?.CumulativeGpa ?? 0m;
+        var currentTerm = termGpas.FirstOrDefault(t => 
+            string.Equals(t.AcademicYear, student.AcademicYear, StringComparison.OrdinalIgnoreCase) && 
+            t.Semester == student.CurrentSemester);
+        var sgpa = currentTerm?.SemesterGpa ?? 0m;
+
+        var previousTerm = termGpas
+            .Where(t => !(string.Equals(t.AcademicYear, student.AcademicYear, StringComparison.OrdinalIgnoreCase) && t.Semester == student.CurrentSemester))
+            .OrderByDescending(t => t.AcademicYear)
+            .ThenByDescending(t => t.Semester)
+            .FirstOrDefault();
+        var lastSgpa = previousTerm?.SemesterGpa ?? 0m;
 
         var model = new GpaSimulatorViewModel
         {
             StudentName = student.DisplayName,
             Department = student.Department?.Name ?? "Not assigned",
-            Year = (student.StandingHistories.Count / 2) + 1,
+            Year = (termGpas.Count / 2) + 1,
             Semester = $"{student.CurrentSemester} {student.AcademicYear}",
-            CurrentCgpa = (double)currentCgpa,
+            CurrentCgpa = (double)cgpa,
             LastSgpa = (double)lastSgpa,
             AcademicStanding = FormatStanding(student.CurrentStanding),
             StandingCssClass = GetStandingCssClass(student.CurrentStanding),
@@ -287,13 +259,15 @@ public class StudentController : Controller
         if (user.DepartmentId is null)
             return BadRequest(new { error = "No department assigned to your account." });
 
-        var cgpa = await _db.StandingHistories
+        var studentCourses = await _db.StudentCourses
+            .Include(sc => sc.Course)
+            .Where(sc => sc.StudentId == user.Id)
             .AsNoTracking()
-            .Where(sh => sh.StudentId == user.Id)
-            .OrderByDescending(sh => sh.AcademicYear)
-            .ThenByDescending(sh => sh.Semester)
-            .Select(sh => sh.CumulativeGpa)
-            .FirstOrDefaultAsync();
+            .ToListAsync();
+
+        var gradeScale = await _academicMetricsService.GetGradeScaleAsync(user.DepartmentId);
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
+        var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScale);
 
         var result = await _impactAnalysisService
             .GetBlockedCoursesAsync(
