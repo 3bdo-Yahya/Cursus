@@ -18,6 +18,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
     public async Task<StudentDashboardDto?> GetDashboardDataAsync(string studentId)
     {
         var student = await _db.Users
+            .Include(u => u.University)
             .Include(u => u.Department)
             .Include(u => u.StudentCourses)
                 .ThenInclude(sc => sc.Course)
@@ -137,6 +138,23 @@ public sealed class StudentDashboardService : IStudentDashboardService
             })
             .ToList();
 
+        var orderedHistories = student.StandingHistories
+            .OrderBy(h => h.AcademicYear)
+            .ThenBy(h => h.Semester)
+            .ToList();
+
+        var gpaHistory = orderedHistories
+            .Select(h => new GpaHistoryPointDto
+            {
+                SemLabel = FormatSemesterAbbrev(h.Semester, h.AcademicYear),
+                Sgpa = h.SemesterGpa
+            })
+            .ToList();
+
+        var highestSgpa = orderedHistories.Count > 0
+            ? orderedHistories.Max(h => h.SemesterGpa)
+            : 0m;
+
         return new StudentDashboardDto
         {
             StudentId = student.Id,
@@ -159,7 +177,10 @@ public sealed class StudentDashboardService : IStudentDashboardService
             ProjectedGraduation = projectedGraduation,
             SemestersCompleted = student.StandingHistories.Count,
             TotalSemesters = totalSemesters,
-            CurrentCourses = currentCourses
+            CurrentCourses = currentCourses,
+            UniversityName = student.University?.Name ?? "Not assigned",
+            HighestSgpa = highestSgpa,
+            GpaHistory = gpaHistory
         };
     }
 
@@ -298,5 +319,21 @@ public sealed class StudentDashboardService : IStudentDashboardService
             SemesterType.Spring => (SemesterType.Summer, year),
             _ => (SemesterType.Fall, year)
         };
+    }
+
+    private static string FormatSemesterAbbrev(SemesterType semester, string academicYear)
+    {
+        var semName = semester switch
+        {
+            SemesterType.Fall => "Fall",
+            SemesterType.Spring => "Spr",
+            _ => "Sum"
+        };
+
+        var year = academicYear.Split('-').FirstOrDefault() ?? "";
+        if (year.Length >= 4)
+            year = year[2..];
+
+        return $"{semName}\n'{year}";
     }
 }

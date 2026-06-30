@@ -312,11 +312,20 @@ public class StudentController : Controller
     public async Task<IActionResult> Profile()
     {
         var user = await _userManager.GetUserAsync(User);
-        var username = user?.UserName?.Split('@').FirstOrDefault() ?? "Student";
-        ViewData["StudentName"] = username;
-        ViewData["StudentEmail"] = user?.Email ?? "";
-        ViewData["Initials"] = GetInitials(username);
-        return View();
+        if (user is null)
+            return RedirectToAction("Login", "Account");
+
+        var dto = await _dashboardService.GetDashboardDataAsync(user.Id);
+        if (dto is null)
+            return RedirectToAction("Login", "Account");
+
+        if (dto.DepartmentName == "Not assigned")
+            TempData["Warning"] = "Please contact your admin to assign your department.";
+        else if (!dto.HasAcademicRecords)
+            TempData["Warning"] = "No academic records found yet. Your profile will populate once your admin enters your course history.";
+
+        ViewData["StudentEmail"] = user.Email ?? "";
+        return View(MapToViewModel(dto));
     }
 
     private static StudentDashboardViewModel MapToViewModel(StudentDashboardDto dto)
@@ -357,6 +366,16 @@ public class StudentController : Controller
                     Schedule = $"{c.CreditHours} credit hours",
                     CreditHours = c.CreditHours,
                     IsElective = c.IsElective
+                })
+                .ToList(),
+
+            UniversityName = dto.UniversityName,
+            HighestSgpa = (double)dto.HighestSgpa,
+            GpaHistory = dto.GpaHistory
+                .Select(h => new GpaHistoryPointViewModel
+                {
+                    SemLabel = h.SemLabel,
+                    Sgpa = (double)h.Sgpa
                 })
                 .ToList()
         };
