@@ -63,7 +63,113 @@ public class StudentController : Controller
     }
 
     public IActionResult CourseMap() => View();
-    public IActionResult Planner() => View();
+    public async Task<IActionResult> Planner()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToAction("Login", "Account");
+
+        var student = await _db.Users
+            .Include(u => u.Department)
+            .Include(u => u.StudentCourses)
+                .ThenInclude(sc => sc.Course)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+        if (student is null)
+            return NotFound();
+
+        var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
+
+        var studentCourses = student.StudentCourses.ToList();
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
+        var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScaleDecimal);
+        var termGpas = _academicMetricsService.CalculateSgpaByTerm(studentCourses, gradeScaleDecimal);
+
+        var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+        var overloadLimit = student.CurrentStanding switch
+        {
+            AcademicStanding.Probation => 12,
+            AcademicStanding.Warning => 15,
+            _ => 21
+        };
+
+        var completedCourses = bestAttempts
+            .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
+            .Select(sc => sc.Course!.Code)
+            .ToList();
+
+        var completedCredits = bestAttempts
+            .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
+            .Sum(sc => sc.Course!.CreditHours);
+
+        var currentlyEnrolled = studentCourses
+            .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
+            .Select(sc => new SimulatedCourseViewModel
+            {
+                Id = sc.Course!.Code,
+                Name = sc.Course.Name,
+                Credits = sc.Course.CreditHours,
+                IsRetake = false,
+                OriginalGrade = string.Empty,
+                OriginalPoints = 0.0
+            })
+            .ToList();
+
+        var catalogCourses = await _db.Courses
+            .Include(c => c.Prerequisites)
+                .ThenInclude(p => p.Prerequisite)
+            .Where(c => (c.DepartmentId == student.DepartmentId || c.CourseType == CourseType.UniversityReq) && c.IsActive)
+            .AsNoTracking()
+            .ToListAsync();
+
+        var catalog = catalogCourses.Select(c => new PlannerCourseViewModel
+        {
+            Id = c.Code,
+            Name = c.Name,
+            Credits = c.CreditHours,
+            Type = c.CourseType switch
+            {
+                CourseType.Core => "Core",
+                CourseType.DeptElective => "Dept. Elective",
+                CourseType.FreeElective => "Free Elective",
+                CourseType.UniversityReq => "University Req.",
+                _ => "Core"
+            },
+            TypeClass = c.CourseType switch
+            {
+                CourseType.Core => "type-core",
+                CourseType.DeptElective => "type-elec",
+                CourseType.FreeElective => "type-free",
+                CourseType.UniversityReq => "type-univ",
+                _ => "type-core"
+            },
+            Prereqs = c.Prerequisites
+                .Where(p => p.Prerequisite is not null)
+                .Select(p => p.Prerequisite!.Code)
+                .ToList()
+        }).ToList();
+
+        var model = new PlannerViewModel
+        {
+            StudentName = student.DisplayName,
+            Department = student.Department?.Name ?? "Not assigned",
+            Year = (termGpas.Count / 2) + 1,
+            Semester = $"{student.CurrentSemester} {student.AcademicYear}",
+            CurrentCgpa = (double)cgpa,
+            AcademicStanding = FormatStanding(student.CurrentStanding),
+            StandingCssClass = GetStandingCssClass(student.CurrentStanding),
+            CompletedCredits = completedCredits,
+            TotalCreditsRequired = student.Department?.TotalCreditsRequired ?? 132,
+            CreditLimit = creditLimit,
+            OverloadLimit = overloadLimit,
+            CompletedCourses = completedCourses,
+            CurrentlyEnrolledCourses = currentlyEnrolled,
+            Catalog = catalog
+        };
+
+        return View(model);
+    }
     public async Task<IActionResult> Progress()
     {
         var user = await _userManager.GetUserAsync(User);

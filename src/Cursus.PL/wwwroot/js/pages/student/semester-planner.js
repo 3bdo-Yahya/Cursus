@@ -1,25 +1,13 @@
 /* ── Available course catalog ───────────────────────────── */
-const CATALOG = [
-  { id:'CS401',  name:'Compiler Design',         credits:3, type:'Core',         typeClass:'type-core', prereqs:['CS201','CS202'] },
-  { id:'CS499',  name:'Senior Capstone',          credits:6, type:'Core',         typeClass:'type-core', prereqs:['CS401'] },
-  { id:'AI501',  name:'Deep Learning',            credits:3, type:'Dept. Elective',typeClass:'type-elec', prereqs:['AI402'] },
-  { id:'SEC301', name:'Cybersecurity Fundamentals',credits:3,type:'Dept. Elective',typeClass:'type-elec', prereqs:['CS303'] },
-  { id:'DS305',  name:'Database Systems',         credits:3, type:'Dept. Elective',typeClass:'type-elec', prereqs:['CS201'] },
-  { id:'NET410', name:'Cloud Computing',          credits:3, type:'Dept. Elective',typeClass:'type-elec', prereqs:['CS303'] },
-  { id:'PSYC101',name:'Intro to Psychology',      credits:3, type:'Free Elective', typeClass:'type-free', prereqs:[] },
-  { id:'ECON101',name:'Principles of Economics',  credits:3, type:'Free Elective', typeClass:'type-free', prereqs:[] },
-  { id:'PHIL105',name:'Ethics in Tech',            credits:2, type:'University Req.',typeClass:'type-univ', prereqs:[] },
-  { id:'MATH301',name:'Probability & Statistics',  credits:3, type:'Core',         typeClass:'type-core', prereqs:['MTH201'] },
-  { id:'SE401',  name:'Software Engineering',     credits:3, type:'Core',         typeClass:'type-core', prereqs:['CS201','CS301'] },
-];
+const CATALOG = window.STUDENT_DATA.catalog || [];
 
 /* ── Student data ──────────────── */
-const COMPLETED_COURSES  = ['CS101','CS201','CS202','AI402','WEB200','MUS101','ART200','ENG102','HIST201','PHYS101','MATH101'];
-const COMPLETED_CREDITS  = 84;
-const TOTAL_CREDITS      = 132;
-const CREDIT_LIMIT       = 18;
-const OVERLOAD_LIMIT     = 21;
-const STUDENT_CGPA       = 3.24;
+const COMPLETED_COURSES  = window.STUDENT_DATA.completedCourses || [];
+const COMPLETED_CREDITS  = window.STUDENT_DATA.completedCredits || 0;
+const TOTAL_CREDITS      = window.STUDENT_DATA.totalCredits || 132;
+const CREDIT_LIMIT       = window.STUDENT_DATA.creditLimit || 18;
+const OVERLOAD_LIMIT     = window.STUDENT_DATA.overloadLimit || 21;
+const STUDENT_CGPA       = window.STUDENT_DATA.studentCgpa || 0.0;
 
 /* ── Planned courses state ──────────────────────────────── */
 let plannedIds = [];
@@ -232,6 +220,12 @@ function updateSummary() {
   bar.style.animation = 'none';
   void bar.offsetWidth;
   bar.style.animation = '';
+
+  const pctLabel = document.getElementById('progress-pct-label');
+  if (pctLabel) {
+    const compPct = Math.min((COMPLETED_CREDITS / TOTAL_CREDITS) * 100, 100).toFixed(1);
+    pctLabel.textContent = `${compPct}% → ${pct}%`;
+  }
 
   const semLeft = Math.ceil((TOTAL_CREDITS - totalAfter) / 15);
   const gradText = semLeft <= 0 ? 'Graduation requirements met! 🎓'
