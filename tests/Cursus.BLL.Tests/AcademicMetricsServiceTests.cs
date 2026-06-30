@@ -208,6 +208,28 @@ public sealed class AcademicMetricsServiceTests
         Assert.Null(reason);
     }
 
+    [Fact]
+    public async Task CanEnrollInCourseAsync_IgnoresExcludedRecordOnEdit()
+    {
+        var service = CreateService(out var db);
+
+        db.StudentCourses.Add(new StudentCourse
+        {
+            Id = 42,
+            StudentId = "s1",
+            CourseId = 10,
+            Status = StudentCourseStatus.InProgress,
+            Semester = SemesterType.Fall,
+            AcademicYear = "2024-2025"
+        });
+        await db.SaveChangesAsync();
+
+        var (canEnroll, reason) = await service.CanEnrollInCourseAsync("s1", 10, excludeStudentCourseId: 42);
+
+        Assert.True(canEnroll);
+        Assert.Null(reason);
+    }
+
     private static AcademicMetricsService CreateService(out ApplicationDbContext db)
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
