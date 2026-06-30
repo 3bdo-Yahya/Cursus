@@ -583,7 +583,7 @@ function openImpactDrawer(result) {
     </div>
 
     <div class="cm-panel-action d-flex flex-column gap-2">
-      <a href="/Student/ImpactAnalyzer" class="cm-btn-view-report text-decoration-none d-flex align-items-center justify-content-center gap-2">
+      <a href="/Student/ImpactAnalyzer?courseId=${result.failedCourseId}" class="cm-btn-view-report text-decoration-none d-flex align-items-center justify-content-center gap-2">
         <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">open_in_new</span>
         View Full Impact Report
       </a>
@@ -661,7 +661,7 @@ function closeImpactDrawer() {
 
 function updateGraphFilter(filterType) {
   if (simActive) {
-    clearSim();
+    clearSimAnimated();
   }
 
   let filteredCourses = COURSES;
