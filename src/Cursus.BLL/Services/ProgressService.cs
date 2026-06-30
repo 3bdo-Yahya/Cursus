@@ -1,6 +1,7 @@
 using Cursus.DAL.Database;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Enums;
+using Cursus.Domain.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.BLL.Services;
@@ -46,7 +47,6 @@ public sealed class ProgressService : IProgressService
             .Include(u => u.StudentCourses)
                 .ThenInclude(sc => sc.Course)
                     .ThenInclude(c => c!.Prerequisites)
-            .Include(u => u.StandingHistories)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == studentId);
 
