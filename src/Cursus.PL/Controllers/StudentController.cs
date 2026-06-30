@@ -296,51 +296,13 @@ public class StudentController : Controller
         if (dto is null)
             return RedirectToAction("Login", "Account");
 
-        var model = MapToViewModel(dto);
+        if (dto.DepartmentName == "Not assigned")
+            TempData["Warning"] = "Please contact your admin to assign your department.";
+        else if (!dto.HasAcademicRecords)
+            TempData["Warning"] = "No academic records found yet. Your profile will populate once your admin enters your course history.";
 
-        // Fetch user's GPA History (StandingHistories)
-        var histories = await _db.StandingHistories
-            .AsNoTracking()
-            .Where(h => h.StudentId == user.Id)
-            .OrderBy(h => h.AcademicYear)
-            .ThenBy(h => h.Semester)
-            .ToListAsync();
-
-        var historyDtos = histories.Select(h => new
-        {
-            sem = FormatSemesterAbbrev(h.Semester, h.AcademicYear),
-            sgpa = (double)h.SemesterGpa
-        }).ToList();
-
-        var userWithUniv = await _db.Users
-            .Include(u => u.University)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Id == user.Id);
-
-        ViewData["StudentName"] = dto.DisplayName;
         ViewData["StudentEmail"] = user.Email ?? "";
-        ViewData["Initials"] = GetInitials(dto.DisplayName);
-        ViewData["UniversityName"] = userWithUniv?.University?.Name ?? "South Valley National University";
-        ViewData["HighestSgpa"] = histories.Any() ? (double)histories.Max(h => h.SemesterGpa) : 0.0;
-        ViewData["GpaHistoryJson"] = System.Text.Json.JsonSerializer.Serialize(historyDtos);
-
-        return View(model);
-    }
-
-    private static string FormatSemesterAbbrev(SemesterType semester, string academicYear)
-    {
-        var semName = semester switch
-        {
-            SemesterType.Fall => "Fall",
-            SemesterType.Spring => "Spr",
-            _ => "Sum"
-        };
-
-        var year = academicYear.Split('-').FirstOrDefault() ?? "";
-        if (year.Length >= 4)
-            year = year[2..];
-
-        return $"{semName}\n'{year}";
+        return View(MapToViewModel(dto));
     }
 
     private static StudentDashboardViewModel MapToViewModel(StudentDashboardDto dto)
@@ -381,6 +343,16 @@ public class StudentController : Controller
                     Schedule = $"{c.CreditHours} credit hours",
                     CreditHours = c.CreditHours,
                     IsElective = c.IsElective
+                })
+                .ToList(),
+
+            UniversityName = dto.UniversityName,
+            HighestSgpa = (double)dto.HighestSgpa,
+            GpaHistory = dto.GpaHistory
+                .Select(h => new GpaHistoryPointViewModel
+                {
+                    SemLabel = h.SemLabel,
+                    Sgpa = (double)h.Sgpa
                 })
                 .ToList()
         };
