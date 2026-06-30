@@ -273,6 +273,7 @@ public class StudentController : Controller
 
         var result = await _impactAnalysisService
             .GetBlockedCoursesAsync(
+                user.Id,
                 request.CourseId,
                 user.DepartmentId.Value,
                 user.CurrentSemester,

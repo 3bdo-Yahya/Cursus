@@ -1,16 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
 
 namespace Cursus.BLL.Services;
 
 /// <summary>
-/// Demo-scoped graduation delay estimate based on retake availability,
-/// standing credit caps, and remaining blocked credits.
+/// Semester-by-semester graduation delay simulation based on retake availability,
+/// prerequisite constraint satisfaction, and standing credit limits.
 /// </summary>
-internal static class GraduationDelayCalculator
+public static class GraduationDelayCalculator
 {
     private const int DefaultMaxCreditsPerSemester = 18;
 
-    internal sealed record Result(
+    public sealed record Result(
         int GraduationDelaySemesters,
         int RetakeDelaySemesters,
         int RecoverySemesters,
@@ -18,29 +22,48 @@ internal static class GraduationDelayCalculator
         string RetakeSemesterLabel,
         string ProjectedGraduationLabel);
 
-    internal static Result Calculate(
+    public static Result Calculate(
         SemesterType currentSemester,
         string? academicYear,
         AcademicStanding standing,
         decimal cgpa,
+        int failedCourseId,
         SemesterAvailability failedCourseAvailability,
-        int blockedCredits,
-        int cascadeDepth)
+        List<Course> allCurriculumCourses,
+        HashSet<int> completedCourseIds,
+        Dictionary<int, List<int>> prerequisites)
     {
         var maxCredits = GetMaxCreditsPerSemester(standing, cgpa);
         var retakeDelay = SemestersUntilOffering(currentSemester, failedCourseAvailability);
 
-        var creditSemesters = blockedCredits > 0
-            ? (int)Math.Ceiling((double)blockedCredits / maxCredits)
-            : 0;
-        var recoverySemesters = Math.Max(creditSemesters, cascadeDepth);
+        // 1. Baseline Path (student passed the course)
+        var baselineCompleted = new HashSet<int>(completedCourseIds) { failedCourseId };
+        var baselineSemesters = SimulateGraduation(
+            baselineCompleted,
+            allCurriculumCourses,
+            prerequisites,
+            currentSemester,
+            academicYear,
+            maxCredits);
 
-        var graduationDelay = retakeDelay + recoverySemesters;
+        // 2. Failure Path (student failed the course)
+        var failureCompleted = new HashSet<int>(completedCourseIds);
+        failureCompleted.Remove(failedCourseId);
+        var failureSemesters = SimulateGraduation(
+            failureCompleted,
+            allCurriculumCourses,
+            prerequisites,
+            currentSemester,
+            academicYear,
+            maxCredits);
+
+        var graduationDelay = Math.Max(0, failureSemesters - baselineSemesters);
+        var recoverySemesters = Math.Max(0, failureSemesters - retakeDelay);
 
         var retakeSemesterLabel = FormatSemesterAfter(
             currentSemester, academicYear, retakeDelay);
         var projectedGraduationLabel = FormatSemesterAfter(
-            currentSemester, academicYear, graduationDelay);
+            currentSemester, academicYear, failureSemesters);
 
         return new Result(
             GraduationDelaySemesters: graduationDelay,
@@ -51,7 +74,113 @@ internal static class GraduationDelayCalculator
             ProjectedGraduationLabel: projectedGraduationLabel);
     }
 
-    internal static int GetMaxCreditsPerSemester(AcademicStanding standing, decimal cgpa) =>
+    private static int SimulateGraduation(
+        HashSet<int> startingCompletedCourses,
+        List<Course> allCurriculumCourses,
+        Dictionary<int, List<int>> prerequisites,
+        SemesterType currentSemester,
+        string? academicYear,
+        int maxCredits)
+    {
+        var completed = new HashSet<int>(startingCompletedCourses);
+        var remaining = allCurriculumCourses
+            .Where(c => !completed.Contains(c.Id))
+            .ToList();
+
+        if (remaining.Count == 0)
+            return 0;
+
+        var semester = currentSemester;
+        var year = ParseAcademicYearStart(academicYear);
+
+        int semesterCount = 0;
+        int safetyLimit = 60; // Safety limit of 20 years
+
+        while (remaining.Count > 0 && semesterCount < safetyLimit)
+        {
+            (semester, year) = AdvanceSemester(semester, year);
+            semesterCount++;
+
+            // Find all eligible courses to schedule in this term
+            var eligible = remaining
+                .Where(c => IsOfferedIn(semester, c.SemesterAvailability) &&
+                            c.Prerequisites.All(p => completed.Contains(p.PrerequisiteId)))
+                .ToList();
+
+            if (eligible.Count == 0)
+            {
+                continue;
+            }
+
+            // Prioritize:
+            // 1. Core courses first
+            // 2. Then courses that are prerequisites for remaining courses (out-degree)
+            // 3. Then by code to be deterministic
+            var prioritized = eligible
+                .OrderByDescending(c => c.CourseType == CourseType.Core)
+                .ThenByDescending(c => CountDownstreamRemaining(c.Id, remaining, prerequisites))
+                .ThenBy(c => c.Code, StringComparer.Ordinal)
+                .ToList();
+
+            int currentCredits = 0;
+            var scheduledThisSemester = new List<Course>();
+
+            foreach (var course in prioritized)
+            {
+                if (currentCredits + course.CreditHours <= maxCredits)
+                {
+                    scheduledThisSemester.Add(course);
+                    currentCredits += course.CreditHours;
+                }
+            }
+
+            if (scheduledThisSemester.Count > 0)
+            {
+                foreach (var course in scheduledThisSemester)
+                {
+                    completed.Add(course.Id);
+                    remaining.Remove(course);
+                }
+            }
+        }
+
+        return semesterCount;
+    }
+
+    private static int CountDownstreamRemaining(
+        int courseId,
+        List<Course> remaining,
+        Dictionary<int, List<int>> adjacency)
+    {
+        var visited = new HashSet<int> { courseId };
+        var queue = new Queue<int>();
+        queue.Enqueue(courseId);
+
+        int count = 0;
+        var remainingIds = remaining.Select(r => r.Id).ToHashSet();
+
+        while (queue.Count > 0)
+        {
+            var curr = queue.Dequeue();
+            if (adjacency.TryGetValue(curr, out var dependents))
+            {
+                foreach (var depId in dependents)
+                {
+                    if (visited.Add(depId))
+                    {
+                        if (remainingIds.Contains(depId))
+                        {
+                            count++;
+                        }
+                        queue.Enqueue(depId);
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    public static int GetMaxCreditsPerSemester(AcademicStanding standing, decimal cgpa) =>
         standing switch
         {
             AcademicStanding.Probation => 12,
@@ -59,7 +188,7 @@ internal static class GraduationDelayCalculator
             _ => cgpa >= 3.0m ? 21 : DefaultMaxCreditsPerSemester
         };
 
-    internal static int SemestersUntilOffering(
+    public static int SemestersUntilOffering(
         SemesterType currentSemester,
         SemesterAvailability availability)
     {
