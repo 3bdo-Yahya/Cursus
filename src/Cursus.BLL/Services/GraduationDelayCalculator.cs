@@ -58,7 +58,8 @@ public static class GraduationDelayCalculator
             maxCredits);
 
         var graduationDelay = Math.Max(0, failureSemesters - baselineSemesters);
-        var recoverySemesters = Math.Max(0, failureSemesters - retakeDelay);
+        // Recovery is the extra path after accounting for waiting to retake.
+        var recoverySemesters = Math.Max(0, graduationDelay - retakeDelay);
 
         var retakeSemesterLabel = FormatSemesterAfter(
             currentSemester, academicYear, retakeDelay);
@@ -95,6 +96,10 @@ public static class GraduationDelayCalculator
 
         int semesterCount = 0;
         int safetyLimit = 60; // Safety limit of 20 years
+
+        // A curriculum with a course above cap is unschedulable by definition.
+        if (remaining.Any(c => c.CreditHours > maxCredits))
+            return safetyLimit;
 
         while (remaining.Count > 0 && semesterCount < safetyLimit)
         {
@@ -134,17 +139,20 @@ public static class GraduationDelayCalculator
                 }
             }
 
-            if (scheduledThisSemester.Count > 0)
+            if (scheduledThisSemester.Count == 0)
             {
-                foreach (var course in scheduledThisSemester)
-                {
-                    completed.Add(course.Id);
-                    remaining.Remove(course);
-                }
+                // Eligible-but-never-packable means current cap/prereq state is stuck.
+                return safetyLimit;
+            }
+
+            foreach (var course in scheduledThisSemester)
+            {
+                completed.Add(course.Id);
+                remaining.Remove(course);
             }
         }
 
-        return semesterCount;
+        return remaining.Count == 0 ? semesterCount : safetyLimit;
     }
 
     private static int CountDownstreamRemaining(
