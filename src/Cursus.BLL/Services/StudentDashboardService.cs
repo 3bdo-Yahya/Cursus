@@ -27,7 +27,6 @@ public sealed class StudentDashboardService : IStudentDashboardService
             .Include(u => u.Department)
             .Include(u => u.StudentCourses)
                 .ThenInclude(sc => sc.Course)
-            .Include(u => u.StandingHistories)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == studentId);
 
@@ -46,16 +45,12 @@ public sealed class StudentDashboardService : IStudentDashboardService
         var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScale);
         var termGpas = _academicMetricsService.CalculateSgpaByTerm(allCourses, gradeScale);
 
-        var currentTerm = termGpas.FirstOrDefault(t => 
-            string.Equals(t.AcademicYear, student.AcademicYear, StringComparison.OrdinalIgnoreCase) && 
+        var currentTerm = termGpas.FirstOrDefault(t =>
+            string.Equals(t.AcademicYear, student.AcademicYear, StringComparison.OrdinalIgnoreCase) &&
             t.Semester == student.CurrentSemester);
         var sgpa = currentTerm?.SemesterGpa ?? 0m;
 
-        var previousTerm = termGpas
-            .Where(t => !(string.Equals(t.AcademicYear, student.AcademicYear, StringComparison.OrdinalIgnoreCase) && t.Semester == student.CurrentSemester))
-            .OrderByDescending(t => t.AcademicYear)
-            .ThenByDescending(t => t.Semester)
-            .FirstOrDefault();
+        var previousTerm = _academicMetricsService.GetPreviousTerm(termGpas, student.AcademicYear, student.CurrentSemester);
         var lastCgpa = previousTerm?.CumulativeGpa ?? cgpa;
 
         var cgpaChange = Math.Round(cgpa - lastCgpa, 2);
@@ -123,7 +118,9 @@ public sealed class StudentDashboardService : IStudentDashboardService
 
         var coursesRemaining = coreRemaining + electiveRemaining + uniReqRemaining;
         var standingAlert = BuildStandingAlert(student.CurrentStanding, cgpa);
-        var (projectedGraduation, totalSemesters) = ProjectGraduation(student.CurrentSemester, student.AcademicYear, creditsCompleted, creditsRequired, student.CurrentStanding, cgpa);
+        var maxCredits = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+        var (projectedGraduation, totalSemesters) = ProjectGraduation(
+            student.CurrentSemester, student.AcademicYear, creditsCompleted, creditsRequired, maxCredits);
 
         var currentCourses = allCourses
             .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
@@ -168,7 +165,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
             StandingAlert = standingAlert,
             HasAcademicRecords = allCourses.Count > 0,
             ProjectedGraduation = projectedGraduation,
-            SemestersCompleted = student.StandingHistories.Count,
+            SemestersCompleted = termGpas.Count,
             TotalSemesters = totalSemesters,
             CurrentCourses = currentCourses,
             UniversityName = student.University?.Name ?? "Not assigned",
@@ -176,8 +173,6 @@ public sealed class StudentDashboardService : IStudentDashboardService
             GpaHistory = gpaHistory
         };
     }
-
-    // Helpers removed, replaced by AcademicMetricsService
 
     private static string BuildStandingAlert(AcademicStanding standing, decimal cgpa)
     {
@@ -199,8 +194,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
         string? academicYear,
         int creditsCompleted,
         int creditsRequired,
-        AcademicStanding standing,
-        decimal cgpa)
+        int maxCreditsPerSemester)
     {
         if (creditsRequired <= 0)
             return ("N/A", 0);
@@ -209,14 +203,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
         if (remaining == 0)
             return ("Completed", 0);
 
-        var maxCredits = standing switch
-        {
-            AcademicStanding.Probation => 12,
-            AcademicStanding.Warning => 15,
-            _ => cgpa >= 3.0m ? 21 : DefaultMaxCreditsPerSemester
-        };
-
-        var semestersNeeded = (int)Math.Ceiling((double)remaining / maxCredits);
+        var semestersNeeded = (int)Math.Ceiling((double)remaining / maxCreditsPerSemester);
         var totalSemesters = (int)Math.Ceiling((double)creditsRequired / DefaultMaxCreditsPerSemester);
 
         var yearStart = ParseAcademicYearStart(academicYear);
@@ -252,21 +239,5 @@ public sealed class StudentDashboardService : IStudentDashboardService
             SemesterType.Spring => (SemesterType.Summer, year),
             _ => (SemesterType.Fall, year)
         };
-    }
-
-    private static string FormatSemesterAbbrev(SemesterType semester, string academicYear)
-    {
-        var semName = semester switch
-        {
-            SemesterType.Fall => "Fall",
-            SemesterType.Spring => "Spr",
-            _ => "Sum"
-        };
-
-        var year = academicYear.Split('-').FirstOrDefault() ?? "";
-        if (year.Length >= 4)
-            year = year[2..];
-
-        return $"{semName}\n'{year}";
     }
 }
