@@ -1,4 +1,4 @@
-﻿namespace Cursus.PL.Models;
+namespace Cursus.PL.Models;
 
 public class AiAdvisorViewModel
 {
@@ -8,5 +8,5 @@ public class AiAdvisorViewModel
     public int Year { get; init; }
     public double Cgpa { get; init; }
     public required string AcademicStanding { get; init; }
-    public string StandingCssClass { get; set; } = "good";
+    public string StandingCssClass { get; init; } = "good";
 }
