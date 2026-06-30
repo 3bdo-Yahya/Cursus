@@ -72,6 +72,7 @@ namespace Cursus.PL
             services.AddScoped<IImpactAnalysisService, ImpactAnalysisService>();
             services.AddSingleton<IGeminiChatClient, GeminiChatClient>();
             services.AddScoped<IGeminiService, GeminiService>();
+            services.AddScoped<IAcademicMetricsService, AcademicMetricsService>();
             #endregion
 
 
