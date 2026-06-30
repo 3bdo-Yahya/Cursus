@@ -33,6 +33,16 @@ public class StudentDashboardViewModel
 
     public List<EnrolledCourseViewModel> CurrentCourses { get; init; } = [];
     public int TotalCurrentCredits => CurrentCourses.Sum(c => c.CreditHours);
+
+    public required string UniversityName { get; init; }
+    public double HighestSgpa { get; init; }
+    public List<GpaHistoryPointViewModel> GpaHistory { get; init; } = [];
+}
+
+public class GpaHistoryPointViewModel
+{
+    public required string SemLabel { get; init; }
+    public double Sgpa { get; init; }
 }
 
 public class EnrolledCourseViewModel
