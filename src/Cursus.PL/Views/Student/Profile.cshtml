@@ -35,6 +35,8 @@
     <link rel="stylesheet" href="~/css/pages/student/student-profile.css" asp-append-version="true"/>
 }
 
+@await Html.PartialAsync("_StudentAlerts")
+
   <section class="sp-hero anim-fade-up">
     <div class="sp-hero-bg"></div>
     <div class="sp-hero-content">
@@ -154,7 +156,7 @@
         <div class="sp-field-grid">
           <div class="sp-field">
             <p class="sp-field-label">University</p>
-            <p class="sp-field-value">@ViewData["UniversityName"]</p>
+            <p class="sp-field-value">@Model.UniversityName</p>
           </div>
           <div class="sp-field">
             <p class="sp-field-label">Department</p>
@@ -253,7 +255,7 @@
           <div class="sp-gpa-summary">
             <div class="sp-gpa-summary-item">
               <p class="sp-field-label">Highest SGPA</p>
-              <p class="fw-800 mb-0" style="font-size:15px;color:#10b981;">@ViewData["HighestSgpa"]</p>
+              <p class="fw-800 mb-0" style="font-size:15px;color:#10b981;">@Model.HighestSgpa.ToString("F2")</p>
             </div>
             <div class="sp-gpa-summary-div"></div>
             <div class="sp-gpa-summary-item">
@@ -357,7 +359,8 @@
 
 @section Scripts {
     <script>
-        window.GPA_HISTORY = @Html.Raw(ViewData["GpaHistoryJson"]);
+        window.GPA_HISTORY = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.GpaHistory.Select(h => new { sem = h.SemLabel, sgpa = h.Sgpa })));
     </script>
     <script src="~/js/pages/student/student-profile.js" asp-append-version="true"></script>
 }
