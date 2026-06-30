@@ -341,6 +341,28 @@ public class AdminController : Controller
         }
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> StudentDeleteCourse(int id)
+    {
+        var record = await _context.StudentCourses.FindAsync(id);
+        if (record is null)
+            return NotFound();
+
+        var studentId = record.StudentId;
+        try
+        {
+            await _studentManagementService.DeleteCourseRecordAsync(id);
+            TempData["StatusMessage"] = "Course record deleted successfully.";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"Unable to delete course record: {ex.Message}";
+        }
+
+        return RedirectToAction(nameof(StudentDetail), new { id = studentId });
+    }
+
     public async Task<IActionResult> Index()
     {
         var dashboard = await _adminDashboardService.GetAdminDashboardAsync();
