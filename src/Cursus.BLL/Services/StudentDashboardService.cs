@@ -12,8 +12,13 @@ public sealed class StudentDashboardService : IStudentDashboardService
     private const int DefaultMaxCreditsPerSemester = 18;
     private const int AlertCgpaThreshold = 2;
     private readonly ApplicationDbContext _db;
+    private readonly IAcademicMetricsService _academicMetricsService;
 
-    public StudentDashboardService(ApplicationDbContext db) => _db = db;
+    public StudentDashboardService(ApplicationDbContext db, IAcademicMetricsService academicMetricsService)
+    {
+        _db = db;
+        _academicMetricsService = academicMetricsService;
+    }
 
     public async Task<StudentDashboardDto?> GetDashboardDataAsync(string studentId)
     {
@@ -29,36 +34,29 @@ public sealed class StudentDashboardService : IStudentDashboardService
         if (student is null)
             return null;
 
-        var gradeScale = await BuildGradeScaleAsync(student.Department?.UniversityId);
+        var gradeScale = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
         var allCourses = student.StudentCourses.ToList();
 
-        // Group by CourseId to filter out duplicates / retakes (Completed > InProgress > Failed)
-        var studentCourseMap = allCourses
-            .GroupBy(sc => sc.CourseId)
-            .ToDictionary(
-                g => g.Key,
-                g => g.OrderBy(sc => sc.Status switch
-                {
-                    StudentCourseStatus.Completed => 0,
-                    StudentCourseStatus.Failed => 1,
-                    StudentCourseStatus.InProgress => 2,
-                    _ => 3
-                }).First());
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(allCourses);
 
-        var completedCourses = studentCourseMap.Values
+        var completedCourses = bestAttempts
             .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
             .ToList();
 
-        var gradedCourses = studentCourseMap.Values
-            .Where(sc => sc.Status is StudentCourseStatus.Completed or StudentCourseStatus.Failed && !string.IsNullOrWhiteSpace(sc.Grade) && sc.Course is not null)
-            .ToList();
+        var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScale);
+        var termGpas = _academicMetricsService.CalculateSgpaByTerm(allCourses, gradeScale);
 
-        var cgpa = CalculateGpa(gradedCourses, gradeScale);
-        var sgpa = CalculateSemesterGpa(student.StandingHistories, student.CurrentSemester, student.AcademicYear);
-        var lastCgpa = student.StandingHistories
-            .OrderByDescending(h => h.AcademicYear)
-            .ThenByDescending(h => h.Semester)
-            .FirstOrDefault()?.CumulativeGpa ?? cgpa;
+        var currentTerm = termGpas.FirstOrDefault(t => 
+            string.Equals(t.AcademicYear, student.AcademicYear, StringComparison.OrdinalIgnoreCase) && 
+            t.Semester == student.CurrentSemester);
+        var sgpa = currentTerm?.SemesterGpa ?? 0m;
+
+        var previousTerm = termGpas
+            .Where(t => !(string.Equals(t.AcademicYear, student.AcademicYear, StringComparison.OrdinalIgnoreCase) && t.Semester == student.CurrentSemester))
+            .OrderByDescending(t => t.AcademicYear)
+            .ThenByDescending(t => t.Semester)
+            .FirstOrDefault();
+        var lastCgpa = previousTerm?.CumulativeGpa ?? cgpa;
 
         var cgpaChange = Math.Round(cgpa - lastCgpa, 2);
         var creditsCompleted = completedCourses.Sum(sc => sc.Course!.CreditHours);
@@ -96,7 +94,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
                 }
                 else if (req.CategoryType is CourseType.DeptElective or CourseType.FreeElective or CourseType.UniversityReq)
                 {
-                    int earnedCredits = studentCourseMap.Values
+                    int earnedCredits = bestAttempts
                         .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course?.CourseType == req.CategoryType)
                         .Sum(sc => sc.Course!.CreditHours);
 
@@ -138,21 +136,16 @@ public sealed class StudentDashboardService : IStudentDashboardService
             })
             .ToList();
 
-        var orderedHistories = student.StandingHistories
-            .OrderBy(h => h.AcademicYear)
-            .ThenBy(h => h.Semester)
-            .ToList();
-
-        var gpaHistory = orderedHistories
+        var gpaHistory = termGpas
             .Select(h => new GpaHistoryPointDto
             {
-                SemLabel = FormatSemesterAbbrev(h.Semester, h.AcademicYear),
+                SemLabel = h.SemLabel,
                 Sgpa = h.SemesterGpa
             })
             .ToList();
 
-        var highestSgpa = orderedHistories.Count > 0
-            ? orderedHistories.Max(h => h.SemesterGpa)
+        var highestSgpa = termGpas.Count > 0
+            ? termGpas.Max(h => h.SemesterGpa)
             : 0m;
 
         return new StudentDashboardDto
@@ -184,67 +177,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
         };
     }
 
-    private async Task<Dictionary<string, decimal>> BuildGradeScaleAsync(int? universityId)
-    {
-        if (universityId is null)
-            return BuildDefaultGradeScale();
-
-        var gradeScale = await _db.GradeScales
-            .AsNoTracking()
-            .Where(gs => gs.UniversityId == universityId)
-            .ToDictionaryAsync(gs => gs.LetterGrade.ToUpper(), gs => gs.PointValue);
-
-        return gradeScale.Count > 0 ? gradeScale : BuildDefaultGradeScale();
-    }
-
-    private static Dictionary<string, decimal> BuildDefaultGradeScale()
-        => new()
-        {
-            ["A+"] = 4.0m,
-            ["A"] = 4.0m,
-            ["A-"] = 3.7m,
-            ["B+"] = 3.3m,
-            ["B"] = 3.0m,
-            ["B-"] = 2.7m,
-            ["C+"] = 2.3m,
-            ["C"] = 2.0m,
-            ["C-"] = 1.7m,
-            ["D+"] = 1.3m,
-            ["D"] = 1.0m,
-            ["F"] = 0.0m
-        };
-
-    private static decimal CalculateGpa(IEnumerable<StudentCourse> records, Dictionary<string, decimal> gradeScale)
-    {
-        var totalPoints = 0m;
-        var totalCredits = 0;
-
-        foreach (var record in records)
-        {
-            if (record.Course is null || string.IsNullOrWhiteSpace(record.Grade))
-                continue;
-
-            var gradeKey = record.Grade.Trim().ToUpper();
-            if (!gradeScale.TryGetValue(gradeKey, out var points))
-                continue;
-
-            totalPoints += points * record.Course.CreditHours;
-            totalCredits += record.Course.CreditHours;
-        }
-
-        return totalCredits == 0 ? 0m : Math.Round(totalPoints / totalCredits, 2);
-    }
-
-    private static decimal CalculateSemesterGpa(IEnumerable<StandingHistory> histories, SemesterType currentSemester, string? academicYear)
-    {
-        var current = histories
-            .Where(h => string.Equals(h.AcademicYear, academicYear, StringComparison.OrdinalIgnoreCase)
-                        && h.Semester == currentSemester)
-            .OrderByDescending(h => h.Id)
-            .FirstOrDefault();
-
-        return current?.SemesterGpa ?? 0m;
-    }
+    // Helpers removed, replaced by AcademicMetricsService
 
     private static string BuildStandingAlert(AcademicStanding standing, decimal cgpa)
     {
