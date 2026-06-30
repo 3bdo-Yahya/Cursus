@@ -76,7 +76,30 @@ public class StudentController : Controller
 
         return View(new ProgressViewModel { Audit = audit });
     }
-    public IActionResult AiAdvisor() => View();
+    public async Task<IActionResult> AiAdvisor()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToAction("Login", "Account");
+
+        var dto = await _dashboardService.GetDashboardDataAsync(user.Id);
+        if (dto is null)
+            return RedirectToAction("Login", "Account");
+
+        var model = new AiAdvisorViewModel
+        {
+            StudentName = dto.DisplayName,
+            Initials = GetInitials(dto.DisplayName),
+            Department = dto.DepartmentName,
+            Year = (dto.SemestersCompleted / 2) + 1,
+            Cgpa = (double)dto.Cgpa,
+            AcademicStanding = FormatStanding(dto.Standing),
+            StandingCssClass = GetStandingCssClass(dto.Standing)
+        };
+
+        return View(model);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AiAdvisorChat([FromBody] ChatRequestDto request, CancellationToken cancellationToken)
