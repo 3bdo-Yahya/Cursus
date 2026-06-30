@@ -87,12 +87,8 @@ public class StudentController : Controller
         var termGpas = _academicMetricsService.CalculateSgpaByTerm(studentCourses, gradeScaleDecimal);
 
         var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
-        var overloadLimit = student.CurrentStanding switch
-        {
-            AcademicStanding.Probation => 12,
-            AcademicStanding.Warning => 15,
-            _ => 21
-        };
+        var isOverloadEligible = student.CurrentStanding == AcademicStanding.Good && cgpa >= 3.0m;
+        var overloadLimit = isOverloadEligible ? 21 : creditLimit;
 
         var completedCourses = bestAttempts
             .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
@@ -103,16 +99,24 @@ public class StudentController : Controller
             .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
             .Sum(sc => sc.Course!.CreditHours);
 
+        var inProgressCourses = studentCourses
+            .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
+            .Select(sc => sc.Course!.Code)
+            .ToList();
+
         var currentlyEnrolled = studentCourses
             .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
-            .Select(sc => new SimulatedCourseViewModel
+            .Select(sc =>
             {
-                Id = sc.Course!.Code,
-                Name = sc.Course.Name,
-                Credits = sc.Course.CreditHours,
-                IsRetake = false,
-                OriginalGrade = string.Empty,
-                OriginalPoints = 0.0
+                var (type, typeClass) = MapPlannerCourseType(sc.Course!.CourseType);
+                return new PlannerEnrolledCourseViewModel
+                {
+                    Id = sc.Course.Code,
+                    Name = sc.Course.Name,
+                    Credits = sc.Course.CreditHours,
+                    Type = type,
+                    TypeClass = typeClass
+                };
             })
             .ToList();
 
@@ -123,31 +127,21 @@ public class StudentController : Controller
             .AsNoTracking()
             .ToListAsync();
 
-        var catalog = catalogCourses.Select(c => new PlannerCourseViewModel
+        var catalog = catalogCourses.Select(c =>
         {
-            Id = c.Code,
-            Name = c.Name,
-            Credits = c.CreditHours,
-            Type = c.CourseType switch
+            var (type, typeClass) = MapPlannerCourseType(c.CourseType);
+            return new PlannerCourseViewModel
             {
-                CourseType.Core => "Core",
-                CourseType.DeptElective => "Dept. Elective",
-                CourseType.FreeElective => "Free Elective",
-                CourseType.UniversityReq => "University Req.",
-                _ => "Core"
-            },
-            TypeClass = c.CourseType switch
-            {
-                CourseType.Core => "type-core",
-                CourseType.DeptElective => "type-elec",
-                CourseType.FreeElective => "type-free",
-                CourseType.UniversityReq => "type-univ",
-                _ => "type-core"
-            },
-            Prereqs = c.Prerequisites
-                .Where(p => p.Prerequisite is not null)
-                .Select(p => p.Prerequisite!.Code)
-                .ToList()
+                Id = c.Code,
+                Name = c.Name,
+                Credits = c.CreditHours,
+                Type = type,
+                TypeClass = typeClass,
+                Prereqs = c.Prerequisites
+                    .Where(p => p.Prerequisite is not null)
+                    .Select(p => p.Prerequisite!.Code)
+                    .ToList()
+            };
         }).ToList();
 
         var model = new PlannerViewModel
@@ -163,7 +157,9 @@ public class StudentController : Controller
             TotalCreditsRequired = student.Department?.TotalCreditsRequired ?? 132,
             CreditLimit = creditLimit,
             OverloadLimit = overloadLimit,
+            IsOverloadEligible = isOverloadEligible,
             CompletedCourses = completedCourses,
+            InProgressCourses = inProgressCourses,
             CurrentlyEnrolledCourses = currentlyEnrolled,
             Catalog = catalog
         };
@@ -499,4 +495,14 @@ public class StudentController : Controller
             return $"{char.ToUpper(parts[0][0])}{char.ToUpper(parts[1][0])}";
         return name.Length >= 2 ? name[..2].ToUpper() : name.ToUpper();
     }
+
+    private static (string Type, string TypeClass) MapPlannerCourseType(CourseType courseType) =>
+        courseType switch
+        {
+            CourseType.Core => ("Core", "type-core"),
+            CourseType.DeptElective => ("Dept. Elective", "type-elec"),
+            CourseType.FreeElective => ("Free Elective", "type-free"),
+            CourseType.UniversityReq => ("University Req.", "type-univ"),
+            _ => ("Core", "type-core")
+        };
 }

@@ -1,19 +1,25 @@
 @model Cursus.PL.Models.PlannerViewModel
+@using Cursus.PL
 
 @{
     ViewData["Title"] = "Semester Planner";
+    var progressPct = Model.TotalCreditsRequired > 0
+        ? Math.Min((double)Model.CompletedCredits / Model.TotalCreditsRequired * 100, 100)
+        : 0;
 }
 
 <script>
     window.STUDENT_DATA = {
-        completedCourses: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CompletedCourses)),
+        completedCourses: @Html.Raw(ViewJson.Serialize(Model.CompletedCourses)),
+        inProgressCourses: @Html.Raw(ViewJson.Serialize(Model.InProgressCourses)),
         completedCredits: @Model.CompletedCredits,
         totalCredits: @Model.TotalCreditsRequired,
         creditLimit: @Model.CreditLimit,
         overloadLimit: @Model.OverloadLimit,
+        isOverloadEligible: @(Model.IsOverloadEligible ? "true" : "false"),
         studentCgpa: @Model.CurrentCgpa,
-        catalog: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Catalog)),
-        currentlyEnrolled: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CurrentlyEnrolledCourses))
+        catalog: @Html.Raw(ViewJson.Serialize(Model.Catalog)),
+        currentlyEnrolled: @Html.Raw(ViewJson.Serialize(Model.CurrentlyEnrolledCourses))
     };
 </script>
 
@@ -54,6 +60,10 @@
 
         <!-- Planned courses list -->
         <div id="planned-courses-list">
+          <div id="planned-empty-state" class="planned-empty-state">
+            <span class="material-symbols-outlined" style="font-size:22px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">playlist_add</span>
+            <p class="mb-0" style="font-size:13px;color:var(--c-muted);">No courses planned yet — add courses below to build your semester.</p>
+          </div>
         </div>
 
         <!-- Add course row -->
@@ -75,17 +85,17 @@
         </div>
       </div>
 
-      <!-- Previously planned -->
+      <!-- Current semester enrollment -->
       <div class="anim-fade-up-2" data-scroll="fade-up">
-        <p class="section-heading mb-2" style="font-size:13px;color:var(--c-muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase;">Previous Semesters · Reference Only</p>
+        <p class="section-heading mb-2" style="font-size:13px;color:var(--c-muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase;">Current Semester · In Progress</p>
         <div class="d-flex flex-column gap-2">
           @if (Model.CurrentlyEnrolledCourses.Any())
           {
               <div class="plan-card" style="opacity:.75;">
                 <div class="plan-card-header">
                   <div>
-                    <div class="plan-card-title" style="font-size:13.5px;">@Model.Semester <span style="font-size:11px;font-weight:600;color:var(--c-primary);">· In Progress</span></div>
-                    <div class="plan-card-subtitle">Currently enrolled</div>
+                    <div class="plan-card-title" style="font-size:13.5px;">@Model.Semester</div>
+                    <div class="plan-card-subtitle">Currently enrolled courses</div>
                   </div>
                   <span class="credit-chip credit-chip-ok">@Model.CurrentlyEnrolledCourses.Sum(c => c.Credits) cr</span>
                 </div>
@@ -95,7 +105,7 @@
                       <div class="planned-row" style="cursor:default;">
                         <span class="planned-code">@sc.Id</span>
                         <span class="planned-name">@sc.Name</span>
-                        <span class="planned-type-badge type-core">Enrolled</span>
+                        <span class="planned-type-badge @sc.TypeClass">@sc.Type</span>
                         <span class="planned-credits">@sc.Credits cr</span>
                         <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
                       </div>
@@ -106,7 +116,7 @@
           else
           {
               <div style="font-size: 13px; color: var(--c-muted); padding: 10px;">
-                  No previous semesters recorded.
+                  No courses currently in progress.
               </div>
           }
         </div>
@@ -143,11 +153,11 @@
           <span class="summary-stat-value ok" id="stat-conflicts">None ✓</span>
         </div>
         <div class="mini-bar-track">
-          <div class="mini-bar-fill" id="plan-bar" style="--bar-w: @(Math.Min(((double)Model.CompletedCredits / Model.TotalCreditsRequired) * 100, 100).ToString("0.0"))%;"></div>
+          <div class="mini-bar-fill" id="plan-bar" style="--bar-w: @progressPct.ToString("0.0")%;"></div>
         </div>
         <div style="padding:0 20px 12px;display:flex;justify-content:space-between;">
           <span style="font-size:11px;color:var(--c-muted);">@Model.CompletedCredits completed</span>
-          <span style="font-size:11px;color:var(--c-muted);font-weight:700;" id="progress-pct-label">@(Math.Min(((double)Model.CompletedCredits / Model.TotalCreditsRequired) * 100, 100).ToString("0.0"))%</span>
+          <span style="font-size:11px;color:var(--c-muted);font-weight:700;" id="progress-pct-label">@progressPct.ToString("0.0")%</span>
           <span style="font-size:11px;color:var(--c-muted);">@Model.TotalCreditsRequired total</span>
         </div>
       </div>
@@ -165,7 +175,7 @@
           </div>
         </div>
 
-        @if (Model.OverloadLimit > Model.CreditLimit)
+        @if (Model.IsOverloadEligible)
         {
             <div class="sidebar-alert alert-info">
               <div class="sidebar-alert-icon" style="background:var(--alert-info-icon);">

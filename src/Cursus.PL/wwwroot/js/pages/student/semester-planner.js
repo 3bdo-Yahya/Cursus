@@ -3,35 +3,41 @@ const CATALOG = window.STUDENT_DATA.catalog || [];
 
 /* ── Student data ──────────────── */
 const COMPLETED_COURSES  = window.STUDENT_DATA.completedCourses || [];
+const IN_PROGRESS_COURSES = window.STUDENT_DATA.inProgressCourses || [];
 const COMPLETED_CREDITS  = window.STUDENT_DATA.completedCredits || 0;
 const TOTAL_CREDITS      = window.STUDENT_DATA.totalCredits || 132;
 const CREDIT_LIMIT       = window.STUDENT_DATA.creditLimit || 18;
 const OVERLOAD_LIMIT     = window.STUDENT_DATA.overloadLimit || 21;
-const STUDENT_CGPA       = window.STUDENT_DATA.studentCgpa || 0.0;
 
 /* ── Planned courses state ──────────────────────────────── */
 let plannedIds = [];
+
+function prereqSatisfied(code) {
+  return COMPLETED_COURSES.includes(code)
+    || IN_PROGRESS_COURSES.includes(code)
+    || plannedIds.includes(code);
+}
+
+function updateEmptyState() {
+  const list = document.getElementById('planned-courses-list');
+  const empty = document.getElementById('planned-empty-state');
+  if (!list || !empty) return;
+  const hasRows = list.querySelectorAll('.planned-row').length > 0;
+  empty.style.display = hasRows ? 'none' : '';
+}
 
 /* ── Read planned courses from DOM ────────────────── */
 function init() {
   document.querySelectorAll('#planned-courses-list .planned-row').forEach(row => {
     plannedIds.push(row.dataset.courseId);
   });
+  updateEmptyState();
   updateSummary();
 
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); obs.unobserve(e.target); } });
   }, { threshold: 0.08 });
   document.querySelectorAll('[data-scroll],[data-scroll-group]').forEach(el => obs.observe(el));
-}
-
-/* ── Switch semester tab ────────────────────────────────── */
-function switchSemester(btn, sem) {
-  document.querySelectorAll('.sem-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  // In a real MVC app this would load the correct semester plan.
-  // For demo we just show a toast.
-  showToast(`Switched to ${btn.textContent}`, 'event_note');
 }
 
 /* ── Remove a course ────────────────────────────────────── */
@@ -52,6 +58,7 @@ function removeCourse(id, e) {
     setTimeout(() => {
       row.remove();
       plannedIds = plannedIds.filter(x => x !== id);
+      updateEmptyState();
       updateSummary();
       showToast(`Removed ${id}`, 'remove_circle');
     }, 250);
@@ -87,7 +94,8 @@ function renderAddList(query) {
   list.innerHTML = '';
 
   const available = CATALOG.filter(c => {
-    if (plannedIds.includes(c.id)) return false; // already in plan
+    if (plannedIds.includes(c.id)) return false;
+    if (IN_PROGRESS_COURSES.includes(c.id)) return false;
     if (query && !c.id.toLowerCase().includes(query) && !c.name.toLowerCase().includes(query)) return false;
     return true;
   });
@@ -98,10 +106,11 @@ function renderAddList(query) {
   }
 
   available.forEach(c => {
-    const prereqsMet = c.prereqs.every(p => COMPLETED_COURSES.includes(p) || plannedIds.includes(p));
+    const prereqs = c.prereqs || [];
+    const prereqsMet = prereqs.every(p => prereqSatisfied(p));
     const item = document.createElement('div');
     item.className = `add-dropdown-item${prereqsMet ? '' : ' disabled'}`;
-    item.title = prereqsMet ? '' : `Requires: ${c.prereqs.join(', ')}`;
+    item.title = prereqsMet ? '' : `Requires: ${prereqs.join(', ')}`;
     item.innerHTML = `
       <span class="add-item-code">${c.id}</span>
       <span class="add-item-name">${c.name}</span>
@@ -117,7 +126,6 @@ function renderAddList(query) {
 
 /* ── Add a course to the plan ───────────────────────────── */
 function addCourse(course) {
-  // Close dropdown
   document.getElementById('add-dropdown').classList.remove('open');
   document.getElementById('add-search-input').value = '';
 
@@ -145,6 +153,7 @@ function addCourse(course) {
     </button>`;
 
   document.getElementById('planned-courses-list').appendChild(row);
+  updateEmptyState();
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -189,8 +198,8 @@ function updateSummary() {
   plannedIds.forEach(id => {
     const c = CATALOG.find(x => x.id === id);
     if (!c) return;
-    c.prereqs.forEach(p => {
-      if (!COMPLETED_COURSES.includes(p) && !plannedIds.includes(p)) {
+    (c.prereqs || []).forEach(p => {
+      if (!prereqSatisfied(p)) {
         conflicts.push(`${c.id} needs ${p}`);
       }
     });
@@ -214,7 +223,7 @@ function updateSummary() {
     alertGrad.style.display = 'none';
   }
 
-  const pct = Math.min((totalAfter / TOTAL_CREDITS) * 100, 100).toFixed(1);
+  const pct = TOTAL_CREDITS > 0 ? Math.min((totalAfter / TOTAL_CREDITS) * 100, 100).toFixed(1) : '0.0';
   const bar  = document.getElementById('plan-bar');
   bar.style.setProperty('--bar-w', pct + '%');
   bar.style.animation = 'none';
@@ -223,7 +232,9 @@ function updateSummary() {
 
   const pctLabel = document.getElementById('progress-pct-label');
   if (pctLabel) {
-    const compPct = Math.min((COMPLETED_CREDITS / TOTAL_CREDITS) * 100, 100).toFixed(1);
+    const compPct = TOTAL_CREDITS > 0
+      ? Math.min((COMPLETED_CREDITS / TOTAL_CREDITS) * 100, 100).toFixed(1)
+      : '0.0';
     pctLabel.textContent = `${compPct}% → ${pct}%`;
   }
 

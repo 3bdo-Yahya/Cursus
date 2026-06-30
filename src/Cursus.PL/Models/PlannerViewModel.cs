@@ -16,9 +16,20 @@ public class PlannerViewModel
     public int TotalCreditsRequired { get; set; }
     public int CreditLimit { get; set; }
     public int OverloadLimit { get; set; }
+    public bool IsOverloadEligible { get; set; }
     public List<string> CompletedCourses { get; set; } = new();
-    public List<SimulatedCourseViewModel> CurrentlyEnrolledCourses { get; set; } = new();
+    public List<string> InProgressCourses { get; set; } = new();
+    public List<PlannerEnrolledCourseViewModel> CurrentlyEnrolledCourses { get; set; } = new();
     public List<PlannerCourseViewModel> Catalog { get; set; } = new();
+}
+
+public class PlannerEnrolledCourseViewModel
+{
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public int Credits { get; set; }
+    public string Type { get; set; } = string.Empty;
+    public string TypeClass { get; set; } = string.Empty;
 }
 
 public class PlannerCourseViewModel
