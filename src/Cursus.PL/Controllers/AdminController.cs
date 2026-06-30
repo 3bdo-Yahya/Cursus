@@ -21,6 +21,7 @@ public class AdminController : Controller
     private readonly IUniversityService _universityService;
     private readonly IDepartmentService _departmentService;
     private readonly IStudentManagementService _studentManagementService;
+    private readonly IAcademicMetricsService _academicMetricsService;
 
     public AdminController(
         ApplicationDbContext context,
@@ -28,7 +29,8 @@ public class AdminController : Controller
         IAdminDashboardService adminDashboardService,
         IUniversityService universityService,
         IDepartmentService departmentService,
-        IStudentManagementService studentManagementService)
+        IStudentManagementService studentManagementService,
+        IAcademicMetricsService academicMetricsService)
     {
         _context = context;
         _courseService = courseService;
@@ -36,6 +38,7 @@ public class AdminController : Controller
         _universityService = universityService;
         _departmentService = departmentService;
         _studentManagementService = studentManagementService;
+        _academicMetricsService = academicMetricsService;
     }
 
     public async Task<IActionResult> Courses(string? searchTerm, int? departmentId, bool includeInactive = false)
@@ -225,7 +228,7 @@ public class AdminController : Controller
         if (!string.IsNullOrWhiteSpace(vm.Grade) && !IsKnownGrade(vm.Grade))
             ModelState.AddModelError(nameof(vm.Grade), "Grade must be one of: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F.");
 
-        // Check for duplicate course record
+        // Check for duplicate course record and validate enrollment
         if (ModelState.IsValid)
         {
             var duplicate = await _context.StudentCourses.AnyAsync(sc =>
@@ -235,8 +238,18 @@ public class AdminController : Controller
                 sc.AcademicYear == vm.AcademicYear.Trim());
 
             if (duplicate)
+            {
                 ModelState.AddModelError(string.Empty,
                     "This student already has a record for the selected course in the same semester and academic year.");
+            }
+            else
+            {
+                var (canEnroll, blockReason) = await _academicMetricsService.CanEnrollInCourseAsync(vm.StudentId, vm.CourseId);
+                if (!canEnroll)
+                {
+                    ModelState.AddModelError(string.Empty, blockReason ?? "Student is not eligible to enroll in this course.");
+                }
+            }
         }
 
         if (!ModelState.IsValid)
