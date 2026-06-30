@@ -86,8 +86,109 @@ public sealed class GraduationDelaySimulatorTests
             prerequisites);
 
         // Assert: Baseline should take 2 semesters (A then B)
-        // Failure path: failing B should add 1 semester delay to retake it, recovery is 1 semester
-        Assert.True(result.GraduationDelaySemesters >= 0);
+        // Failure path: failing B should add 1 semester delay to retake it.
+        Assert.Equal(1, result.GraduationDelaySemesters);
         Assert.Equal(1, result.RetakeDelaySemesters);
+        Assert.Equal(0, result.RecoverySemesters);
+    }
+
+    [Fact]
+    public void Simulation_FallOnlyFailedCourse_ProducesRealisticTwoSemesterDelay()
+    {
+        // Arrange:
+        // 10 (Fall-only) is prerequisite for 11 and 12; dependents can run in parallel.
+        var failed = new Course
+        {
+            Id = 10,
+            Code = "CSW221",
+            Name = "Data Structures",
+            CreditHours = 3,
+            CourseType = CourseType.Core,
+            SemesterAvailability = SemesterAvailability.Fall,
+            Prerequisites = new List<CoursePrerequisite>()
+        };
+
+        var dependentA = new Course
+        {
+            Id = 11,
+            Code = "CSW241",
+            Name = "Course A",
+            CreditHours = 3,
+            CourseType = CourseType.Core,
+            SemesterAvailability = SemesterAvailability.All,
+            Prerequisites = new List<CoursePrerequisite>
+            {
+                new CoursePrerequisite { CourseId = 11, PrerequisiteId = 10 }
+            }
+        };
+
+        var dependentB = new Course
+        {
+            Id = 12,
+            Code = "CSW326",
+            Name = "Course B",
+            CreditHours = 3,
+            CourseType = CourseType.Core,
+            SemesterAvailability = SemesterAvailability.All,
+            Prerequisites = new List<CoursePrerequisite>
+            {
+                new CoursePrerequisite { CourseId = 12, PrerequisiteId = 10 }
+            }
+        };
+
+        var curriculum = new List<Course> { failed, dependentA, dependentB };
+        var completed = new HashSet<int>();
+        var prerequisites = new Dictionary<int, List<int>>
+        {
+            [10] = new List<int> { 11, 12 }
+        };
+
+        // Act
+        var result = GraduationDelayCalculator.Calculate(
+            SemesterType.Spring,
+            "2025-2026",
+            AcademicStanding.Warning,
+            2.0m,
+            failed.Id,
+            failed.SemesterAvailability,
+            curriculum,
+            completed,
+            prerequisites);
+
+        // Assert
+        Assert.Equal(2, result.RetakeDelaySemesters);      // Spring -> Summer -> Fall
+        Assert.Equal(2, result.GraduationDelaySemesters);  // realistic delay, not inflated
+        Assert.Equal(0, result.RecoverySemesters);         // parallel completion right after retake
+    }
+
+    [Fact]
+    public void Simulation_UnschedulableCourseBeyondCreditCap_HitsSafetyLimit()
+    {
+        // Arrange: 19-credit course cannot fit warning cap (15), making path unschedulable.
+        var oversized = new Course
+        {
+            Id = 50,
+            Code = "MEGA500",
+            Name = "Oversized Requirement",
+            CreditHours = 19,
+            CourseType = CourseType.Core,
+            SemesterAvailability = SemesterAvailability.All,
+            Prerequisites = new List<CoursePrerequisite>()
+        };
+
+        // Act
+        var result = GraduationDelayCalculator.Calculate(
+            SemesterType.Fall,
+            "2025-2026",
+            AcademicStanding.Warning,
+            2.0m,
+            oversized.Id,
+            oversized.SemesterAvailability,
+            new List<Course> { oversized },
+            new HashSet<int>(),
+            new Dictionary<int, List<int>>());
+
+        // Assert: this safeguards against false "normal" projections.
+        Assert.Equal(60, result.GraduationDelaySemesters);
     }
 }
