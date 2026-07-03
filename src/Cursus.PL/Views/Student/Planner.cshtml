@@ -10,6 +10,7 @@
 
 <script>
     window.STUDENT_DATA = {
+        studentId: '@Model.StudentId',
         completedCourses: @Html.Raw(ViewJson.Serialize(Model.CompletedCourses)),
         inProgressCourses: @Html.Raw(ViewJson.Serialize(Model.InProgressCourses)),
         completedCredits: @Model.CompletedCredits,

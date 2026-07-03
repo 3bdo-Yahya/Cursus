@@ -12,6 +12,18 @@ const OVERLOAD_LIMIT     = window.STUDENT_DATA.overloadLimit || 21;
 /* ── Planned courses state ──────────────────────────────── */
 let plannedIds = [];
 
+const STUDENT_ID = window.STUDENT_DATA.studentId || '';
+const LS_KEY = STUDENT_ID ? `cursus.plannedCourses.${STUDENT_ID}` : '';
+
+function persistPlan() {
+  if (!LS_KEY) return;
+  const planned = plannedIds.map(id => {
+    const c = CATALOG.find(x => x.id === id);
+    return c ? { id: c.id, name: c.name, credits: c.credits } : null;
+  }).filter(Boolean);
+  localStorage.setItem(LS_KEY, JSON.stringify(planned));
+}
+
 function prereqSatisfied(code) {
   return COMPLETED_COURSES.includes(code)
     || IN_PROGRESS_COURSES.includes(code)
@@ -26,10 +38,59 @@ function updateEmptyState() {
   empty.style.display = hasRows ? 'none' : '';
 }
 
-/* ── Read planned courses from DOM ────────────────── */
+/* ── Read planned courses from DOM / localStorage ────────────────── */
+function appendPlannedRow(course) {
+  const row = document.createElement('div');
+  row.className = 'planned-row';
+  row.dataset.courseId = course.id;
+  row.innerHTML = `
+    <span class="planned-code">${course.id}</span>
+    <span class="planned-name">${course.name}</span>
+    <span class="planned-type-badge ${course.typeClass}">${course.type}</span>
+    <span class="planned-credits">${course.credits} cr</span>
+    <button class="remove-course-btn" onclick="removeCourse('${course.id}',event)" title="Remove course">
+      <span class="material-symbols-outlined">close</span>
+    </button>`;
+  document.getElementById('planned-courses-list').appendChild(row);
+  return row;
+}
+
+function pruneStoredPlan(planned) {
+  const blocked = new Set([...COMPLETED_COURSES, ...IN_PROGRESS_COURSES]);
+  return planned.filter(p => p && p.id && !blocked.has(p.id));
+}
+
+function loadSavedPlan() {
+  if (!LS_KEY) return;
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return;
+    const stored = JSON.parse(raw);
+    if (!Array.isArray(stored)) return;
+
+    const pruned = pruneStoredPlan(stored);
+    if (pruned.length !== stored.length) {
+      localStorage.setItem(LS_KEY, JSON.stringify(pruned));
+    }
+
+    pruned.forEach(p => {
+      if (plannedIds.includes(p.id)) return;
+      const course = CATALOG.find(c => c.id === p.id);
+      if (!course) return;
+      plannedIds.push(course.id);
+      appendPlannedRow(course);
+    });
+  } catch {
+    // ignore corrupt storage
+  }
+}
+
 function init() {
+  loadSavedPlan();
   document.querySelectorAll('#planned-courses-list .planned-row').forEach(row => {
-    plannedIds.push(row.dataset.courseId);
+    if (!plannedIds.includes(row.dataset.courseId)) {
+      plannedIds.push(row.dataset.courseId);
+    }
   });
   updateEmptyState();
   updateSummary();
@@ -60,6 +121,7 @@ function removeCourse(id, e) {
       plannedIds = plannedIds.filter(x => x !== id);
       updateEmptyState();
       updateSummary();
+      persistPlan();
       showToast(`Removed ${id}`, 'remove_circle');
     }, 250);
   }, 200);
@@ -96,6 +158,7 @@ function renderAddList(query) {
   const available = CATALOG.filter(c => {
     if (plannedIds.includes(c.id)) return false;
     if (IN_PROGRESS_COURSES.includes(c.id)) return false;
+    if (COMPLETED_COURSES.includes(c.id)) return false;
     if (query && !c.id.toLowerCase().includes(query) && !c.name.toLowerCase().includes(query)) return false;
     return true;
   });
@@ -137,22 +200,10 @@ function addCourse(course) {
 
   plannedIds.push(course.id);
 
-  const row = document.createElement('div');
-  row.className = 'planned-row';
-  row.dataset.courseId = course.id;
+  const row = appendPlannedRow(course);
   row.style.opacity   = '0';
   row.style.transform = 'translateX(-10px)';
   row.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-  row.innerHTML = `
-    <span class="planned-code">${course.id}</span>
-    <span class="planned-name">${course.name}</span>
-    <span class="planned-type-badge ${course.typeClass}">${course.type}</span>
-    <span class="planned-credits">${course.credits} cr</span>
-    <button class="remove-course-btn" onclick="removeCourse('${course.id}',event)" title="Remove course">
-      <span class="material-symbols-outlined">close</span>
-    </button>`;
-
-  document.getElementById('planned-courses-list').appendChild(row);
   updateEmptyState();
 
   requestAnimationFrame(() => {
@@ -163,6 +214,7 @@ function addCourse(course) {
   });
 
   updateSummary();
+  persistPlan();
   showToast(`Added ${course.id} — ${course.name}`, 'add_circle');
 }
 
@@ -247,7 +299,17 @@ function updateSummary() {
 
 /* ── Save plan ──────────────────────────────────────────── */
 function savePlan() {
-  showToast('Semester plan saved!', 'check_circle');
+  if (!LS_KEY) {
+    showToast('Unable to save — student ID missing', 'error', true);
+    return;
+  }
+
+  try {
+    persistPlan();
+    showToast(`Semester plan saved! (${plannedIds.length} course${plannedIds.length !== 1 ? 's' : ''})`, 'check_circle');
+  } catch {
+    showToast('Unable to save plan to browser storage', 'error', true);
+  }
 }
 
 /* ── Toast helper ───────────────────────────────────────── */
@@ -271,3 +333,4 @@ function showToast(message, icon = 'info', isError = false) {
 }
 
 init();
+

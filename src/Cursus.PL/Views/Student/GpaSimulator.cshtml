@@ -8,6 +8,7 @@
 
 <script>
     window.STUDENT_DATA = {
+        studentId: '@Model.StudentId',
         completedCredits: @Model.GpaHours,
         completedQp: @Model.CompletedQp,
         currentCgpa: @Model.CurrentCgpa,
@@ -16,6 +17,8 @@
         currentCourses: @Html.Raw(ViewJson.Serialize(Model.CurrentCourses)),
 
         improvableCourses: @Html.Raw(ViewJson.Serialize(Model.ImprovableCourses)),
+
+        completedCourses: @Html.Raw(ViewJson.Serialize(Model.CompletedCourses)),
 
         gradeScale: @Html.Raw(ViewJson.Serialize(Model.GradeScale))
     };
@@ -184,3 +187,4 @@
 @section Scripts {
     <script src="~/js/pages/student/gpa-simulator.js" asp-append-version="true"></script>
 }
+
