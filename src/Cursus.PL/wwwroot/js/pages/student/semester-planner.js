@@ -16,12 +16,17 @@ const STUDENT_ID = window.STUDENT_DATA.studentId || '';
 const LS_KEY = STUDENT_ID ? `cursus.plannedCourses.${STUDENT_ID}` : '';
 
 function persistPlan() {
-  if (!LS_KEY) return;
-  const planned = plannedIds.map(id => {
-    const c = CATALOG.find(x => x.id === id);
-    return c ? { id: c.id, name: c.name, credits: c.credits } : null;
-  }).filter(Boolean);
-  localStorage.setItem(LS_KEY, JSON.stringify(planned));
+  if (!LS_KEY) return false;
+  try {
+    const planned = plannedIds.map(id => {
+      const c = CATALOG.find(x => x.id === id);
+      return c ? { id: c.id, name: c.name, credits: c.credits } : null;
+    }).filter(Boolean);
+    localStorage.setItem(LS_KEY, JSON.stringify(planned));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function prereqSatisfied(code) {
@@ -304,10 +309,9 @@ function savePlan() {
     return;
   }
 
-  try {
-    persistPlan();
+  if (persistPlan()) {
     showToast(`Semester plan saved! (${plannedIds.length} course${plannedIds.length !== 1 ? 's' : ''})`, 'check_circle');
-  } catch {
+  } else {
     showToast('Unable to save plan to browser storage', 'error', true);
   }
 }
@@ -333,4 +337,5 @@ function showToast(message, icon = 'info', isError = false) {
 }
 
 init();
+
 
