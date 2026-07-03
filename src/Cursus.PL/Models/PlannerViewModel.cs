@@ -5,6 +5,7 @@ namespace Cursus.PL.Models;
 
 public class PlannerViewModel
 {
+    public string StudentId { get; set; } = string.Empty;
     public string StudentName { get; set; } = string.Empty;
     public string Department { get; set; } = string.Empty;
     public int Year { get; set; }

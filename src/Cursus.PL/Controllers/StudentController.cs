@@ -146,10 +146,11 @@ public class StudentController : Controller
 
         var model = new PlannerViewModel
         {
+            StudentId = student.Id,
             StudentName = student.DisplayName,
             Department = student.Department?.Name ?? "Not assigned",
-            Year = (termGpas.Count / 2) + 1,
-            Semester = $"{student.CurrentSemester} {student.AcademicYear}",
+            Year = int.TryParse(student.AcademicYear, out var plannerYear) ? plannerYear : (termGpas.Count / 2) + 1,
+            Semester = FormatSemester(student.CurrentSemester, student.AcademicYear),
             CurrentCgpa = (double)cgpa,
             AcademicStanding = FormatStanding(student.CurrentStanding),
             StandingCssClass = GetStandingCssClass(student.CurrentStanding),
@@ -196,7 +197,7 @@ public class StudentController : Controller
             StudentName = dto.DisplayName,
             Initials = GetInitials(dto.DisplayName),
             Department = dto.DepartmentName,
-            Year = (dto.SemestersCompleted / 2) + 1,
+            Year = int.TryParse(dto.AcademicYear, out var advisorYear) ? advisorYear : (dto.SemestersCompleted / 2) + 1,
             Cgpa = (double)dto.Cgpa,
             AcademicStanding = FormatStanding(dto.Standing),
             StandingCssClass = GetStandingCssClass(dto.Standing)
@@ -261,6 +262,10 @@ public class StudentController : Controller
 
         var completedCredits = completedCourses.Sum(sc => sc.Course!.CreditHours);
 
+        var completedCourseCodes = completedCourses
+            .Select(sc => sc.Course!.Code)
+            .ToList();
+
         // Graded Courses (Completed or Failed best attempts with grades)
         var gradedCourses = bestAttempts
             .Where(sc => (sc.Status == StudentCourseStatus.Completed || sc.Status == StudentCourseStatus.Failed)
@@ -316,15 +321,16 @@ public class StudentController : Controller
         var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScaleDecimal);
         var termGpas = _academicMetricsService.CalculateSgpaByTerm(studentCourses, gradeScaleDecimal);
 
-        var previousTerm = _academicMetricsService.GetPreviousTerm(termGpas, student.AcademicYear, student.CurrentSemester);
-        var lastSgpa = previousTerm?.SemesterGpa ?? 0m;
+        var latestGraded = _academicMetricsService.GetLatestGradedTerms(termGpas, 1);
+        var lastSgpa = latestGraded.Count > 0 ? latestGraded[^1].SemesterGpa : 0m;
 
         var model = new GpaSimulatorViewModel
         {
+            StudentId = student.Id,
             StudentName = student.DisplayName,
             Department = student.Department?.Name ?? "Not assigned",
-            Year = (termGpas.Count / 2) + 1,
-            Semester = $"{student.CurrentSemester} {student.AcademicYear}",
+            Year = int.TryParse(student.AcademicYear, out var simYear) ? simYear : (termGpas.Count / 2) + 1,
+            Semester = FormatSemester(student.CurrentSemester, student.AcademicYear),
             CurrentCgpa = (double)cgpa,
             LastSgpa = (double)lastSgpa,
             AcademicStanding = FormatStanding(student.CurrentStanding),
@@ -334,6 +340,7 @@ public class StudentController : Controller
             GpaHours = gpaHours,
             CurrentCourses = currentCourses,
             ImprovableCourses = improvableCourses,
+            CompletedCourses = completedCourseCodes,
             GradeScale = gradeScale
         };
 
@@ -342,6 +349,7 @@ public class StudentController : Controller
     public IActionResult ImpactAnalyzer() => View();
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> SimulateFailure([FromBody] SimulateFailureRequest request)
     {
         var user = await _userManager.GetUserAsync(User);
@@ -406,7 +414,7 @@ public class StudentController : Controller
             StudentName = dto.DisplayName,
             Initials = GetInitials(dto.DisplayName),
             Department = dto.DepartmentName,
-            Year = (dto.SemestersCompleted / 2) + 1,
+            Year = int.TryParse(dto.AcademicYear, out var dashYear) ? dashYear : (dto.SemestersCompleted / 2) + 1,
             Semester = FormatSemester(dto.CurrentSemester, dto.AcademicYear),
             AcademicStanding = FormatStanding(dto.Standing),
             StandingCssClass = GetStandingCssClass(dto.Standing),
@@ -441,6 +449,7 @@ public class StudentController : Controller
                 .ToList(),
 
             UniversityName = dto.UniversityName,
+            EnrollmentDate = dto.EnrollmentDate,
             HighestSgpa = (double)dto.HighestSgpa,
             GpaHistory = dto.GpaHistory
                 .Select(h => new GpaHistoryPointViewModel
@@ -462,12 +471,9 @@ public class StudentController : Controller
         };
 
         if (!string.IsNullOrWhiteSpace(academicYear))
-        {
-            var year = academicYear.Split('-').FirstOrDefault() ?? DateTime.UtcNow.Year.ToString();
-            return $"{semesterName} {year}";
-        }
+            return $"{semesterName} — Year {academicYear}";
 
-        return $"{semesterName} {DateTime.UtcNow.Year}";
+        return semesterName;
     }
 
     private static string FormatStanding(AcademicStanding standing) => standing switch
@@ -506,3 +512,4 @@ public class StudentController : Controller
             _ => ("Core", "type-core")
         };
 }
+
