@@ -230,6 +230,44 @@ public sealed class AcademicMetricsServiceTests
         Assert.Null(reason);
     }
 
+    [Fact]
+    public void GetLatestGradedTerms_FiltersUngradedAndReturnsLastN()
+    {
+        var service = CreateService(out _);
+
+        var terms = new List<TermGpaDto>
+        {
+            new() { AcademicYear = "2023-2024", Semester = SemesterType.Fall, SemesterGpa = 3.2m, CumulativeGpa = 3.2m, GradedCredits = 15 },
+            new() { AcademicYear = "2023-2024", Semester = SemesterType.Spring, SemesterGpa = 0.0m, CumulativeGpa = 3.2m, GradedCredits = 0 },
+            new() { AcademicYear = "2024-2025", Semester = SemesterType.Fall, SemesterGpa = 3.5m, CumulativeGpa = 3.35m, GradedCredits = 18 },
+            new() { AcademicYear = "2024-2025", Semester = SemesterType.Spring, SemesterGpa = 0.0m, CumulativeGpa = 3.35m, GradedCredits = 0 }
+        };
+
+        var latest = service.GetLatestGradedTerms(terms, 2);
+
+        Assert.Equal(2, latest.Count);
+        Assert.Equal("2023-2024", latest[0].AcademicYear);
+        Assert.Equal(SemesterType.Fall, latest[0].Semester);
+        Assert.Equal("2024-2025", latest[1].AcademicYear);
+        Assert.Equal(SemesterType.Fall, latest[1].Semester);
+    }
+
+    [Fact]
+    public void GetLatestGradedTerms_IncludesAllFailingTerm()
+    {
+        var service = CreateService(out _);
+
+        var terms = new List<TermGpaDto>
+        {
+            new() { AcademicYear = "1", Semester = SemesterType.Fall, SemesterGpa = 0.0m, CumulativeGpa = 0.0m, GradedCredits = 12 }
+        };
+
+        var latest = service.GetLatestGradedTerms(terms, 1);
+
+        Assert.Single(latest);
+        Assert.Equal(12, latest[0].GradedCredits);
+    }
+
     private static AcademicMetricsService CreateService(out ApplicationDbContext db)
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
@@ -240,3 +278,4 @@ public sealed class AcademicMetricsServiceTests
         return new AcademicMetricsService(db);
     }
 }
+

@@ -9,4 +9,6 @@ public class TermGpaDto
     public string SemLabel { get; set; } = string.Empty;
     public decimal SemesterGpa { get; set; }
     public decimal CumulativeGpa { get; set; }
+    public int GradedCredits { get; set; }
 }
+

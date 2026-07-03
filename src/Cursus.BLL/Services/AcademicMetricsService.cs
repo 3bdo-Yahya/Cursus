@@ -142,7 +142,8 @@ public class AcademicMetricsService : IAcademicMetricsService
                 Semester = termGroup.Key.Semester,
                 SemLabel = FormatSemesterAbbrev(termGroup.Key.Semester, termGroup.Key.AcademicYear),
                 SemesterGpa = sgpa,
-                CumulativeGpa = cgpa
+                CumulativeGpa = cgpa,
+                GradedCredits = termCredits
             });
         }
 
@@ -176,11 +177,27 @@ public class AcademicMetricsService : IAcademicMetricsService
             _ => "Sum"
         };
 
+        // If the academic year is a small ordinal (1-6), use "Spr Y3" style
+        if (int.TryParse(academicYear.Trim(), out var ordinal) && ordinal is >= 1 and <= 10)
+            return $"{semName}\nY{ordinal}";
+
+        // Fallback: calendar year → "Spr '24"
         var year = academicYear.Split('-', '/').FirstOrDefault() ?? "";
         if (year.Length >= 4)
             year = year[2..];
 
         return $"{semName}\n'{year}";
+    }
+
+    public List<TermGpaDto> GetLatestGradedTerms(IReadOnlyList<TermGpaDto> terms, int count = 2)
+    {
+        var gradedTerms = terms
+            .Where(t => t.GradedCredits > 0)
+            .ToList();
+
+        return gradedTerms.Count <= count
+            ? gradedTerms.ToList()
+            : gradedTerms.Skip(gradedTerms.Count - count).ToList();
     }
 
     public int GetCreditLimits(AcademicStanding standing, decimal cgpa)
@@ -226,3 +243,4 @@ public class AcademicMetricsService : IAcademicMetricsService
         return (true, null);
     }
 }
+
