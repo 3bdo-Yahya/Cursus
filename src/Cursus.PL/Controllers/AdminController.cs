@@ -139,7 +139,8 @@ public class AdminController : Controller
             DepartmentId = student.DepartmentId ?? 0,
             AcademicYear = student.AcademicYear ?? string.Empty,
             CurrentSemester = student.CurrentSemester,
-            CurrentStanding = student.CurrentStanding
+            CurrentStanding = student.CurrentStanding,
+            EnrollmentDate = student.EnrollmentDate
         };
 
         await PopulateEditStudentFormAsync(vm);
@@ -166,6 +167,7 @@ public class AdminController : Controller
         student.AcademicYear = vm.AcademicYear.Trim();
         student.CurrentSemester = vm.CurrentSemester;
         student.CurrentStanding = vm.CurrentStanding;
+        student.EnrollmentDate = vm.EnrollmentDate;
 
         try
         {

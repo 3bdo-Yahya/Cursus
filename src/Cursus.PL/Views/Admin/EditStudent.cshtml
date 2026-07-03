@@ -122,6 +122,16 @@
                 <span asp-validation-for="CurrentStanding" class="text-danger" style="font-size:12px;"></span>
             </div>
 
+            <!-- Enrollment Date -->
+            <div class="col-12 col-sm-4">
+                <label asp-for="EnrollmentDate" class="form-label fw-700" style="font-size:13px;color:var(--c-text);">
+                    Enrollment Date
+                </label>
+                <input asp-for="EnrollmentDate" type="date" class="form-control"
+                       style="border-radius:10px;border:1px solid var(--c-border);background:var(--c-bg);color:var(--c-text);font-size:13px;padding:10px 14px;"/>
+                <span asp-validation-for="EnrollmentDate" class="text-danger" style="font-size:12px;"></span>
+                <p class="mt-1 mb-0" style="font-size:11.5px;color:var(--c-muted);">When the student started their program.</p>
+            </div>
         </div>
 
         <!-- Actions -->
