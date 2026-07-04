@@ -21,6 +21,7 @@ public class AdminController : Controller
     private readonly IUniversityService _universityService;
     private readonly IDepartmentService _departmentService;
     private readonly IStudentManagementService _studentManagementService;
+    private readonly IAcademicMetricsService _academicMetricsService;
 
     public AdminController(
         ApplicationDbContext context,
@@ -28,7 +29,8 @@ public class AdminController : Controller
         IAdminDashboardService adminDashboardService,
         IUniversityService universityService,
         IDepartmentService departmentService,
-        IStudentManagementService studentManagementService)
+        IStudentManagementService studentManagementService,
+        IAcademicMetricsService academicMetricsService)
     {
         _context = context;
         _courseService = courseService;
@@ -36,6 +38,7 @@ public class AdminController : Controller
         _universityService = universityService;
         _departmentService = departmentService;
         _studentManagementService = studentManagementService;
+        _academicMetricsService = academicMetricsService;
     }
 
     public async Task<IActionResult> Courses(string? searchTerm, int? departmentId, bool includeInactive = false)
@@ -136,7 +139,8 @@ public class AdminController : Controller
             DepartmentId = student.DepartmentId ?? 0,
             AcademicYear = student.AcademicYear ?? string.Empty,
             CurrentSemester = student.CurrentSemester,
-            CurrentStanding = student.CurrentStanding
+            CurrentStanding = student.CurrentStanding,
+            EnrollmentDate = student.EnrollmentDate
         };
 
         await PopulateEditStudentFormAsync(vm);
@@ -163,6 +167,7 @@ public class AdminController : Controller
         student.AcademicYear = vm.AcademicYear.Trim();
         student.CurrentSemester = vm.CurrentSemester;
         student.CurrentStanding = vm.CurrentStanding;
+        student.EnrollmentDate = vm.EnrollmentDate;
 
         try
         {
@@ -225,7 +230,7 @@ public class AdminController : Controller
         if (!string.IsNullOrWhiteSpace(vm.Grade) && !IsKnownGrade(vm.Grade))
             ModelState.AddModelError(nameof(vm.Grade), "Grade must be one of: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F.");
 
-        // Check for duplicate course record
+        // Check for duplicate course record and validate enrollment
         if (ModelState.IsValid)
         {
             var duplicate = await _context.StudentCourses.AnyAsync(sc =>
@@ -235,8 +240,18 @@ public class AdminController : Controller
                 sc.AcademicYear == vm.AcademicYear.Trim());
 
             if (duplicate)
+            {
                 ModelState.AddModelError(string.Empty,
                     "This student already has a record for the selected course in the same semester and academic year.");
+            }
+            else
+            {
+                var (canEnroll, blockReason) = await _academicMetricsService.CanEnrollInCourseAsync(vm.StudentId, vm.CourseId);
+                if (!canEnroll)
+                {
+                    ModelState.AddModelError(string.Empty, blockReason ?? "Student is not eligible to enroll in this course.");
+                }
+            }
         }
 
         if (!ModelState.IsValid)
@@ -310,6 +325,31 @@ public class AdminController : Controller
         if (!string.IsNullOrWhiteSpace(vm.Grade) && !IsKnownGrade(vm.Grade))
             ModelState.AddModelError(nameof(vm.Grade), "Grade must be one of: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F.");
 
+        if (ModelState.IsValid)
+        {
+            var existingRecord = await _context.StudentCourses
+                .AsNoTracking()
+                .FirstOrDefaultAsync(sc => sc.Id == vm.RecordId);
+
+            if (existingRecord is not null)
+            {
+                var (canEnroll, blockReason) = await _academicMetricsService.CanEnrollInCourseAsync(
+                    existingRecord.StudentId,
+                    existingRecord.CourseId,
+                    excludeStudentCourseId: vm.RecordId);
+
+                var settingInProgress = string.IsNullOrWhiteSpace(vm.Grade)
+                    || vm.Status == StudentCourseStatus.InProgress;
+                var settingPassingGrade = !string.IsNullOrWhiteSpace(vm.Grade)
+                    && !new[] { "D+", "D", "D-", "F" }.Contains(vm.Grade.Trim().ToUpper());
+
+                if ((settingInProgress || settingPassingGrade) && !canEnroll)
+                {
+                    ModelState.AddModelError(string.Empty, blockReason ?? "Student is not eligible for this course state.");
+                }
+            }
+        }
+
         if (!ModelState.IsValid)
         {
             var student = await _studentManagementService.GetStudentDetailAsync(vm.StudentId);
@@ -339,6 +379,28 @@ public class AdminController : Controller
             await PopulateStudentCourseFormAsync(vm, student?.DepartmentId);
             return View("Students/EditCourse", vm);
         }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> StudentDeleteCourse(int id)
+    {
+        var record = await _context.StudentCourses.FindAsync(id);
+        if (record is null)
+            return NotFound();
+
+        var studentId = record.StudentId;
+        try
+        {
+            await _studentManagementService.DeleteCourseRecordAsync(id);
+            TempData["StatusMessage"] = "Course record deleted successfully.";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"Unable to delete course record: {ex.Message}";
+        }
+
+        return RedirectToAction(nameof(StudentDetail), new { id = studentId });
     }
 
     public async Task<IActionResult> Index()

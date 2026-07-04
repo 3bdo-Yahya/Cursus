@@ -3,6 +3,12 @@
 # =========================
 # SDLC documents are managed in ClickUp.
 docs/
+CLAUDE.md
+
+# =========================
+# Graphify
+# =========================
+graphify-out/
 
 # =========================
 # .NET / ASP.NET Core
@@ -38,6 +44,7 @@ Cursus.Domain.csproj.lscache
 Thumbs.db
 .DS_Store
 .cursor/
+.agents/
 
 # =========================
 # Environment Variables

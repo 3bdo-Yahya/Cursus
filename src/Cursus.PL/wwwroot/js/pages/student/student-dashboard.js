@@ -45,8 +45,8 @@ function updateGpaDisplay(sgpa, cgpa) {
   if (ring && !isNaN(value)) {
     const radius = 19; 
     const circumference = 2 * Math.PI * radius;
-    const ratio = Math.min(value / 4.0, 1);
-
+      const maxGpa = parseFloat(ring.dataset.maxGpa) || 4.0;
+      const ratio = Math.min(value / maxGpa, 1);
     ring.style.strokeDashoffset = circumference * (1 - ratio);
   }
 }

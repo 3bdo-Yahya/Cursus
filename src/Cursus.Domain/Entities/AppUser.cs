@@ -19,6 +19,8 @@ namespace Cursus.Domain.Entities
 
         public AcademicStanding CurrentStanding { get; set; }
 
+        public DateTime? EnrollmentDate { get; set; }
+
         public University? University { get; set; }
         public Department? Department { get; set; }
 

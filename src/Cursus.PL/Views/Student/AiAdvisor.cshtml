@@ -1,13 +1,17 @@
+@model Cursus.PL.Models.AiAdvisorViewModel
+
 @{
   ViewData["Title"] = "AI Advisor";
 }
 
 @section Styles {
+  <link rel="stylesheet" href="~/css/pages/student/student-dashboard.css" asp-append-version="true" />
   <link rel="stylesheet" href="~/css/pages/student/ai-advisor.css" asp-append-version="true" />
 }
 @Html.AntiForgeryToken()
 <!-- ─── Advisor Shell ────────────────────────────────────── -->
-<div class="ai-advisor-page">
+<div class="ai-advisor-page"
+     data-initials="@Model.Initials">
   <div class="advisor-shell">
     <div class="chat-wrap">
 
@@ -56,20 +60,26 @@
                 style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:var(--c-soft);color:var(--c-primary);border:1px solid rgba(79,70,229,.2);">
                 <span class="material-symbols-outlined"
                       style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">person</span>
-                Ahmed Kamal
+                            @Model.StudentName
               </span>
               <span
                 style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:var(--c-soft);color:var(--c-primary);border:1px solid rgba(79,70,229,.2);">
                 <span class="material-symbols-outlined"
                       style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">school</span>
-                CS · Year 3 · CGPA 3.24
+                            @Model.Department · Year @Model.Year · CGPA @Model.Cgpa
               </span>
-              <span
-                style="padding:4px 12px;border-radius:99px;font-size:11.5px;font-weight:700;background:rgba(16,185,129,.1);color:#047857;border:1px solid rgba(16,185,129,.2);">
-                <span class="material-symbols-outlined"
-                      style="font-size:12px;vertical-align:middle;font-variation-settings:'FILL' 1,'wght' 500">verified</span>
-                Good Standing
-              </span>
+                        <span class="d-inline-flex align-items-center gap-1 rounded-pill px-2 py-1 fw-700 badge-standing standing-@Model.StandingCssClass"
+                              style="font-size:11.5px;">
+                            <span class="rounded-circle standing-dot-@Model.StandingCssClass"
+                                  style="width:5px;height:5px;display:inline-block;flex-shrink:0;"></span>
+
+                            <span class="material-symbols-outlined"
+                                  style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 500">
+                                verified
+                            </span>
+
+                            @Model.AcademicStanding
+                        </span>
             </div>
           </div>
         </div>

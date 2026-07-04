@@ -12,8 +12,13 @@ public sealed class StudentDashboardService : IStudentDashboardService
     private const int DefaultMaxCreditsPerSemester = 18;
     private const int AlertCgpaThreshold = 2;
     private readonly ApplicationDbContext _db;
+    private readonly IAcademicMetricsService _academicMetricsService;
 
-    public StudentDashboardService(ApplicationDbContext db) => _db = db;
+    public StudentDashboardService(ApplicationDbContext db, IAcademicMetricsService academicMetricsService)
+    {
+        _db = db;
+        _academicMetricsService = academicMetricsService;
+    }
 
     public async Task<StudentDashboardDto?> GetDashboardDataAsync(string studentId)
     {
@@ -22,45 +27,44 @@ public sealed class StudentDashboardService : IStudentDashboardService
             .Include(u => u.Department)
             .Include(u => u.StudentCourses)
                 .ThenInclude(sc => sc.Course)
-            .Include(u => u.StandingHistories)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == studentId);
 
         if (student is null)
             return null;
 
-        var gradeScale = await BuildGradeScaleAsync(student.Department?.UniversityId);
+        var gradeScale = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
         var allCourses = student.StudentCourses.ToList();
 
-        // Group by CourseId to filter out duplicates / retakes (Completed > InProgress > Failed)
-        var studentCourseMap = allCourses
-            .GroupBy(sc => sc.CourseId)
-            .ToDictionary(
-                g => g.Key,
-                g => g.OrderBy(sc => sc.Status switch
-                {
-                    StudentCourseStatus.Completed => 0,
-                    StudentCourseStatus.Failed => 1,
-                    StudentCourseStatus.InProgress => 2,
-                    _ => 3
-                }).First());
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(allCourses);
 
-        var completedCourses = studentCourseMap.Values
+        var completedCourses = bestAttempts
             .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
             .ToList();
 
-        var gradedCourses = studentCourseMap.Values
-            .Where(sc => sc.Status is StudentCourseStatus.Completed or StudentCourseStatus.Failed && !string.IsNullOrWhiteSpace(sc.Grade) && sc.Course is not null)
-            .ToList();
+        var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScale);
+        var termGpas = _academicMetricsService.CalculateSgpaByTerm(allCourses, gradeScale);
 
-        var cgpa = CalculateGpa(gradedCourses, gradeScale);
-        var sgpa = CalculateSemesterGpa(student.StandingHistories, student.CurrentSemester, student.AcademicYear);
-        var lastCgpa = student.StandingHistories
-            .OrderByDescending(h => h.AcademicYear)
-            .ThenByDescending(h => h.Semester)
-            .FirstOrDefault()?.CumulativeGpa ?? cgpa;
+        // Trend: compare CGPA of last two graded terms
+        var latestGraded = _academicMetricsService.GetLatestGradedTerms(termGpas, 2);
+        decimal sgpa;
+        decimal cgpaChange;
 
-        var cgpaChange = Math.Round(cgpa - lastCgpa, 2);
+        if (latestGraded.Count == 0)
+        {
+            sgpa = 0m;
+            cgpaChange = 0m;
+        }
+        else if (latestGraded.Count == 1)
+        {
+            sgpa = latestGraded[0].SemesterGpa;
+            cgpaChange = latestGraded[0].CumulativeGpa; // change from 0
+        }
+        else
+        {
+            sgpa = latestGraded[^1].SemesterGpa;
+            cgpaChange = Math.Round(latestGraded[^1].CumulativeGpa - latestGraded[^2].CumulativeGpa, 2);
+        }
         var creditsCompleted = completedCourses.Sum(sc => sc.Course!.CreditHours);
         var creditsRequired = student.Department?.TotalCreditsRequired ?? 0;
 
@@ -96,7 +100,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
                 }
                 else if (req.CategoryType is CourseType.DeptElective or CourseType.FreeElective or CourseType.UniversityReq)
                 {
-                    int earnedCredits = studentCourseMap.Values
+                    int earnedCredits = bestAttempts
                         .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course?.CourseType == req.CategoryType)
                         .Sum(sc => sc.Course!.CreditHours);
 
@@ -125,7 +129,31 @@ public sealed class StudentDashboardService : IStudentDashboardService
 
         var coursesRemaining = coreRemaining + electiveRemaining + uniReqRemaining;
         var standingAlert = BuildStandingAlert(student.CurrentStanding, cgpa);
-        var (projectedGraduation, totalSemesters) = ProjectGraduation(student.CurrentSemester, student.AcademicYear, creditsCompleted, creditsRequired, student.CurrentStanding, cgpa);
+        var maxCredits = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+
+        // Enrollment date: use EnrollmentDate property; fallback only for calendar academic years on courses
+        var enrollmentDate = student.EnrollmentDate;
+        if (enrollmentDate is null && allCourses.Count > 0)
+        {
+            var earliest = allCourses
+                .OrderBy(sc => sc.AcademicYear)
+                .ThenBy(sc => sc.Semester)
+                .FirstOrDefault();
+
+            if (earliest is not null
+                && TryParseCalendarAcademicYearStart(earliest.AcademicYear, out var calYear))
+            {
+                var month = earliest.Semester == SemesterType.Spring ? 1
+                    : earliest.Semester == SemesterType.Summer ? 6 : 9;
+                enrollmentDate = new DateTime(calYear, month, 1);
+            }
+        }
+
+        var enrollmentDateDisplay = enrollmentDate?.ToString("MMMM yyyy") ?? "—";
+
+        var (projectedGraduation, totalSemesters) = ProjectGraduation(
+            student.CurrentSemester, enrollmentDate, student.AcademicYear,
+            creditsCompleted, creditsRequired, maxCredits);
 
         var currentCourses = allCourses
             .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
@@ -138,21 +166,17 @@ public sealed class StudentDashboardService : IStudentDashboardService
             })
             .ToList();
 
-        var orderedHistories = student.StandingHistories
-            .OrderBy(h => h.AcademicYear)
-            .ThenBy(h => h.Semester)
-            .ToList();
-
-        var gpaHistory = orderedHistories
+        var gpaHistory = termGpas
             .Select(h => new GpaHistoryPointDto
             {
-                SemLabel = FormatSemesterAbbrev(h.Semester, h.AcademicYear),
+                SemLabel = h.SemLabel,
                 Sgpa = h.SemesterGpa
             })
             .ToList();
 
-        var highestSgpa = orderedHistories.Count > 0
-            ? orderedHistories.Max(h => h.SemesterGpa)
+        var gradedTerms = termGpas.Where(t => t.GradedCredits > 0).ToList();
+        var highestSgpa = gradedTerms.Count > 0
+            ? gradedTerms.Max(h => h.SemesterGpa)
             : 0m;
 
         return new StudentDashboardDto
@@ -175,75 +199,14 @@ public sealed class StudentDashboardService : IStudentDashboardService
             StandingAlert = standingAlert,
             HasAcademicRecords = allCourses.Count > 0,
             ProjectedGraduation = projectedGraduation,
-            SemestersCompleted = student.StandingHistories.Count,
+            SemestersCompleted = termGpas.Count,
             TotalSemesters = totalSemesters,
             CurrentCourses = currentCourses,
             UniversityName = student.University?.Name ?? "Not assigned",
+            EnrollmentDate = enrollmentDateDisplay,
             HighestSgpa = highestSgpa,
             GpaHistory = gpaHistory
         };
-    }
-
-    private async Task<Dictionary<string, decimal>> BuildGradeScaleAsync(int? universityId)
-    {
-        if (universityId is null)
-            return BuildDefaultGradeScale();
-
-        var gradeScale = await _db.GradeScales
-            .AsNoTracking()
-            .Where(gs => gs.UniversityId == universityId)
-            .ToDictionaryAsync(gs => gs.LetterGrade.ToUpper(), gs => gs.PointValue);
-
-        return gradeScale.Count > 0 ? gradeScale : BuildDefaultGradeScale();
-    }
-
-    private static Dictionary<string, decimal> BuildDefaultGradeScale()
-        => new()
-        {
-            ["A+"] = 4.0m,
-            ["A"] = 4.0m,
-            ["A-"] = 3.7m,
-            ["B+"] = 3.3m,
-            ["B"] = 3.0m,
-            ["B-"] = 2.7m,
-            ["C+"] = 2.3m,
-            ["C"] = 2.0m,
-            ["C-"] = 1.7m,
-            ["D+"] = 1.3m,
-            ["D"] = 1.0m,
-            ["F"] = 0.0m
-        };
-
-    private static decimal CalculateGpa(IEnumerable<StudentCourse> records, Dictionary<string, decimal> gradeScale)
-    {
-        var totalPoints = 0m;
-        var totalCredits = 0;
-
-        foreach (var record in records)
-        {
-            if (record.Course is null || string.IsNullOrWhiteSpace(record.Grade))
-                continue;
-
-            var gradeKey = record.Grade.Trim().ToUpper();
-            if (!gradeScale.TryGetValue(gradeKey, out var points))
-                continue;
-
-            totalPoints += points * record.Course.CreditHours;
-            totalCredits += record.Course.CreditHours;
-        }
-
-        return totalCredits == 0 ? 0m : Math.Round(totalPoints / totalCredits, 2);
-    }
-
-    private static decimal CalculateSemesterGpa(IEnumerable<StandingHistory> histories, SemesterType currentSemester, string? academicYear)
-    {
-        var current = histories
-            .Where(h => string.Equals(h.AcademicYear, academicYear, StringComparison.OrdinalIgnoreCase)
-                        && h.Semester == currentSemester)
-            .OrderByDescending(h => h.Id)
-            .FirstOrDefault();
-
-        return current?.SemesterGpa ?? 0m;
     }
 
     private static string BuildStandingAlert(AcademicStanding standing, decimal cgpa)
@@ -263,11 +226,11 @@ public sealed class StudentDashboardService : IStudentDashboardService
 
     private static (string projectedGraduation, int totalSemesters) ProjectGraduation(
         SemesterType currentSemester,
-        string? academicYear,
+        DateTime? enrollmentDate,
+        string? academicYearOrdinal,
         int creditsCompleted,
         int creditsRequired,
-        AcademicStanding standing,
-        decimal cgpa)
+        int maxCreditsPerSemester)
     {
         if (creditsRequired <= 0)
             return ("N/A", 0);
@@ -276,64 +239,55 @@ public sealed class StudentDashboardService : IStudentDashboardService
         if (remaining == 0)
             return ("Completed", 0);
 
-        var maxCredits = standing switch
-        {
-            AcademicStanding.Probation => 12,
-            AcademicStanding.Warning => 15,
-            _ => cgpa >= 3.0m ? 21 : DefaultMaxCreditsPerSemester
-        };
-
-        var semestersNeeded = (int)Math.Ceiling((double)remaining / maxCredits);
+        // Count semesters needed (Fall/Spring only, skip Summer)
+        var semestersNeeded = (int)Math.Ceiling((double)remaining / maxCreditsPerSemester);
         var totalSemesters = (int)Math.Ceiling((double)creditsRequired / DefaultMaxCreditsPerSemester);
 
-        var yearStart = ParseAcademicYearStart(academicYear);
+        // Anchor to calendar year from EnrollmentDate; fallback to current year
+        var calendarYear = enrollmentDate?.Year ?? DateTime.UtcNow.Year;
+        var currentOrdinal = int.TryParse(academicYearOrdinal, out var ord) ? ord : 1;
+
+        // Determine current calendar year from enrollment + ordinal
+        // e.g. enrolled Sep 2022, Year 3 → current academic year starts Sep 2024
+        var currentAcademicStartYear = calendarYear + (currentOrdinal - 1);
+
         var semester = currentSemester;
-        var year = currentSemester switch
+        var year = semester switch
         {
-            SemesterType.Fall => yearStart,
-            _ => yearStart + 1
+            SemesterType.Fall => currentAcademicStartYear,
+            _ => currentAcademicStartYear + 1
         };
 
+        // Advance only Fall→Spring (skip Summer for graduation projection)
         for (var i = 0; i < semestersNeeded; i++)
         {
-            (semester, year) = AdvanceSemester(semester, year);
+            (semester, year) = AdvanceSemesterNoSummer(semester, year);
         }
 
-        return ($"{semester} {year}", totalSemesters);
+        var gradYear = currentOrdinal + (int)Math.Ceiling(semestersNeeded / 2.0);
+
+        return ($"{semester} {year} (Year {gradYear})", totalSemesters);
     }
 
-    private static int ParseAcademicYearStart(string? academicYear)
+    private static bool TryParseCalendarAcademicYearStart(string? academicYear, out int startYear)
     {
+        startYear = 0;
         if (string.IsNullOrWhiteSpace(academicYear))
-            return DateTime.UtcNow.Year;
+            return false;
 
         var part = academicYear.Split('-', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-        return int.TryParse(part, out var year) ? year : DateTime.UtcNow.Year;
+        return part?.Length == 4
+            && int.TryParse(part, out startYear)
+            && startYear >= 1900;
     }
 
-    private static (SemesterType semester, int year) AdvanceSemester(SemesterType semester, int year)
+    private static (SemesterType semester, int year) AdvanceSemesterNoSummer(SemesterType semester, int year)
     {
         return semester switch
         {
             SemesterType.Fall => (SemesterType.Spring, year + 1),
-            SemesterType.Spring => (SemesterType.Summer, year),
-            _ => (SemesterType.Fall, year)
+            _ => (SemesterType.Fall, year) // Spring → Fall (skip Summer)
         };
-    }
-
-    private static string FormatSemesterAbbrev(SemesterType semester, string academicYear)
-    {
-        var semName = semester switch
-        {
-            SemesterType.Fall => "Fall",
-            SemesterType.Spring => "Spr",
-            _ => "Sum"
-        };
-
-        var year = academicYear.Split('-').FirstOrDefault() ?? "";
-        if (year.Length >= 4)
-            year = year[2..];
-
-        return $"{semName}\n'{year}";
     }
 }
+
