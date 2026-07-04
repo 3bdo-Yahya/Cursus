@@ -351,9 +351,14 @@ function pulseEdge(edge) {
 }
 
 async function fetchImpactResult(courseId) {
+  const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
   const res = await fetch('/Student/SimulateFailure', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'RequestVerificationToken': token
+    },
     body: JSON.stringify({ courseId }),
   });
   if (res.status === 404) throw new Error('Selected course was not found in your curriculum.');

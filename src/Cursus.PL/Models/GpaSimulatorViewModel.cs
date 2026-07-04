@@ -4,6 +4,7 @@ namespace Cursus.PL.Models;
 
 public class GpaSimulatorViewModel
 {
+    public required string StudentId { get; init; }
     public required string StudentName { get; init; }
     public required string Department { get; init; }
     public int Year { get; init; }
@@ -20,6 +21,7 @@ public class GpaSimulatorViewModel
 
     public required List<SimulatedCourseViewModel> CurrentCourses { get; init; }
     public required List<ImprovableCourseViewModel> ImprovableCourses { get; init; }
+    public required List<string> CompletedCourses { get; init; }
     public required Dictionary<string, double> GradeScale { get; init; }
 }
 
@@ -42,3 +44,4 @@ public class ImprovableCourseViewModel
     public double OriginalPoints { get; init; }
     
 }
+

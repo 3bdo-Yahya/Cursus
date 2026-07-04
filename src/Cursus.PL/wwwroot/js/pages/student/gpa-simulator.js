@@ -15,11 +15,44 @@ const MAX_GPA = window.STUDENT_DATA?.maxGpa ?? 4.0;
 
 const CURRENT_COURSES = window.STUDENT_DATA?.currentCourses ?? [];
 const IMPROVABLE_COURSES = window.STUDENT_DATA?.improvableCourses ?? [];
+const COMPLETED_COURSES = window.STUDENT_DATA?.completedCourses ?? [];
+
+/* ── Planned courses from Planner localStorage bridge ───── */
+const STUDENT_ID = window.STUDENT_DATA?.studentId || '';
+const PLANNED_LS_KEY = STUDENT_ID ? `cursus.plannedCourses.${STUDENT_ID}` : '';
+
+function loadPlannedCourses() {
+  if (!PLANNED_LS_KEY) return [];
+  try {
+    const raw = localStorage.getItem(PLANNED_LS_KEY);
+    if (!raw) return [];
+    const planned = JSON.parse(raw);
+    if (!Array.isArray(planned)) return [];
+
+    const blockedIds = new Set([
+      ...CURRENT_COURSES.map(c => c.id),
+      ...IMPROVABLE_COURSES.map(c => c.id),
+      ...COMPLETED_COURSES
+    ]);
+
+    const filtered = planned.filter(p => p && p.id && !blockedIds.has(p.id));
+
+    if (filtered.length !== planned.length) {
+      localStorage.setItem(PLANNED_LS_KEY, JSON.stringify(filtered));
+    }
+
+    return filtered;
+  } catch {
+    return [];
+  }
+}
+
+const PLANNED_COURSES = loadPlannedCourses();
 
 /* ── Custom grade dropdown ───────────────────── */
 function buildCustomSelect(grades, idx, type) {
-  const id = type === 'improve' ? `improve-sel-${idx}` : `course-sel-${idx}`;
-  const dataAttr = type === 'improve' ? `data-improve-index="${idx}"` : `data-index="${idx}"`;
+  const id = type === 'improve' ? `improve-sel-${idx}` : type === 'planned' ? `planned-sel-${idx}` : `course-sel-${idx}`;
+  const dataAttr = type === 'improve' ? `data-improve-index="${idx}"` : type === 'planned' ? `data-planned-index="${idx}"` : `data-index="${idx}"`;
   const options = grades.map(g => {
     const pts = GRADE_SCALE[g];
     const cls = g === '—' ? '' : gradeClass(g);
@@ -64,6 +97,27 @@ function renderCoursesTable() {
       ${buildCustomSelect(GRADE_OPTIONS, i, 'course')}`;
     body.appendChild(row);
   });
+
+  // Append planned courses from planner bridge
+  if (PLANNED_COURSES.length > 0) {
+    const divider = document.createElement('div');
+    divider.style.cssText = 'padding:8px 16px 4px;font-size:11.5px;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:.04em;border-top:1px solid var(--c-border);margin-top:4px;';
+    divider.textContent = 'Planned (from Semester Planner)';
+    body.appendChild(divider);
+
+    PLANNED_COURSES.forEach((c, i) => {
+      const row = document.createElement('div');
+      row.className = 'grade-table-row';
+      row.innerHTML = `
+        <span class="grade-row-code">${c.id}
+          <span style="font-size:9px;font-weight:700;color:#7c3aed;background:rgba(124,58,237,.1);padding:1px 6px;border-radius:6px;margin-left:4px;">Planned</span>
+        </span>
+        <span class="grade-row-name">${c.name}</span>
+        <span class="grade-row-credits">${c.credits} cr</span>
+        ${buildCustomSelect(GRADE_OPTIONS, i, 'planned')}`;
+      body.appendChild(row);
+    });
+  }
 }
 
 /* ── Render Grade Improvement Table ─────────────────────── */
@@ -152,8 +206,14 @@ function setupGradeSelectDelegation() {
 }
 
 /* ── Calculation Engine ────────────────────────────── */
+function getSemesterCourseCredits() {
+  const currentCredits = CURRENT_COURSES.reduce((sum, c) => sum + c.credits, 0);
+  const plannedCredits = PLANNED_COURSES.reduce((sum, c) => sum + c.credits, 0);
+  return currentCredits + plannedCredits;
+}
+
 function calculate() {
-  const courseSelects  = document.querySelectorAll('#courses-body .custom-grade-select');
+  const courseSelects  = document.querySelectorAll('#courses-body .custom-grade-select[data-index]');
   const improveSelects = document.querySelectorAll('#improvement-body .custom-grade-select');
 
   let semCredits = 0;
@@ -164,11 +224,13 @@ function calculate() {
   let retakeQPDelta = 0;
   let retakeCreditsDelta = 0;
 
-  courseSelects.forEach((sel, i) => {
+  courseSelects.forEach((sel) => {
     const grade = sel.dataset.currentVal || '—';
     if (grade === '—') return;
     anySelected = true;
-    const c = CURRENT_COURSES[i];
+    const idx = parseInt(sel.dataset.index, 10);
+    const c = CURRENT_COURSES[idx];
+    if (!c) return;
     semCredits += c.credits;
     semQP      += c.credits * GRADE_SCALE[grade];
 
@@ -176,6 +238,18 @@ function calculate() {
       retakeQPDelta     -= c.originalPoints * c.credits;
       retakeCreditsDelta -= c.credits;
     }
+  });
+
+  // ── Planned courses (from planner bridge)
+  const plannedSelects = document.querySelectorAll('#courses-body .custom-grade-select[data-planned-index]');
+  plannedSelects.forEach((sel, i) => {
+    const grade = sel.dataset.currentVal || '—';
+    if (grade === '—') return;
+    anySelected = true;
+    const c = PLANNED_COURSES[i];
+    if (!c) return;
+    semCredits += c.credits;
+    semQP      += c.credits * GRADE_SCALE[grade];
   });
 
   let improveQPDelta = 0;
@@ -187,7 +261,7 @@ function calculate() {
     improveQPDelta += c.credits * (GRADE_SCALE[grade] - c.originalPoints);
   });
 
-  const totalSemCredits = CURRENT_COURSES.reduce((s, c) => s + c.credits, 0);
+  const totalSemCredits = getSemesterCourseCredits();
   document.getElementById('stat-semester-credits').textContent = `${totalSemCredits} cr`;
 
   if (!anySelected) {
@@ -303,7 +377,7 @@ function updateCgpaImpact(delta) {
 function updateTargetResult() {
   const target    = parseFloat(document.getElementById('target-slider').value);
   const resultEl  = document.getElementById('target-result');
-  const semTotal  = CURRENT_COURSES.reduce((s, c) => s + c.credits, 0);
+  const semTotal  = getSemesterCourseCredits();
 
   document.getElementById('target-value-display').textContent = target.toFixed(2);
 

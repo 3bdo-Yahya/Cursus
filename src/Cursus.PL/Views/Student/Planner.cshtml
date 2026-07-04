@@ -1,6 +1,28 @@
+@model Cursus.PL.Models.PlannerViewModel
+@using Cursus.PL
+
 @{
     ViewData["Title"] = "Semester Planner";
+    var progressPct = Model.TotalCreditsRequired > 0
+        ? Math.Min((double)Model.CompletedCredits / Model.TotalCreditsRequired * 100, 100)
+        : 0;
 }
+
+<script>
+    window.STUDENT_DATA = {
+        studentId: '@Model.StudentId',
+        completedCourses: @Html.Raw(ViewJson.Serialize(Model.CompletedCourses)),
+        inProgressCourses: @Html.Raw(ViewJson.Serialize(Model.InProgressCourses)),
+        completedCredits: @Model.CompletedCredits,
+        totalCredits: @Model.TotalCreditsRequired,
+        creditLimit: @Model.CreditLimit,
+        overloadLimit: @Model.OverloadLimit,
+        isOverloadEligible: @(Model.IsOverloadEligible ? "true" : "false"),
+        studentCgpa: @Model.CurrentCgpa,
+        catalog: @Html.Raw(ViewJson.Serialize(Model.Catalog)),
+        currentlyEnrolled: @Html.Raw(ViewJson.Serialize(Model.CurrentlyEnrolledCourses))
+    };
+</script>
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/student/semester-planner.css" asp-append-version="true"/>
@@ -13,13 +35,13 @@
     <div class="d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
       <div>
         <h1 class="fw-900 mb-1" style="font-size:1.55rem;letter-spacing:-.4px;color:var(--c-text);">Semester Planner</h1>
-        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Plan your upcoming semester — drag &amp; drop courses, check prerequisites, and stay within your credit limits.</p>
+        <p class="mb-0" style="font-size:13px;color:var(--c-muted);">
+            @Model.StudentName · @Model.Department · Year @Model.Year · @Model.Semester
+        </p>
       </div>
       <!-- Semester selector -->
       <div class="semester-tabs flex-shrink-0">
-        <button class="sem-tab" onclick="switchSemester(this,'fall-2026')">Fall 2026</button>
-        <button class="sem-tab active" onclick="switchSemester(this,'spring-2027')">Spring 2027</button>
-        <button class="sem-tab" onclick="switchSemester(this,'fall-2027')">Fall 2027</button>
+        <button class="sem-tab active">@Model.Semester</button>
       </div>
     </div>
   </section>
@@ -31,65 +53,18 @@
       <div class="plan-card anim-fade-up-1" id="plan-card-main">
         <div class="plan-card-header">
           <div>
-            <div class="plan-card-title">Spring 2027</div>
-            <div class="plan-card-subtitle">Planned semester · 18 credit limit (Good Standing)</div>
+            <div class="plan-card-title">@Model.Semester</div>
+            <div class="plan-card-subtitle">Planned semester · @Model.CreditLimit credit limit (@Model.AcademicStanding)</div>
           </div>
-          <span class="credit-chip credit-chip-ok" id="credit-chip">14 / 18 cr</span>
+          <span class="credit-chip credit-chip-empty" id="credit-chip">0 / @Model.CreditLimit cr</span>
         </div>
 
         <!-- Planned courses list -->
         <div id="planned-courses-list">
-
-          <div class="planned-row" data-course-id="CS401">
-            <span class="planned-code">CS401</span>
-            <span class="planned-name">Compiler Design</span>
-            <span class="planned-type-badge type-core">Core</span>
-            <span class="planned-credits">3 cr</span>
-            <button class="remove-course-btn" onclick="removeCourse('CS401',event)" title="Remove course">
-              <span class="material-symbols-outlined">close</span>
-            </button>
+          <div id="planned-empty-state" class="planned-empty-state">
+            <span class="material-symbols-outlined" style="font-size:22px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">playlist_add</span>
+            <p class="mb-0" style="font-size:13px;color:var(--c-muted);">No courses planned yet — add courses below to build your semester.</p>
           </div>
-
-          <div class="planned-row" data-course-id="DS305">
-            <span class="planned-code">DS305</span>
-            <span class="planned-name">Database Systems</span>
-            <span class="planned-type-badge type-elec">Dept. Elective</span>
-            <span class="planned-credits">3 cr</span>
-            <button class="remove-course-btn" onclick="removeCourse('DS305',event)" title="Remove course">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-
-          <div class="planned-row" data-course-id="NET410">
-            <span class="planned-code">NET410</span>
-            <span class="planned-name">Cloud Computing</span>
-            <span class="planned-type-badge type-elec">Dept. Elective</span>
-            <span class="planned-credits">3 cr</span>
-            <button class="remove-course-btn" onclick="removeCourse('NET410',event)" title="Remove course">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-
-          <div class="planned-row" data-course-id="PSYC101">
-            <span class="planned-code">PSYC101</span>
-            <span class="planned-name">Intro to Psychology</span>
-            <span class="planned-type-badge type-free">Free Elective</span>
-            <span class="planned-credits">3 cr</span>
-            <button class="remove-course-btn" onclick="removeCourse('PSYC101',event)" title="Remove course">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-
-          <div class="planned-row" data-course-id="PHIL105">
-            <span class="planned-code">PHIL105</span>
-            <span class="planned-name">Ethics in Tech</span>
-            <span class="planned-type-badge type-univ">University Req.</span>
-            <span class="planned-credits">2 cr</span>
-            <button class="remove-course-btn" onclick="removeCourse('PHIL105',event)" title="Remove course">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-
         </div>
 
         <!-- Add course row -->
@@ -111,57 +86,40 @@
         </div>
       </div>
 
-      <!-- Previously planned -->
+      <!-- Current semester enrollment -->
       <div class="anim-fade-up-2" data-scroll="fade-up">
-        <p class="section-heading mb-2" style="font-size:13px;color:var(--c-muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase;">Previous Semesters · Reference Only</p>
+        <p class="section-heading mb-2" style="font-size:13px;color:var(--c-muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase;">Current Semester · In Progress</p>
         <div class="d-flex flex-column gap-2">
-
-          <div class="plan-card" style="opacity:.75;">
-            <div class="plan-card-header">
-              <div>
-                <div class="plan-card-title" style="font-size:13.5px;">Fall 2026 <span style="font-size:11px;font-weight:600;color:var(--c-muted);">· In Progress</span></div>
-                <div class="plan-card-subtitle">Currently enrolled</div>
+          @if (Model.CurrentlyEnrolledCourses.Any())
+          {
+              <div class="plan-card" style="opacity:.75;">
+                <div class="plan-card-header">
+                  <div>
+                    <div class="plan-card-title" style="font-size:13.5px;">@Model.Semester</div>
+                    <div class="plan-card-subtitle">Currently enrolled courses</div>
+                  </div>
+                  <span class="credit-chip credit-chip-ok">@Model.CurrentlyEnrolledCourses.Sum(c => c.Credits) cr</span>
+                </div>
+                <div style="padding:10px 0 6px;">
+                  @foreach (var sc in Model.CurrentlyEnrolledCourses)
+                  {
+                      <div class="planned-row" style="cursor:default;">
+                        <span class="planned-code">@sc.Id</span>
+                        <span class="planned-name">@sc.Name</span>
+                        <span class="planned-type-badge @sc.TypeClass">@sc.Type</span>
+                        <span class="planned-credits">@sc.Credits cr</span>
+                        <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
+                      </div>
+                  }
+                </div>
               </div>
-              <span class="credit-chip credit-chip-ok">14 cr</span>
-            </div>
-            <div style="padding:10px 0 6px;">
-              <div class="planned-row" style="cursor:default;">
-                <span class="planned-code">CS301</span>
-                <span class="planned-name">Operating Systems</span>
-                <span class="planned-type-badge type-core">Core</span>
-                <span class="planned-credits">3 cr</span>
-                <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
+          }
+          else
+          {
+              <div style="font-size: 13px; color: var(--c-muted); padding: 10px;">
+                  No courses currently in progress.
               </div>
-              <div class="planned-row" style="cursor:default;">
-                <span class="planned-code">CS303</span>
-                <span class="planned-name">Computer Networks</span>
-                <span class="planned-type-badge type-core">Core</span>
-                <span class="planned-credits">3 cr</span>
-                <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
-              </div>
-              <div class="planned-row" style="cursor:default;">
-                <span class="planned-code">MTH201</span>
-                <span class="planned-name">Linear Algebra</span>
-                <span class="planned-type-badge type-core">Core</span>
-                <span class="planned-credits">3 cr</span>
-                <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
-              </div>
-              <div class="planned-row" style="cursor:default;">
-                <span class="planned-code">ENG201</span>
-                <span class="planned-name">Technical Writing</span>
-                <span class="planned-type-badge type-univ">University Req.</span>
-                <span class="planned-credits">2 cr</span>
-                <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
-              </div>
-              <div class="planned-row" style="cursor:default;">
-                <span class="planned-code">CS202</span>
-                <span class="planned-name">Discrete Mathematics</span>
-                <span class="planned-type-badge type-core">Core</span>
-                <span class="planned-credits">3 cr</span>
-                <span style="font-size:10.5px;font-weight:700;color:var(--c-primary);margin-left:auto;">In Progress</span>
-              </div>
-            </div>
-          </div>
+          }
         </div>
       </div>
     </div>
@@ -177,31 +135,31 @@
         </div>
         <div class="summary-stat-row">
           <span class="summary-stat-label">Planned credits</span>
-          <span class="summary-stat-value ok" id="stat-planned-cr">14</span>
+          <span class="summary-stat-value" id="stat-planned-cr">0 cr</span>
         </div>
         <div class="summary-stat-row">
           <span class="summary-stat-label">Credit limit</span>
-          <span class="summary-stat-value" id="stat-cr-limit">18 (Good Standing)</span>
+          <span class="summary-stat-value" id="stat-cr-limit">@Model.CreditLimit (@Model.AcademicStanding)</span>
         </div>
         <div class="summary-stat-row">
           <span class="summary-stat-label">Credits after semester</span>
-          <span class="summary-stat-value" id="stat-total-after">98 / 132</span>
+          <span class="summary-stat-value" id="stat-total-after">@Model.CompletedCredits / @Model.TotalCreditsRequired</span>
         </div>
         <div class="summary-stat-row">
           <span class="summary-stat-label">Courses planned</span>
-          <span class="summary-stat-value" id="stat-course-count">5</span>
+          <span class="summary-stat-value" id="stat-course-count">0</span>
         </div>
         <div class="summary-stat-row">
           <span class="summary-stat-label">Prerequisite conflicts</span>
           <span class="summary-stat-value ok" id="stat-conflicts">None ✓</span>
         </div>
         <div class="mini-bar-track">
-          <div class="mini-bar-fill" id="plan-bar" style="--bar-w:74.2%;"></div>
+          <div class="mini-bar-fill" id="plan-bar" style="--bar-w: @progressPct.ToString("0.0")%;"></div>
         </div>
         <div style="padding:0 20px 12px;display:flex;justify-content:space-between;">
-          <span style="font-size:11px;color:var(--c-muted);">84 completed</span>
-          <span style="font-size:11px;color:var(--c-muted);font-weight:700;">74.2% → 74.2%</span>
-          <span style="font-size:11px;color:var(--c-muted);">132 total</span>
+          <span style="font-size:11px;color:var(--c-muted);">@Model.CompletedCredits completed</span>
+          <span style="font-size:11px;color:var(--c-muted);font-weight:700;" id="progress-pct-label">@progressPct.ToString("0.0")%</span>
+          <span style="font-size:11px;color:var(--c-muted);">@Model.TotalCreditsRequired total</span>
         </div>
       </div>
 
@@ -218,15 +176,18 @@
           </div>
         </div>
 
-        <div class="sidebar-alert alert-info">
-          <div class="sidebar-alert-icon" style="background:var(--alert-info-icon);">
-            <span class="material-symbols-outlined" style="color:var(--alert-info-title);">bolt</span>
-          </div>
-          <div>
-            <p class="fw-800 mb-0" style="font-size:12.5px;color:var(--alert-info-title);">Overload available</p>
-            <p class="mb-0" style="font-size:11.5px;color:var(--alert-info-text);line-height:1.5;">Your GPA (3.24) qualifies you for overload — up to 21 credits.</p>
-          </div>
-        </div>
+        @if (Model.IsOverloadEligible)
+        {
+            <div class="sidebar-alert alert-info">
+              <div class="sidebar-alert-icon" style="background:var(--alert-info-icon);">
+                <span class="material-symbols-outlined" style="color:var(--alert-info-title);">bolt</span>
+              </div>
+              <div>
+                <p class="fw-800 mb-0" style="font-size:12.5px;color:var(--alert-info-title);">Overload available</p>
+                <p class="mb-0" style="font-size:11.5px;color:var(--alert-info-text);line-height:1.5;">Your GPA (@Model.CurrentCgpa.ToString("0.00")) qualifies you for overload — up to @Model.OverloadLimit credits.</p>
+              </div>
+            </div>
+        }
 
         <div class="sidebar-alert alert-warn" id="alert-grad" style="display:none;">
           <div class="sidebar-alert-icon" style="background:var(--alert-warn-icon);">
@@ -234,7 +195,7 @@
           </div>
           <div>
             <p class="fw-800 mb-0" style="font-size:12.5px;color:var(--alert-warn-title);">Over credit limit!</p>
-            <p class="mb-0 warn-text" style="font-size:11.5px;color:var(--alert-warn-text);line-height:1.5;">This plan exceeds your 18-credit limit.</p>
+            <p class="mb-0 warn-text" style="font-size:11.5px;color:var(--alert-warn-text);line-height:1.5;">This plan exceeds your @Model.CreditLimit-credit limit.</p>
           </div>
         </div>
 

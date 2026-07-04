@@ -31,6 +31,7 @@ public sealed class StudentDashboardDto
     public required IReadOnlyList<EnrolledCourseDto> CurrentCourses { get; init; }
 
     public required string UniversityName { get; init; }
+    public required string EnrollmentDate { get; init; }
     public decimal HighestSgpa { get; init; }
     public required IReadOnlyList<GpaHistoryPointDto> GpaHistory { get; init; }
 }

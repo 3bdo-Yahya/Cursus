@@ -29,11 +29,20 @@ function showReport(report) {
   loadReport(report);
 }
 
+function getAntiForgeryToken() {
+  const input = document.querySelector('input[name="__RequestVerificationToken"]');
+  return input ? input.value : '';
+}
+
 async function fetchAndShowReport(courseId) {
   try {
     const res = await fetch('/Student/SimulateFailure', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'RequestVerificationToken': getAntiForgeryToken()
+      },
       body: JSON.stringify({ courseId }),
     });
     if (!res.ok) {

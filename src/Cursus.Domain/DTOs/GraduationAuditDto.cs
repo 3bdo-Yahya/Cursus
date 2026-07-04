@@ -29,7 +29,7 @@ public sealed class GraduationAuditDto
 
     // ── GPA ──────────────────────────────────────────────────────────────
     /// <summary>
-    /// Cumulative GPA taken from the most recent <c>StandingHistory</c> record.
+    /// Cumulative GPA computed from graded <c>StudentCourse</c> records via best-attempt resolution.
     /// </summary>
     public decimal Cgpa { get; init; }
 

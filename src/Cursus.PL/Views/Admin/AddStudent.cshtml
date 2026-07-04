@@ -215,6 +215,18 @@
             </div>
           </div>
 
+          <!-- Enrollment Date -->
+          <div class="col-12 col-md-4">
+            <div class="form-group-fancy" id="fg-enrollment-date">
+              <label class="form-label-fancy" for="student-enrollment-date">Enrollment Date</label>
+              <div class="input-wrap">
+                <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">event</span></span>
+                <input type="date" id="student-enrollment-date" name="student-enrollment-date" class="form-control fancy-input has-prefix" oninput="markFieldDirty(this)"/>
+              </div>
+              <p class="field-hint mt-2">When the student started their program</p>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -264,3 +276,4 @@
     <script src="~/js/pages/admin/form-helpers.js" asp-append-version="true"></script>
     <script src="~/js/pages/admin/add-student.js" asp-append-version="true"></script>
 }
+
