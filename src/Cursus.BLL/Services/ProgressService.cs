@@ -124,7 +124,7 @@ public sealed class ProgressService : IProgressService
         // ── 8. Project graduation semester ────────────────────────────────
         var creditsRemaining = Math.Max(0, totalRequired - totalEarned);
         var graduationSemester = ProjectGraduationSemester(
-            creditsRemaining, student.CurrentSemester, student.AcademicYear ?? "");
+            creditsRemaining, student.CurrentSemester, student.EnrollmentDate, student.AcademicYear);
 
         // ── 9. Determine on-track status ──────────────────────────────────
         var isOnTrack = cgpa >= student.Department.MinGpaForGraduation;
@@ -303,46 +303,47 @@ public sealed class ProgressService : IProgressService
     private static string ProjectGraduationSemester(
         int creditsRemaining,
         SemesterType currentSemester,
-        string academicYear)
+        DateTime? enrollmentDate,
+        string? academicYearOrdinal)
     {
         if (creditsRemaining <= 0)
             return "This Semester";
 
-        int semestersNeeded = (int)Math.Ceiling((double)creditsRemaining / AvgCreditsPerSemester);
-
-        // Parse the start year from "YYYY-YYYY".
-        int startYear = TryParseStartYear(academicYear);
-
-        // Advance semester by semester from current position.
-        var sem = currentSemester;
-        var year = startYear;
-
-        for (int i = 0; i < semestersNeeded; i++)
+        if (enrollmentDate == null || string.IsNullOrWhiteSpace(academicYearOrdinal) || !int.TryParse(academicYearOrdinal, out var currentOrdinal))
         {
-            (sem, year) = AdvanceSemester(sem, year);
+            return "Unknown";
         }
 
-        return $"{sem} {year}/{year + 1}";
-    }
+        int semestersNeeded = (int)Math.Ceiling((double)creditsRemaining / AvgCreditsPerSemester);
 
-    private static (SemesterType Semester, int Year) AdvanceSemester(SemesterType current, int year)
-    {
-        return current switch
+        var calendarYear = enrollmentDate.Value.Year;
+        var currentAcademicStartYear = calendarYear + (currentOrdinal - 1);
+
+        var semester = currentSemester;
+        var year = semester switch
         {
-            SemesterType.Fall   => (SemesterType.Spring, year),
-            SemesterType.Spring => (SemesterType.Summer, year),
-            SemesterType.Summer => (SemesterType.Fall,   year + 1),
-            _                   => (SemesterType.Spring, year)
+            SemesterType.Fall => currentAcademicStartYear,
+            _ => currentAcademicStartYear + 1
         };
+
+        for (var i = 0; i < semestersNeeded; i++)
+        {
+            (semester, year) = AdvanceSemesterNoSummer(semester, year);
+        }
+
+        var academicStartYear = semester == SemesterType.Fall ? year : year - 1;
+        var gradYear = academicStartYear - currentAcademicStartYear + currentOrdinal;
+
+        return $"{semester} {year} (Year {gradYear})";
     }
 
-    private static int TryParseStartYear(string academicYear)
+    private static (SemesterType semester, int year) AdvanceSemesterNoSummer(SemesterType semester, int year)
     {
-        if (string.IsNullOrWhiteSpace(academicYear))
-            return DateTime.UtcNow.Year;
-
-        var part = academicYear.Split('-', '/')[0].Trim();
-        return int.TryParse(part, out var y) ? y : DateTime.UtcNow.Year;
+        return semester switch
+        {
+            SemesterType.Fall => (SemesterType.Spring, year + 1),
+            _ => (SemesterType.Fall, year) // Spring → Fall (skip Summer)
+        };
     }
 
     private static int StatusSortKey(CourseAuditStatus status) => status switch
