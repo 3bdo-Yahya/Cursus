@@ -145,6 +145,11 @@ public class StudentController : Controller
             .Include(c => c.Prerequisites)
                 .ThenInclude(p => p.Prerequisite)
             .Where(c => (c.DepartmentId == student.DepartmentId || c.CourseType == CourseType.UniversityReq) && c.IsActive)
+            .Where(c =>
+                c.SemesterAvailability == SemesterAvailability.All
+                || c.SemesterAvailability == SemesterAvailability.FallSpring
+                || (primaryTerm.Semester == SemesterType.Fall && c.SemesterAvailability == SemesterAvailability.Fall)
+                || (primaryTerm.Semester == SemesterType.Spring && c.SemesterAvailability == SemesterAvailability.Spring))
             .AsNoTracking()
             .ToListAsync();
 
@@ -154,11 +159,13 @@ public class StudentController : Controller
                 var (type, typeClass) = MapPlannerCourseType(c.CourseType);
                 return new PlannerCourseViewModel
                 {
+                    CourseId = c.Id,
                     Id = c.Code,
                     Name = c.Name,
                     Credits = c.CreditHours,
                     Type = type,
                     TypeClass = typeClass,
+                    Category = c.CourseType,
                     Prereqs = c.Prerequisites
                         .Where(p => p.Prerequisite is not null)
                         .Select(p => p.Prerequisite!.Code)
@@ -168,6 +175,8 @@ public class StudentController : Controller
             .Where(c => !completedCourses.Contains(c.Id))
             .Where(c => !inProgressCourses.Contains(c.Id))
             .Where(c => !plannedCodes.Contains(c.Id))
+            .GroupBy(c => c.Id, StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
             .ToList();
 
         var model = new PlannerViewModel
@@ -764,5 +773,6 @@ public class StudentController : Controller
             _ => ("Core", "type-core")
         };
 }
+
 
 

@@ -63,11 +63,13 @@ public class PlannerEnrolledCourseViewModel
 
 public class PlannerCourseViewModel
 {
+    public int CourseId { get; set; }
     public string Id { get; set; } = string.Empty; // Course code
     public string Name { get; set; } = string.Empty;
     public int Credits { get; set; }
     public string Type { get; set; } = string.Empty; // Core, Dept. Elective, Free Elective, University Req.
     public string TypeClass { get; set; } = string.Empty; // type-core, type-elec, type-free, type-univ
+    public CourseType Category { get; set; }
     public List<string> Prereqs { get; set; } = new(); // Course codes of prerequisites
 }
 
@@ -77,4 +79,5 @@ public class PlannerCourseMutationRequest
     public string AcademicYear { get; set; } = string.Empty;
     public SemesterType Semester { get; set; }
 }
+
 
