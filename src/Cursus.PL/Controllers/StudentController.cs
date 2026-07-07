@@ -23,6 +23,7 @@ public class StudentController : Controller
     private readonly IImpactAnalysisService _impactAnalysisService;
     private readonly IGeminiService _geminiService;
     private readonly IAcademicMetricsService _academicMetricsService;
+    private readonly IPlannerService _plannerService;
 
     public StudentController(
         UserManager<AppUser> userManager,
@@ -31,7 +32,8 @@ public class StudentController : Controller
         IStudentDashboardService dashboardService,
         IImpactAnalysisService impactAnalysisService,
         IGeminiService geminiService,
-        IAcademicMetricsService academicMetricsService)
+        IAcademicMetricsService academicMetricsService,
+        IPlannerService plannerService)
     {
         _userManager = userManager;
         _db = db;
@@ -40,6 +42,7 @@ public class StudentController : Controller
         _impactAnalysisService = impactAnalysisService;
         _geminiService = geminiService;
         _academicMetricsService = academicMetricsService;
+        _plannerService = plannerService;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -80,7 +83,6 @@ public class StudentController : Controller
             return NotFound();
 
         var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
-
         var studentCourses = student.StudentCourses.ToList();
         var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
         var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScaleDecimal);
@@ -120,6 +122,25 @@ public class StudentController : Controller
             })
             .ToList();
 
+        var planningTerms = await _plannerService.GetPlanningTermsAsync(student.Id, creditLimit);
+        var primaryTerm = planningTerms.FirstOrDefault(t => t.IsPrimary) ?? planningTerms.FirstOrDefault();
+        if (primaryTerm is null)
+            return NotFound();
+
+        var primaryCapacity = await _plannerService.GetTermCapacityAsync(
+            student.Id,
+            primaryTerm.AcademicYear,
+            primaryTerm.Semester,
+            creditLimit);
+
+        var allPlannedCourses = await _plannerService.GetAllPlansAsync(student.Id);
+        var primaryPlannedCourses = allPlannedCourses
+            .Where(pc => pc.AcademicYear == primaryTerm.AcademicYear && pc.Semester == primaryTerm.Semester)
+            .ToList();
+        var plannedCodes = allPlannedCourses
+            .Select(pc => pc.Code)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
         var catalogCourses = await _db.Courses
             .Include(c => c.Prerequisites)
                 .ThenInclude(p => p.Prerequisite)
@@ -127,22 +148,27 @@ public class StudentController : Controller
             .AsNoTracking()
             .ToListAsync();
 
-        var catalog = catalogCourses.Select(c =>
-        {
-            var (type, typeClass) = MapPlannerCourseType(c.CourseType);
-            return new PlannerCourseViewModel
+        var catalog = catalogCourses
+            .Select(c =>
             {
-                Id = c.Code,
-                Name = c.Name,
-                Credits = c.CreditHours,
-                Type = type,
-                TypeClass = typeClass,
-                Prereqs = c.Prerequisites
-                    .Where(p => p.Prerequisite is not null)
-                    .Select(p => p.Prerequisite!.Code)
-                    .ToList()
-            };
-        }).ToList();
+                var (type, typeClass) = MapPlannerCourseType(c.CourseType);
+                return new PlannerCourseViewModel
+                {
+                    Id = c.Code,
+                    Name = c.Name,
+                    Credits = c.CreditHours,
+                    Type = type,
+                    TypeClass = typeClass,
+                    Prereqs = c.Prerequisites
+                        .Where(p => p.Prerequisite is not null)
+                        .Select(p => p.Prerequisite!.Code)
+                        .ToList()
+                };
+            })
+            .Where(c => !completedCourses.Contains(c.Id))
+            .Where(c => !inProgressCourses.Contains(c.Id))
+            .Where(c => !plannedCodes.Contains(c.Id))
+            .ToList();
 
         var model = new PlannerViewModel
         {
@@ -162,10 +188,236 @@ public class StudentController : Controller
             CompletedCourses = completedCourses,
             InProgressCourses = inProgressCourses,
             CurrentlyEnrolledCourses = currentlyEnrolled,
+            Terms = planningTerms
+                .Select(t => new PlannerTermViewModel
+                {
+                    AcademicYear = t.AcademicYear,
+                    Semester = t.Semester,
+                    Label = FormatSemester(t.Semester, t.AcademicYear),
+                    IsPrimary = t.IsPrimary
+                })
+                .ToList(),
+            PrimaryTermCapacity = new PlannerTermCapacityViewModel
+            {
+                AcademicYear = primaryCapacity.AcademicYear,
+                Semester = primaryCapacity.Semester,
+                ForcedInProgressCredits = primaryCapacity.ForcedInProgressCredits,
+                PlannedCredits = primaryCapacity.PlannedCredits,
+                RemainingRoom = primaryCapacity.RemainingRoom
+            },
+            PlannedCourses = primaryPlannedCourses
+                .Select(pc => new PlannerPlannedCourseViewModel
+                {
+                    CourseId = pc.CourseId,
+                    Code = pc.Code,
+                    Name = pc.Name,
+                    Credits = pc.CreditHours
+                })
+                .ToList(),
             Catalog = catalog
         };
 
         return View(model);
+    }
+
+    [HttpGet]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PlannerPlan(string academicYear, SemesterType semester)
+    {
+        if (string.IsNullOrWhiteSpace(academicYear))
+            return BadRequest(new { error = "Academic year is required." });
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return Unauthorized();
+
+        var student = await _db.Users
+            .Include(u => u.Department)
+            .Include(u => u.StudentCourses)
+                .ThenInclude(sc => sc.Course)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+        if (student is null)
+            return NotFound();
+
+        var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
+        var cgpa = _academicMetricsService.CalculateCgpa(
+            _academicMetricsService.ResolveBestAttempts(student.StudentCourses),
+            gradeScaleDecimal);
+        var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+
+        var plannedCourses = await _plannerService.GetPlanAsync(student.Id, academicYear, semester);
+        var capacity = await _plannerService.GetTermCapacityAsync(student.Id, academicYear, semester, creditLimit);
+
+        return Json(new
+        {
+            term = new { academicYear, semester = semester.ToString() },
+            capacity = new
+            {
+                forcedInProgressCredits = capacity.ForcedInProgressCredits,
+                plannedCredits = capacity.PlannedCredits,
+                remainingRoom = capacity.RemainingRoom
+            },
+            plannedCourses = plannedCourses.Select(pc => new
+            {
+                courseId = pc.CourseId,
+                code = pc.Code,
+                name = pc.Name,
+                credits = pc.CreditHours,
+                type = pc.CourseType.ToString()
+            })
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddPlannedCourse([FromBody] PlannerCourseMutationRequest request)
+    {
+        if (request is null || request.CourseId <= 0 || string.IsNullOrWhiteSpace(request.AcademicYear))
+            return BadRequest(new { error = "Invalid request payload." });
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return Unauthorized();
+
+        var student = await _db.Users
+            .Include(u => u.Department)
+            .Include(u => u.StudentCourses)
+                .ThenInclude(sc => sc.Course)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+        if (student is null)
+            return NotFound();
+
+        var course = await _db.Courses
+            .Include(c => c.Prerequisites)
+                .ThenInclude(p => p.Prerequisite)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == request.CourseId && c.IsActive);
+
+        if (course is null)
+            return NotFound(new { error = "Course not found." });
+
+        if (course.CourseType != CourseType.UniversityReq && course.DepartmentId != student.DepartmentId)
+            return BadRequest(new { error = "Course is out of your department scope." });
+
+        if (student.StudentCourses.Any(sc => sc.CourseId == request.CourseId))
+            return BadRequest(new { error = "Course is already completed/in progress/recorded." });
+
+        var existingPlan = await _plannerService.GetPlanAsync(student.Id, request.AcademicYear, request.Semester);
+        if (existingPlan.Any(pc => pc.CourseId == request.CourseId))
+            return BadRequest(new { error = "Course is already planned for this term." });
+
+        var allPlans = await _plannerService.GetAllPlansAsync(student.Id);
+        var availableCodes = student.StudentCourses
+            .Where(sc => sc.Course is not null)
+            .Select(sc => sc.Course!.Code)
+            .Concat(allPlans.Select(pc => pc.Code))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var missingPrereq = course.Prerequisites
+            .Where(p => p.Prerequisite is not null)
+            .Select(p => p.Prerequisite!.Code)
+            .FirstOrDefault(code => !availableCodes.Contains(code));
+
+        if (!string.IsNullOrWhiteSpace(missingPrereq))
+            return BadRequest(new { error = $"Prerequisite {missingPrereq} is not satisfied." });
+
+        var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
+        var cgpa = _academicMetricsService.CalculateCgpa(
+            _academicMetricsService.ResolveBestAttempts(student.StudentCourses),
+            gradeScaleDecimal);
+        var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+
+        var capacity = await _plannerService.GetTermCapacityAsync(
+            student.Id,
+            request.AcademicYear,
+            request.Semester,
+            creditLimit);
+
+        if (capacity.RemainingRoom < course.CreditHours)
+            return BadRequest(new { error = "Adding this course exceeds term credit capacity." });
+
+        var added = await _plannerService.AddPlannedCourseAsync(
+            student.Id,
+            request.CourseId,
+            request.AcademicYear,
+            request.Semester);
+
+        if (!added)
+            return BadRequest(new { error = "Unable to add planned course." });
+
+        var updatedCapacity = await _plannerService.GetTermCapacityAsync(
+            student.Id,
+            request.AcademicYear,
+            request.Semester,
+            creditLimit);
+
+        return Json(new
+        {
+            success = true,
+            capacity = new
+            {
+                forcedInProgressCredits = updatedCapacity.ForcedInProgressCredits,
+                plannedCredits = updatedCapacity.PlannedCredits,
+                remainingRoom = updatedCapacity.RemainingRoom
+            }
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemovePlannedCourse([FromBody] PlannerCourseMutationRequest request)
+    {
+        if (request is null || request.CourseId <= 0 || string.IsNullOrWhiteSpace(request.AcademicYear))
+            return BadRequest(new { error = "Invalid request payload." });
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return Unauthorized();
+
+        var removed = await _plannerService.RemovePlannedCourseAsync(
+            user.Id,
+            request.CourseId,
+            request.AcademicYear,
+            request.Semester);
+
+        if (!removed)
+            return NotFound(new { error = "Planned course was not found for this term." });
+
+        var student = await _db.Users
+            .Include(u => u.Department)
+            .Include(u => u.StudentCourses)
+                .ThenInclude(sc => sc.Course)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+        if (student is null)
+            return NotFound();
+
+        var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
+        var cgpa = _academicMetricsService.CalculateCgpa(
+            _academicMetricsService.ResolveBestAttempts(student.StudentCourses),
+            gradeScaleDecimal);
+        var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+        var capacity = await _plannerService.GetTermCapacityAsync(
+            student.Id,
+            request.AcademicYear,
+            request.Semester,
+            creditLimit);
+
+        return Json(new
+        {
+            success = true,
+            capacity = new
+            {
+                forcedInProgressCredits = capacity.ForcedInProgressCredits,
+                plannedCredits = capacity.PlannedCredits,
+                remainingRoom = capacity.RemainingRoom
+            }
+        });
     }
     public async Task<IActionResult> Progress()
     {
@@ -512,4 +764,5 @@ public class StudentController : Controller
             _ => ("Core", "type-core")
         };
 }
+
 
