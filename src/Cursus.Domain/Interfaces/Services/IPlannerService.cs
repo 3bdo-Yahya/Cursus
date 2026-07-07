@@ -5,6 +5,18 @@ namespace Cursus.Domain.Interfaces.Services;
 
 public interface IPlannerService
 {
+    Task<IReadOnlyList<PlanningTermDto>> GetPlanningTermsAsync(
+        string studentId,
+        int creditLimit,
+        CancellationToken cancellationToken = default);
+
+    Task<PlannerTermCapacityDto> GetTermCapacityAsync(
+        string studentId,
+        string academicYear,
+        SemesterType semester,
+        int creditLimit,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<PlannedCourseDto>> GetPlanAsync(
         string studentId,
         string academicYear,

@@ -12,3 +12,20 @@ public class PlannedCourseDto
     public string AcademicYear { get; set; } = string.Empty;
     public SemesterType Semester { get; set; }
 }
+
+public class PlanningTermDto
+{
+    public string AcademicYear { get; set; } = string.Empty;
+    public SemesterType Semester { get; set; }
+    public bool IsPrimary { get; set; }
+}
+
+public class PlannerTermCapacityDto
+{
+    public string AcademicYear { get; set; } = string.Empty;
+    public SemesterType Semester { get; set; }
+    public int ForcedInProgressCredits { get; set; }
+    public int PlannedCredits { get; set; }
+    public int RemainingRoom { get; set; }
+}
+

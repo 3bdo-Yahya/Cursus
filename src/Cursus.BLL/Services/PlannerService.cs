@@ -16,6 +16,105 @@ public sealed class PlannerService : IPlannerService
         _db = db ?? throw new ArgumentNullException(nameof(db));
     }
 
+    public async Task<IReadOnlyList<PlanningTermDto>> GetPlanningTermsAsync(
+        string studentId,
+        int creditLimit,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(studentId);
+
+        await PruneStalePlansAsync(studentId, cancellationToken);
+
+        var student = await _db.Users
+            .Include(u => u.Department)
+            .Include(u => u.StudentCourses)
+                .ThenInclude(sc => sc.Course)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == studentId, cancellationToken);
+
+        if (student is null)
+            return Array.Empty<PlanningTermDto>();
+
+        var requiredCredits = student.Department?.TotalCreditsRequired ?? 132;
+        var completedCredits = student.StudentCourses
+            .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
+            .Sum(sc => sc.Course!.CreditHours);
+
+        var remainingCredits = Math.Max(0, requiredCredits - completedCredits);
+        var termCount = Math.Max(2, (int)Math.Ceiling(remainingCredits / (double)Math.Max(1, creditLimit)) + 1);
+
+        var terms = BuildTermSequence(student.AcademicYear, student.CurrentSemester, termCount);
+
+        var forcedCreditsByTerm = student.StudentCourses
+            .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
+            .GroupBy(sc => TermKey(sc.AcademicYear, sc.Semester))
+            .ToDictionary(g => g.Key, g => g.Sum(sc => sc.Course!.CreditHours));
+
+        var primaryIndex = terms.FindIndex(term =>
+        {
+            var key = TermKey(term.AcademicYear, term.Semester);
+            var forced = forcedCreditsByTerm.GetValueOrDefault(key, 0);
+            return forced < creditLimit;
+        });
+
+        if (primaryIndex < 0)
+        {
+            primaryIndex = terms.Count - 1;
+        }
+
+        var result = new List<PlanningTermDto>(terms.Count);
+        for (var i = 0; i < terms.Count; i++)
+        {
+            result.Add(new PlanningTermDto
+            {
+                AcademicYear = terms[i].AcademicYear,
+                Semester = terms[i].Semester,
+                IsPrimary = i == primaryIndex
+            });
+        }
+
+        return result;
+    }
+
+    public async Task<PlannerTermCapacityDto> GetTermCapacityAsync(
+        string studentId,
+        string academicYear,
+        SemesterType semester,
+        int creditLimit,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(studentId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(academicYear);
+
+        await PruneStalePlansAsync(studentId, cancellationToken);
+
+        var forcedCredits = await _db.StudentCourses
+            .AsNoTracking()
+            .Where(sc => sc.StudentId == studentId
+                         && sc.AcademicYear == academicYear
+                         && sc.Semester == semester
+                         && sc.Status == StudentCourseStatus.InProgress
+                         && sc.Course != null)
+            .SumAsync(sc => sc.Course!.CreditHours, cancellationToken);
+
+        var plannedCredits = await _db.PlannedCourses
+            .AsNoTracking()
+            .Where(pc => pc.StudentId == studentId
+                         && pc.AcademicYear == academicYear
+                         && pc.Semester == semester
+                         && pc.Course != null)
+            .SumAsync(pc => pc.Course!.CreditHours, cancellationToken);
+
+        return new PlannerTermCapacityDto
+        {
+            AcademicYear = academicYear,
+            Semester = semester,
+            ForcedInProgressCredits = forcedCredits,
+            PlannedCredits = plannedCredits,
+            RemainingRoom = creditLimit - forcedCredits - plannedCredits
+        };
+    }
+
     public async Task<IReadOnlyList<PlannedCourseDto>> GetPlanAsync(
         string studentId,
         string academicYear,
@@ -78,10 +177,7 @@ public sealed class PlannerService : IPlannerService
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.Id == courseId && c.IsActive, cancellationToken);
 
-        if (course is null)
-            return false;
-
-        if (!IsCourseInScope(course, student.DepartmentId))
+        if (course is null || !IsCourseInScope(course, student.DepartmentId))
             return false;
 
         if (await IsSupersededAsync(studentId, courseId, cancellationToken))
@@ -188,31 +284,11 @@ public sealed class PlannerService : IPlannerService
 
         foreach (var planned in plannedCourses)
         {
-            if (planned.Course is null)
-            {
-                toRemove.Add(planned);
-                continue;
-            }
-
-            if (!planned.Course.IsActive)
-            {
-                toRemove.Add(planned);
-                continue;
-            }
-
-            if (!IsCourseInScope(planned.Course, student.DepartmentId))
-            {
-                toRemove.Add(planned);
-                continue;
-            }
-
-            if (supersededSet.Contains(planned.CourseId))
-            {
-                toRemove.Add(planned);
-                continue;
-            }
-
-            if (IsPastTerm(planned.AcademicYear, planned.Semester, student.AcademicYear, student.CurrentSemester))
+            if (planned.Course is null
+                || !planned.Course.IsActive
+                || !IsCourseInScope(planned.Course, student.DepartmentId)
+                || supersededSet.Contains(planned.CourseId)
+                || IsPastTerm(planned.AcademicYear, planned.Semester, student.AcademicYear, student.CurrentSemester))
             {
                 toRemove.Add(planned);
             }
@@ -225,15 +301,58 @@ public sealed class PlannerService : IPlannerService
         await _db.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task<bool> IsSupersededAsync(
-        string studentId,
-        int courseId,
-        CancellationToken cancellationToken)
+    private async Task<bool> IsSupersededAsync(string studentId, int courseId, CancellationToken cancellationToken)
     {
         return await _db.StudentCourses.AnyAsync(
             sc => sc.StudentId == studentId && sc.CourseId == courseId,
             cancellationToken);
     }
+
+    private static List<AcademicTerm> BuildTermSequence(string? startAcademicYear, SemesterType startSemester, int count)
+    {
+        var terms = new List<AcademicTerm>(count);
+        var year = NormalizeAcademicYear(startAcademicYear);
+        var semester = startSemester;
+
+        while (terms.Count < count)
+        {
+            if (semester != SemesterType.Summer)
+            {
+                terms.Add(new AcademicTerm(year, semester));
+            }
+
+            (year, semester) = NextTerm(year, semester);
+        }
+
+        return terms;
+    }
+
+    private static (string Year, SemesterType Semester) NextTerm(string academicYear, SemesterType semester)
+    {
+        if (semester == SemesterType.Fall)
+            return (academicYear, SemesterType.Spring);
+
+        var yearStart = TryGetYearStart(academicYear);
+        var nextStart = yearStart + 1;
+        return ($"{nextStart}-{nextStart + 1}", SemesterType.Fall);
+    }
+
+    private static string NormalizeAcademicYear(string? academicYear)
+    {
+        var yearStart = TryGetYearStart(academicYear);
+        return $"{yearStart}-{yearStart + 1}";
+    }
+
+    private static int TryGetYearStart(string? academicYear)
+    {
+        if (string.IsNullOrWhiteSpace(academicYear))
+            return DateTime.UtcNow.Year;
+
+        var firstChunk = academicYear.Split('-', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+        return int.TryParse(firstChunk, out var parsedYear) ? parsedYear : DateTime.UtcNow.Year;
+    }
+
+    private static string TermKey(string academicYear, SemesterType semester) => $"{academicYear}|{(int)semester}";
 
     private static bool IsCourseInScope(Course course, int? departmentId) =>
         course.CourseType == CourseType.UniversityReq
@@ -248,12 +367,14 @@ public sealed class PlannerService : IPlannerService
         if (string.IsNullOrWhiteSpace(currentYear))
             return false;
 
-        var yearCompare = string.Compare(plannedYear, currentYear, StringComparison.Ordinal);
-        if (yearCompare < 0)
-            return true;
-        if (yearCompare > 0)
-            return false;
+        var plannedStart = TryGetYearStart(plannedYear);
+        var currentStart = TryGetYearStart(currentYear);
+
+        if (plannedStart != currentStart)
+            return plannedStart < currentStart;
 
         return plannedSemester < currentSemester;
     }
+
+    private sealed record AcademicTerm(string AcademicYear, SemesterType Semester);
 }
