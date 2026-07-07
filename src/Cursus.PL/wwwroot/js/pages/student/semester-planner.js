@@ -40,6 +40,43 @@ function requestHeaders() {
   };
 }
 
+function mapCourseTypeFromEnum(courseType) {
+  switch (courseType) {
+    case 'DeptElective': return { type: 'Dept. Elective', typeClass: 'type-elec' };
+    case 'FreeElective': return { type: 'Free Elective', typeClass: 'type-free' };
+    case 'UniversityReq': return { type: 'University Req.', typeClass: 'type-univ' };
+    default: return { type: 'Core', typeClass: 'type-core' };
+  }
+}
+
+function normalizePlannedCourse(pc) {
+  const code = pc.code || pc.id;
+  const catalogCourse = CATALOG.find(c => c.id === code);
+  const mapped = pc.type && pc.typeClass
+    ? { type: pc.type, typeClass: pc.typeClass }
+    : mapCourseTypeFromEnum(pc.courseType || pc.type);
+
+  return {
+    id: code,
+    courseId: pc.courseId || courseIdByCode[code] || 0,
+    name: pc.name,
+    credits: pc.credits ?? pc.creditHours ?? catalogCourse?.credits ?? 0,
+    type: catalogCourse?.type || mapped.type,
+    typeClass: catalogCourse?.typeClass || mapped.typeClass,
+    prereqs: catalogCourse?.prereqs || []
+  };
+}
+
+function getActivePlannedCourses() {
+  const cached = termCache.get(activeTermKey);
+  return (cached?.plannedCourses || []).map(normalizePlannedCourse);
+}
+
+function findPlannedCourse(code) {
+  return getActivePlannedCourses().find(pc => pc.id === code)
+    || normalizePlannedCourse({ code, ...(CATALOG.find(c => c.id === code) || {}) });
+}
+
 function getAllPlannedCodes() {
   const codes = new Set();
   termCache.forEach(state => state.plannedIds.forEach(id => codes.add(id)));
@@ -88,10 +125,8 @@ function appendPlannedRow(course) {
 
 function renderPlannedRows() {
   clearPlannedList();
-  plannedIds.forEach(id => {
-    const course = CATALOG.find(c => c.id === id);
-    if (course) appendPlannedRow(course);
-  });
+  getActivePlannedCourses().forEach(course => appendPlannedRow(course));
+  plannedIds = getActivePlannedCourses().map(course => course.id);
 }
 
 function updatePlanCardTitle() {
@@ -123,7 +158,9 @@ function initTermCache() {
     courseId: pc.courseId,
     code: pc.code,
     name: pc.name,
-    credits: pc.credits
+    credits: pc.credits,
+    type: pc.type,
+    typeClass: pc.typeClass
   }));
 
   termCache.set(key, {
@@ -164,7 +201,13 @@ async function loadTermPlan(academicYear, semester) {
     throw new Error(payload.error || 'Unable to load term plan.');
   }
 
-  const plannedCourses = payload.plannedCourses || [];
+  const plannedCourses = (payload.plannedCourses || []).map(pc => ({
+    courseId: pc.courseId,
+    code: pc.code,
+    name: pc.name,
+    credits: pc.credits,
+    courseType: pc.type
+  }));
   termCache.set(key, {
     academicYear,
     semester,
@@ -363,7 +406,9 @@ async function addCourse(course) {
       courseId: course.courseId || courseIdByCode[course.id],
       code: course.id,
       name: course.name,
-      credits: course.credits
+      credits: course.credits,
+      type: course.type,
+      typeClass: course.typeClass
     });
   }
 
@@ -376,14 +421,14 @@ async function addCourse(course) {
 async function removeCourse(id, e) {
   e.stopPropagation();
 
-  const course = CATALOG.find(c => c.id === id);
-  if (!course) return;
+  const course = findPlannedCourse(id);
+  if (!course?.courseId) return;
 
   const response = await fetch('/Student/RemovePlannedCourse', {
     method: 'POST',
     headers: requestHeaders(),
     body: JSON.stringify({
-      courseId: resolveCourseId(id),
+      courseId: course.courseId || resolveCourseId(id),
       academicYear: termState.academicYear,
       semester: termState.semester
     })
@@ -414,10 +459,7 @@ async function removeCourse(id, e) {
 }
 
 function getPlannedCredits() {
-  return plannedIds.reduce((sum, id) => {
-    const c = CATALOG.find(x => x.id === id);
-    return sum + (c ? c.credits : 0);
-  }, 0);
+  return getActivePlannedCourses().reduce((sum, course) => sum + (course.credits || 0), 0);
 }
 
 function updateSummary() {
@@ -442,9 +484,7 @@ function updateSummary() {
   document.getElementById('stat-course-count').textContent = plannedIds.length;
 
   const conflicts = [];
-  plannedIds.forEach(id => {
-    const c = CATALOG.find(x => x.id === id);
-    if (!c) return;
+  getActivePlannedCourses().forEach(c => {
     (c.prereqs || []).forEach(p => {
       if (!prereqSatisfied(p)) conflicts.push(`${c.id} needs ${p}`);
     });
@@ -530,3 +570,4 @@ window.removeCourse = removeCourse;
 window.savePlan = savePlan;
 
 init();
+
