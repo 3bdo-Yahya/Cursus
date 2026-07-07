@@ -36,6 +36,8 @@ namespace Cursus.Domain.Entities
         }
 
         public ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
+        public ICollection<PlannedCourse> PlannedCourses { get; set; } = new List<PlannedCourse>();
         public ICollection<StandingHistory> StandingHistories { get; set; } = new List<StandingHistory>();
     }
 }
+
