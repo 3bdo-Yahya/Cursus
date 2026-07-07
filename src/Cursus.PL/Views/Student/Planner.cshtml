@@ -19,6 +19,8 @@
         overloadLimit: @Model.OverloadLimit,
         isOverloadEligible: @(Model.IsOverloadEligible ? "true" : "false"),
         studentCgpa: @Model.CurrentCgpa,
+        term: @Html.Raw(ViewJson.Serialize(Model.PrimaryTermCapacity)),
+        plannedCourses: @Html.Raw(ViewJson.Serialize(Model.PlannedCourses)),
         catalog: @Html.Raw(ViewJson.Serialize(Model.Catalog)),
         currentlyEnrolled: @Html.Raw(ViewJson.Serialize(Model.CurrentlyEnrolledCourses))
     };
@@ -29,6 +31,7 @@
 }
 
 <div class="d-flex flex-column gap-4">
+  @Html.AntiForgeryToken()
 
   <!-- Page Header -->
   <section class="anim-fade-up">
@@ -41,7 +44,7 @@
       </div>
       <!-- Semester selector -->
       <div class="semester-tabs flex-shrink-0">
-        <button class="sem-tab active">@Model.Semester</button>
+        <button class="sem-tab active">@($"{Model.PrimaryTermCapacity.Semester} {Model.PrimaryTermCapacity.AcademicYear}")</button>
       </div>
     </div>
   </section>
@@ -53,7 +56,7 @@
       <div class="plan-card anim-fade-up-1" id="plan-card-main">
         <div class="plan-card-header">
           <div>
-            <div class="plan-card-title">@Model.Semester</div>
+            <div class="plan-card-title">@($"{Model.PrimaryTermCapacity.Semester} {Model.PrimaryTermCapacity.AcademicYear}")</div>
             <div class="plan-card-subtitle">Planned semester · @Model.CreditLimit credit limit (@Model.AcademicStanding)</div>
           </div>
           <span class="credit-chip credit-chip-empty" id="credit-chip">0 / @Model.CreditLimit cr</span>
@@ -221,3 +224,4 @@
 @section Scripts {
     <script src="~/js/pages/student/semester-planner.js" asp-append-version="true"></script>
 }
+
