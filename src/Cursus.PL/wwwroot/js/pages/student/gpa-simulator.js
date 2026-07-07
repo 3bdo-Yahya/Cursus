@@ -17,37 +17,8 @@ const CURRENT_COURSES = window.STUDENT_DATA?.currentCourses ?? [];
 const IMPROVABLE_COURSES = window.STUDENT_DATA?.improvableCourses ?? [];
 const COMPLETED_COURSES = window.STUDENT_DATA?.completedCourses ?? [];
 
-/* ── Planned courses from Planner localStorage bridge ───── */
-const STUDENT_ID = window.STUDENT_DATA?.studentId || '';
-const PLANNED_LS_KEY = STUDENT_ID ? `cursus.plannedCourses.${STUDENT_ID}` : '';
-
-function loadPlannedCourses() {
-  if (!PLANNED_LS_KEY) return [];
-  try {
-    const raw = localStorage.getItem(PLANNED_LS_KEY);
-    if (!raw) return [];
-    const planned = JSON.parse(raw);
-    if (!Array.isArray(planned)) return [];
-
-    const blockedIds = new Set([
-      ...CURRENT_COURSES.map(c => c.id),
-      ...IMPROVABLE_COURSES.map(c => c.id),
-      ...COMPLETED_COURSES
-    ]);
-
-    const filtered = planned.filter(p => p && p.id && !blockedIds.has(p.id));
-
-    if (filtered.length !== planned.length) {
-      localStorage.setItem(PLANNED_LS_KEY, JSON.stringify(filtered));
-    }
-
-    return filtered;
-  } catch {
-    return [];
-  }
-}
-
-const PLANNED_COURSES = loadPlannedCourses();
+/* ── Planned courses from primary-term planner (server) ─── */
+const PLANNED_COURSES = window.STUDENT_DATA?.plannedCourses ?? [];
 
 /* ── Custom grade dropdown ───────────────────── */
 function buildCustomSelect(grades, idx, type) {
@@ -102,7 +73,7 @@ function renderCoursesTable() {
   if (PLANNED_COURSES.length > 0) {
     const divider = document.createElement('div');
     divider.style.cssText = 'padding:8px 16px 4px;font-size:11.5px;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:.04em;border-top:1px solid var(--c-border);margin-top:4px;';
-    divider.textContent = 'Planned (from Semester Planner)';
+    divider.textContent = 'Planned (primary term)';
     body.appendChild(divider);
 
     PLANNED_COURSES.forEach((c, i) => {
@@ -431,3 +402,4 @@ renderCoursesTable();
 renderImprovementTable();
 setupGradeSelectDelegation();
 updateTargetResult();
+

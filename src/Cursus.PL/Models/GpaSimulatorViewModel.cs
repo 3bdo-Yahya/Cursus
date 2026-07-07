@@ -20,6 +20,7 @@ public class GpaSimulatorViewModel
     public double MaxGpa { get; init; } = 4.0;
 
     public required List<SimulatedCourseViewModel> CurrentCourses { get; init; }
+    public required List<SimulatedCourseViewModel> PlannedCourses { get; init; }
     public required List<ImprovableCourseViewModel> ImprovableCourses { get; init; }
     public required List<string> CompletedCourses { get; init; }
     public required Dictionary<string, double> GradeScale { get; init; }
@@ -44,4 +45,5 @@ public class ImprovableCourseViewModel
     public double OriginalPoints { get; init; }
     
 }
+
 

@@ -585,6 +585,34 @@ public class StudentController : Controller
         var latestGraded = _academicMetricsService.GetLatestGradedTerms(termGpas, 1);
         var lastSgpa = latestGraded.Count > 0 ? latestGraded[^1].SemesterGpa : 0m;
 
+        var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+        var planningTerms = await _plannerService.GetPlanningTermsAsync(student.Id, creditLimit);
+        var primaryTerm = planningTerms.FirstOrDefault(t => t.IsPrimary) ?? planningTerms.FirstOrDefault();
+
+        var blockedPlannedCodes = completedCourseCodes
+            .Concat(currentCourses.Select(c => c.Id))
+            .Concat(improvableCourses.Select(c => c.Id))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var plannedCourses = new List<SimulatedCourseViewModel>();
+        if (primaryTerm is not null)
+        {
+            var primaryPlan = await _plannerService.GetPlanAsync(
+                student.Id,
+                primaryTerm.AcademicYear,
+                primaryTerm.Semester);
+
+            plannedCourses = primaryPlan
+                .Where(pc => !blockedPlannedCodes.Contains(pc.Code))
+                .Select(pc => new SimulatedCourseViewModel
+                {
+                    Id = pc.Code,
+                    Name = pc.Name,
+                    Credits = pc.CreditHours
+                })
+                .ToList();
+        }
+
         var model = new GpaSimulatorViewModel
         {
             StudentId = student.Id,
@@ -600,6 +628,7 @@ public class StudentController : Controller
             CompletedQp = completedQp,
             GpaHours = gpaHours,
             CurrentCourses = currentCourses,
+            PlannedCourses = plannedCourses,
             ImprovableCourses = improvableCourses,
             CompletedCourses = completedCourseCodes,
             GradeScale = gradeScale
@@ -773,6 +802,7 @@ public class StudentController : Controller
             _ => ("Core", "type-core")
         };
 }
+
 
 
 

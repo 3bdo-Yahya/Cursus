@@ -16,6 +16,8 @@
 
         currentCourses: @Html.Raw(ViewJson.Serialize(Model.CurrentCourses)),
 
+        plannedCourses: @Html.Raw(ViewJson.Serialize(Model.PlannedCourses)),
+
         improvableCourses: @Html.Raw(ViewJson.Serialize(Model.ImprovableCourses)),
 
         completedCourses: @Html.Raw(ViewJson.Serialize(Model.CompletedCourses)),
@@ -187,4 +189,5 @@
 @section Scripts {
     <script src="~/js/pages/student/gpa-simulator.js" asp-append-version="true"></script>
 }
+
 
