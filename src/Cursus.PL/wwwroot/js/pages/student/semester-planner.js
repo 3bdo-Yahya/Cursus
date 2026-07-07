@@ -1,4 +1,5 @@
 const CATALOG = window.STUDENT_DATA.catalog || [];
+const TERMS = window.STUDENT_DATA.terms || [];
 const COMPLETED_COURSES = window.STUDENT_DATA.completedCourses || [];
 const IN_PROGRESS_COURSES = window.STUDENT_DATA.inProgressCourses || [];
 const COMPLETED_CREDITS = window.STUDENT_DATA.completedCredits || 0;
@@ -6,15 +7,26 @@ const TOTAL_CREDITS = window.STUDENT_DATA.totalCredits || 132;
 const CREDIT_LIMIT = window.STUDENT_DATA.creditLimit || 18;
 
 const TERM = window.STUDENT_DATA.term || {};
-let termState = {
-  academicYear: TERM.academicYear || '',
-  semester: TERM.semester || 0,
-  forcedInProgressCredits: TERM.forcedInProgressCredits || 0,
-  plannedCredits: TERM.plannedCredits || 0,
-  remainingRoom: TERM.remainingRoom ?? CREDIT_LIMIT
-};
+const courseIdByCode = Object.fromEntries(CATALOG.map(c => [c.id, c.courseId]));
 
-let plannedIds = (window.STUDENT_DATA.plannedCourses || []).map(c => c.code);
+const termCache = new Map();
+let activeTermKey = '';
+let termState = {
+  academicYear: '',
+  semester: 0,
+  forcedInProgressCredits: 0,
+  plannedCredits: 0,
+  remainingRoom: CREDIT_LIMIT
+};
+let plannedIds = [];
+
+function termKey(year, semester) {
+  return `${year}|${semester}`;
+}
+
+function semesterLabel(semester) {
+  return ['Fall', 'Spring', 'Summer'][semester] || String(semester);
+}
 
 function getAntiForgeryToken() {
   const input = document.querySelector('input[name="__RequestVerificationToken"]');
@@ -28,10 +40,22 @@ function requestHeaders() {
   };
 }
 
+function getAllPlannedCodes() {
+  const codes = new Set();
+  termCache.forEach(state => state.plannedIds.forEach(id => codes.add(id)));
+  return codes;
+}
+
 function prereqSatisfied(code) {
   return COMPLETED_COURSES.includes(code)
     || IN_PROGRESS_COURSES.includes(code)
-    || plannedIds.includes(code);
+    || getAllPlannedCodes().has(code);
+}
+
+function resolveCourseId(code) {
+  const cached = termCache.get(activeTermKey);
+  const fromTerm = cached?.plannedCourses?.find(pc => pc.code === code)?.courseId;
+  return fromTerm || courseIdByCode[code] || 0;
 }
 
 function updateEmptyState() {
@@ -40,6 +64,10 @@ function updateEmptyState() {
   if (!list || !empty) return;
   const hasRows = list.querySelectorAll('.planned-row').length > 0;
   empty.style.display = hasRows ? 'none' : '';
+}
+
+function clearPlannedList() {
+  document.querySelectorAll('#planned-courses-list .planned-row').forEach(row => row.remove());
 }
 
 function appendPlannedRow(course) {
@@ -58,13 +86,134 @@ function appendPlannedRow(course) {
   return row;
 }
 
-function hydratePlannedRows() {
-  const planned = window.STUDENT_DATA.plannedCourses || [];
-  planned.forEach(p => {
-    const catalogCourse = CATALOG.find(c => c.id === p.code);
-    if (!catalogCourse) return;
-    appendPlannedRow(catalogCourse);
+function renderPlannedRows() {
+  clearPlannedList();
+  plannedIds.forEach(id => {
+    const course = CATALOG.find(c => c.id === id);
+    if (course) appendPlannedRow(course);
   });
+}
+
+function updatePlanCardTitle() {
+  const title = document.getElementById('plan-card-title');
+  if (!title) return;
+  title.textContent = `${semesterLabel(termState.semester)} ${termState.academicYear}`;
+}
+
+function applyCapacity(capacity) {
+  if (!capacity) return;
+  termState.forcedInProgressCredits = capacity.forcedInProgressCredits;
+  termState.plannedCredits = capacity.plannedCredits;
+  termState.remainingRoom = capacity.remainingRoom;
+
+  const cached = termCache.get(activeTermKey);
+  if (cached) {
+    cached.forcedInProgressCredits = capacity.forcedInProgressCredits;
+    cached.plannedCredits = capacity.plannedCredits;
+    cached.remainingRoom = capacity.remainingRoom;
+  }
+}
+
+function initTermCache() {
+  const primary = TERMS.find(t => t.isPrimary) || TERMS[0];
+  if (!primary) return;
+
+  const key = termKey(primary.academicYear, primary.semester);
+  const initialPlanned = (window.STUDENT_DATA.plannedCourses || []).map(pc => ({
+    courseId: pc.courseId,
+    code: pc.code,
+    name: pc.name,
+    credits: pc.credits
+  }));
+
+  termCache.set(key, {
+    academicYear: primary.academicYear,
+    semester: primary.semester,
+    forcedInProgressCredits: TERM.forcedInProgressCredits || 0,
+    plannedCredits: TERM.plannedCredits || 0,
+    remainingRoom: TERM.remainingRoom ?? CREDIT_LIMIT,
+    plannedIds: initialPlanned.map(pc => pc.code),
+    plannedCourses: initialPlanned,
+    loaded: true
+  });
+
+  activeTermKey = key;
+  termState = {
+    academicYear: primary.academicYear,
+    semester: primary.semester,
+    forcedInProgressCredits: TERM.forcedInProgressCredits || 0,
+    plannedCredits: TERM.plannedCredits || 0,
+    remainingRoom: TERM.remainingRoom ?? CREDIT_LIMIT
+  };
+  plannedIds = [...termCache.get(key).plannedIds];
+}
+
+async function loadTermPlan(academicYear, semester) {
+  const key = termKey(academicYear, semester);
+  const params = new URLSearchParams({
+    academicYear,
+    semester: String(semester)
+  });
+
+  const response = await fetch(`/Student/PlannerPlan?${params}`, {
+    headers: { RequestVerificationToken: getAntiForgeryToken() }
+  });
+
+  const payload = await response.json();
+  if (!response.ok) {
+    throw new Error(payload.error || 'Unable to load term plan.');
+  }
+
+  const plannedCourses = payload.plannedCourses || [];
+  termCache.set(key, {
+    academicYear,
+    semester,
+    forcedInProgressCredits: payload.capacity?.forcedInProgressCredits || 0,
+    plannedCredits: payload.capacity?.plannedCredits || 0,
+    remainingRoom: payload.capacity?.remainingRoom ?? CREDIT_LIMIT,
+    plannedIds: plannedCourses.map(pc => pc.code),
+    plannedCourses,
+    loaded: true
+  });
+}
+
+async function switchTerm(academicYear, semester) {
+  const key = termKey(academicYear, semester);
+  if (key === activeTermKey) return;
+
+  document.querySelectorAll('.sem-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.termKey === key);
+  });
+
+  document.getElementById('semester-tabs')?.classList.add('loading');
+
+  try {
+    if (!termCache.has(key) || !termCache.get(key).loaded) {
+      await loadTermPlan(academicYear, semester);
+    }
+
+    activeTermKey = key;
+    const state = termCache.get(key);
+    termState = {
+      academicYear: state.academicYear,
+      semester: state.semester,
+      forcedInProgressCredits: state.forcedInProgressCredits,
+      plannedCredits: state.plannedCredits,
+      remainingRoom: state.remainingRoom
+    };
+    plannedIds = [...state.plannedIds];
+
+    renderPlannedRows();
+    updatePlanCardTitle();
+    updateEmptyState();
+    updateSummary();
+    renderAddList(document.getElementById('add-search-input')?.value?.toLowerCase().trim() || '');
+    document.getElementById('add-dropdown')?.classList.remove('open');
+  } catch (err) {
+    showToast(err.message || 'Failed to switch term.', 'error', true);
+  } finally {
+    document.getElementById('semester-tabs')?.classList.remove('loading');
+  }
 }
 
 function toggleAddDropdown() {
@@ -105,7 +254,7 @@ function renderCategorySection(list, category, courses) {
   const section = document.createElement('div');
   section.className = 'add-category-section';
 
-  const bodyId = `cat-${category}`;
+  const bodyId = `cat-${category}-${activeTermKey.replace('|', '-')}`;
   section.innerHTML = `
     <button type="button" class="add-category-toggle" data-target="${bodyId}" aria-expanded="${meta.open}">
       <span>${meta.title}</span>
@@ -187,7 +336,7 @@ async function addCourse(course) {
     method: 'POST',
     headers: requestHeaders(),
     body: JSON.stringify({
-      courseId: (window.STUDENT_DATA.plannedCourses || []).find(c => c.code === course.id)?.courseId || CATALOG.find(c => c.id === course.id)?.courseId || 0,
+      courseId: course.courseId || courseIdByCode[course.id] || 0,
       academicYear: termState.academicYear,
       semester: termState.semester
     })
@@ -204,11 +353,18 @@ async function addCourse(course) {
 
   plannedIds.push(course.id);
   appendPlannedRow(course);
+  applyCapacity(payload.capacity);
 
-  if (payload.capacity) {
-    termState.forcedInProgressCredits = payload.capacity.forcedInProgressCredits;
-    termState.plannedCredits = payload.capacity.plannedCredits;
-    termState.remainingRoom = payload.capacity.remainingRoom;
+  const cached = termCache.get(activeTermKey);
+  if (cached) {
+    cached.plannedIds = [...plannedIds];
+    cached.plannedCourses = cached.plannedCourses || [];
+    cached.plannedCourses.push({
+      courseId: course.courseId || courseIdByCode[course.id],
+      code: course.id,
+      name: course.name,
+      credits: course.credits
+    });
   }
 
   updateEmptyState();
@@ -227,7 +383,7 @@ async function removeCourse(id, e) {
     method: 'POST',
     headers: requestHeaders(),
     body: JSON.stringify({
-      courseId: (window.STUDENT_DATA.plannedCourses || []).find(c => c.code === id)?.courseId || course.courseId || 0,
+      courseId: resolveCourseId(id),
       academicYear: termState.academicYear,
       semester: termState.semester
     })
@@ -243,11 +399,12 @@ async function removeCourse(id, e) {
   if (row) row.remove();
 
   plannedIds = plannedIds.filter(x => x !== id);
+  applyCapacity(payload.capacity);
 
-  if (payload.capacity) {
-    termState.forcedInProgressCredits = payload.capacity.forcedInProgressCredits;
-    termState.plannedCredits = payload.capacity.plannedCredits;
-    termState.remainingRoom = payload.capacity.remainingRoom;
+  const cached = termCache.get(activeTermKey);
+  if (cached) {
+    cached.plannedIds = [...plannedIds];
+    cached.plannedCourses = (cached.plannedCourses || []).filter(pc => pc.code !== id);
   }
 
   updateEmptyState();
@@ -350,9 +507,21 @@ function showToast(message, icon = 'info', isError = false) {
 }
 
 function init() {
-  hydratePlannedRows();
+  initTermCache();
+  renderPlannedRows();
   updateEmptyState();
   updateSummary();
+
+  document.querySelectorAll('.sem-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchTerm(btn.dataset.academicYear, parseInt(btn.dataset.semester, 10));
+    });
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('[data-scroll],[data-scroll-group]').forEach(el => obs.observe(el));
 }
 
 window.toggleAddDropdown = toggleAddDropdown;
