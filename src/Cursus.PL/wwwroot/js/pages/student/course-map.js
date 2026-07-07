@@ -7,6 +7,7 @@ const STATUS_BY_CODE = { 0:'passed', 1:'failed', 2:'in-progress' };
 const STATUS_STYLE = {
   'passed':      { bg:'#10b981', border:'#059669', text:'#fff',     label:'Passed'      },
   'in-progress': { bg:'#3b82f6', border:'#2563eb', text:'#fff',     label:'In Progress' },
+  'planned':     { bg:'#dbeafe', border:'#60a5fa', text:'#1e40af',  label:'Planned'     },
   'remaining':   { bg:'#e2e8f0', border:'#cbd5e1', text:'#475569',  label:'Remaining'   },
   'blocked':     { bg:'#475569', border:'#334155', text:'#94a3b8',  label:'Blocked'     },
   'failed':      { bg:'#ef4444', border:'#dc2626', text:'#fff',     label:'Failed'      },
@@ -37,7 +38,12 @@ function buildCourses(nodes, edges) {
 
   const knownStatus = {};
   nodes.forEach(n => {
-    knownStatus[String(n.id)] = (n.status === null || n.status === undefined) ? null : STATUS_BY_CODE[n.status];
+    const id = String(n.id);
+    if (n.isPlanned && (n.status === null || n.status === undefined)) {
+      knownStatus[id] = 'planned';
+      return;
+    }
+    knownStatus[id] = (n.status === null || n.status === undefined) ? null : STATUS_BY_CODE[n.status];
   });
 
   return nodes.map(n => {
@@ -152,6 +158,13 @@ cy = cytoscape({
       },
     },
     {
+      selector: 'node.planned',
+      style: {
+        'border-style': 'dashed',
+        'border-width': 3,
+      },
+    },
+    {
       selector: 'node.selected-node',
       style: { 
         'border-width':4, 'border-color':'#4F46E5', 'width':178, 'height':64,
@@ -250,13 +263,13 @@ function openPanel(d) {
   document.getElementById('panel-name').textContent    = d.name;
   document.getElementById('panel-credits').textContent = d.credits + ' credit hours';
 
-  const iconMap  = { 'passed':'check_circle','failed':'cancel','in-progress':'autorenew','remaining':'radio_button_unchecked','blocked':'lock','cascade':'bolt' };
-  const colorMap = { 'passed':'#10b981','failed':'#ef4444','in-progress':'#3b82f6','remaining':'var(--c-muted)','blocked':'var(--c-muted)','cascade':'#ef4444' };
+  const iconMap  = { 'passed':'check_circle','failed':'cancel','in-progress':'autorenew','planned':'event_note','remaining':'radio_button_unchecked','blocked':'lock','cascade':'bolt' };
+  const colorMap = { 'passed':'#10b981','failed':'#ef4444','in-progress':'#3b82f6','planned':'#60a5fa','remaining':'var(--c-muted)','blocked':'var(--c-muted)','cascade':'#ef4444' };
   const icon     = document.getElementById('panel-status-icon');
   icon.textContent  = iconMap[st] || 'help';
   icon.style.color  = colorMap[st] || 'var(--c-muted)';
   document.getElementById('panel-status-text').textContent = style.label;
-  document.getElementById('panel-grade-text').textContent  = d.grade ? 'Grade: ' + d.grade : (st === 'in-progress' ? 'Awaiting final grade' : '');
+  document.getElementById('panel-grade-text').textContent  = d.grade ? 'Grade: ' + d.grade : (st === 'in-progress' ? 'Awaiting final grade' : (st === 'planned' ? 'Planned for primary term' : ''));
 
   document.getElementById('panel-type').textContent  = d.type || '—';
   document.getElementById('panel-avail').textContent = d.avail || '—';
@@ -301,7 +314,7 @@ function openPanel(d) {
     unlockEl.innerHTML = '<span style="font-size:12px;color:var(--c-muted);font-style:italic;">Terminal course</span>';
   } 
 
-  const canSim = (st === 'passed' || st === 'in-progress') && !simActive;
+  const canSim = (st === 'passed' || st === 'in-progress' || st === 'planned') && !simActive;
   document.getElementById('panel-simulate-wrap').style.display = canSim ? '' : 'none';
   document.getElementById('panel-clear-wrap').style.display    = simActive ? '' : 'none';
 
@@ -427,7 +440,7 @@ async function startSim() {
     simTimeouts.push(tId);
   });
 
-  COURSES.filter(c => c.status === 'passed' || c.status === 'in-progress').forEach(c => {
+  COURSES.filter(c => c.status === 'passed' || c.status === 'in-progress' || c.status === 'planned').forEach(c => {
     if (c.id !== simSourceId) {
       cy.getElementById(c.id).removeClass('dimmed').style('opacity', 0.45);
     }
@@ -712,3 +725,4 @@ function wireFilterControls() {
 }
 
 })();
+
