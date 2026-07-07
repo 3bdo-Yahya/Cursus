@@ -50,6 +50,8 @@ public class PlannerPlannedCourseViewModel
     public string Code { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public int Credits { get; set; }
+    public string Type { get; set; } = string.Empty;
+    public string TypeClass { get; set; } = string.Empty;
 }
 
 public class PlannerEnrolledCourseViewModel
@@ -79,5 +81,6 @@ public class PlannerCourseMutationRequest
     public string AcademicYear { get; set; } = string.Empty;
     public SemesterType Semester { get; set; }
 }
+
 
 

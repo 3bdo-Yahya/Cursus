@@ -215,12 +215,18 @@ public class StudentController : Controller
                 RemainingRoom = primaryCapacity.RemainingRoom
             },
             PlannedCourses = primaryPlannedCourses
-                .Select(pc => new PlannerPlannedCourseViewModel
+                .Select(pc =>
                 {
-                    CourseId = pc.CourseId,
-                    Code = pc.Code,
-                    Name = pc.Name,
-                    Credits = pc.CreditHours
+                    var (type, typeClass) = MapPlannerCourseType(pc.CourseType);
+                    return new PlannerPlannedCourseViewModel
+                    {
+                        CourseId = pc.CourseId,
+                        Code = pc.Code,
+                        Name = pc.Name,
+                        Credits = pc.CreditHours,
+                        Type = type,
+                        TypeClass = typeClass
+                    };
                 })
                 .ToList(),
             Catalog = catalog
@@ -802,6 +808,7 @@ public class StudentController : Controller
             _ => ("Core", "type-core")
         };
 }
+
 
 
 
