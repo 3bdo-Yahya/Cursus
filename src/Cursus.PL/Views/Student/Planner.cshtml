@@ -19,6 +19,7 @@
         overloadLimit: @Model.OverloadLimit,
         isOverloadEligible: @(Model.IsOverloadEligible ? "true" : "false"),
         studentCgpa: @Model.CurrentCgpa,
+        terms: @Html.Raw(ViewJson.Serialize(Model.Terms)),
         term: @Html.Raw(ViewJson.Serialize(Model.PrimaryTermCapacity)),
         plannedCourses: @Html.Raw(ViewJson.Serialize(Model.PlannedCourses)),
         catalog: @Html.Raw(ViewJson.Serialize(Model.Catalog)),
@@ -43,8 +44,21 @@
         </p>
       </div>
       <!-- Semester selector -->
-      <div class="semester-tabs flex-shrink-0">
-        <button class="sem-tab active">@($"{Model.PrimaryTermCapacity.Semester} {Model.PrimaryTermCapacity.AcademicYear}")</button>
+      <div class="semester-tabs flex-shrink-0" id="semester-tabs">
+        @foreach (var t in Model.Terms)
+        {
+            <button type="button"
+                    class="sem-tab@(t.IsPrimary ? " active" : "")"
+                    data-academic-year="@t.AcademicYear"
+                    data-semester="@((int)t.Semester)"
+                    data-term-key="@($"{t.AcademicYear}|{(int)t.Semester}")">
+              @t.Label
+              @if (t.IsPrimary)
+              {
+                  <span class="tab-primary-dot" title="Primary planning term"></span>
+              }
+            </button>
+        }
       </div>
     </div>
   </section>
@@ -56,7 +70,7 @@
       <div class="plan-card anim-fade-up-1" id="plan-card-main">
         <div class="plan-card-header">
           <div>
-            <div class="plan-card-title">@($"{Model.PrimaryTermCapacity.Semester} {Model.PrimaryTermCapacity.AcademicYear}")</div>
+            <div class="plan-card-title" id="plan-card-title">@($"{Model.PrimaryTermCapacity.Semester} {Model.PrimaryTermCapacity.AcademicYear}")</div>
             <div class="plan-card-subtitle">Planned semester · @Model.CreditLimit credit limit (@Model.AcademicStanding)</div>
           </div>
           <span class="credit-chip credit-chip-empty" id="credit-chip">0 / @Model.CreditLimit cr</span>
@@ -224,4 +238,5 @@
 @section Scripts {
     <script src="~/js/pages/student/semester-planner.js" asp-append-version="true"></script>
 }
+
 
