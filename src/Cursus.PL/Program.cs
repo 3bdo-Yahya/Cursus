@@ -21,7 +21,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddApplicationServices(builder.Configuration);
+        builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
 
         // Email Settings
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -40,12 +40,15 @@ public class Program
             app.UseHsts();
         }
 
-        await StartupSeeder.InitializeDatabaseAsync(app.Services);
-        await SeedRolesAsync(app.Services);
-        await StartupSeeder.SeedSampleCatalogAsync(app.Services);
-        await StartupSeeder.SeedGradeScaleAsync(app.Services);
-        await SeedDefaultAdminAsync(app.Services);
-        await StartupSeeder.SeedDemoStudentsAsync(app.Services);
+        if (!app.Environment.IsEnvironment("Testing"))
+        {
+            await StartupSeeder.InitializeDatabaseAsync(app.Services);
+            await SeedRolesAsync(app.Services);
+            await StartupSeeder.SeedSampleCatalogAsync(app.Services);
+            await StartupSeeder.SeedGradeScaleAsync(app.Services);
+            await SeedDefaultAdminAsync(app.Services);
+            await StartupSeeder.SeedDemoStudentsAsync(app.Services);
+        }
 
         app.UseHttpsRedirection();
         app.UseRouting();
@@ -173,3 +176,4 @@ public class Program
             .FirstOrDefaultAsync(u => u.Name == universityName.Trim());
     }
 }
+

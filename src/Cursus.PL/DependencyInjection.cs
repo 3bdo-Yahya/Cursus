@@ -16,13 +16,23 @@ namespace Cursus.PL
     {
         public static IServiceCollection AddApplicationServices(
                 this IServiceCollection services,
-                IConfiguration configuration)
+                IConfiguration configuration,
+                IHostEnvironment environment)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            if (environment.IsEnvironment("Testing"))
+            {
+                var databaseName = configuration["Testing:DatabaseName"] ?? "CursusTests";
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseInMemoryDatabase(databaseName));
+            }
+            else
+            {
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(connectionString));
+            }
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -81,3 +91,4 @@ namespace Cursus.PL
         }
     }
 }
+
