@@ -32,7 +32,7 @@ namespace Cursus.BLL.Services
         public async Task<CourseGraphDto> GetCourseGraphForStudentAsync(string studentId, int departmentId)
         {
             var courses = await _courseRepository.GetAll()
-                .Where(c => (c.DepartmentId == departmentId || c.CourseType == CourseType.UniversityReq) && c.IsActive)
+                .Where(c => c.DepartmentId == departmentId && c.IsActive)
                 .Include(c => c.Prerequisites)
                     .ThenInclude(p => p.Prerequisite)
                 .AsNoTracking()
@@ -133,5 +133,6 @@ namespace Cursus.BLL.Services
         }
     }
 }
+
 
 

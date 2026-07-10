@@ -32,11 +32,8 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         string? academicYear,
         AcademicStanding standing,
         decimal cgpa)
-    {
-        var courses = await _db.Courses
-            .Where(c => (c.DepartmentId == departmentId
-                         || c.CourseType == CourseType.UniversityReq)
-                        && c.IsActive)
+        {
+        var courses = await CurriculumScope.ForDepartment(_db.Courses, departmentId)
             .Include(c => c.Prerequisites)
             .Include(c => c.IsPrerequisiteFor)
             .AsNoTracking()
@@ -409,11 +406,14 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
 
         return courses
             .Where(c => c.Id != failedCourse.Id)
+            .Where(c => c.CourseType != CourseType.UniversityReq)
             .Where(c => !completedCourseIds.Contains(c.Id))
             .Where(c => !blockedIds.Contains(c.Id))
             .Where(c => SemesterMath.ResolveRecommendedSemester(c) > failedRec)
             .Where(c => c.Prerequisites.All(p => completedCourseIds.Contains(p.PrerequisiteId)))
             .OrderBy(c => SemesterMath.ResolveRecommendedSemester(c))
+            .GroupBy(c => c.Code, StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
             .Select(c => CourseDisplayHelper.Label(c))
             .Take(5)
             .ToList();
@@ -480,10 +480,6 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         {
             recs.Add($"CGPA impact may change standing to <strong>{projectedStanding}</strong> — meet your advisor promptly.");
         }
-        else if (scenario.Type == FailureScenarioType.Semester1WithBlock)
-        {
-            recs.Add(scenario.Summary);
-        }
 
         return recs;
     }
@@ -499,4 +495,5 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         return creditsAtRisk > 0 ? "Low" : "None";
     }
 }
+
 

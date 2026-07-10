@@ -21,7 +21,7 @@ public sealed class PlannerCatalogFilterTests
         var primaryTerm = new { AcademicYear = PlannerTestData.AcademicYear, Semester = SemesterType.Fall };
 
         var catalog = await db.Courses
-            .Where(c => (c.DepartmentId == PlannerTestData.DepartmentId || c.CourseType == CourseType.UniversityReq) && c.IsActive)
+            .Where(c => c.DepartmentId == PlannerTestData.DepartmentId && c.IsActive)
             .Where(c =>
                 c.SemesterAvailability == SemesterAvailability.All
                 || c.SemesterAvailability == SemesterAvailability.FallSpring
@@ -37,3 +37,4 @@ public sealed class PlannerCatalogFilterTests
         Assert.DoesNotContain("SPR", catalog);
     }
 }
+

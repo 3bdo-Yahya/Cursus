@@ -130,7 +130,7 @@ public static class GraduationDelayCalculator
         }
 
         var semester = currentSemester;
-        var year = ParseAcademicYearStart(academicYear);
+        var year = AcademicYearHelper.ParseCalendarYearStart(academicYear);
         var schedule = new List<ScheduledTermEntry>();
         var retakeCompleted = !isFailurePath || failedCourseId is null || completed.Contains(failedCourseId.Value);
         var unlockedAfterRetake = new HashSet<int>();
@@ -360,7 +360,7 @@ public static class GraduationDelayCalculator
         string? academicYear,
         int semestersAhead)
     {
-        var yearStart = ParseAcademicYearStart(academicYear);
+        var yearStart = AcademicYearHelper.ParseCalendarYearStart(academicYear);
         var semester = currentSemester;
         var year = currentSemester switch
         {
@@ -376,7 +376,7 @@ public static class GraduationDelayCalculator
 
     private static string FormatCurrentLabel(SemesterType semester, string? academicYear)
     {
-        var yearStart = ParseAcademicYearStart(academicYear);
+        var yearStart = AcademicYearHelper.ParseCalendarYearStart(academicYear);
         var year = semester switch
         {
             SemesterType.Fall => yearStart,
@@ -397,12 +397,5 @@ public static class GraduationDelayCalculator
             _ => (SemesterType.Fall, year)
         };
 
-    private static int ParseAcademicYearStart(string? academicYear)
-    {
-        if (string.IsNullOrWhiteSpace(academicYear))
-            return DateTime.UtcNow.Year;
-
-        var part = academicYear.Split('-', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-        return int.TryParse(part, out var year) ? year : DateTime.UtcNow.Year;
-    }
 }
+

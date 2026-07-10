@@ -115,15 +115,48 @@ function loadReport(report) {
 
   document.getElementById('report-severity').textContent = severity;
   document.getElementById('report-severity').className = 'ia-severity-badge ia-sev-' + severity.toLowerCase();
-  document.getElementById('report-subtitle').textContent = report.scenarioSummary
-    || ('Simulating failure of ' + src.id + ' — ' + src.name);
+  document.getElementById('report-subtitle').textContent =
+    `Simulating failure of ${src.name || src.id}${src.id ? ` (${src.id})` : ''}`;
+
+  const scenarioEl = document.getElementById('ia-scenario-callout');
+  const scenarioText = document.getElementById('ia-scenario-text');
+  if (report.scenarioSummary && scenarioEl && scenarioText) {
+    scenarioText.innerHTML = report.scenarioSummary;
+    scenarioEl.classList.remove('d-none');
+  } else if (scenarioEl) {
+    scenarioEl.classList.add('d-none');
+  }
 
   animCount('kpi-blocked', report.blockedCoursesCount ?? blocked.length);
   animCount('kpi-semesters', semAff);
-  document.getElementById('kpi-delay').textContent    = '+' + delay + ' sem';
-  document.getElementById('kpi-new-grad').textContent = delay > 0
-    ? `${originalGrad} → ${projectedGrad}`
-    : projectedGrad;
+
+  const delayEl = document.getElementById('kpi-delay');
+  delayEl.textContent = delay > 0 ? `+${delay} sem` : 'None';
+  delayEl.style.color = delay > 0 ? '#ef4444' : '#10b981';
+
+  const gradEl = document.getElementById('kpi-new-grad');
+  const gradDetail = document.getElementById('kpi-grad-detail');
+  if (delay > 0) {
+    gradEl.textContent = projectedGrad;
+    if (gradDetail) gradDetail.textContent = `Was ${originalGrad}`;
+  } else {
+    gradEl.textContent = projectedGrad;
+    if (gradDetail) gradDetail.textContent = 'On track — no graduation delay';
+  }
+
+  const cgpaKpi = document.getElementById('kpi-cgpa');
+  if (cgpaKpi) {
+    cgpaKpi.textContent = cgpaDelta < 0
+      ? `${projectedCgpa.toFixed(2)} (${cgpaDelta.toFixed(2)})`
+      : projectedCgpa.toFixed(2);
+    cgpaKpi.style.color = cgpaDelta < 0 ? '#d97706' : '#10b981';
+  }
+
+  const standingKpi = document.getElementById('kpi-standing');
+  if (standingKpi) {
+    standingKpi.textContent = standingWouldChange ? `${projectedStanding} (at risk)` : projectedStanding;
+    standingKpi.style.color = standingWouldChange ? '#d97706' : '#10b981';
+  }
 
   document.getElementById('fc-code').textContent    = src.id;
   document.getElementById('fc-name').textContent    = src.name;
@@ -154,19 +187,6 @@ function loadReport(report) {
 
   document.getElementById('risk-avail').textContent    = retakeLabel;
   document.getElementById('risk-credits').textContent  = creditsAtRisk + ' cr';
-
-  const cgpaEl = document.getElementById('risk-cgpa');
-  if (cgpaDelta < 0) {
-    cgpaEl.textContent = `${projectedCgpa.toFixed(2)} (${cgpaDelta.toFixed(2)})`;
-    cgpaEl.style.color = '#d97706';
-  } else {
-    cgpaEl.textContent = projectedCgpa.toFixed(2);
-    cgpaEl.style.color = '#10b981';
-  }
-
-  const standingEl = document.getElementById('risk-standing');
-  standingEl.textContent = standingWouldChange ? `${projectedStanding} (at risk)` : projectedStanding;
-  standingEl.style.color = standingWouldChange ? '#d97706' : '#10b981';
 
   const tlEl = document.getElementById('ia-timeline');
   tlEl.innerHTML = '';
@@ -265,4 +285,5 @@ function animCount(id, target) {
     if (current >= target) clearInterval(interval);
   }, 45);
 }
+
 

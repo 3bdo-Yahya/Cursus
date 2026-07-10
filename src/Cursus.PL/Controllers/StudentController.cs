@@ -145,7 +145,7 @@ public class StudentController : Controller
         var catalogCourses = await _db.Courses
             .Include(c => c.Prerequisites)
                 .ThenInclude(p => p.Prerequisite)
-            .Where(c => (c.DepartmentId == student.DepartmentId || c.CourseType == CourseType.UniversityReq) && c.IsActive)
+            .Where(c => c.DepartmentId == student.DepartmentId && c.IsActive)
             .Where(c =>
                 c.SemesterAvailability == SemesterAvailability.All
                 || c.SemesterAvailability == SemesterAvailability.FallSpring
@@ -812,6 +812,7 @@ public class StudentController : Controller
             _ => ("Core", "type-core")
         };
 }
+
 
 
 
