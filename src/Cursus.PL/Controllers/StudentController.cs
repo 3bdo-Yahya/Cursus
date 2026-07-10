@@ -327,7 +327,9 @@ public class StudentController : Controller
 
         var allPlans = await _plannerService.GetAllPlansAsync(student.Id);
         var availableCodes = student.StudentCourses
-            .Where(sc => sc.Course is not null)
+            .Where(sc => sc.Course is not null
+                         && (sc.Status == StudentCourseStatus.Completed
+                             || sc.Status == StudentCourseStatus.InProgress))
             .Select(sc => sc.Course!.Code)
             .Concat(allPlans.Select(pc => pc.Code))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -808,6 +810,7 @@ public class StudentController : Controller
             _ => ("Core", "type-core")
         };
 }
+
 
 
 

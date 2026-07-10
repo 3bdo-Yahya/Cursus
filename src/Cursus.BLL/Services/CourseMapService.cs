@@ -40,6 +40,7 @@ namespace Cursus.BLL.Services
 
             var studentCourses = await _studentCourseRepository.GetAll()
                 .Where(sc => sc.StudentId == studentId)
+                .Include(sc => sc.Course)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -131,3 +132,4 @@ namespace Cursus.BLL.Services
         }
     }
 }
+
