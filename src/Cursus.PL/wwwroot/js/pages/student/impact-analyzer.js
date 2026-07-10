@@ -68,6 +68,11 @@ function showFetchError(message) {
   }
 }
 
+function formatStanding(standing) {
+  const map = { 0: 'Good Standing', 1: 'Academic Warning', 2: 'Probation' };
+  return map[standing] ?? String(standing);
+}
+
 function loadReport(report) {
   const src = report.src || {
     id: report.failedCourseCode,
@@ -81,29 +86,39 @@ function loadReport(report) {
     name: b.name,
     credits: b.creditHours,
     depth: b.depth,
-    avail: '',
+    avail: b.newTermLabel ? `Delayed to ${b.newTermLabel}` : '',
   }));
 
-  const delay = report.graduationDelaySemesters ?? 1;
+  const delay = report.graduationDelaySemesters ?? 0;
   const semAff = report.semestersAffected ?? delay;
   const severity = (report.severity || 'Low').toUpperCase();
-  const projectedGrad = report.projectedGraduationLabel || ('Fall 20' + (27 + (delay - 1)));
-  const retakeLabel = report.retakeSemesterLabel || ('Next ' + (src.avail || 'term'));
+  const originalGrad = report.originalGraduationLabel || 'On track';
+  const projectedGrad = report.projectedGraduationLabel || originalGrad;
+  const retakeLabel = report.retakeSemesterLabel || 'Next Summer';
   const creditsAtRisk = report.creditsAtRisk ?? blocked.reduce((s, b) => s + b.credits, 0);
+  const recoverySchedule = report.recoverySchedule || [];
+  const recommendations = report.recommendations || [];
+  const projectedCgpa = report.projectedCgpa ?? report.currentCgpa;
+  const cgpaDelta = report.cgpaDelta ?? 0;
+  const standingWouldChange = report.standingWouldChange === true;
+  const projectedStanding = formatStanding(report.projectedStanding);
 
   document.getElementById('report-severity').textContent = severity;
   document.getElementById('report-severity').className = 'ia-severity-badge ia-sev-' + severity.toLowerCase();
-  document.getElementById('report-subtitle').textContent = 'Simulating failure of ' + src.id + ' — ' + src.name;
+  document.getElementById('report-subtitle').textContent = report.scenarioSummary
+    || ('Simulating failure of ' + src.id + ' — ' + src.name);
 
   animCount('kpi-blocked', report.blockedCoursesCount ?? blocked.length);
   animCount('kpi-semesters', semAff);
   document.getElementById('kpi-delay').textContent    = '+' + delay + ' sem';
-  document.getElementById('kpi-new-grad').textContent = projectedGrad;
+  document.getElementById('kpi-new-grad').textContent = delay > 0
+    ? `${originalGrad} → ${projectedGrad}`
+    : projectedGrad;
 
   document.getElementById('fc-code').textContent    = src.id;
   document.getElementById('fc-name').textContent    = src.name;
   document.getElementById('fc-credits').textContent = src.credits + ' credit hours';
-  document.getElementById('fc-avail').textContent   = src.avail || retakeLabel;
+  document.getElementById('fc-avail').textContent   = retakeLabel;
   document.getElementById('fc-type').textContent    = src.type || 'Core';
 
   const listEl = document.getElementById('blocked-list');
@@ -129,24 +144,69 @@ function loadReport(report) {
 
   document.getElementById('risk-avail').textContent    = retakeLabel;
   document.getElementById('risk-credits').textContent  = creditsAtRisk + ' cr';
-  document.getElementById('risk-cgpa').textContent     = delay > 0 ? 'See Advisor' : 'Minimal';
-  document.getElementById('risk-standing').textContent = blocked.length > 4 ? 'Warning Risk' : 'Good Standing';
-  document.getElementById('risk-standing').style.color = blocked.length > 4 ? '#d97706' : '#10b981';
+
+  const cgpaEl = document.getElementById('risk-cgpa');
+  if (cgpaDelta < 0) {
+    cgpaEl.textContent = `${projectedCgpa.toFixed(2)} (${cgpaDelta.toFixed(2)})`;
+    cgpaEl.style.color = '#d97706';
+  } else {
+    cgpaEl.textContent = projectedCgpa.toFixed(2);
+    cgpaEl.style.color = '#10b981';
+  }
+
+  const standingEl = document.getElementById('risk-standing');
+  standingEl.textContent = standingWouldChange ? `${projectedStanding} (at risk)` : projectedStanding;
+  standingEl.style.color = standingWouldChange ? '#d97706' : '#10b981';
 
   const tlEl = document.getElementById('ia-timeline');
   tlEl.innerHTML = '';
+
   const steps = [
-    { color:'#ef4444', icon:'bolt',       sem:'Now',          label:`<strong>${src.id}</strong> failure cascades — ${blocked.length} courses blocked`, type:'fail'     },
-    { color:'#d97706', icon:'refresh',    sem:retakeLabel,    label:`Retake <strong>${src.id}</strong> · ${retakeLabel}`, type:'retake'   },
-    ...blocked.slice(0, 2).map((b, i) => ({
-      color: '#10b981',
-      icon:  'lock_open',
-      sem:   i === 0 ? 'After retake' : 'Following term',
-      label: `<strong>${b.id}</strong> — ${b.name} unlocks`,
-      type:  'unlock',
-    })),
-    { color:'var(--c-primary)', icon:'school', sem:'New Graduation', label:`<strong>${projectedGrad}</strong> — delayed ${delay} semester${delay > 1 ? 's' : ''}`, type:'grad' },
+    {
+      color: '#ef4444',
+      icon: 'bolt',
+      sem: 'Now',
+      label: `<strong>${src.id}</strong> failure — ${blocked.length} course${blocked.length === 1 ? '' : 's'} blocked`,
+      type: 'fail'
+    }
   ];
+
+  if (recoverySchedule.length > 0) {
+    recoverySchedule.forEach((term, i) => {
+      const courseLabels = (term.courses || []).map(c => {
+        if (c.isRetake) return `<strong>${c.code}</strong> (retake)`;
+        if (c.isNewlyUnlocked) return `<strong>${c.code}</strong> unlocks`;
+        return `<strong>${c.code}</strong>`;
+      }).join(', ');
+
+      steps.push({
+        color: term.isRetakeTerm ? '#d97706' : '#10b981',
+        icon: term.isRetakeTerm ? 'refresh' : 'calendar_month',
+        sem: term.label,
+        label: courseLabels || 'Continue planned courses',
+        type: term.isRetakeTerm ? 'retake' : 'unlock'
+      });
+    });
+  } else {
+    steps.push({
+      color: '#d97706',
+      icon: 'refresh',
+      sem: retakeLabel,
+      label: `Retake <strong>${src.id}</strong>`,
+      type: 'retake'
+    });
+  }
+
+  steps.push({
+    color: 'var(--c-primary)',
+    icon: 'school',
+    sem: 'Graduation',
+    label: delay > 0
+      ? `<strong>${originalGrad}</strong> → <strong>${projectedGrad}</strong>`
+      : `<strong>${projectedGrad}</strong> on schedule`,
+    type: 'grad'
+  });
+
   steps.forEach((s, i) => {
     const el = document.createElement('div');
     el.className = 'ia-tl-item ia-tl-' + s.type;
@@ -165,18 +225,18 @@ function loadReport(report) {
   });
 
   const recEl = document.getElementById('ia-recommendations');
-  const recs = [
-    { icon:'priority_high', color:'#ef4444', text:`Prioritize <strong>${src.id}</strong> — register for ${retakeLabel} immediately.` },
-    { icon:'school',         color:'#d97706', text:`Speak to your advisor about the ${delay}-semester delay impact.` },
-    { icon:'auto_awesome',   color:'var(--c-primary)', text:`Use the GPA Simulator to see how the retake affects your CGPA.` },
-  ];
   recEl.innerHTML = '';
-  recs.forEach(r => {
+  const recList = recommendations.length > 0 ? recommendations : [
+    `Prioritize <strong>${src.id}</strong> — register for ${retakeLabel}.`,
+    `Speak to your advisor about the ${delay}-semester graduation impact.`
+  ];
+
+  recList.forEach(r => {
     const el = document.createElement('div');
     el.className = 'ia-rec-item';
     el.innerHTML = `
-      <span class="material-symbols-outlined flex-shrink-0" style="font-size:17px;color:${r.color};font-variation-settings:'FILL' 1,'wght' 400">${r.icon}</span>
-      <span style="font-size:12.5px;color:var(--c-text-sub);line-height:1.55;">${r.text}</span>
+      <span class="material-symbols-outlined flex-shrink-0" style="font-size:17px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 400">tips_and_updates</span>
+      <span style="font-size:12.5px;color:var(--c-text-sub);line-height:1.55;">${r}</span>
     `;
     recEl.appendChild(el);
   });
@@ -185,7 +245,7 @@ function loadReport(report) {
 function animCount(id, target) {
   const el = document.getElementById(id);
   let current = 0;
-  const step = Math.ceil(target / 12);
+  const step = Math.ceil(target / 12) || 1;
   const interval = setInterval(() => {
     current = Math.min(current + step, target);
     el.textContent = current;
