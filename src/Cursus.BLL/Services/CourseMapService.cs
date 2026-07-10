@@ -74,7 +74,8 @@ namespace Cursus.BLL.Services
                     Status: hasStudentRecord ? record.Status : null,
                     Grade: hasStudentRecord ? record.Grade : null,
                     CourseType: c.CourseType,
-                    IsPlanned: isPlanned
+                    IsPlanned: isPlanned,
+                    RecommendedSemester: c.RecommendedSemester
                 );
             }).ToList();
 
@@ -132,4 +133,5 @@ namespace Cursus.BLL.Services
         }
     }
 }
+
 
