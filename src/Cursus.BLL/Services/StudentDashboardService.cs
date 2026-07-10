@@ -155,6 +155,10 @@ public sealed class StudentDashboardService : IStudentDashboardService
             student.CurrentSemester, enrollmentDate, student.AcademicYear,
             creditsCompleted, creditsRequired, maxCredits);
 
+        var semestersCompleted = termGpas
+            .Count(t => t.Semester != SemesterType.Summer && t.GradedCredits > 0);
+        semestersCompleted = Math.Min(semestersCompleted, totalSemesters);
+
         var currentCourses = allCourses
             .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
             .Select(sc => new EnrolledCourseDto
@@ -199,7 +203,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
             StandingAlert = standingAlert,
             HasAcademicRecords = allCourses.Count > 0,
             ProjectedGraduation = projectedGraduation,
-            SemestersCompleted = termGpas.Count,
+            SemestersCompleted = semestersCompleted,
             TotalSemesters = totalSemesters,
             CurrentCourses = currentCourses,
             UniversityName = student.University?.Name ?? "Not assigned",
@@ -290,4 +294,5 @@ public sealed class StudentDashboardService : IStudentDashboardService
         };
     }
 }
+
 

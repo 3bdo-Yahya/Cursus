@@ -52,6 +52,21 @@
   box-shadow:   0 2px 8px rgba(79,70,229,.1);
 }
 
+.sem-tab .tab-primary-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.semester-tabs.loading .sem-tab {
+  pointer-events: none;
+  opacity: 0.65;
+}
+
 /* ── Plan card ─────────────────────── */
 .plan-card {
   background:    var(--c-surface);
@@ -346,6 +361,41 @@ html.dark .add-dropdown {
   white-space: nowrap;
 }
 
+.add-category-section + .add-category-section {
+  border-top: 1px solid var(--c-border);
+}
+
+.add-category-toggle {
+  width: 100%;
+  border: none;
+  background: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-text-sub);
+  cursor: pointer;
+}
+
+.add-category-toggle .material-symbols-outlined {
+  font-size: 16px !important;
+  transition: transform 0.15s ease;
+}
+
+.add-category-toggle.open .material-symbols-outlined {
+  transform: rotate(180deg);
+}
+
+.add-category-body {
+  display: none;
+}
+
+.add-category-body.open {
+  display: block;
+}
+
 /* ── Sticky sidebar ─────────────────────────────────────── */
 .plan-sidebar { position: sticky; top: 84px; }
 
@@ -540,4 +590,6 @@ html.dark .sidebar-alert:hover {
 .text-sub     { color: var(--c-text-sub) !important; }
 .border-token { border-color: var(--c-border) !important; }
 html.dark .text-muted { color: var(--c-muted) !important; }
+
+
 
