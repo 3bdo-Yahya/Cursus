@@ -49,6 +49,7 @@ namespace Cursus.Domain.Entities
         public ICollection<CoursePrerequisite> IsPrerequisiteFor { get; set; } = new List<CoursePrerequisite>();
 
         public ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
+        public ICollection<PlannedCourse> PlannedCourses { get; set; } = new List<PlannedCourse>();
         public ICollection<GraduationRequirementCourse> GraduationRequirementCourses { get; set; } = new List<GraduationRequirementCourse>();
 
 
@@ -57,3 +58,4 @@ namespace Cursus.Domain.Entities
 
     }
 }
+

@@ -1,3 +1,4 @@
+using Cursus.DAL.Database;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
@@ -8,20 +9,28 @@ namespace Cursus.BLL.Services
 {
     public class CourseMapService : ICourseMapService
     {
+        private readonly ApplicationDbContext _db;
         private readonly IGenericRepository<Course> _courseRepository;
         private readonly IGenericRepository<StudentCourse> _studentCourseRepository;
+        private readonly IPlannerService _plannerService;
+        private readonly IAcademicMetricsService _academicMetricsService;
 
         public CourseMapService(
+            ApplicationDbContext db,
             IGenericRepository<Course> courseRepository,
-            IGenericRepository<StudentCourse> studentCourseRepository)
+            IGenericRepository<StudentCourse> studentCourseRepository,
+            IPlannerService plannerService,
+            IAcademicMetricsService academicMetricsService)
         {
+            _db = db ?? throw new ArgumentNullException(nameof(db));
             _courseRepository = courseRepository;
             _studentCourseRepository = studentCourseRepository;
+            _plannerService = plannerService;
+            _academicMetricsService = academicMetricsService;
         }
 
         public async Task<CourseGraphDto> GetCourseGraphForStudentAsync(string studentId, int departmentId)
         {
-            // Load courses for the department or general university requirements that are active
             var courses = await _courseRepository.GetAll()
                 .Where(c => (c.DepartmentId == departmentId || c.CourseType == CourseType.UniversityReq) && c.IsActive)
                 .Include(c => c.Prerequisites)
@@ -29,18 +38,20 @@ namespace Cursus.BLL.Services
                 .AsNoTracking()
                 .ToListAsync();
 
-            // Load student's courses asynchronously
             var studentCourses = await _studentCourseRepository.GetAll()
                 .Where(sc => sc.StudentId == studentId)
+                .Include(sc => sc.Course)
                 .AsNoTracking()
                 .ToListAsync();
 
-            // Group by CourseId to handle duplicate attempts/retakes and select the best attempt status
+            var plannedCourseIds = await GetPrimaryTermPlannedCourseIdsAsync(studentId, departmentId, studentCourses);
+
             var studentCourseMap = studentCourses
                 .GroupBy(sc => sc.CourseId)
                 .ToDictionary(
                     g => g.Key,
-                    g => {
+                    g =>
+                    {
                         var bestAttempt = g.OrderBy(sc => sc.Status switch
                         {
                             StudentCourseStatus.Completed => 0,
@@ -54,6 +65,7 @@ namespace Cursus.BLL.Services
             var nodes = courses.Select(c =>
             {
                 var hasStudentRecord = studentCourseMap.TryGetValue(c.Id, out var record);
+                var isPlanned = !hasStudentRecord && plannedCourseIds.Contains(c.Id);
                 return new CourseNodeDto(
                     Id: c.Id,
                     Code: c.Code,
@@ -61,13 +73,13 @@ namespace Cursus.BLL.Services
                     CreditHours: c.CreditHours,
                     Status: hasStudentRecord ? record.Status : null,
                     Grade: hasStudentRecord ? record.Grade : null,
-                    CourseType: c.CourseType
+                    CourseType: c.CourseType,
+                    IsPlanned: isPlanned
                 );
             }).ToList();
 
             var courseIdSet = courses.Select(c => c.Id).ToHashSet();
 
-            // Create edges only if both source and target course exist in the loaded nodes set
             var edges = courses
                 .SelectMany(c => c.Prerequisites, (course, prereq) => new { course, prereq })
                 .Where(x => courseIdSet.Contains(x.prereq.PrerequisiteId))
@@ -84,5 +96,40 @@ namespace Cursus.BLL.Services
                 Edges: edges
             );
         }
+
+        private async Task<HashSet<int>> GetPrimaryTermPlannedCourseIdsAsync(
+            string studentId,
+            int departmentId,
+            IReadOnlyList<StudentCourse> studentCourses)
+        {
+            var department = await _db.Departments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(d => d.Id == departmentId);
+
+            var student = await _db.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == studentId);
+
+            if (student is null)
+                return [];
+
+            var gradeScale = await _academicMetricsService.GetGradeScaleAsync(department?.UniversityId);
+            var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
+            var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScale);
+            var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+
+            var terms = await _plannerService.GetPlanningTermsAsync(studentId, creditLimit);
+            var primaryTerm = terms.FirstOrDefault(t => t.IsPrimary);
+            if (primaryTerm is null)
+                return [];
+
+            var planned = await _plannerService.GetPlanAsync(
+                studentId,
+                primaryTerm.AcademicYear,
+                primaryTerm.Semester);
+
+            return planned.Select(pc => pc.CourseId).ToHashSet();
+        }
     }
 }
+

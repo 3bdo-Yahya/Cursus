@@ -1,38 +1,98 @@
-/* ── Available course catalog ───────────────────────────── */
 const CATALOG = window.STUDENT_DATA.catalog || [];
-
-/* ── Student data ──────────────── */
-const COMPLETED_COURSES  = window.STUDENT_DATA.completedCourses || [];
+const TERMS = window.STUDENT_DATA.terms || [];
+const COMPLETED_COURSES = window.STUDENT_DATA.completedCourses || [];
 const IN_PROGRESS_COURSES = window.STUDENT_DATA.inProgressCourses || [];
-const COMPLETED_CREDITS  = window.STUDENT_DATA.completedCredits || 0;
-const TOTAL_CREDITS      = window.STUDENT_DATA.totalCredits || 132;
-const CREDIT_LIMIT       = window.STUDENT_DATA.creditLimit || 18;
-const OVERLOAD_LIMIT     = window.STUDENT_DATA.overloadLimit || 21;
+const COMPLETED_CREDITS = window.STUDENT_DATA.completedCredits || 0;
+const TOTAL_CREDITS = window.STUDENT_DATA.totalCredits || 132;
+const CREDIT_LIMIT = window.STUDENT_DATA.creditLimit || 18;
 
-/* ── Planned courses state ──────────────────────────────── */
+const TERM = window.STUDENT_DATA.term || {};
+const courseIdByCode = Object.fromEntries(CATALOG.map(c => [c.id, c.courseId]));
+
+const termCache = new Map();
+let activeTermKey = '';
+let termState = {
+  academicYear: '',
+  semester: 0,
+  forcedInProgressCredits: 0,
+  plannedCredits: 0,
+  remainingRoom: CREDIT_LIMIT
+};
 let plannedIds = [];
 
-const STUDENT_ID = window.STUDENT_DATA.studentId || '';
-const LS_KEY = STUDENT_ID ? `cursus.plannedCourses.${STUDENT_ID}` : '';
+function termKey(year, semester) {
+  return `${year}|${semester}`;
+}
 
-function persistPlan() {
-  if (!LS_KEY) return false;
-  try {
-    const planned = plannedIds.map(id => {
-      const c = CATALOG.find(x => x.id === id);
-      return c ? { id: c.id, name: c.name, credits: c.credits } : null;
-    }).filter(Boolean);
-    localStorage.setItem(LS_KEY, JSON.stringify(planned));
-    return true;
-  } catch {
-    return false;
+function semesterLabel(semester) {
+  return ['Fall', 'Spring', 'Summer'][semester] || String(semester);
+}
+
+function getAntiForgeryToken() {
+  const input = document.querySelector('input[name="__RequestVerificationToken"]');
+  return input ? input.value : '';
+}
+
+function requestHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'RequestVerificationToken': getAntiForgeryToken()
+  };
+}
+
+function mapCourseTypeFromEnum(courseType) {
+  switch (courseType) {
+    case 'DeptElective': return { type: 'Dept. Elective', typeClass: 'type-elec' };
+    case 'FreeElective': return { type: 'Free Elective', typeClass: 'type-free' };
+    case 'UniversityReq': return { type: 'University Req.', typeClass: 'type-univ' };
+    default: return { type: 'Core', typeClass: 'type-core' };
   }
+}
+
+function normalizePlannedCourse(pc) {
+  const code = pc.code || pc.id;
+  const catalogCourse = CATALOG.find(c => c.id === code);
+  const mapped = pc.type && pc.typeClass
+    ? { type: pc.type, typeClass: pc.typeClass }
+    : mapCourseTypeFromEnum(pc.courseType || pc.type);
+
+  return {
+    id: code,
+    courseId: pc.courseId || courseIdByCode[code] || 0,
+    name: pc.name,
+    credits: pc.credits ?? pc.creditHours ?? catalogCourse?.credits ?? 0,
+    type: catalogCourse?.type || mapped.type,
+    typeClass: catalogCourse?.typeClass || mapped.typeClass,
+    prereqs: catalogCourse?.prereqs || []
+  };
+}
+
+function getActivePlannedCourses() {
+  const cached = termCache.get(activeTermKey);
+  return (cached?.plannedCourses || []).map(normalizePlannedCourse);
+}
+
+function findPlannedCourse(code) {
+  return getActivePlannedCourses().find(pc => pc.id === code)
+    || normalizePlannedCourse({ code, ...(CATALOG.find(c => c.id === code) || {}) });
+}
+
+function getAllPlannedCodes() {
+  const codes = new Set();
+  termCache.forEach(state => state.plannedIds.forEach(id => codes.add(id)));
+  return codes;
 }
 
 function prereqSatisfied(code) {
   return COMPLETED_COURSES.includes(code)
     || IN_PROGRESS_COURSES.includes(code)
-    || plannedIds.includes(code);
+    || getAllPlannedCodes().has(code);
+}
+
+function resolveCourseId(code) {
+  const cached = termCache.get(activeTermKey);
+  const fromTerm = cached?.plannedCourses?.find(pc => pc.code === code)?.courseId;
+  return fromTerm || courseIdByCode[code] || 0;
 }
 
 function updateEmptyState() {
@@ -43,7 +103,10 @@ function updateEmptyState() {
   empty.style.display = hasRows ? 'none' : '';
 }
 
-/* ── Read planned courses from DOM / localStorage ────────────────── */
+function clearPlannedList() {
+  document.querySelectorAll('#planned-courses-list .planned-row').forEach(row => row.remove());
+}
+
 function appendPlannedRow(course) {
   const row = document.createElement('div');
   row.className = 'planned-row';
@@ -60,81 +123,144 @@ function appendPlannedRow(course) {
   return row;
 }
 
-function pruneStoredPlan(planned) {
-  const blocked = new Set([...COMPLETED_COURSES, ...IN_PROGRESS_COURSES]);
-  return planned.filter(p => p && p.id && !blocked.has(p.id));
+function renderPlannedRows() {
+  clearPlannedList();
+  getActivePlannedCourses().forEach(course => appendPlannedRow(course));
+  plannedIds = getActivePlannedCourses().map(course => course.id);
 }
 
-function loadSavedPlan() {
-  if (!LS_KEY) return;
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return;
-    const stored = JSON.parse(raw);
-    if (!Array.isArray(stored)) return;
+function updatePlanCardTitle() {
+  const title = document.getElementById('plan-card-title');
+  if (!title) return;
+  title.textContent = `${semesterLabel(termState.semester)} ${termState.academicYear}`;
+}
 
-    const pruned = pruneStoredPlan(stored);
-    if (pruned.length !== stored.length) {
-      localStorage.setItem(LS_KEY, JSON.stringify(pruned));
-    }
+function applyCapacity(capacity) {
+  if (!capacity) return;
+  termState.forcedInProgressCredits = capacity.forcedInProgressCredits;
+  termState.plannedCredits = capacity.plannedCredits;
+  termState.remainingRoom = capacity.remainingRoom;
 
-    pruned.forEach(p => {
-      if (plannedIds.includes(p.id)) return;
-      const course = CATALOG.find(c => c.id === p.id);
-      if (!course) return;
-      plannedIds.push(course.id);
-      appendPlannedRow(course);
-    });
-  } catch {
-    // ignore corrupt storage
+  const cached = termCache.get(activeTermKey);
+  if (cached) {
+    cached.forcedInProgressCredits = capacity.forcedInProgressCredits;
+    cached.plannedCredits = capacity.plannedCredits;
+    cached.remainingRoom = capacity.remainingRoom;
   }
 }
 
-function init() {
-  loadSavedPlan();
-  document.querySelectorAll('#planned-courses-list .planned-row').forEach(row => {
-    if (!plannedIds.includes(row.dataset.courseId)) {
-      plannedIds.push(row.dataset.courseId);
-    }
+function initTermCache() {
+  const primary = TERMS.find(t => t.isPrimary) || TERMS[0];
+  if (!primary) return;
+
+  const key = termKey(primary.academicYear, primary.semester);
+  const initialPlanned = (window.STUDENT_DATA.plannedCourses || []).map(pc => ({
+    courseId: pc.courseId,
+    code: pc.code,
+    name: pc.name,
+    credits: pc.credits,
+    type: pc.type,
+    typeClass: pc.typeClass
+  }));
+
+  termCache.set(key, {
+    academicYear: primary.academicYear,
+    semester: primary.semester,
+    forcedInProgressCredits: TERM.forcedInProgressCredits || 0,
+    plannedCredits: TERM.plannedCredits || 0,
+    remainingRoom: TERM.remainingRoom ?? CREDIT_LIMIT,
+    plannedIds: initialPlanned.map(pc => pc.code),
+    plannedCourses: initialPlanned,
+    loaded: true
   });
-  updateEmptyState();
-  updateSummary();
 
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); obs.unobserve(e.target); } });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('[data-scroll],[data-scroll-group]').forEach(el => obs.observe(el));
+  activeTermKey = key;
+  termState = {
+    academicYear: primary.academicYear,
+    semester: primary.semester,
+    forcedInProgressCredits: TERM.forcedInProgressCredits || 0,
+    plannedCredits: TERM.plannedCredits || 0,
+    remainingRoom: TERM.remainingRoom ?? CREDIT_LIMIT
+  };
+  plannedIds = [...termCache.get(key).plannedIds];
 }
 
-/* ── Remove a course ────────────────────────────────────── */
-function removeCourse(id, e) {
-  e.stopPropagation();
-  const row = document.querySelector(`#planned-courses-list [data-course-id="${id}"]`);
-  if (!row) return;
+async function loadTermPlan(academicYear, semester) {
+  const key = termKey(academicYear, semester);
+  const params = new URLSearchParams({
+    academicYear,
+    semester: String(semester)
+  });
 
-  row.style.transition = 'opacity 0.2s ease, transform 0.2s ease, max-height 0.25s ease';
-  row.style.opacity  = '0';
-  row.style.transform = 'translateX(12px)';
-  row.style.maxHeight = row.offsetHeight + 'px';
-  row.style.overflow  = 'hidden';
+  const response = await fetch(`/Student/PlannerPlan?${params}`, {
+    headers: { RequestVerificationToken: getAntiForgeryToken() }
+  });
 
-  setTimeout(() => {
-    row.style.maxHeight = '0';
-    row.style.padding   = '0';
-    setTimeout(() => {
-      row.remove();
-      plannedIds = plannedIds.filter(x => x !== id);
-      updateEmptyState();
-      updateSummary();
-      persistPlan();
-      showToast(`Removed ${id}`, 'remove_circle');
-    }, 250);
-  }, 200);
+  const payload = await response.json();
+  if (!response.ok) {
+    throw new Error(payload.error || 'Unable to load term plan.');
+  }
+
+  const plannedCourses = (payload.plannedCourses || []).map(pc => ({
+    courseId: pc.courseId,
+    code: pc.code,
+    name: pc.name,
+    credits: pc.credits,
+    courseType: pc.type
+  }));
+  termCache.set(key, {
+    academicYear,
+    semester,
+    forcedInProgressCredits: payload.capacity?.forcedInProgressCredits || 0,
+    plannedCredits: payload.capacity?.plannedCredits || 0,
+    remainingRoom: payload.capacity?.remainingRoom ?? CREDIT_LIMIT,
+    plannedIds: plannedCourses.map(pc => pc.code),
+    plannedCourses,
+    loaded: true
+  });
 }
 
-/* ── Add-course dropdown ─────────────────────── */
+async function switchTerm(academicYear, semester) {
+  const key = termKey(academicYear, semester);
+  if (key === activeTermKey) return;
+
+  document.querySelectorAll('.sem-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.termKey === key);
+  });
+
+  document.getElementById('semester-tabs')?.classList.add('loading');
+
+  try {
+    if (!termCache.has(key) || !termCache.get(key).loaded) {
+      await loadTermPlan(academicYear, semester);
+    }
+
+    activeTermKey = key;
+    const state = termCache.get(key);
+    termState = {
+      academicYear: state.academicYear,
+      semester: state.semester,
+      forcedInProgressCredits: state.forcedInProgressCredits,
+      plannedCredits: state.plannedCredits,
+      remainingRoom: state.remainingRoom
+    };
+    plannedIds = [...state.plannedIds];
+
+    renderPlannedRows();
+    updatePlanCardTitle();
+    updateEmptyState();
+    updateSummary();
+    renderAddList(document.getElementById('add-search-input')?.value?.toLowerCase().trim() || '');
+    document.getElementById('add-dropdown')?.classList.remove('open');
+  } catch (err) {
+    showToast(err.message || 'Failed to switch term.', 'error', true);
+  } finally {
+    document.getElementById('semester-tabs')?.classList.remove('loading');
+  }
+}
+
 function toggleAddDropdown() {
-  const dd    = document.getElementById('add-dropdown');
+  const dd = document.getElementById('add-dropdown');
   const input = document.getElementById('add-search-input');
   const isOpen = dd.classList.contains('open');
   dd.classList.toggle('open');
@@ -144,16 +270,65 @@ function toggleAddDropdown() {
   }
 }
 
-/* Close dropdown on outside click */
 document.addEventListener('click', e => {
   if (!e.target.closest('.add-dropdown-wrap')) {
     document.getElementById('add-dropdown')?.classList.remove('open');
   }
 });
 
-/* ── Filter the add list ────────────────────────────────── */
 function filterAddList(q) {
   renderAddList(q.toLowerCase().trim());
+}
+
+function categoryMeta(category) {
+  switch (category) {
+    case 0: return { title: 'Core', open: true };
+    case 1: return { title: 'Dept Elective', open: true };
+    case 2: return { title: 'Free Elective', open: false };
+    case 3: return { title: 'University Req', open: false };
+    default: return { title: 'Other', open: false };
+  }
+}
+
+function renderCategorySection(list, category, courses) {
+  if (courses.length === 0) return;
+  const meta = categoryMeta(category);
+
+  const section = document.createElement('div');
+  section.className = 'add-category-section';
+
+  const bodyId = `cat-${category}-${activeTermKey.replace('|', '-')}`;
+  section.innerHTML = `
+    <button type="button" class="add-category-toggle" data-target="${bodyId}" aria-expanded="${meta.open}">
+      <span>${meta.title}</span>
+      <span class="material-symbols-outlined">expand_more</span>
+    </button>
+    <div id="${bodyId}" class="add-category-body${meta.open ? ' open' : ''}"></div>
+  `;
+
+  const body = section.querySelector('.add-category-body');
+  courses.forEach(c => {
+    const prereqs = c.prereqs || [];
+    const prereqsMet = prereqs.every(p => prereqSatisfied(p));
+
+    const item = document.createElement('div');
+    item.className = `add-dropdown-item${prereqsMet ? '' : ' disabled'}`;
+    item.title = prereqsMet ? '' : `Requires: ${prereqs.join(', ')}`;
+    item.innerHTML = `
+      <span class="add-item-code">${c.id}</span>
+      <span class="add-item-name">${c.name}</span>
+      <span class="add-item-credits">${c.credits} cr</span>
+      ${!prereqsMet ? `<span class="material-symbols-outlined" style="font-size:14px!important;color:#b45309;font-variation-settings:'FILL' 1,'wght' 500">lock</span>` : ''}
+    `;
+
+    if (prereqsMet) {
+      item.onclick = () => addCourse(c);
+    }
+
+    body.appendChild(item);
+  });
+
+  list.appendChild(section);
 }
 
 function renderAddList(query) {
@@ -169,96 +344,149 @@ function renderAddList(query) {
   });
 
   if (available.length === 0) {
-    list.innerHTML = `<div class="add-dropdown-item" style="color:var(--c-muted);cursor:default;">No courses match</div>`;
+    list.innerHTML = '<div class="add-dropdown-item" style="color:var(--c-muted);cursor:default;">No courses match</div>';
     return;
   }
 
+  const grouped = new Map();
   available.forEach(c => {
-    const prereqs = c.prereqs || [];
-    const prereqsMet = prereqs.every(p => prereqSatisfied(p));
-    const item = document.createElement('div');
-    item.className = `add-dropdown-item${prereqsMet ? '' : ' disabled'}`;
-    item.title = prereqsMet ? '' : `Requires: ${prereqs.join(', ')}`;
-    item.innerHTML = `
-      <span class="add-item-code">${c.id}</span>
-      <span class="add-item-name">${c.name}</span>
-      <span class="add-item-credits">${c.credits} cr</span>
-      ${!prereqsMet ? `<span class="material-symbols-outlined" style="font-size:14px!important;color:#b45309;font-variation-settings:'FILL' 1,'wght' 500">lock</span>` : ''}
-    `;
-    if (prereqsMet) {
-      item.onclick = () => addCourse(c);
-    }
-    list.appendChild(item);
+    const key = typeof c.category === 'number' ? c.category : 0;
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(c);
+  });
+
+  [0, 1, 2, 3].forEach(cat => renderCategorySection(list, cat, grouped.get(cat) || []));
+
+  list.querySelectorAll('.add-category-toggle').forEach(btn => {
+    btn.onclick = () => {
+      const body = document.getElementById(btn.dataset.target);
+      const open = body.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+      btn.classList.toggle('open', open);
+    };
+    if (btn.getAttribute('aria-expanded') === 'true') btn.classList.add('open');
   });
 }
 
-/* ── Add a course to the plan ───────────────────────────── */
-function addCourse(course) {
+async function addCourse(course) {
+  const currentTotal = termState.forcedInProgressCredits + getPlannedCredits();
+  if (currentTotal + course.credits > CREDIT_LIMIT) {
+    showToast('Exceeds credit capacity for this term.', 'error', true);
+    return;
+  }
+
+  const response = await fetch('/Student/AddPlannedCourse', {
+    method: 'POST',
+    headers: requestHeaders(),
+    body: JSON.stringify({
+      courseId: course.courseId || courseIdByCode[course.id] || 0,
+      academicYear: termState.academicYear,
+      semester: termState.semester
+    })
+  });
+
+  const payload = await response.json();
+  if (!response.ok) {
+    showToast(payload.error || 'Unable to add course.', 'error', true);
+    return;
+  }
+
   document.getElementById('add-dropdown').classList.remove('open');
   document.getElementById('add-search-input').value = '';
 
-  const currentCr = getTotalCredits();
-  if (currentCr + course.credits > OVERLOAD_LIMIT) {
-    showToast('Exceeds maximum credit limit!', 'error', true);
-    return;
+  plannedIds.push(course.id);
+  appendPlannedRow(course);
+  applyCapacity(payload.capacity);
+
+  const cached = termCache.get(activeTermKey);
+  if (cached) {
+    cached.plannedIds = [...plannedIds];
+    cached.plannedCourses = cached.plannedCourses || [];
+    cached.plannedCourses.push({
+      courseId: course.courseId || courseIdByCode[course.id],
+      code: course.id,
+      name: course.name,
+      credits: course.credits,
+      type: course.type,
+      typeClass: course.typeClass
+    });
   }
 
-  plannedIds.push(course.id);
-
-  const row = appendPlannedRow(course);
-  row.style.opacity   = '0';
-  row.style.transform = 'translateX(-10px)';
-  row.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
   updateEmptyState();
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      row.style.opacity   = '1';
-      row.style.transform = 'translateX(0)';
-    });
-  });
-
   updateSummary();
-  persistPlan();
+  renderAddList('');
   showToast(`Added ${course.id} — ${course.name}`, 'add_circle');
 }
 
-/* ── Compute total planned credits ──────────────────────── */
-function getTotalCredits() {
-  return plannedIds.reduce((sum, id) => {
-    const c = CATALOG.find(x => x.id === id);
-    return sum + (c ? c.credits : 0);
-  }, 0);
+async function removeCourse(id, e) {
+  e.stopPropagation();
+
+  const course = findPlannedCourse(id);
+  if (!course?.courseId) return;
+
+  const response = await fetch('/Student/RemovePlannedCourse', {
+    method: 'POST',
+    headers: requestHeaders(),
+    body: JSON.stringify({
+      courseId: course.courseId || resolveCourseId(id),
+      academicYear: termState.academicYear,
+      semester: termState.semester
+    })
+  });
+
+  const payload = await response.json();
+  if (!response.ok) {
+    showToast(payload.error || 'Unable to remove course.', 'error', true);
+    return;
+  }
+
+  const row = document.querySelector(`#planned-courses-list [data-course-id="${id}"]`);
+  if (row) row.remove();
+
+  plannedIds = plannedIds.filter(x => x !== id);
+  applyCapacity(payload.capacity);
+
+  const cached = termCache.get(activeTermKey);
+  if (cached) {
+    cached.plannedIds = [...plannedIds];
+    cached.plannedCourses = (cached.plannedCourses || []).filter(pc => pc.code !== id);
+  }
+
+  updateEmptyState();
+  updateSummary();
+  renderAddList('');
+  showToast(`Removed ${id}`, 'remove_circle');
 }
 
-/* ── Update summary sidebar ──────────────────────────────── */
+function getPlannedCredits() {
+  return getActivePlannedCourses().reduce((sum, course) => sum + (course.credits || 0), 0);
+}
+
 function updateSummary() {
-  const cr         = getTotalCredits();
-  const courseCount = plannedIds.length;
-  const totalAfter  = COMPLETED_CREDITS + cr;
+  const plannedCredits = getPlannedCredits();
+  const totalInTerm = termState.forcedInProgressCredits + plannedCredits;
+  const totalAfter = COMPLETED_CREDITS + plannedCredits;
 
   const chip = document.getElementById('credit-chip');
-  chip.textContent = `${cr} / ${CREDIT_LIMIT} cr`;
+  chip.textContent = `${totalInTerm} / ${CREDIT_LIMIT} cr`;
   chip.className = 'credit-chip ';
-  if (cr === 0)                             chip.className += 'credit-chip-empty';
-  else if (cr > CREDIT_LIMIT)              chip.className += 'credit-chip-over';
-  else if (cr >= CREDIT_LIMIT - 3)         chip.className += 'credit-chip-ok';
-  else                                     chip.className += 'credit-chip-warn';
 
-  document.getElementById('stat-planned-cr').textContent  = `${cr} cr`;
-  document.getElementById('stat-planned-cr').className = 'summary-stat-value ' +
-    (cr > CREDIT_LIMIT ? 'danger' : cr > 0 ? 'ok' : '');
+  if (totalInTerm === 0) chip.className += 'credit-chip-empty';
+  else if (totalInTerm > CREDIT_LIMIT) chip.className += 'credit-chip-over';
+  else if (totalInTerm >= CREDIT_LIMIT - 3) chip.className += 'credit-chip-ok';
+  else chip.className += 'credit-chip-warn';
+
+  const statPlanned = document.getElementById('stat-planned-cr');
+  statPlanned.textContent = `${plannedCredits} cr (+ ${termState.forcedInProgressCredits} forced)`;
+  statPlanned.className = 'summary-stat-value ' + (totalInTerm > CREDIT_LIMIT ? 'danger' : plannedCredits > 0 ? 'ok' : '');
+
   document.getElementById('stat-total-after').textContent = `${totalAfter} / ${TOTAL_CREDITS}`;
-  document.getElementById('stat-course-count').textContent = courseCount;
+  document.getElementById('stat-course-count').textContent = plannedIds.length;
 
-  let conflicts = [];
-  plannedIds.forEach(id => {
-    const c = CATALOG.find(x => x.id === id);
-    if (!c) return;
+  const conflicts = [];
+  getActivePlannedCourses().forEach(c => {
     (c.prereqs || []).forEach(p => {
-      if (!prereqSatisfied(p)) {
-        conflicts.push(`${c.id} needs ${p}`);
-      }
+      if (!prereqSatisfied(p)) conflicts.push(`${c.id} needs ${p}`);
     });
   });
 
@@ -272,51 +500,33 @@ function updateSummary() {
   }
 
   const alertGrad = document.getElementById('alert-grad');
-  if (cr > CREDIT_LIMIT) {
+  if (totalInTerm > CREDIT_LIMIT) {
     alertGrad.style.display = 'flex';
     alertGrad.querySelector('.warn-text').textContent =
-      `This plan (${cr} cr) exceeds your ${CREDIT_LIMIT}-credit limit by ${cr - CREDIT_LIMIT} cr.`;
+      `Term load (${totalInTerm} cr) exceeds ${CREDIT_LIMIT}-credit limit by ${totalInTerm - CREDIT_LIMIT} cr.`;
   } else {
     alertGrad.style.display = 'none';
   }
 
   const pct = TOTAL_CREDITS > 0 ? Math.min((totalAfter / TOTAL_CREDITS) * 100, 100).toFixed(1) : '0.0';
-  const bar  = document.getElementById('plan-bar');
-  bar.style.setProperty('--bar-w', pct + '%');
-  bar.style.animation = 'none';
-  void bar.offsetWidth;
-  bar.style.animation = '';
+  const bar = document.getElementById('plan-bar');
+  bar.style.setProperty('--bar-w', `${pct}%`);
 
   const pctLabel = document.getElementById('progress-pct-label');
   if (pctLabel) {
-    const compPct = TOTAL_CREDITS > 0
-      ? Math.min((COMPLETED_CREDITS / TOTAL_CREDITS) * 100, 100).toFixed(1)
-      : '0.0';
+    const compPct = TOTAL_CREDITS > 0 ? Math.min((COMPLETED_CREDITS / TOTAL_CREDITS) * 100, 100).toFixed(1) : '0.0';
     pctLabel.textContent = `${compPct}% → ${pct}%`;
   }
 
   const semLeft = Math.ceil((TOTAL_CREDITS - totalAfter) / 15);
-  const gradText = semLeft <= 0 ? 'Graduation requirements met! 🎓'
-    : `~${semLeft} semester${semLeft > 1 ? 's' : ''} remaining after this plan`;
-  document.getElementById('proj-grad-text').innerHTML =
-    `<strong style="color:var(--c-primary)">${gradText}</strong>`;
+  const gradText = semLeft <= 0 ? 'Graduation requirements met! 🎓' : `~${semLeft} semester${semLeft > 1 ? 's' : ''} remaining after this plan`;
+  document.getElementById('proj-grad-text').innerHTML = `<strong style="color:var(--c-primary)">${gradText}</strong>`;
 }
 
-/* ── Save plan ──────────────────────────────────────────── */
 function savePlan() {
-  if (!LS_KEY) {
-    showToast('Unable to save — student ID missing', 'error', true);
-    return;
-  }
-
-  if (persistPlan()) {
-    showToast(`Semester plan saved! (${plannedIds.length} course${plannedIds.length !== 1 ? 's' : ''})`, 'check_circle');
-  } else {
-    showToast('Unable to save plan to browser storage', 'error', true);
-  }
+  showToast('Plan changes are auto-saved to database.', 'check_circle');
 }
 
-/* ── Toast helper ───────────────────────────────────────── */
 let toastTimer = null;
 function showToast(message, icon = 'info', isError = false) {
   document.querySelector('.toast-cursus')?.remove();
@@ -336,6 +546,28 @@ function showToast(message, icon = 'info', isError = false) {
   }, 2800);
 }
 
-init();
+function init() {
+  initTermCache();
+  renderPlannedRows();
+  updateEmptyState();
+  updateSummary();
 
+  document.querySelectorAll('.sem-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchTerm(btn.dataset.academicYear, parseInt(btn.dataset.semester, 10));
+    });
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('[data-scroll],[data-scroll-group]').forEach(el => obs.observe(el));
+}
+
+window.toggleAddDropdown = toggleAddDropdown;
+window.filterAddList = filterAddList;
+window.removeCourse = removeCourse;
+window.savePlan = savePlan;
+
+init();
 

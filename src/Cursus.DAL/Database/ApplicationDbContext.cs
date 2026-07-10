@@ -20,6 +20,7 @@ namespace Cursus.DAL.Database
         public DbSet<GradeScale> GradeScales => Set<GradeScale>();
         public DbSet<CreditHourRule> CreditHourRules => Set<CreditHourRule>();
         public DbSet<StudentCourse> StudentCourses => Set<StudentCourse>();
+        public DbSet<PlannedCourse> PlannedCourses => Set<PlannedCourse>();
         public DbSet<StandingHistory> StandingHistories => Set<StandingHistory>();
 
         protected override void OnModelCreating(ModelBuilder builder)
