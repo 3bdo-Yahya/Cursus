@@ -1,5 +1,4 @@
 using Cursus.BLL.Services;
-using Cursus.DAL.Repositories;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
 
@@ -23,8 +22,9 @@ public sealed class ImpactAnalysisServiceTests
         });
         await db.SaveChangesAsync();
 
-        var service = new ImpactAnalysisService(new GenericRepository<Course>(db));
+        var service = new ImpactAnalysisService(db, new AcademicMetricsService(db));
         var result = await service.GetBlockedCoursesAsync(
+            PlannerTestData.StudentId,
             prereq.Id,
             PlannerTestData.DepartmentId,
             SemesterType.Fall,
