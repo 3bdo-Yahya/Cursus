@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Cursus.DAL.Database;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Entities;
@@ -15,13 +16,16 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
 {
     private readonly ApplicationDbContext _db;
     private readonly IAcademicMetricsService _academicMetricsService;
+    private readonly ILogger<ImpactAnalysisService> _logger;
 
     public ImpactAnalysisService(
         ApplicationDbContext db,
-        IAcademicMetricsService academicMetricsService)
+        IAcademicMetricsService academicMetricsService,
+        ILogger<ImpactAnalysisService> logger)
     {
         _db = db;
         _academicMetricsService = academicMetricsService;
+        _logger = logger;
     }
 
     public async Task<ImpactAnalysisResultDto?> GetBlockedCoursesAsync(
@@ -44,7 +48,7 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         if (!courseById.TryGetValue(courseId, out var failedCourse))
             return null;
 
-        var adjacency = BuildAdjacency(courses, courseById);
+        var adjacency = BuildAdjacency(courses, courseById, _logger);
         var orderedBlocked = FindBlockedCourses(courseId, courseById, adjacency);
         var cascadeDepth = orderedBlocked.Count > 0 ? orderedBlocked.Max(b => b.Depth) : 0;
         var creditsAtRisk = orderedBlocked.Sum(b => b.CreditHours);
@@ -149,7 +153,8 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
 
     private static Dictionary<int, List<int>> BuildAdjacency(
         List<Course> courses,
-        Dictionary<int, Course> courseById)
+        Dictionary<int, Course> courseById,
+        ILogger logger)
     {
         var adjacency = new Dictionary<int, List<int>>();
         foreach (var course in courses)
@@ -157,7 +162,13 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
             foreach (var edge in course.IsPrerequisiteFor)
             {
                 if (!courseById.ContainsKey(edge.CourseId))
+                {
+                    logger.LogWarning(
+                        "Prerequisite edge {PrereqCode} -> course {DependentId} omitted from blocked-course BFS (not in department scope or inactive).",
+                        course.Code,
+                        edge.CourseId);
                     continue;
+                }
 
                 if (!adjacency.TryGetValue(course.Id, out var dependents))
                 {
@@ -217,19 +228,9 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         Dictionary<CourseType, int> completedCreditsByType,
         Course failedCourse)
     {
-        var simulationCourses = new List<Course>();
-        var coreReq = requirements.FirstOrDefault(r => r.CategoryType == CourseType.Core);
-        var coreCourseIds = coreReq?.GraduationRequirementCourses
-            .Select(rc => rc.CourseId)
-            .ToHashSet() ?? [];
-
-        foreach (var course in courses)
-        {
-            if (course.CourseType != CourseType.Core && !coreCourseIds.Contains(course.Id))
-                continue;
-
-            simulationCourses.Add(CopyCourseForSimulation(course));
-        }
+        var simulationCourses = courses
+            .Select(CopyCourseForSimulation)
+            .ToList();
 
         var virtualIdCounter = 1;
         foreach (var req in requirements)
@@ -312,6 +313,9 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         foreach (var record in bestAttempts)
         {
             if (record.Course is null || string.IsNullOrWhiteSpace(record.Grade))
+                continue;
+
+            if (record.CourseId == failedCourse.Id)
                 continue;
 
             if (record.Status != StudentCourseStatus.Completed && record.Status != StudentCourseStatus.Failed)
@@ -495,5 +499,6 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         return creditsAtRisk > 0 ? "Low" : "None";
     }
 }
+
 
 

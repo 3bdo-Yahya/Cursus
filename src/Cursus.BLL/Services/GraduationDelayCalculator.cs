@@ -199,14 +199,11 @@ public static class GraduationDelayCalculator
             if (eligible.Count > 0 && termCourses.Count == 0 && !retakeCompleted)
                 return new SimulationResult(SafetyLimit, FormatLabel(semester, year), schedule);
 
-            if (termCourses.Count > 0)
-            {
-                schedule.Add(new ScheduledTermEntry(
-                    semester,
-                    year,
-                    FormatLabel(semester, year),
-                    termCourses));
-            }
+            schedule.Add(new ScheduledTermEntry(
+                semester,
+                year,
+                FormatLabel(semester, year),
+                termCourses));
         }
 
         var graduationLabel = schedule.Count > 0
@@ -398,4 +395,5 @@ public static class GraduationDelayCalculator
         };
 
 }
+
 

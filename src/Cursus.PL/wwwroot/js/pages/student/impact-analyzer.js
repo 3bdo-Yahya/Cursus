@@ -73,14 +73,24 @@ function formatStanding(standing) {
   return map[standing] ?? String(standing);
 }
 
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text ?? '';
+  return div.innerHTML;
+}
+
 function formatCourseLabel(course, { retake = false, unlocked = false } = {}) {
   const code = course.code || '';
   const name = course.name || code;
   const primary = name && name !== code ? name : code;
-  const suffix = code && name && name !== code ? ` <span style="color:var(--c-muted);font-weight:500;">(${code})</span>` : '';
-  if (retake) return `<strong>${primary}</strong>${suffix} <span style="color:#d97706;">(retake)</span>`;
-  if (unlocked) return `<strong>${primary}</strong>${suffix} <span style="color:#10b981;">unlocks</span>`;
-  return `<strong>${primary}</strong>${suffix}`;
+  const safePrimary = escapeHtml(primary);
+  const safeCode = escapeHtml(code);
+  const suffix = code && name && name !== code
+    ? ` <span style="color:var(--c-muted);font-weight:500;">(${safeCode})</span>`
+    : '';
+  if (retake) return `<strong>${safePrimary}</strong>${suffix} <span style="color:#d97706;">(retake)</span>`;
+  if (unlocked) return `<strong>${safePrimary}</strong>${suffix} <span style="color:#10b981;">unlocks</span>`;
+  return `<strong>${safePrimary}</strong>${suffix}`;
 }
 
 function loadReport(report) {
@@ -121,7 +131,7 @@ function loadReport(report) {
   const scenarioEl = document.getElementById('ia-scenario-callout');
   const scenarioText = document.getElementById('ia-scenario-text');
   if (report.scenarioSummary && scenarioEl && scenarioText) {
-    scenarioText.innerHTML = report.scenarioSummary;
+    scenarioText.textContent = report.scenarioSummary;
     scenarioEl.classList.remove('d-none');
   } else if (scenarioEl) {
     scenarioEl.classList.add('d-none');
@@ -285,5 +295,6 @@ function animCount(id, target) {
     if (current >= target) clearInterval(interval);
   }, 45);
 }
+
 
 
