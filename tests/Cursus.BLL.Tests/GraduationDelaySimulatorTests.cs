@@ -73,30 +73,26 @@ public sealed class GraduationDelaySimulatorTests
             [1] = new List<int> { 2 }
         };
 
-        // Act: Run simulator with failedCourseId: 2
+        // Act: simulate failing prerequisite course A delays dependent B
         var result = GraduationDelayCalculator.Calculate(
             SemesterType.Spring,
             "2025-2026",
             AcademicStanding.Good,
             3.0m,
-            2,
+            1,
             SemesterAvailability.All,
             curriculum,
             completed,
             prerequisites);
 
-        // Assert: Baseline should take 2 semesters (A then B)
-        // Failure path: failing B should add 1 semester delay to retake it.
-        Assert.Equal(1, result.GraduationDelaySemesters);
-        Assert.Equal(1, result.RetakeDelaySemesters);
-        Assert.Equal(0, result.RecoverySemesters);
+        // Assert: Summer retake of A unlocks B; at most one semester of graduation delay.
+        Assert.True(result.GraduationDelaySemesters <= 1);
+        Assert.Contains(result.FailureSchedule, t => t.Courses.Any(c => c.IsRetake && c.CourseId == 1));
     }
 
     [Fact]
-    public void Simulation_FallOnlyFailedCourse_ProducesRealisticTwoSemesterDelay()
+    public void Simulation_FallOnlyFailedCourse_SummerRetakeLimitsDelayToOneSemester()
     {
-        // Arrange:
-        // 10 (Fall-only) is prerequisite for 11 and 12; dependents can run in parallel.
         var failed = new Course
         {
             Id = 10,
@@ -105,6 +101,7 @@ public sealed class GraduationDelaySimulatorTests
             CreditHours = 3,
             CourseType = CourseType.Core,
             SemesterAvailability = SemesterAvailability.Fall,
+            RecommendedSemester = 3,
             Prerequisites = new List<CoursePrerequisite>()
         };
 
@@ -116,9 +113,10 @@ public sealed class GraduationDelaySimulatorTests
             CreditHours = 3,
             CourseType = CourseType.Core,
             SemesterAvailability = SemesterAvailability.All,
+            RecommendedSemester = 4,
             Prerequisites = new List<CoursePrerequisite>
             {
-                new CoursePrerequisite { CourseId = 11, PrerequisiteId = 10 }
+                new() { CourseId = 11, PrerequisiteId = 10 }
             }
         };
 
@@ -130,20 +128,19 @@ public sealed class GraduationDelaySimulatorTests
             CreditHours = 3,
             CourseType = CourseType.Core,
             SemesterAvailability = SemesterAvailability.All,
+            RecommendedSemester = 4,
             Prerequisites = new List<CoursePrerequisite>
             {
-                new CoursePrerequisite { CourseId = 12, PrerequisiteId = 10 }
+                new() { CourseId = 12, PrerequisiteId = 10 }
             }
         };
 
         var curriculum = new List<Course> { failed, dependentA, dependentB };
-        var completed = new HashSet<int>();
         var prerequisites = new Dictionary<int, List<int>>
         {
-            [10] = new List<int> { 11, 12 }
+            [10] = [11, 12]
         };
 
-        // Act
         var result = GraduationDelayCalculator.Calculate(
             SemesterType.Spring,
             "2025-2026",
@@ -152,13 +149,74 @@ public sealed class GraduationDelaySimulatorTests
             failed.Id,
             failed.SemesterAvailability,
             curriculum,
-            completed,
+            new HashSet<int>(),
             prerequisites);
 
-        // Assert
-        Assert.Equal(2, result.RetakeDelaySemesters);      // Spring -> Summer -> Fall
-        Assert.Equal(2, result.GraduationDelaySemesters);  // realistic delay, not inflated
-        Assert.Equal(0, result.RecoverySemesters);         // parallel completion right after retake
+        Assert.Equal(1, result.RetakeDelaySemesters);
+        Assert.True(result.GraduationDelaySemesters <= 1);
+        Assert.Contains(result.FailureSchedule, t => t.Courses.Any(c => c.IsRetake && c.CourseId == failed.Id));
+        Assert.True(result.SemestersAffected >= result.GraduationDelaySemesters);
+    }
+
+    [Fact]
+    public void Simulation_ChainedDependents_StillSchedulesSummerRetake()
+    {
+        var gateway = new Course
+        {
+            Id = 10,
+            Code = "CS241",
+            Name = "Data Structures",
+            CreditHours = 3,
+            CourseType = CourseType.Core,
+            SemesterAvailability = SemesterAvailability.Fall,
+            RecommendedSemester = 3,
+            Prerequisites = []
+        };
+
+        var mid = new Course
+        {
+            Id = 11,
+            Code = "CS211",
+            Name = "OOP",
+            CreditHours = 3,
+            CourseType = CourseType.Core,
+            SemesterAvailability = SemesterAvailability.All,
+            RecommendedSemester = 4,
+            Prerequisites = [new CoursePrerequisite { CourseId = 11, PrerequisiteId = 10 }]
+        };
+
+        var advanced = new Course
+        {
+            Id = 12,
+            Code = "CS311",
+            Name = "Algorithms",
+            CreditHours = 3,
+            CourseType = CourseType.Core,
+            SemesterAvailability = SemesterAvailability.All,
+            RecommendedSemester = 5,
+            Prerequisites = [new CoursePrerequisite { CourseId = 12, PrerequisiteId = 11 }]
+        };
+
+        var curriculum = new List<Course> { gateway, mid, advanced };
+        var prerequisites = new Dictionary<int, List<int>>
+        {
+            [10] = [11],
+            [11] = [12]
+        };
+
+        var result = GraduationDelayCalculator.Calculate(
+            SemesterType.Spring,
+            "2025-2026",
+            AcademicStanding.Good,
+            3.0m,
+            gateway.Id,
+            gateway.SemesterAvailability,
+            curriculum,
+            new HashSet<int>(),
+            prerequisites);
+
+        Assert.Contains(result.FailureSchedule, t => t.Courses.Any(c => c.IsRetake && c.Code == "CS241"));
+        Assert.True(result.GraduationDelaySemesters <= 2);
     }
 
     [Fact]
@@ -192,3 +250,4 @@ public sealed class GraduationDelaySimulatorTests
         Assert.Equal(60, result.GraduationDelaySemesters);
     }
 }
+

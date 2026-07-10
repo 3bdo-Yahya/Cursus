@@ -19,7 +19,8 @@ public sealed class SemesterMathTests
     }
 
     [Theory]
-    [InlineData("CS241", 5)]
+    [InlineData("CS241", 3)]
+    [InlineData("CS341", 5)]
     [InlineData("MATH101", 1)]
     [InlineData("ENG401", 7)]
     public void InfersSemesterFromCourseCode(string code, int expected)
@@ -27,3 +28,4 @@ public sealed class SemesterMathTests
         Assert.Equal(expected, SemesterMath.InferFromCourseCode(code));
     }
 }
+

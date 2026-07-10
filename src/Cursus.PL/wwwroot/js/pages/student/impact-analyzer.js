@@ -73,6 +73,16 @@ function formatStanding(standing) {
   return map[standing] ?? String(standing);
 }
 
+function formatCourseLabel(course, { retake = false, unlocked = false } = {}) {
+  const code = course.code || '';
+  const name = course.name || code;
+  const primary = name && name !== code ? name : code;
+  const suffix = code && name && name !== code ? ` <span style="color:var(--c-muted);font-weight:500;">(${code})</span>` : '';
+  if (retake) return `<strong>${primary}</strong>${suffix} <span style="color:#d97706;">(retake)</span>`;
+  if (unlocked) return `<strong>${primary}</strong>${suffix} <span style="color:#10b981;">unlocks</span>`;
+  return `<strong>${primary}</strong>${suffix}`;
+}
+
 function loadReport(report) {
   const src = report.src || {
     id: report.failedCourseCode,
@@ -166,24 +176,27 @@ function loadReport(report) {
       color: '#ef4444',
       icon: 'bolt',
       sem: 'Now',
-      label: `<strong>${src.id}</strong> failure — ${blocked.length} course${blocked.length === 1 ? '' : 's'} blocked`,
+      label: `<strong>${src.name || src.id}</strong>${src.name && src.id ? ` <span style="color:var(--c-muted);font-weight:500;">(${src.id})</span>` : ''} failure — ${blocked.length} course${blocked.length === 1 ? '' : 's'} blocked`,
       type: 'fail'
     }
   ];
 
   if (recoverySchedule.length > 0) {
-    recoverySchedule.forEach((term, i) => {
-      const courseLabels = (term.courses || []).map(c => {
-        if (c.isRetake) return `<strong>${c.code}</strong> (retake)`;
-        if (c.isNewlyUnlocked) return `<strong>${c.code}</strong> unlocks`;
-        return `<strong>${c.code}</strong>`;
-      }).join(', ');
+    recoverySchedule.forEach((term) => {
+      const visible = (term.courses || []).slice(0, 5);
+      const overflow = (term.courses || []).length - visible.length;
+      const courseLabels = visible.map(c => formatCourseLabel(c, {
+        retake: c.isRetake,
+        unlocked: c.isNewlyUnlocked
+      })).join(', ');
 
       steps.push({
         color: term.isRetakeTerm ? '#d97706' : '#10b981',
         icon: term.isRetakeTerm ? 'refresh' : 'calendar_month',
         sem: term.label,
-        label: courseLabels || 'Continue planned courses',
+        label: courseLabels
+          ? courseLabels + (overflow > 0 ? `, <span style="color:var(--c-muted);">+${overflow} more</span>` : '')
+          : 'Continue planned courses',
         type: term.isRetakeTerm ? 'retake' : 'unlock'
       });
     });
@@ -192,7 +205,7 @@ function loadReport(report) {
       color: '#d97706',
       icon: 'refresh',
       sem: retakeLabel,
-      label: `Retake <strong>${src.id}</strong>`,
+      label: `Retake ${formatCourseLabel({ code: src.id, name: src.name })}`,
       type: 'retake'
     });
   }
@@ -227,7 +240,7 @@ function loadReport(report) {
   const recEl = document.getElementById('ia-recommendations');
   recEl.innerHTML = '';
   const recList = recommendations.length > 0 ? recommendations : [
-    `Prioritize <strong>${src.id}</strong> — register for ${retakeLabel}.`,
+    `Prioritize <strong>${src.name || src.id}</strong> — register for ${retakeLabel}.`,
     `Speak to your advisor about the ${delay}-semester graduation impact.`
   ];
 
@@ -252,3 +265,4 @@ function animCount(id, target) {
     if (current >= target) clearInterval(interval);
   }, 45);
 }
+

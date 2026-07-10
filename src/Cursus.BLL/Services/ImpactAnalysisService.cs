@@ -251,8 +251,8 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
                 simulationCourses.Add(new Course
                 {
                     Id = -100 - (int)req.CategoryType * 100 - virtualIdCounter++,
-                    Code = $"ELEC-{req.CategoryType.ToString().ToUpper()}-{i}",
-                    Name = $"{req.CategoryType} Elective {i}",
+                        Code = $"ELEC-{req.CategoryType.ToString().ToUpper()}-{i}",
+                        Name = $"{req.CategoryType} elective",
                     CreditHours = 3,
                     CourseType = req.CategoryType,
                     SemesterAvailability = SemesterAvailability.All,
@@ -367,14 +367,14 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         {
             return new ScenarioResult(
                 FailureScenarioType.Semester2Failure,
-                $"Failing {failedCourse.Code} in Spring delays dependents until after a Summer retake, then normal continuation resumes.");
+                $"Failing {CourseDisplayHelper.Label(failedCourse)} in Spring delays dependents until after a Summer retake, then normal continuation resumes.");
         }
 
         var nextSpringSem = recSem.HasValue ? recSem.Value + 1 : (int?)null;
         var blockedSpringCourses = courses
             .Where(c => c.RecommendedSemester == nextSpringSem)
             .Where(c => blocked.Any(b => b.CourseId == c.Id))
-            .Select(c => c.Code)
+            .Select(c => CourseDisplayHelper.Label(c))
             .ToList();
 
         if (blockedSpringCourses.Count > 0)
@@ -391,12 +391,12 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
 
             return new ScenarioResult(
                 FailureScenarioType.Semester1WithBlock,
-                $"Failing {failedCourse.Code} blocks {string.Join(", ", blockedSpringCourses)} next Spring. Retake in Summer to unlock the blocked path.{replacementText}");
+                $"Failing {CourseDisplayHelper.Label(failedCourse)} blocks {string.Join(", ", blockedSpringCourses)} next Spring. Retake in Summer to unlock the blocked path.{replacementText}");
         }
 
         return new ScenarioResult(
             FailureScenarioType.Semester1NoBlock,
-            $"Failing {failedCourse.Code} does not block next-term courses. Continue as planned and retake in Summer.");
+            $"Failing {CourseDisplayHelper.Label(failedCourse)} does not block next-term courses. Continue as planned and retake in Summer.");
     }
 
     private static List<string> FindReplacementCourses(
@@ -414,7 +414,7 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
             .Where(c => SemesterMath.ResolveRecommendedSemester(c) > failedRec)
             .Where(c => c.Prerequisites.All(p => completedCourseIds.Contains(p.PrerequisiteId)))
             .OrderBy(c => SemesterMath.ResolveRecommendedSemester(c))
-            .Select(c => c.Code)
+            .Select(c => CourseDisplayHelper.Label(c))
             .Take(5)
             .ToList();
     }
@@ -422,15 +422,26 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
     private static List<RecoverySemesterDto> MapRecoverySchedule(
         IReadOnlyList<GraduationDelayCalculator.ScheduledTermEntry> failureSchedule)
     {
-        return failureSchedule.Select(term => new RecoverySemesterDto(
-            Label: term.Label,
-            Courses: term.Courses.Select(c => new RecoveryCourseDto(
-                Code: c.Code,
-                Name: c.Name,
-                CreditHours: c.CreditHours,
-                IsRetake: c.IsRetake,
-                IsNewlyUnlocked: c.IsNewlyUnlocked)).ToList(),
-            IsRetakeTerm: term.Courses.Any(c => c.IsRetake))).ToList();
+        return failureSchedule
+            .Select(term =>
+            {
+                var courses = term.Courses
+                    .Where(c => !CourseDisplayHelper.IsVirtualPlaceholderCode(c.Code))
+                    .Select(c => new RecoveryCourseDto(
+                        Code: c.Code,
+                        Name: c.Name,
+                        CreditHours: c.CreditHours,
+                        IsRetake: c.IsRetake,
+                        IsNewlyUnlocked: c.IsNewlyUnlocked))
+                    .ToList();
+
+                return new RecoverySemesterDto(
+                    Label: term.Label,
+                    Courses: courses,
+                    IsRetakeTerm: term.Courses.Any(c => c.IsRetake));
+            })
+            .Where(term => term.Courses.Any())
+            .ToList();
     }
 
     private static List<string> BuildRecommendations(
@@ -443,7 +454,7 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
     {
         var recs = new List<string>
         {
-            $"Register for <strong>{failedCourse.Code}</strong> in {delay.RetakeSemesterLabel} (Summer retake, assume pass)."
+            $"Register for <strong>{CourseDisplayHelper.Label(failedCourse)}</strong> in {delay.RetakeSemesterLabel} (Summer retake, assume pass)."
         };
 
         if (delay.GraduationDelaySemesters > 0)
@@ -458,7 +469,10 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
 
         if (blocked.Count > 0)
         {
-            var direct = blocked.Where(b => b.Depth == 1).Select(b => b.Code).Take(3);
+            var direct = blocked
+                .Where(b => b.Depth == 1)
+                .Select(b => CourseDisplayHelper.Label(b.Code, b.Name))
+                .Take(3);
             recs.Add($"Blocked courses ({string.Join(", ", direct)}) unlock after the Summer retake.");
         }
 
@@ -485,3 +499,4 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         return creditsAtRisk > 0 ? "Low" : "None";
     }
 }
+
