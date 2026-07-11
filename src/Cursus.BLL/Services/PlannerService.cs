@@ -355,8 +355,7 @@ public sealed class PlannerService : IPlannerService
     private static string TermKey(string academicYear, SemesterType semester) => $"{academicYear}|{(int)semester}";
 
     private static bool IsCourseInScope(Course course, int? departmentId) =>
-        course.CourseType == CourseType.UniversityReq
-        || (departmentId.HasValue && course.DepartmentId == departmentId.Value);
+        departmentId.HasValue && course.DepartmentId == departmentId.Value;
 
     private static bool IsPastTerm(
         string plannedYear,
@@ -378,3 +377,4 @@ public sealed class PlannerService : IPlannerService
 
     private sealed record AcademicTerm(string AcademicYear, SemesterType Semester);
 }
+

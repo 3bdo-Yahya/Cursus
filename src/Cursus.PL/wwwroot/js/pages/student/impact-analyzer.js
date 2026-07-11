@@ -68,6 +68,31 @@ function showFetchError(message) {
   }
 }
 
+function formatStanding(standing) {
+  const map = { 0: 'Good Standing', 1: 'Academic Warning', 2: 'Probation' };
+  return map[standing] ?? String(standing);
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text ?? '';
+  return div.innerHTML;
+}
+
+function formatCourseLabel(course, { retake = false, unlocked = false } = {}) {
+  const code = course.code || '';
+  const name = course.name || code;
+  const primary = name && name !== code ? name : code;
+  const safePrimary = escapeHtml(primary);
+  const safeCode = escapeHtml(code);
+  const suffix = code && name && name !== code
+    ? ` <span style="color:var(--c-muted);font-weight:500;">(${safeCode})</span>`
+    : '';
+  if (retake) return `<strong>${safePrimary}</strong>${suffix} <span style="color:#d97706;">(retake)</span>`;
+  if (unlocked) return `<strong>${safePrimary}</strong>${suffix} <span style="color:#10b981;">unlocks</span>`;
+  return `<strong>${safePrimary}</strong>${suffix}`;
+}
+
 function loadReport(report) {
   const src = report.src || {
     id: report.failedCourseCode,
@@ -81,29 +106,72 @@ function loadReport(report) {
     name: b.name,
     credits: b.creditHours,
     depth: b.depth,
-    avail: '',
+    avail: b.newTermLabel ? `Delayed to ${b.newTermLabel}` : '',
   }));
 
-  const delay = report.graduationDelaySemesters ?? 1;
+  const delay = report.graduationDelaySemesters ?? 0;
   const semAff = report.semestersAffected ?? delay;
   const severity = (report.severity || 'Low').toUpperCase();
-  const projectedGrad = report.projectedGraduationLabel || ('Fall 20' + (27 + (delay - 1)));
-  const retakeLabel = report.retakeSemesterLabel || ('Next ' + (src.avail || 'term'));
+  const originalGrad = report.originalGraduationLabel || 'On track';
+  const projectedGrad = report.projectedGraduationLabel || originalGrad;
+  const retakeLabel = report.retakeSemesterLabel || 'Next Summer';
   const creditsAtRisk = report.creditsAtRisk ?? blocked.reduce((s, b) => s + b.credits, 0);
+  const recoverySchedule = report.recoverySchedule || [];
+  const recommendations = report.recommendations || [];
+  const projectedCgpa = report.projectedCgpa ?? report.currentCgpa;
+  const cgpaDelta = report.cgpaDelta ?? 0;
+  const standingWouldChange = report.standingWouldChange === true;
+  const projectedStanding = formatStanding(report.projectedStanding);
 
   document.getElementById('report-severity').textContent = severity;
   document.getElementById('report-severity').className = 'ia-severity-badge ia-sev-' + severity.toLowerCase();
-  document.getElementById('report-subtitle').textContent = 'Simulating failure of ' + src.id + ' — ' + src.name;
+  document.getElementById('report-subtitle').textContent =
+    `Simulating failure of ${src.name || src.id}${src.id ? ` (${src.id})` : ''}`;
+
+  const scenarioEl = document.getElementById('ia-scenario-callout');
+  const scenarioText = document.getElementById('ia-scenario-text');
+  if (report.scenarioSummary && scenarioEl && scenarioText) {
+    scenarioText.textContent = report.scenarioSummary;
+    scenarioEl.classList.remove('d-none');
+  } else if (scenarioEl) {
+    scenarioEl.classList.add('d-none');
+  }
 
   animCount('kpi-blocked', report.blockedCoursesCount ?? blocked.length);
   animCount('kpi-semesters', semAff);
-  document.getElementById('kpi-delay').textContent    = '+' + delay + ' sem';
-  document.getElementById('kpi-new-grad').textContent = projectedGrad;
+
+  const delayEl = document.getElementById('kpi-delay');
+  delayEl.textContent = delay > 0 ? `+${delay} sem` : 'None';
+  delayEl.style.color = delay > 0 ? '#ef4444' : '#10b981';
+
+  const gradEl = document.getElementById('kpi-new-grad');
+  const gradDetail = document.getElementById('kpi-grad-detail');
+  if (delay > 0) {
+    gradEl.textContent = projectedGrad;
+    if (gradDetail) gradDetail.textContent = `Was ${originalGrad}`;
+  } else {
+    gradEl.textContent = projectedGrad;
+    if (gradDetail) gradDetail.textContent = 'On track — no graduation delay';
+  }
+
+  const cgpaKpi = document.getElementById('kpi-cgpa');
+  if (cgpaKpi) {
+    cgpaKpi.textContent = cgpaDelta < 0
+      ? `${projectedCgpa.toFixed(2)} (${cgpaDelta.toFixed(2)})`
+      : projectedCgpa.toFixed(2);
+    cgpaKpi.style.color = cgpaDelta < 0 ? '#d97706' : '#10b981';
+  }
+
+  const standingKpi = document.getElementById('kpi-standing');
+  if (standingKpi) {
+    standingKpi.textContent = standingWouldChange ? `${projectedStanding} (at risk)` : projectedStanding;
+    standingKpi.style.color = standingWouldChange ? '#d97706' : '#10b981';
+  }
 
   document.getElementById('fc-code').textContent    = src.id;
   document.getElementById('fc-name').textContent    = src.name;
   document.getElementById('fc-credits').textContent = src.credits + ' credit hours';
-  document.getElementById('fc-avail').textContent   = src.avail || retakeLabel;
+  document.getElementById('fc-avail').textContent   = retakeLabel;
   document.getElementById('fc-type').textContent    = src.type || 'Core';
 
   const listEl = document.getElementById('blocked-list');
@@ -129,24 +197,59 @@ function loadReport(report) {
 
   document.getElementById('risk-avail').textContent    = retakeLabel;
   document.getElementById('risk-credits').textContent  = creditsAtRisk + ' cr';
-  document.getElementById('risk-cgpa').textContent     = delay > 0 ? 'See Advisor' : 'Minimal';
-  document.getElementById('risk-standing').textContent = blocked.length > 4 ? 'Warning Risk' : 'Good Standing';
-  document.getElementById('risk-standing').style.color = blocked.length > 4 ? '#d97706' : '#10b981';
 
   const tlEl = document.getElementById('ia-timeline');
   tlEl.innerHTML = '';
+
   const steps = [
-    { color:'#ef4444', icon:'bolt',       sem:'Now',          label:`<strong>${src.id}</strong> failure cascades — ${blocked.length} courses blocked`, type:'fail'     },
-    { color:'#d97706', icon:'refresh',    sem:retakeLabel,    label:`Retake <strong>${src.id}</strong> · ${retakeLabel}`, type:'retake'   },
-    ...blocked.slice(0, 2).map((b, i) => ({
-      color: '#10b981',
-      icon:  'lock_open',
-      sem:   i === 0 ? 'After retake' : 'Following term',
-      label: `<strong>${b.id}</strong> — ${b.name} unlocks`,
-      type:  'unlock',
-    })),
-    { color:'var(--c-primary)', icon:'school', sem:'New Graduation', label:`<strong>${projectedGrad}</strong> — delayed ${delay} semester${delay > 1 ? 's' : ''}`, type:'grad' },
+    {
+      color: '#ef4444',
+      icon: 'bolt',
+      sem: 'Now',
+      label: `<strong>${src.name || src.id}</strong>${src.name && src.id ? ` <span style="color:var(--c-muted);font-weight:500;">(${src.id})</span>` : ''} failure — ${blocked.length} course${blocked.length === 1 ? '' : 's'} blocked`,
+      type: 'fail'
+    }
   ];
+
+  if (recoverySchedule.length > 0) {
+    recoverySchedule.forEach((term) => {
+      const visible = (term.courses || []).slice(0, 5);
+      const overflow = (term.courses || []).length - visible.length;
+      const courseLabels = visible.map(c => formatCourseLabel(c, {
+        retake: c.isRetake,
+        unlocked: c.isNewlyUnlocked
+      })).join(', ');
+
+      steps.push({
+        color: term.isRetakeTerm ? '#d97706' : '#10b981',
+        icon: term.isRetakeTerm ? 'refresh' : 'calendar_month',
+        sem: term.label,
+        label: courseLabels
+          ? courseLabels + (overflow > 0 ? `, <span style="color:var(--c-muted);">+${overflow} more</span>` : '')
+          : 'Continue planned courses',
+        type: term.isRetakeTerm ? 'retake' : 'unlock'
+      });
+    });
+  } else {
+    steps.push({
+      color: '#d97706',
+      icon: 'refresh',
+      sem: retakeLabel,
+      label: `Retake ${formatCourseLabel({ code: src.id, name: src.name })}`,
+      type: 'retake'
+    });
+  }
+
+  steps.push({
+    color: 'var(--c-primary)',
+    icon: 'school',
+    sem: 'Graduation',
+    label: delay > 0
+      ? `<strong>${originalGrad}</strong> → <strong>${projectedGrad}</strong>`
+      : `<strong>${projectedGrad}</strong> on schedule`,
+    type: 'grad'
+  });
+
   steps.forEach((s, i) => {
     const el = document.createElement('div');
     el.className = 'ia-tl-item ia-tl-' + s.type;
@@ -165,18 +268,18 @@ function loadReport(report) {
   });
 
   const recEl = document.getElementById('ia-recommendations');
-  const recs = [
-    { icon:'priority_high', color:'#ef4444', text:`Prioritize <strong>${src.id}</strong> — register for ${retakeLabel} immediately.` },
-    { icon:'school',         color:'#d97706', text:`Speak to your advisor about the ${delay}-semester delay impact.` },
-    { icon:'auto_awesome',   color:'var(--c-primary)', text:`Use the GPA Simulator to see how the retake affects your CGPA.` },
-  ];
   recEl.innerHTML = '';
-  recs.forEach(r => {
+  const recList = recommendations.length > 0 ? recommendations : [
+    `Prioritize <strong>${src.name || src.id}</strong> — register for ${retakeLabel}.`,
+    `Speak to your advisor about the ${delay}-semester graduation impact.`
+  ];
+
+  recList.forEach(r => {
     const el = document.createElement('div');
     el.className = 'ia-rec-item';
     el.innerHTML = `
-      <span class="material-symbols-outlined flex-shrink-0" style="font-size:17px;color:${r.color};font-variation-settings:'FILL' 1,'wght' 400">${r.icon}</span>
-      <span style="font-size:12.5px;color:var(--c-text-sub);line-height:1.55;">${r.text}</span>
+      <span class="material-symbols-outlined flex-shrink-0" style="font-size:17px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 400">tips_and_updates</span>
+      <span style="font-size:12.5px;color:var(--c-text-sub);line-height:1.55;">${r}</span>
     `;
     recEl.appendChild(el);
   });
@@ -185,10 +288,13 @@ function loadReport(report) {
 function animCount(id, target) {
   const el = document.getElementById(id);
   let current = 0;
-  const step = Math.ceil(target / 12);
+  const step = Math.ceil(target / 12) || 1;
   const interval = setInterval(() => {
     current = Math.min(current + step, target);
     el.textContent = current;
     if (current >= target) clearInterval(interval);
   }, 45);
 }
+
+
+

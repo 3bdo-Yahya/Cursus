@@ -85,7 +85,12 @@
       </div>
     </section>
 
-    <section class="ia-kpi-strip anim-fade-up-1">
+    <section class="ia-scenario-callout anim-fade-up-1 d-none" id="ia-scenario-callout">
+      <span class="material-symbols-outlined ia-scenario-icon" style="font-variation-settings:'FILL' 1,'wght' 400">info</span>
+      <p class="ia-scenario-text mb-0" id="ia-scenario-text"></p>
+    </section>
+
+    <section class="ia-kpi-strip ia-kpi-strip-extended anim-fade-up-1">
       <div class="ia-kpi-card ia-kpi-danger">
         <div class="ia-kpi-icon">
           <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400">error</span>
@@ -113,13 +118,32 @@
           <p class="ia-kpi-label">Graduation Delay</p>
         </div>
       </div>
-      <div class="ia-kpi-card ia-kpi-neutral">
+      <div class="ia-kpi-card ia-kpi-neutral ia-kpi-grad">
         <div class="ia-kpi-icon">
           <span class="material-symbols-outlined" style="font-size:22px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 400">school</span>
         </div>
+        <div class="flex-fill min-w-0">
+          <p class="ia-kpi-val" id="kpi-new-grad" style="color:var(--c-primary);font-size:1.05rem;line-height:1.35;">Fall 2027</p>
+          <p class="ia-kpi-sublabel" id="kpi-grad-detail">On track</p>
+          <p class="ia-kpi-label">Projected Graduation</p>
+        </div>
+      </div>
+      <div class="ia-kpi-card ia-kpi-risk">
+        <div class="ia-kpi-icon">
+          <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400">trending_down</span>
+        </div>
         <div>
-          <p class="ia-kpi-val" id="kpi-new-grad" style="color:var(--c-primary);">Fall 2027</p>
-          <p class="ia-kpi-label">New Graduation</p>
+          <p class="ia-kpi-val" id="kpi-cgpa">3.35</p>
+          <p class="ia-kpi-label">Expected CGPA</p>
+        </div>
+      </div>
+      <div class="ia-kpi-card ia-kpi-standing">
+        <div class="ia-kpi-icon">
+          <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400">verified</span>
+        </div>
+        <div>
+          <p class="ia-kpi-val" id="kpi-standing">Good Standing</p>
+          <p class="ia-kpi-label">Standing Risk</p>
         </div>
       </div>
     </section>
@@ -161,30 +185,22 @@
           <div id="blocked-list" class="d-flex flex-column gap-2 mt-3"></div>
         </div>
 
-        <!-- GPA impact -->
+        <!-- Recovery context -->
         <div class="surface ia-section-card">
           <div class="ia-section-header-row">
             <div class="d-flex align-items-center gap-2">
-              <span class="material-symbols-outlined" style="font-size:18px;color:#d97706;font-variation-settings:'FILL' 1,'wght' 400">trending_down</span>
-              <h3 class="fw-800 mb-0" style="font-size:14px;color:var(--c-text);">Academic Risk Analysis</h3>
+              <span class="material-symbols-outlined" style="font-size:18px;color:#d97706;font-variation-settings:'FILL' 1,'wght' 400">event</span>
+              <h3 class="fw-800 mb-0" style="font-size:14px;color:var(--c-text);">Recovery Context</h3>
             </div>
           </div>
           <div class="ia-risk-grid mt-3">
             <div class="ia-risk-item">
-              <p class="ia-risk-label">Retake Availability</p>
-              <p id="risk-avail" class="ia-risk-val">Next Fall 2026</p>
+              <p class="ia-risk-label">Summer Retake</p>
+              <p id="risk-avail" class="ia-risk-val">Summer 2026</p>
             </div>
             <div class="ia-risk-item">
               <p class="ia-risk-label">Credits at Risk</p>
               <p id="risk-credits" class="ia-risk-val" style="color:#ef4444;">12 cr</p>
-            </div>
-            <div class="ia-risk-item">
-              <p class="ia-risk-label">Expected CGPA Impact</p>
-              <p id="risk-cgpa" class="ia-risk-val" style="color:#d97706;">−0.18</p>
-            </div>
-            <div class="ia-risk-item">
-              <p class="ia-risk-label">Standing Risk</p>
-              <p id="risk-standing" class="ia-risk-val" style="color:#10b981;">Good Standing</p>
             </div>
           </div>
         </div>
@@ -237,3 +253,5 @@
 @section Scripts {
     <script src="~/js/pages/student/impact-analyzer.js" asp-append-version="true"></script>
 }
+
+

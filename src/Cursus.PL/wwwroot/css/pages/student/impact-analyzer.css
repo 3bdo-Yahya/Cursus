@@ -150,14 +150,43 @@ html.dark .ia-sev-low {
 }
 
 /* ── KPI Strip ───────────────────────────────────────────── */
+.ia-scenario-callout {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           12px;
+  background:    var(--c-soft);
+  border:        1px solid var(--c-border);
+  border-radius: 14px;
+  padding:       14px 16px;
+  margin-bottom: 16px;
+}
+.ia-scenario-icon {
+  color:         var(--c-primary);
+  font-size:     20px;
+  flex-shrink:   0;
+  margin-top:    1px;
+}
+.ia-scenario-text {
+  font-size:     13px;
+  line-height:   1.6;
+  color:         var(--c-text-sub);
+}
+
 .ia-kpi-strip {
   display:               grid;
   grid-template-columns: repeat(4, 1fr);
   gap:                   12px;
   margin-bottom:         24px;
 }
+.ia-kpi-strip-extended {
+  grid-template-columns: repeat(6, 1fr);
+}
+@media (max-width:1200px) {
+  .ia-kpi-strip-extended { grid-template-columns: repeat(3, 1fr); }
+}
 @media (max-width:768px) {
-  .ia-kpi-strip { grid-template-columns: 1fr 1fr; }
+  .ia-kpi-strip,
+  .ia-kpi-strip-extended { grid-template-columns: 1fr 1fr; }
 }
 .ia-kpi-card {
   background:    var(--c-surface);
@@ -209,6 +238,14 @@ html.dark .ia-sev-low {
 .ia-kpi-danger .ia-kpi-val { color:#ef4444; }
 .ia-kpi-warn   .ia-kpi-val { color:#d97706; }
 .ia-kpi-info   .ia-kpi-val { color:var(--c-primary); }
+.ia-kpi-risk   .ia-kpi-icon { background:rgba(217,119,6,.1); color:#d97706; }
+.ia-kpi-standing .ia-kpi-icon { background:rgba(16,185,129,.1); color:#10b981; }
+.ia-kpi-sublabel {
+  font-size:   11px;
+  font-weight: 600;
+  color:       var(--c-text-sub);
+  margin:      0 0 4px;
+}
 .ia-kpi-label {
   font-size:   10px;
   font-weight: 700;
@@ -636,3 +673,4 @@ html.dark .ia-feat-item:hover { background-color: rgba(79,70,229,.12); }
   50%       { box-shadow: 0 0 0 4px rgba(239,68,68,.15); }
 }
 .ia-sev-critical { animation: severityPulse 2.5s ease-in-out 1s 3; }
+

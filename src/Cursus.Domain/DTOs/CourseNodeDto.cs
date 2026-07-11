@@ -10,6 +10,8 @@ namespace Cursus.Domain.DTOs
         StudentCourseStatus? Status,  // Color code: Completed, Failed, InProgress, or null
         string? Grade,
         CourseType CourseType,
-        bool IsPlanned = false
+        bool IsPlanned = false,
+        int? RecommendedSemester = null
     );
 }
+

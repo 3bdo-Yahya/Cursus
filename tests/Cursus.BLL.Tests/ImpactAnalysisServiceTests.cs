@@ -1,7 +1,7 @@
 using Cursus.BLL.Services;
-using Cursus.DAL.Repositories;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cursus.BLL.Tests;
 
@@ -23,8 +23,12 @@ public sealed class ImpactAnalysisServiceTests
         });
         await db.SaveChangesAsync();
 
-        var service = new ImpactAnalysisService(new GenericRepository<Course>(db));
+        var service = new ImpactAnalysisService(
+            db,
+            new AcademicMetricsService(db),
+            NullLogger<ImpactAnalysisService>.Instance);
         var result = await service.GetBlockedCoursesAsync(
+            PlannerTestData.StudentId,
             prereq.Id,
             PlannerTestData.DepartmentId,
             SemesterType.Fall,
@@ -38,3 +42,4 @@ public sealed class ImpactAnalysisServiceTests
         Assert.Equal("DEP", result.BlockedCourses.First().Code);
     }
 }
+

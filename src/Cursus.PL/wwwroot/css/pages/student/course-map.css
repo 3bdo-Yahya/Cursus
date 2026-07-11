@@ -39,6 +39,37 @@ html.dark .cm-canvas {
   background-image: radial-gradient(circle at 1px 1px, rgba(79,70,229,.08) 1px, transparent 0);
 }
 
+.cm-semester-headers {
+  position:       absolute;
+  inset:          0;
+  z-index:        10;
+  pointer-events: none;
+}
+
+.cm-semester-header {
+  position:       absolute;
+  top:            0;
+  left:           0;
+  padding:        6px 12px;
+  border:         1px solid var(--c-border);
+  border-radius:  999px;
+  background:     rgba(255,255,255,.82);
+  color:          var(--c-text-sub);
+  font-family:    'Outfit', system-ui, sans-serif;
+  font-size:      11px;
+  font-weight:    800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  box-shadow:     0 8px 20px rgba(15,23,42,.08);
+  white-space:    nowrap;
+  transition:     background-color .2s ease, border-color .2s ease, color .2s ease !important;
+}
+
+html.dark .cm-semester-header {
+  background: rgba(14,16,24,.82);
+  box-shadow: 0 8px 20px rgba(0,0,0,.24);
+}
+
 
 /* ── Filter Bar ─────────────────────────────────────────── */
 .cm-filter-bar {

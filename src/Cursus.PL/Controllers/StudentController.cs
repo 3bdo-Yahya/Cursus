@@ -1,3 +1,4 @@
+using Cursus.BLL.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -144,7 +145,7 @@ public class StudentController : Controller
         var catalogCourses = await _db.Courses
             .Include(c => c.Prerequisites)
                 .ThenInclude(p => p.Prerequisite)
-            .Where(c => (c.DepartmentId == student.DepartmentId || c.CourseType == CourseType.UniversityReq) && c.IsActive)
+            .Where(c => c.DepartmentId == student.DepartmentId && c.IsActive)
             .Where(c =>
                 c.SemesterAvailability == SemesterAvailability.All
                 || c.SemesterAvailability == SemesterAvailability.FallSpring
@@ -184,7 +185,7 @@ public class StudentController : Controller
             StudentId = student.Id,
             StudentName = student.DisplayName,
             Department = student.Department?.Name ?? "Not assigned",
-            Year = int.TryParse(student.AcademicYear, out var plannerYear) ? plannerYear : (termGpas.Count / 2) + 1,
+            Year = AcademicYearHelper.DeriveYearNumber(termGpas.Count),
             Semester = FormatSemester(student.CurrentSemester, student.AcademicYear),
             CurrentCgpa = (double)cgpa,
             AcademicStanding = FormatStanding(student.CurrentStanding),
@@ -626,7 +627,7 @@ public class StudentController : Controller
             StudentId = student.Id,
             StudentName = student.DisplayName,
             Department = student.Department?.Name ?? "Not assigned",
-            Year = int.TryParse(student.AcademicYear, out var simYear) ? simYear : (termGpas.Count / 2) + 1,
+            Year = AcademicYearHelper.DeriveYearNumber(termGpas.Count),
             Semester = FormatSemester(student.CurrentSemester, student.AcademicYear),
             CurrentCgpa = (double)cgpa,
             LastSgpa = (double)lastSgpa,
@@ -673,6 +674,7 @@ public class StudentController : Controller
 
         var result = await _impactAnalysisService
             .GetBlockedCoursesAsync(
+                user.Id,
                 request.CourseId,
                 user.DepartmentId.Value,
                 user.CurrentSemester,
@@ -810,6 +812,8 @@ public class StudentController : Controller
             _ => ("Core", "type-core")
         };
 }
+
+
 
 
 

@@ -118,7 +118,7 @@ public sealed class StudentDashboardService : IStudentDashboardService
         {
             // Fallback if graduation requirements are not seeded/defined for department
             var fallbackCourses = await _db.Courses
-                .Where(c => (c.DepartmentId == student.DepartmentId || c.CourseType == CourseType.UniversityReq) && c.IsActive)
+                .Where(c => c.DepartmentId == student.DepartmentId && c.IsActive)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -294,5 +294,6 @@ public sealed class StudentDashboardService : IStudentDashboardService
         };
     }
 }
+
 
 

@@ -31,6 +31,7 @@ namespace Cursus.Domain.Interfaces.Services
         /// department's curriculum.
         /// </returns>
         Task<ImpactAnalysisResultDto?> GetBlockedCoursesAsync(
+            string studentId,
             int courseId,
             int departmentId,
             SemesterType currentSemester,

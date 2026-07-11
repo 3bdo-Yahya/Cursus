@@ -1,3 +1,4 @@
+using Cursus.BLL.Services;
 using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
@@ -132,13 +133,16 @@ public static class StartupSeeder
                     .Select(entry => entry.Value.Id)
                     .ToHashSet();
 
-                var existingCourseKeys = await context.Courses
+                var existingCourses = await context.Courses
                     .Where(course => universityDepartmentIds.Contains(course.DepartmentId))
-                    .Select(course => $"{course.DepartmentId}:{course.Code}")
                     .ToListAsync();
 
-                var existingCourseKeySet = existingCourseKeys.ToHashSet(StringComparer.OrdinalIgnoreCase);
+                var existingCoursesByKey = existingCourses.ToDictionary(
+                    course => $"{course.DepartmentId}:{course.Code}",
+                    StringComparer.OrdinalIgnoreCase);
+                var existingCourseKeySet = existingCoursesByKey.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
                 var coursesToAdd = new List<Course>();
+                var coursesToUpdate = new List<Course>();
                 int duplicateCourseCount = 0;
 
                 foreach (var curriculumCourse in curriculumCourses)
@@ -148,9 +152,17 @@ public static class StartupSeeder
                         var departmentName = MapMajorToDepartmentName(rule.Major);
                         var department = departmentsByKey[$"{university.Id}:{departmentName}"];
                         var key = $"{department.Id}:{curriculumCourse.Code}";
+                        var recommendedSemester = GetRecommendedSemester(curriculumCourse.Code, rule);
 
                         if (existingCourseKeySet.Contains(key))
                         {
+                            if (existingCoursesByKey.TryGetValue(key, out var existingCourse)
+                                && existingCourse.RecommendedSemester != recommendedSemester)
+                            {
+                                existingCourse.RecommendedSemester = recommendedSemester;
+                                coursesToUpdate.Add(existingCourse);
+                            }
+
                             duplicateCourseCount++;
                             Console.WriteLine($"[Seeding] WARNING: Duplicate course {curriculumCourse.Code} in {departmentName}, skipping");
                             continue;
@@ -173,7 +185,8 @@ public static class StartupSeeder
                             SemesterAvailability = ParseSemesterAvailability(curriculumCourse.SemesterAvailability),
                             PassingGradeThreshold = NormalizePassingGrade(curriculumCourse.PassingGradeThreshold),
                             DepartmentId = department.Id,
-                            IsActive = true
+                            IsActive = true,
+                            RecommendedSemester = recommendedSemester
                         });
 
                         existingCourseKeySet.Add(key);
@@ -190,6 +203,12 @@ public static class StartupSeeder
                     context.Courses.AddRange(coursesToAdd);
                     await context.SaveChangesAsync();
                     Console.WriteLine($"[Seeding] Added {coursesToAdd.Count} courses");
+                }
+
+                if (coursesToUpdate.Count > 0)
+                {
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"[Seeding] Updated recommended semesters for {coursesToUpdate.Count} existing courses");
                 }
 
                 var coursesByDepartmentAndCode = await context.Courses
@@ -931,6 +950,14 @@ public static class StartupSeeder
         return SemesterAvailability.All;
     }
 
+    private static int? GetRecommendedSemester(string courseCode, ProgramRuleSeed rule)
+    {
+        if (rule.RecommendedSemesters.Count > 0)
+            return rule.RecommendedSemesters[0];
+
+        return SemesterMath.InferFromCourseCode(courseCode);
+    }
+
     private static string NormalizePassingGrade(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -1045,7 +1072,17 @@ public static class StartupSeeder
                             ? courseTypeElement.GetString() ?? nameof(CourseType.Core)
                             : nameof(CourseType.Core);
 
-                        programRules.Add(new ProgramRuleSeed(ruleProperty.Name, courseType));
+                        var recommendedSemesters = new List<int>();
+                        if (ruleProperty.Value.TryGetProperty("recommendedSemesters", out var semestersElement)
+                            && semestersElement.ValueKind == JsonValueKind.Array)
+                        {
+                            recommendedSemesters.AddRange(semestersElement.EnumerateArray()
+                                .Where(value => value.ValueKind == JsonValueKind.Number && value.TryGetInt32(out _))
+                                .Select(value => value.GetInt32())
+                                .Where(value => value >= 1 && value <= 8));
+                        }
+
+                        programRules.Add(new ProgramRuleSeed(ruleProperty.Name, courseType, recommendedSemesters));
                     }
                 }
 
@@ -1215,7 +1252,10 @@ public static class StartupSeeder
         return null;
     }
 
-    private sealed record ProgramRuleSeed(string Major, string CourseType);
+    private sealed record ProgramRuleSeed(
+        string Major,
+        string CourseType,
+        IReadOnlyList<int> RecommendedSemesters);
 
     private sealed record CurriculumCourseSeed(
         string Code,
@@ -1264,7 +1304,13 @@ public static class StartupSeeder
         }
     }
 
-    public static async Task SeedSampleStudentsAsync(IServiceProvider serviceProvider)
+    [Obsolete("Use SeedDemoStudentsAsync — this method seeds ordinal AcademicYear values that break term labels.")]
+    public static Task SeedSampleStudentsAsync(IServiceProvider serviceProvider) =>
+        Task.CompletedTask;
+
+#if false
+    // Legacy body retained for reference — not invoked.
+    private static async Task SeedSampleStudentsAsync_Legacy(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -1331,4 +1377,6 @@ public static class StartupSeeder
             }
         }
     }
+#endif
 }
+
