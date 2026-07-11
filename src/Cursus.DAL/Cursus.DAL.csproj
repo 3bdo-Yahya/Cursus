@@ -17,4 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Cursus.Domain\Cursus.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Database\SeedData\**\*" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
