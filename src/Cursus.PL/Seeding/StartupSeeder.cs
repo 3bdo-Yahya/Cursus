@@ -861,6 +861,11 @@ public static class StartupSeeder
     {
         var candidates = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
+            // Published/deployed layout (e.g. MonsterASP wwwroot)
+            Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Database", "SeedData")),
+            Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "Database", "SeedData")),
+
+            // Local dev / source tree layout
             Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "src", "Cursus.DAL", "Database", "SeedData")),
             Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "Cursus.DAL", "Database", "SeedData")),
             Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "Cursus.DAL", "Database", "SeedData")),
@@ -870,6 +875,7 @@ public static class StartupSeeder
         var probe = new DirectoryInfo(Directory.GetCurrentDirectory());
         while (probe is not null)
         {
+            candidates.Add(Path.Combine(probe.FullName, "Database", "SeedData"));
             candidates.Add(Path.Combine(probe.FullName, "src", "Cursus.DAL", "Database", "SeedData"));
             candidates.Add(Path.Combine(probe.FullName, "Cursus.DAL", "Database", "SeedData"));
             probe = probe.Parent;
@@ -1379,4 +1385,5 @@ public static class StartupSeeder
     }
 #endif
 }
+
 
