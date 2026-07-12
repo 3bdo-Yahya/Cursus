@@ -227,8 +227,45 @@ public class Program
             return null;
         }
 
-        return await context.Universities
-            .FirstOrDefaultAsync(u => u.Name == universityName.Trim());
+        foreach (var candidate in GetAdminUniversityNameCandidates(universityName))
+        {
+            var university = await context.Universities
+                .FirstOrDefaultAsync(u => u.Name == candidate);
+
+            if (university is not null)
+            {
+                return university;
+            }
+        }
+
+        return null;
+    }
+
+    private static IReadOnlyList<string> GetAdminUniversityNameCandidates(string universityName)
+    {
+        var requestedName = universityName.Trim();
+        var candidates = new List<string> { requestedName };
+
+        switch (requestedName.ToUpperInvariant())
+        {
+            case "SOUTH VALLEY NATIONAL UNIVERSITY":
+            case "SOUTH VALLEY UNIVERSITY":
+                candidates.Add("South Valley University");
+                candidates.Add("South Valley National University");
+                break;
+
+            case "AUC":
+            case "THE AMERICAN UNIVERSITY IN CAIRO":
+            case "AMERICAN UNIVERSITY IN CAIRO":
+                candidates.Add("American University in Cairo");
+                candidates.Add("The American University in Cairo");
+                candidates.Add("AUC");
+                break;
+        }
+
+        return candidates
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 }
 
