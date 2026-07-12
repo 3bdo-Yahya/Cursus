@@ -77,7 +77,11 @@ public class AdminController : Controller
 
         await PopulateDepartmentsFilterDropDownListAsync(departmentId);
 
-        var paginated = PaginatedList<CourseDto>.Create(courses, page, PageSize);
+        var courseList = courses.ToList();
+        ViewData["ActiveCount"]   = courseList.Count(c => c.IsActive);
+        ViewData["InactiveCount"] = courseList.Count(c => !c.IsActive);
+
+        var paginated = PaginatedList<CourseDto>.Create(courseList, page, PageSize);
 
         ViewData["PageIndex"]  = paginated.PageIndex;
         ViewData["TotalPages"] = paginated.TotalPages;
@@ -104,10 +108,15 @@ public class AdminController : Controller
         ViewData["SelectedDepartmentId"] = departmentId;
 
         var students = await _studentManagementService.GetStudentsAsync(searchTerm, departmentId);
+        var studentList = students.ToList();
+        ViewData["GoodStandingCount"]       = studentList.Count(s => s.CurrentStanding == Domain.Enums.AcademicStanding.Good);
+        ViewData["WarningProbationCount"]   = studentList.Count(s => s.CurrentStanding == Domain.Enums.AcademicStanding.Warning
+                                                                   || s.CurrentStanding == Domain.Enums.AcademicStanding.Probation);
+        ViewData["DismissedCount"]          = studentList.Count(s => s.CurrentStanding == Domain.Enums.AcademicStanding.Dismissed);
 
         await PopulateDepartmentsFilterDropDownListAsync(departmentId);
 
-        var paginated = PaginatedList<AppUser>.Create(students, page, PageSize);
+        var paginated = PaginatedList<AppUser>.Create(studentList, page, PageSize);
 
         ViewData["PageIndex"]  = paginated.PageIndex;
         ViewData["TotalPages"] = paginated.TotalPages;
@@ -181,6 +190,7 @@ public class AdminController : Controller
             Email            = email,
             UserId           = userId,
             Initials         = initials,
+            EmailConfirmed   = adminUser?.EmailConfirmed ?? false,
             TotalStudents    = dashboard.TotalStudents,
             TotalCourses     = dashboard.TotalCourses,
             ActiveCourses    = dashboard.ActiveCourses,
@@ -255,7 +265,25 @@ public class AdminController : Controller
             return View(vm);
         }
 
-        await _userManager.AddToRoleAsync(user, Roles.Student);
+        try
+        {
+            var roleResult = await _userManager.AddToRoleAsync(user, Roles.Student);
+
+            if (!roleResult.Succeeded)
+            {
+                foreach (var error in roleResult.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+
+                await PopulateCreateStudentFormAsync(vm);
+                return View(vm);
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, $"The role \u201c{Roles.Student}\u201d is not configured. Contact an administrator.");
+            await PopulateCreateStudentFormAsync(vm);
+            return View(vm);
+        }
 
         TempData["StatusMessage"] = $"Student \u201c{user.DisplayName}\u201d created successfully.";
         return RedirectToAction(nameof(Students));
@@ -631,7 +659,11 @@ public class AdminController : Controller
     public async Task<IActionResult> DepartmentIndex(int page = 1)
     {
         var departments = await _departmentService.GetAllAsync();
-        var paginated   = PaginatedList<DepartmentDto>.Create(departments, page, PageSize);
+        var deptList    = departments.ToList();
+        ViewData["ActiveCount"]   = deptList.Count(d => d.IsActive);
+        ViewData["InactiveCount"] = deptList.Count(d => !d.IsActive);
+
+        var paginated   = PaginatedList<DepartmentDto>.Create(deptList, page, PageSize);
 
         ViewData["PageIndex"]  = paginated.PageIndex;
         ViewData["TotalPages"] = paginated.TotalPages;

@@ -178,9 +178,18 @@
               <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Account email verified by Identity</p>
             </div>
           </div>
-          <span class="status-badge status-active" style="font-size:11px;">
-            <span class="status-dot-sm"></span>Active
-          </span>
+          @if (Model.EmailConfirmed)
+          {
+            <span class="status-badge status-active" style="font-size:11px;">
+              <span class="status-dot-sm"></span>Verified
+            </span>
+          }
+          else
+          {
+            <span class="status-badge status-archived" style="font-size:11px;">
+              <span class="status-dot-sm"></span>Unverified
+            </span>
+          }
         </div>
       </div>
     </div>

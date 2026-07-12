@@ -50,18 +50,6 @@
     </div>
 
     <div class="row g-4">
-      <!-- Full Name (read from email on submit, but we still capture display preference) -->
-      <div class="col-12 col-md-6">
-        <div class="form-group-fancy">
-          <label asp-for="DisplayName" class="form-label-fancy">Full Name <span style="color:#dc2626;">*</span></label>
-          <div class="input-wrap">
-            <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">badge</span></span>
-            <input asp-for="DisplayName" id="DisplayName" class="form-control fancy-input has-prefix" placeholder="e.g. Ahmed Kamal" />
-          </div>
-          <span asp-validation-for="DisplayName" class="field-error" style="display:block;"></span>
-        </div>
-      </div>
-
       <!-- Email -->
       <div class="col-12 col-md-6">
         <div class="form-group-fancy">

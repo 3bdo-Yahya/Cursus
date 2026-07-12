@@ -14,6 +14,7 @@ public class AdminProfileViewModel
     public string DisplayName    { get; init; } = "Administrator";
     public string Email          { get; init; } = string.Empty;
     public string UserId         { get; init; } = string.Empty;
+    public bool   EmailConfirmed { get; init; }
 
     /// <summary>Two-letter initials derived from the display name.</summary>
     public string Initials { get; init; } = "AD";

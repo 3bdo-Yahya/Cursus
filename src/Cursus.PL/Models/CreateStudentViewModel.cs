@@ -7,11 +7,6 @@ namespace Cursus.PL.Models;
 
 public class CreateStudentViewModel
 {
-    [Required(ErrorMessage = "Full name is required.")]
-    [StringLength(100, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 100 characters.")]
-    [Display(Name = "Full Name")]
-    public string DisplayName { get; set; } = string.Empty;
-
     [Required(ErrorMessage = "Email address is required.")]
     [EmailAddress(ErrorMessage = "Enter a valid email address.")]
     [Display(Name = "Email Address")]

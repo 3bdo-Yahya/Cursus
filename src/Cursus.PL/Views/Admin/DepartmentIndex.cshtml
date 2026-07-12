@@ -6,8 +6,8 @@
     ViewData["Title"] = "Department Management";
     var list    = Model.Items.ToList();
     var total   = (int)(ViewData["TotalCount"] ?? 0);
-    var active  = list.Count(d => d.IsActive);
-    var inactive = list.Count(d => !d.IsActive);
+    var active  = (int)(ViewData["ActiveCount"] ?? list.Count(d => d.IsActive));
+    var inactive = (int)(ViewData["InactiveCount"] ?? list.Count(d => !d.IsActive));
 }
 
 @section Styles {
@@ -100,7 +100,8 @@
                   @if (item.IsActive)
                   {
                       <form asp-action="DepartmentDeactivate" asp-route-id="@item.Id" method="post" class="d-inline"
-                            onsubmit="return confirm('Deactivate department @item.Name?');">
+                            onsubmit="return confirm(this.getAttribute('data-confirm'));"
+                            data-confirm="Deactivate department @item.Name?">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="action-btn" title="Deactivate"
                                 style="color:#f59e0b;border:none;background:transparent;cursor:pointer;padding:6px 8px;border-radius:8px;">

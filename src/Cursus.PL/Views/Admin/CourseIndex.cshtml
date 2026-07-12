@@ -9,8 +9,8 @@
     var searchTerm = ViewData["SearchTerm"] as string;
     var selectedDepartmentId = ViewData["SelectedDepartmentId"]?.ToString();
     var total   = (int)(ViewData["TotalCount"] ?? 0);
-    var active  = list.Count(c => c.IsActive);
-    var inactive= list.Count(c => !c.IsActive);
+    var active  = (int)(ViewData["ActiveCount"] ?? list.Count(c => c.IsActive));
+    var inactive= (int)(ViewData["InactiveCount"] ?? list.Count(c => !c.IsActive));
 
     string AvailClass(SemesterAvailability s) => s switch
     {

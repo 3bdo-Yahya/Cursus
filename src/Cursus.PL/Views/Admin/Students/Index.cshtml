@@ -11,9 +11,9 @@
     var total    = (int)(ViewData["TotalCount"] ?? 0);
     var pageSize = (int)(ViewData["PageSize"] ?? 10);
 
-    var goodStanding       = list.Count(s => s.CurrentStanding == AcademicStanding.Good);
-    var warningOrProbation = list.Count(s => s.CurrentStanding == AcademicStanding.Warning || s.CurrentStanding == AcademicStanding.Probation);
-    var dismissed          = list.Count(s => s.CurrentStanding == AcademicStanding.Dismissed);
+    var goodStanding       = (int)(ViewData["GoodStandingCount"] ?? list.Count(s => s.CurrentStanding == AcademicStanding.Good));
+    var warningOrProbation = (int)(ViewData["WarningProbationCount"] ?? list.Count(s => s.CurrentStanding == AcademicStanding.Warning || s.CurrentStanding == AcademicStanding.Probation));
+    var dismissed          = (int)(ViewData["DismissedCount"] ?? list.Count(s => s.CurrentStanding == AcademicStanding.Dismissed));
 }
 
 @functions {
@@ -177,7 +177,8 @@
                     <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
                   </a>
                   <form asp-action="DeleteStudent" asp-route-id="@item.Id" method="post" class="d-inline"
-                        onsubmit="return confirm('Delete student @item.DisplayName? This cannot be undone.');">
+                        onsubmit="return confirm(this.getAttribute('data-confirm'));"
+                        data-confirm="Delete student @item.DisplayName? This cannot be undone.">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="action-btn" title="Delete student"
                             style="color:#ef4444;border:none;background:transparent;cursor:pointer;padding:6px 8px;border-radius:8px;transition:background .15s;">
