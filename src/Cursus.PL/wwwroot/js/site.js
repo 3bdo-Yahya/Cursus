@@ -1,15 +1,29 @@
 ﻿window.CursusUI = window.CursusUI || {};
 
 /* ── Dark Mode Toggle ────────────────────────────────────── */
-const darkToggle = document.getElementById('dark-toggle');
-const darkIcon   = document.getElementById('dark-icon');
-if (darkToggle && darkIcon) {
+(function () {
+  const darkToggle = document.getElementById('dark-toggle');
+  const darkIcon   = document.getElementById('dark-icon');
+  if (!darkToggle || !darkIcon) return;
+
+  // Sync icon to current class (set by inline script in _Layout)
+  darkIcon.textContent = document.documentElement.classList.contains('dark')
+    ? 'light_mode' : 'dark_mode';
+
   darkToggle.addEventListener('click', () => {
-    document.documentElement.classList.toggle('dark');
-    darkIcon.textContent = document.documentElement.classList.contains('dark')
-      ? 'light_mode' : 'dark_mode';
+    var isDark = document.documentElement.classList.contains('dark');
+    if (isDark) {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+    }
+    isDark = !isDark;
+    darkIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
   });
-}
+})();
 
 /* ── Notifications ────────────────────────────────────────── */
 const notifBtn   = document.getElementById('notif-btn');
