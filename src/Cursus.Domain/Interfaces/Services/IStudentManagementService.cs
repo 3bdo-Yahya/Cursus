@@ -1,3 +1,4 @@
+using Cursus.Domain.DTOs;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
 
@@ -5,7 +6,6 @@ namespace Cursus.Domain.Interfaces.Services
 {
     public interface IStudentManagementService
     {
-        // ── Listing ──────────────────────────────────────────────────────────
         Task<IEnumerable<AppUser>> GetStudentsAsync(string? searchTerm, int? departmentId);
 
         /// <summary>
@@ -14,7 +14,6 @@ namespace Cursus.Domain.Interfaces.Services
         /// </summary>
         Task<IEnumerable<AppUser>> GetAllStudentsAsync(string? departmentFilter);
 
-        // ── Detail ───────────────────────────────────────────────────────────
         /// <summary>
         /// Returns the student together with all their <see cref="StudentCourse"/>
         /// records (including the related <see cref="Course"/> and its
@@ -22,7 +21,25 @@ namespace Cursus.Domain.Interfaces.Services
         /// </summary>
         Task<AppUser?> GetStudentDetailAsync(string studentId);
 
-        // ── Course-record CRUD ────────────────────────────────────────────────
+        /// <summary>
+        /// Creates a student Identity account, assigns the Student role, and
+        /// sets academic profile fields (department, university, standing).
+        /// </summary>
+        Task<StudentCommandResult> CreateStudentAsync(
+            CreateStudentRequest request,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Deletes a user only when they are in the Student role.
+        /// </summary>
+        Task<StudentCommandResult> DeleteStudentAsync(
+            string userId,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>Standing breakdown across all students (single pass).</summary>
+        Task<StudentStandingSummary> GetStandingSummaryAsync(
+            CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Creates a new <see cref="StudentCourse"/> record.
         /// <para>

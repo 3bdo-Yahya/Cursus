@@ -6,22 +6,19 @@
   const darkIcon   = document.getElementById('dark-icon');
   if (!darkToggle || !darkIcon) return;
 
-  // Sync icon to current class (set by inline script in _Layout)
-  darkIcon.textContent = document.documentElement.classList.contains('dark')
-    ? 'light_mode' : 'dark_mode';
-
-  darkToggle.addEventListener('click', () => {
-    var isDark = document.documentElement.classList.contains('dark');
-    if (isDark) {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
-      document.documentElement.classList.add('dark');
-    }
-    isDark = !isDark;
+  function applyTheme(isDark) {
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.classList.toggle('light', !isDark);
+    document.documentElement.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
     darkIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
     try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+  }
+
+  // Sync icon/theme attrs to current class (set by inline script in _Layout)
+  applyTheme(document.documentElement.classList.contains('dark'));
+
+  darkToggle.addEventListener('click', () => {
+    applyTheme(!document.documentElement.classList.contains('dark'));
   });
 })();
 
@@ -107,3 +104,4 @@ document.querySelectorAll('[data-scroll],[data-scroll-group]').forEach(el => _vc
     if (window.innerWidth >= 768) closeDrawer();
   });
 }());
+

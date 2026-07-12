@@ -1,6 +1,10 @@
 using Cursus.DAL.Database;
+using Cursus.Domain.Constants;
+using Cursus.Domain.DTOs;
 using Cursus.Domain.Entities;
 using Cursus.Domain.Enums;
+using Cursus.Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.BLL.Services
@@ -9,9 +13,9 @@ namespace Cursus.BLL.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IAcademicMetricsService _academicMetricsService;
+        private readonly UserManager<AppUser> _userManager;
 
         // Standard letter-grade ordering — lower index = higher grade.
-        // Extend this list if additional grades are used in the institution.
         private static readonly IReadOnlyList<string> GradeOrder = new[]
         {
             "A+", "A", "A-",
@@ -21,13 +25,15 @@ namespace Cursus.BLL.Services
             "F"
         };
 
-        public StudentManagementService(ApplicationDbContext context, IAcademicMetricsService academicMetricsService)
+        public StudentManagementService(
+            ApplicationDbContext context,
+            IAcademicMetricsService academicMetricsService,
+            UserManager<AppUser> userManager)
         {
-            _context = context;
-            _academicMetricsService = academicMetricsService;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _academicMetricsService = academicMetricsService ?? throw new ArgumentNullException(nameof(academicMetricsService));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
-
-        // ── GetStudentsAsync (existing, used by the Admin list page) ─────────
 
         public async Task<IEnumerable<AppUser>> GetStudentsAsync(
             string? searchTerm, int? departmentId)
@@ -62,8 +68,6 @@ namespace Cursus.BLL.Services
             return await query.OrderBy(u => u.UserName).ToListAsync();
         }
 
-        // ── GetAllStudentsAsync ───────────────────────────────────────────────
-
         public async Task<IEnumerable<AppUser>> GetAllStudentsAsync(
             string? departmentFilter)
         {
@@ -94,8 +98,6 @@ namespace Cursus.BLL.Services
             return await query.OrderBy(u => u.UserName).ToListAsync();
         }
 
-        // ── GetStudentDetailAsync ─────────────────────────────────────────────
-
         public async Task<AppUser?> GetStudentDetailAsync(string studentId)
         {
             return await _context.Users
@@ -109,7 +111,115 @@ namespace Cursus.BLL.Services
                 .FirstOrDefaultAsync(u => u.Id == studentId);
         }
 
-        // ── AddCourseRecordAsync ──────────────────────────────────────────────
+        public async Task<StudentCommandResult> CreateStudentAsync(
+            CreateStudentRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+
+            var email = request.Email.Trim();
+            var normalizedEmail = email.ToLowerInvariant();
+
+            var existing = await _userManager.FindByEmailAsync(normalizedEmail);
+            if (existing is not null)
+            {
+                return StudentCommandResult.Failure(
+                    "A student with this email address already exists.",
+                    nameof(CreateStudentRequest.Email));
+            }
+
+            var department = await _context.Departments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(
+                    d => d.Id == request.DepartmentId && d.IsActive,
+                    cancellationToken);
+
+            if (department is null)
+            {
+                return StudentCommandResult.Failure(
+                    "Please select a valid active department.",
+                    nameof(CreateStudentRequest.DepartmentId));
+            }
+
+            var user = new AppUser
+            {
+                UserName = normalizedEmail,
+                Email = email,
+                EmailConfirmed = true,
+                UniversityId = department.UniversityId,
+                DepartmentId = department.Id,
+                AcademicYear = request.AcademicYear.Trim(),
+                CurrentSemester = request.CurrentSemester,
+                CurrentStanding = AcademicStanding.Good,
+                EnrollmentDate = request.EnrollmentDate
+            };
+
+            var createResult = await _userManager.CreateAsync(user, request.Password);
+            if (!createResult.Succeeded)
+            {
+                return StudentCommandResult.Failures(
+                    createResult.Errors.Select(e => e.Description));
+            }
+
+            try
+            {
+                var roleResult = await _userManager.AddToRoleAsync(user, Roles.Student);
+                if (!roleResult.Succeeded)
+                {
+                    await _userManager.DeleteAsync(user);
+                    return StudentCommandResult.Failures(
+                        roleResult.Errors.Select(e => e.Description));
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                await _userManager.DeleteAsync(user);
+                return StudentCommandResult.Failure(
+                    $"The role \u201c{Roles.Student}\u201d is not configured. Contact an administrator.");
+            }
+
+            return StudentCommandResult.Success(user.DisplayName);
+        }
+
+        public async Task<StudentCommandResult> DeleteStudentAsync(
+            string userId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return StudentCommandResult.Failure("Student id is required.");
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                return StudentCommandResult.Failure("Student not found.");
+
+            if (!await _userManager.IsInRoleAsync(user, Roles.Student))
+            {
+                return StudentCommandResult.Failure(
+                    "Only accounts in the Student role can be deleted from student management.");
+            }
+
+            var displayName = user.DisplayName;
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return StudentCommandResult.Failures(
+                    result.Errors.Select(e => e.Description));
+            }
+
+            return StudentCommandResult.Success(displayName);
+        }
+
+        public async Task<StudentStandingSummary> GetStandingSummaryAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var students = (await GetStudentsAsync(null, null)).ToList();
+            return new StudentStandingSummary(
+                Total: students.Count,
+                Good: students.Count(s => s.CurrentStanding == AcademicStanding.Good),
+                WarningOrProbation: students.Count(s =>
+                    s.CurrentStanding is AcademicStanding.Warning or AcademicStanding.Probation),
+                Dismissed: students.Count(s => s.CurrentStanding == AcademicStanding.Dismissed));
+        }
 
         public async Task<StudentCourse> AddCourseRecordAsync(
             string studentId,
@@ -141,8 +251,6 @@ namespace Cursus.BLL.Services
             await _context.SaveChangesAsync();
             return record;
         }
-
-        // ── UpdateCourseRecordAsync ───────────────────────────────────────────
 
         public async Task<StudentCourse> UpdateCourseRecordAsync(
             int recordId,
@@ -184,8 +292,6 @@ namespace Cursus.BLL.Services
             return record;
         }
 
-        // ── DeleteCourseRecordAsync ───────────────────────────────────────────
-
         public async Task DeleteCourseRecordAsync(int recordId)
         {
             var record = await _context.StudentCourses.FindAsync(recordId)
@@ -196,16 +302,6 @@ namespace Cursus.BLL.Services
             await _context.SaveChangesAsync();
         }
 
-        // ── Private helpers ───────────────────────────────────────────────────
-
-        /// <summary>
-        /// Resolves the <see cref="StudentCourseStatus"/> from a grade string.
-        /// <list type="bullet">
-        ///   <item>No grade supplied → use the caller-provided <paramref name="fallback"/>.</item>
-        ///   <item>Grade &gt;= passing threshold  → <c>Completed</c>.</item>
-        ///   <item>Grade &lt;  passing threshold  → <c>Failed</c>.</item>
-        /// </list>
-        /// </summary>
         private async Task<StudentCourseStatus> ResolveStatus(
             string? grade, StudentCourseStatus fallback, int courseId)
         {
@@ -214,7 +310,6 @@ namespace Cursus.BLL.Services
             if (string.IsNullOrEmpty(normalized))
                 return fallback;
 
-            // Fetch passing threshold for the course.
             var threshold = await _context.Courses
                 .Where(c => c.Id == courseId)
                 .Select(c => c.PassingGradeThreshold)
@@ -226,21 +321,14 @@ namespace Cursus.BLL.Services
                 : StudentCourseStatus.Failed;
         }
 
-        /// <summary>
-        /// Returns <c>true</c> when <paramref name="grade"/> is equal to or
-        /// better than <paramref name="threshold"/> using the
-        /// <see cref="GradeOrder"/> ordering.
-        /// </summary>
         private static bool IsGradeAtLeast(string grade, string threshold)
         {
             var gradeIdx = IndexOf(grade);
             var thresholdIdx = IndexOf(threshold);
 
-            // Unknown grades are treated as failing.
             if (gradeIdx < 0 || thresholdIdx < 0)
                 return false;
 
-            // Smaller index = better grade.
             return gradeIdx <= thresholdIdx;
         }
 

@@ -14,6 +14,9 @@ public class CreateStudentViewModel
 
     [Required(ErrorMessage = "Password is required.")]
     [MinLength(8, ErrorMessage = "Password must be at least 8 characters.")]
+    [RegularExpression(
+        @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$",
+        ErrorMessage = "Password needs upper, lower, digit, and a non-alphanumeric character.")]
     [DataType(DataType.Password)]
     [Display(Name = "Temporary Password")]
     public string Password { get; set; } = string.Empty;
@@ -39,3 +42,4 @@ public class CreateStudentViewModel
     public IEnumerable<SelectListItem> DepartmentOptions { get; set; } = [];
     public IEnumerable<SelectListItem> SemesterOptions   { get; set; } = [];
 }
+

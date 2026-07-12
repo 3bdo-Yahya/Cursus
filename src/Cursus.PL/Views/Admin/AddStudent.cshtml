@@ -68,12 +68,12 @@
           <label asp-for="Password" class="form-label-fancy">Temporary Password <span style="color:#dc2626;">*</span></label>
           <div class="input-wrap">
             <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">lock</span></span>
-            <input asp-for="Password" id="Password" type="password" class="form-control fancy-input has-prefix" placeholder="Min. 8 characters" style="padding-right:44px;" />
+            <input asp-for="Password" id="Password" type="password" class="form-control fancy-input has-prefix" placeholder="e.g. TempPass1!" style="padding-right:44px;" />
             <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility()" title="Show/hide password">
               <span class="material-symbols-outlined" id="pass-toggle-icon" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 300">visibility</span>
             </button>
           </div>
-          <p class="field-hint">Student will be prompted to change this on first login</p>
+          <p class="field-hint">At least 8 characters, with upper, lower, digit, and a non-alphanumeric character. Share securely with the student.</p>
           <span asp-validation-for="Password" class="field-error" style="display:block;"></span>
         </div>
       </div>
@@ -184,3 +184,4 @@
       }
     </script>
 }
+

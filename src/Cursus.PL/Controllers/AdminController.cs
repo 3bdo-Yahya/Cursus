@@ -156,65 +156,53 @@ public class AdminController : Controller
 
     public async Task<IActionResult> Profile()
     {
-        // ── Current admin identity ────────────────────────────────────────────
         var adminUser = await _userManager.GetUserAsync(User);
-        var email        = adminUser?.Email        ?? User.Identity?.Name ?? "admin";
-        var userName     = adminUser?.UserName      ?? email;
-        var userId       = adminUser?.Id            ?? string.Empty;
+        var email = adminUser?.Email ?? User.Identity?.Name ?? "admin";
+        var userName = adminUser?.UserName ?? email;
+        var userId = adminUser?.Id ?? string.Empty;
 
-        // Display name: derive from username (same logic as AppUser.DisplayName)
-        var namePart    = userName.Split('@')[0];
-        var nameParts   = namePart.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        var namePart = userName.Split('@')[0];
+        var nameParts = namePart.Split('.', StringSplitOptions.RemoveEmptyEntries);
         var displayName = nameParts.Length > 0
             ? string.Join(" ", nameParts.Select(p => p.Length > 0 ? char.ToUpper(p[0]) + p[1..].ToLower() : p))
             : userName;
 
-        // Initials (up to 2 chars)
         var initials = nameParts.Length >= 2
             ? $"{char.ToUpper(nameParts[0][0])}{char.ToUpper(nameParts[1][0])}"
             : displayName.Length >= 2 ? displayName[..2].ToUpper() : displayName.ToUpper();
 
-        // ── System-wide stats ─────────────────────────────────────────────────
         var dashboard = await _adminDashboardService.GetAdminDashboardAsync();
-
-        // ── Student standing breakdown ────────────────────────────────────────
-        var allStudents = (await _studentManagementService.GetStudentsAsync(null, null)).ToList();
-        var goodStanding       = allStudents.Count(s => s.CurrentStanding == Domain.Enums.AcademicStanding.Good);
-        var warningOrProbation = allStudents.Count(s => s.CurrentStanding == Domain.Enums.AcademicStanding.Warning
-                                                     || s.CurrentStanding == Domain.Enums.AcademicStanding.Probation);
-        var dismissed          = allStudents.Count(s => s.CurrentStanding == Domain.Enums.AcademicStanding.Dismissed);
+        var standing = await _studentManagementService.GetStandingSummaryAsync();
 
         var vm = new AdminProfileViewModel
         {
-            DisplayName      = displayName,
-            Email            = email,
-            UserId           = userId,
-            Initials         = initials,
-            EmailConfirmed   = adminUser?.EmailConfirmed ?? false,
-            TotalStudents    = dashboard.TotalStudents,
-            TotalCourses     = dashboard.TotalCourses,
-            ActiveCourses    = dashboard.ActiveCourses,
-            InactiveCourses  = dashboard.InactiveCourses,
+            DisplayName = displayName,
+            Email = email,
+            UserId = userId,
+            Initials = initials,
+            EmailConfirmed = adminUser?.EmailConfirmed ?? false,
+            TotalStudents = standing.Total,
+            TotalCourses = dashboard.TotalCourses,
+            ActiveCourses = dashboard.ActiveCourses,
+            InactiveCourses = dashboard.InactiveCourses,
             TotalDepartments = dashboard.TotalDepartments,
-            ActiveDepartments= dashboard.ActiveDepartments,
-            TotalUniversities= dashboard.TotalUniversities,
-            GoodStanding       = goodStanding,
-            WarningOrProbation = warningOrProbation,
-            Dismissed          = dismissed
+            ActiveDepartments = dashboard.ActiveDepartments,
+            TotalUniversities = dashboard.TotalUniversities,
+            GoodStanding = standing.Good,
+            WarningOrProbation = standing.WarningOrProbation,
+            Dismissed = standing.Dismissed
         };
 
         return View(vm);
     }
-
-    // ── AddStudent ────────────────────────────────────────────────────────────
 
     [HttpGet]
     public async Task<IActionResult> AddStudent()
     {
         var vm = new CreateStudentViewModel
         {
-            AcademicYear    = $"{DateTime.Today.Year}-{DateTime.Today.Year + 1}",
-            EnrollmentDate  = DateTime.Today,
+            AcademicYear = $"{DateTime.Today.Year}-{DateTime.Today.Year + 1}",
+            EnrollmentDate = DateTime.Today,
             CurrentSemester = SemesterType.Fall
         };
         await PopulateCreateStudentFormAsync(vm);
@@ -231,85 +219,64 @@ public class AdminController : Controller
             return View(vm);
         }
 
-        // ── Explicit email uniqueness check ───────────────────────────────────
-        // Done before CreateAsync so the error is bound to the Email field
-        // (Identity's own duplicate-email error is model-level and less specific).
-        var normalizedEmail = vm.Email.Trim().ToLower();
-        var existing = await _userManager.FindByEmailAsync(normalizedEmail);
-        if (existing is not null)
+        var result = await _studentManagementService.CreateStudentAsync(new CreateStudentRequest
         {
-            ModelState.AddModelError(nameof(vm.Email), "A student with this email address already exists.");
-            await PopulateCreateStudentFormAsync(vm);
-            return View(vm);
-        }
-
-        var user = new AppUser
-        {
-            UserName        = normalizedEmail,
-            Email           = vm.Email.Trim(),
-            DepartmentId    = vm.DepartmentId,
-            AcademicYear    = vm.AcademicYear.Trim(),
+            Email = vm.Email,
+            Password = vm.Password,
+            DepartmentId = vm.DepartmentId,
+            AcademicYear = vm.AcademicYear,
             CurrentSemester = vm.CurrentSemester,
-            CurrentStanding = Domain.Enums.AcademicStanding.Good,
-            EnrollmentDate  = vm.EnrollmentDate
-        };
+            EnrollmentDate = vm.EnrollmentDate
+        });
 
-        var result = await _userManager.CreateAsync(user, vm.Password);
-
-        if (!result.Succeeded)
+        if (!result.IsSuccess)
         {
-            foreach (var error in result.Errors)
-                ModelState.AddModelError(string.Empty, error.Description);
-
-            await PopulateCreateStudentFormAsync(vm);
-            return View(vm);
-        }
-
-        try
-        {
-            var roleResult = await _userManager.AddToRoleAsync(user, Roles.Student);
-
-            if (!roleResult.Succeeded)
+            if (!string.IsNullOrEmpty(result.Field))
             {
-                foreach (var error in roleResult.Errors)
-                    ModelState.AddModelError(string.Empty, error.Description);
-
-                await PopulateCreateStudentFormAsync(vm);
-                return View(vm);
+                var modelField = result.Field switch
+                {
+                    nameof(CreateStudentRequest.Email) => nameof(vm.Email),
+                    nameof(CreateStudentRequest.DepartmentId) => nameof(vm.DepartmentId),
+                    _ => result.Field
+                };
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(modelField, error);
             }
-        }
-        catch (InvalidOperationException)
-        {
-            ModelState.AddModelError(string.Empty, $"The role \u201c{Roles.Student}\u201d is not configured. Contact an administrator.");
+            else
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error);
+            }
+
             await PopulateCreateStudentFormAsync(vm);
             return View(vm);
         }
 
-        TempData["StatusMessage"] = $"Student \u201c{user.DisplayName}\u201d created successfully.";
+        TempData["StatusMessage"] = $"Student \u201c{result.DisplayName}\u201d created successfully.";
         return RedirectToAction(nameof(Students));
     }
-
-    // ── DeleteStudent ──────────────────────────────────────────────────────────
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteStudent(string id)
     {
-        var user = await _userManager.FindByIdAsync(id);
-        if (user is null)
+        var result = await _studentManagementService.DeleteStudentAsync(id);
+
+        if (result.IsSuccess)
+        {
+            TempData["StatusMessage"] = $"Student \u201c{result.DisplayName}\u201d deleted successfully.";
+        }
+        else if (result.Errors.Any(e => e.Contains("not found", StringComparison.OrdinalIgnoreCase)))
+        {
             return NotFound();
-
-        var result = await _userManager.DeleteAsync(user);
-
-        if (result.Succeeded)
-            TempData["StatusMessage"] = $"Student \u201c{user.DisplayName}\u201d deleted successfully.";
+        }
         else
-            TempData["ErrorMessage"] = "Unable to delete student: " + string.Join(", ", result.Errors.Select(e => e.Description));
+        {
+            TempData["ErrorMessage"] = "Unable to delete student: " + string.Join(", ", result.Errors);
+        }
 
         return RedirectToAction(nameof(Students));
     }
-
-    // ── EditStudent ────────────────────────────────────────────────────────────
 
     [HttpGet]
     public async Task<IActionResult> EditStudent(string? id)
