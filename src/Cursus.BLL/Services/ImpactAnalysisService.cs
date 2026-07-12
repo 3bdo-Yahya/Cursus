@@ -133,6 +133,17 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
             blockedWithTerms,
             standingWouldChange,
             projectedStanding);
+        var whatIfSummerRetake = BuildWhatIfSummerRetake(
+            failedCourse,
+            simulationCourses,
+            delay,
+            currentSemester,
+            academicYear,
+            standing,
+            cgpa,
+            completedCourseIds,
+            adjacency,
+            failurePathMaxCredits);
 
         return new ImpactAnalysisResultDto(
             FailedCourseId: failedCourse.Id,
@@ -162,7 +173,53 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
             ScenarioSummary: scenario.Summary,
             RecoverySchedule: recoverySchedule,
             Recommendations: recommendations,
-            ReplacementCourses: replacementCourses);
+            ReplacementCourses: replacementCourses,
+            WhatIfSummerRetake: whatIfSummerRetake);
+    }
+
+    private static WhatIfScenarioDto? BuildWhatIfSummerRetake(
+        Course failedCourse,
+        List<Course> simulationCourses,
+        GraduationDelayCalculator.Result realDelay,
+        SemesterType currentSemester,
+        string? academicYear,
+        AcademicStanding standing,
+        decimal cgpa,
+        HashSet<int> completedCourseIds,
+        Dictionary<int, List<int>> adjacency,
+        int failurePathMaxCredits)
+    {
+        if (failedCourse.SemesterAvailability == SemesterAvailability.All)
+            return null;
+
+        var whatIf = GraduationDelayCalculator.Calculate(
+            currentSemester,
+            academicYear,
+            standing,
+            cgpa,
+            failedCourse.Id,
+            failedCourse.SemesterAvailability,
+            simulationCourses,
+            completedCourseIds,
+            adjacency,
+            baselineMaxCreditsOverride: null,
+            failureMaxCreditsOverride: failurePathMaxCredits,
+            forceSummerRetake: true);
+
+        var improves =
+            !string.Equals(whatIf.RetakeSemesterLabel, realDelay.RetakeSemesterLabel, StringComparison.Ordinal)
+            && whatIf.GraduationDelaySemesters <= realDelay.GraduationDelaySemesters;
+
+        if (!improves)
+            return null;
+
+        return new WhatIfScenarioDto(
+            RetakeSemesterLabel: whatIf.RetakeSemesterLabel,
+            ProjectedGraduationLabel: whatIf.ProjectedGraduationLabel,
+            GraduationDelaySemesters: whatIf.GraduationDelaySemesters,
+            SemestersAffected: whatIf.SemestersAffected,
+            SemestersSaved: Math.Max(0, realDelay.GraduationDelaySemesters - whatIf.GraduationDelaySemesters),
+            RecoverySchedule: MapRecoverySchedule(whatIf.FailureSchedule));
     }
 
     private static Dictionary<int, List<int>> BuildAdjacency(
@@ -519,6 +576,7 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         return creditsAtRisk > 0 ? "Low" : "None";
     }
 }
+
 
 
 

@@ -205,9 +205,9 @@ function renderLeanRecovery({ src, retakeLabel, blockedRaw, replacements, recove
   `;
 }
 
-function renderFullSchedule({ recoverySchedule, recoveryStatus, src, retakeLabel, blockedCount }) {
-  const tlEl = document.getElementById('ia-timeline');
-  const detailsEl = document.getElementById('ia-full-schedule');
+function renderFullSchedule({ recoverySchedule, recoveryStatus, src, retakeLabel, blockedCount, timelineId = 'ia-timeline', detailsId = 'ia-full-schedule' }) {
+  const tlEl = document.getElementById(timelineId);
+  const detailsEl = document.getElementById(detailsId);
   if (!tlEl) return;
 
   tlEl.innerHTML = '';
@@ -287,6 +287,134 @@ function renderFullSchedule({ recoverySchedule, recoveryStatus, src, retakeLabel
   });
 }
 
+const PROJECTION_SWAP_MS = 180;
+let projectionViews = null;
+let activeProjectionView = 'actual';
+let projectionSwapTimer = null;
+let projectionToggleBound = false;
+
+function getSwapTargets() {
+  return [
+    document.getElementById('ia-recovery-swap'),
+    document.getElementById('kpi-delay'),
+    document.getElementById('kpi-new-grad'),
+    document.getElementById('kpi-grad-detail'),
+    document.getElementById('kpi-semesters'),
+    document.getElementById('risk-avail'),
+    document.getElementById('fc-avail'),
+  ].filter(Boolean);
+}
+
+function setProjectionToggle(view) {
+  const toggle = document.getElementById('ia-projection-toggle');
+  if (!toggle) return;
+  toggle.querySelectorAll('.ia-projection-btn').forEach(btn => {
+    const isActive = btn.dataset.view === view;
+    btn.classList.toggle('is-active', isActive);
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+}
+
+function bindProjectionToggle() {
+  if (projectionToggleBound) return;
+  const toggle = document.getElementById('ia-projection-toggle');
+  if (!toggle) return;
+  toggle.addEventListener('click', (e) => {
+    const btn = e.target.closest('.ia-projection-btn');
+    if (!btn || !projectionViews) return;
+    const view = btn.dataset.view;
+    if (!view || view === activeProjectionView || !projectionViews[view]) return;
+    swapProjectionView(view);
+  });
+  projectionToggleBound = true;
+}
+
+function applyProjectionView(view, { animate = false } = {}) {
+  if (!projectionViews || !projectionViews[view]) return;
+
+  const paint = () => {
+    const v = projectionViews[view];
+    activeProjectionView = view;
+    setProjectionToggle(view);
+
+    const summerNote = document.getElementById('ia-summer-note');
+    if (summerNote) summerNote.classList.toggle('d-none', view !== 'summer');
+
+    const delayEl = document.getElementById('kpi-delay');
+    if (delayEl) {
+      if (v.recoveryStatus.key === 'uncertain') {
+        delayEl.textContent = 'Uncertain';
+        delayEl.style.color = '#ef4444';
+      } else {
+        delayEl.textContent = v.delay > 0 ? `+${v.delay} sem` : 'None';
+        delayEl.style.color = v.delay > 0 ? '#ef4444' : '#10b981';
+      }
+    }
+
+    const gradEl = document.getElementById('kpi-new-grad');
+    const gradDetail = document.getElementById('kpi-grad-detail');
+    if (gradEl) {
+      if (v.recoveryStatus.key === 'uncertain') {
+        gradEl.textContent = 'Needs review';
+        if (gradDetail) gradDetail.textContent = 'Path projection incomplete';
+      } else if (v.delay > 0) {
+        gradEl.textContent = v.projectedGrad;
+        if (gradDetail) gradDetail.textContent = `Was ${v.originalGrad}`;
+      } else {
+        gradEl.textContent = v.projectedGrad;
+        if (gradDetail) gradDetail.textContent = 'On track — no graduation delay';
+      }
+    }
+
+    const semEl = document.getElementById('kpi-semesters');
+    if (semEl) semEl.textContent = v.semestersAffected;
+
+    applyRecoveryBadge(v.recoveryStatus);
+
+    const riskAvail = document.getElementById('risk-avail');
+    if (riskAvail) riskAvail.textContent = v.retakeLabel;
+    const fcAvail = document.getElementById('fc-avail');
+    if (fcAvail) fcAvail.textContent = v.retakeLabel;
+
+    renderLeanRecovery({
+      src: v.src,
+      retakeLabel: v.retakeLabel,
+      blockedRaw: v.blockedRaw,
+      replacements: v.replacements,
+      recoveryStatus: v.recoveryStatus
+    });
+
+    renderFullSchedule({
+      recoverySchedule: v.recoverySchedule,
+      recoveryStatus: v.recoveryStatus,
+      src: v.src,
+      retakeLabel: v.retakeLabel,
+      blockedCount: v.blockedCount,
+      timelineId: 'ia-timeline',
+      detailsId: 'ia-full-schedule'
+    });
+  };
+
+  if (!animate) {
+    paint();
+    return;
+  }
+
+  const targets = getSwapTargets();
+  targets.forEach(el => el.classList.add('ia-swapping'));
+  if (projectionSwapTimer) clearTimeout(projectionSwapTimer);
+  projectionSwapTimer = setTimeout(() => {
+    paint();
+    requestAnimationFrame(() => {
+      targets.forEach(el => el.classList.remove('ia-swapping'));
+    });
+  }, PROJECTION_SWAP_MS);
+}
+
+function swapProjectionView(view) {
+  applyProjectionView(view, { animate: true });
+}
+
 function loadReport(report) {
   const src = report.src || {
     id: report.failedCourseCode,
@@ -339,31 +467,6 @@ function loadReport(report) {
   }
 
   animCount('kpi-blocked', report.blockedCoursesCount ?? blocked.length);
-  animCount('kpi-semesters', semAff);
-
-  const delayEl = document.getElementById('kpi-delay');
-  if (recoveryStatus.key === 'uncertain') {
-    delayEl.textContent = 'Uncertain';
-    delayEl.style.color = '#ef4444';
-  } else {
-    delayEl.textContent = delay > 0 ? `+${delay} sem` : 'None';
-    delayEl.style.color = delay > 0 ? '#ef4444' : '#10b981';
-  }
-
-  const gradEl = document.getElementById('kpi-new-grad');
-  const gradDetail = document.getElementById('kpi-grad-detail');
-  if (recoveryStatus.key === 'uncertain') {
-    gradEl.textContent = 'Needs review';
-    if (gradDetail) gradDetail.textContent = 'Path projection incomplete';
-  } else if (delay > 0) {
-    gradEl.textContent = projectedGrad;
-    if (gradDetail) gradDetail.textContent = `Was ${originalGrad}`;
-  } else {
-    gradEl.textContent = projectedGrad;
-    if (gradDetail) gradDetail.textContent = 'On track — no graduation delay';
-  }
-
-  applyRecoveryBadge(recoveryStatus);
 
   const cgpaKpi = document.getElementById('kpi-cgpa');
   if (cgpaKpi) {
@@ -382,7 +485,6 @@ function loadReport(report) {
   document.getElementById('fc-code').textContent    = src.id;
   document.getElementById('fc-name').textContent    = src.name;
   document.getElementById('fc-credits').textContent = src.credits + ' credit hours';
-  document.getElementById('fc-avail').textContent   = retakeLabel;
   document.getElementById('fc-type').textContent    = src.type || 'Core';
 
   const listEl = document.getElementById('blocked-list');
@@ -405,25 +507,53 @@ function loadReport(report) {
     listEl.appendChild(row);
   });
   document.getElementById('blocked-count-badge').textContent = blocked.length + ' courses';
+  document.getElementById('risk-credits').textContent = creditsAtRisk + ' cr';
 
-  document.getElementById('risk-avail').textContent    = retakeLabel;
-  document.getElementById('risk-credits').textContent  = creditsAtRisk + ' cr';
-
-  renderLeanRecovery({
-    src,
+  const actualView = {
+    delay,
+    semestersAffected: semAff,
+    originalGrad,
+    projectedGrad,
     retakeLabel,
-    blockedRaw,
-    replacements,
-    recoveryStatus
-  });
-
-  renderFullSchedule({
     recoverySchedule,
     recoveryStatus,
     src,
-    retakeLabel,
+    blockedRaw,
+    replacements,
     blockedCount: blocked.length
-  });
+  };
+
+  const whatIf = report.whatIfSummerRetake;
+  let summerView = null;
+  if (whatIf) {
+    const summerDelay = whatIf.graduationDelaySemesters ?? 0;
+    const summerGrad = whatIf.projectedGraduationLabel || originalGrad;
+    summerView = {
+      delay: summerDelay,
+      semestersAffected: whatIf.semestersAffected ?? summerDelay,
+      originalGrad,
+      projectedGrad: summerGrad,
+      retakeLabel: whatIf.retakeSemesterLabel || retakeLabel,
+      recoverySchedule: whatIf.recoverySchedule || [],
+      recoveryStatus: resolveRecoveryStatus({
+        delay: summerDelay,
+        originalGrad,
+        projectedGrad: summerGrad
+      }),
+      src,
+      blockedRaw,
+      replacements,
+      blockedCount: blocked.length
+    };
+  }
+
+  projectionViews = { actual: actualView, summer: summerView };
+  activeProjectionView = 'actual';
+
+  const toggle = document.getElementById('ia-projection-toggle');
+  if (toggle) toggle.classList.toggle('d-none', !summerView);
+  bindProjectionToggle();
+  applyProjectionView('actual');
 
   const recEl = document.getElementById('ia-recommendations');
   recEl.innerHTML = '';
@@ -453,6 +583,7 @@ function animCount(id, target) {
     if (current >= target) clearInterval(interval);
   }, 45);
 }
+
 
 
 

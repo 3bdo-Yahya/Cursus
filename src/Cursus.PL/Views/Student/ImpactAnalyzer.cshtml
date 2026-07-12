@@ -212,28 +212,39 @@
         <div style="position:sticky;top:84px;" class="d-flex flex-column gap-4">
 
           <!-- Recovery plan (lean default + collapsed full schedule) -->
-          <div class="surface ia-section-card">
+          <div class="surface ia-section-card" id="ia-recovery-card">
             <div class="ia-section-header-row">
               <div class="d-flex align-items-center gap-2">
                 <span class="material-symbols-outlined" style="font-size:18px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">route</span>
                 <h3 class="fw-800 mb-0" style="font-size:14px;color:var(--c-text);">Recovery Plan</h3>
               </div>
-              <span id="ia-recovery-badge" class="ia-status-badge ia-status-ontrack">
-                <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
-                <span id="ia-recovery-badge-text">Recoverable</span>
-              </span>
+              <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                <div id="ia-projection-toggle" class="ia-projection-toggle d-none" role="group" aria-label="Recovery projection">
+                  <button type="button" class="ia-projection-btn is-active" data-view="actual" aria-pressed="true">Actual plan</button>
+                  <button type="button" class="ia-projection-btn" data-view="summer" aria-pressed="false">If offered in Summer</button>
+                </div>
+                <span id="ia-recovery-badge" class="ia-status-badge ia-status-ontrack">
+                  <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                  <span id="ia-recovery-badge-text">Recoverable</span>
+                </span>
+              </div>
             </div>
             <p id="ia-recovery-hint" class="ia-recovery-hint mt-2 mb-0">
               What to do next: retake, affected courses, and what you can take instead.
             </p>
-            <div id="ia-lean-recovery" class="ia-lean-recovery mt-3"></div>
-            <details id="ia-full-schedule" class="ia-full-schedule mt-3">
-              <summary class="ia-full-schedule-summary">
-                <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 400">calendar_month</span>
-                Full semester plan
-              </summary>
-              <div id="ia-timeline" class="ia-timeline mt-3"></div>
-            </details>
+            <p id="ia-summer-note" class="ia-summer-note mt-2 mb-0 d-none">
+              Assumes the university offers it next Summer and you pass.
+            </p>
+            <div id="ia-recovery-swap" class="ia-recovery-swap">
+              <div id="ia-lean-recovery" class="ia-lean-recovery mt-3"></div>
+              <details id="ia-full-schedule" class="ia-full-schedule mt-3">
+                <summary class="ia-full-schedule-summary">
+                  <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 400">calendar_month</span>
+                  Full semester plan
+                </summary>
+                <div id="ia-timeline" class="ia-timeline mt-3"></div>
+              </details>
+            </div>
           </div>
 
           <!-- Recommendations -->
@@ -263,6 +274,7 @@
 @section Scripts {
     <script src="~/js/pages/student/impact-analyzer.js" asp-append-version="true"></script>
 }
+
 
 
 

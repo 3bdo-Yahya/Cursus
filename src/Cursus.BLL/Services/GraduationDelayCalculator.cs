@@ -58,7 +58,8 @@ public static class GraduationDelayCalculator
         HashSet<int> completedCourseIds,
         Dictionary<int, List<int>> prerequisites,
         int? baselineMaxCreditsOverride = null,
-        int? failureMaxCreditsOverride = null)
+        int? failureMaxCreditsOverride = null,
+        bool forceSummerRetake = false)
     {
         var baselineMaxCredits = baselineMaxCreditsOverride ?? GetMaxCreditsPerSemester(standing, cgpa);
         var failureMaxCredits = failureMaxCreditsOverride ?? baselineMaxCredits;
@@ -86,7 +87,8 @@ public static class GraduationDelayCalculator
             prerequisites,
             currentSemester,
             academicYear,
-            failureMaxCredits);
+            failureMaxCredits,
+            forceSummerRetake: forceSummerRetake);
 
         var graduationDelay = Math.Max(0, failure.TermCount - baseline.TermCount);
         var retakeDelay = FindRetakeDelaySemesters(failure.Schedule, failedCourseId);
@@ -118,7 +120,8 @@ public static class GraduationDelayCalculator
         Dictionary<int, List<int>> prerequisites,
         SemesterType currentSemester,
         string? academicYear,
-        int maxCredits)
+        int maxCredits,
+        bool forceSummerRetake = false)
     {
         var completed = new HashSet<int>(startingCompletedCourses);
         var remaining = allCurriculumCourses
@@ -155,10 +158,14 @@ public static class GraduationDelayCalculator
             var termCap = semester == SemesterType.Summer ? Math.Min(SummerMaxCredits, maxCredits) : maxCredits;
             var failedAvailability = failedCourse?.SemesterAvailability ?? failedCourseAvailability;
 
+            var canRetake = forceSummerRetake
+                ? semester == SemesterType.Summer
+                : IsOfferedIn(semester, failedAvailability);
+
             if (isFailurePath
                 && !retakeCompleted
                 && failedCourse is not null
-                && IsOfferedIn(semester, failedAvailability))
+                && canRetake)
             {
                 if (failedCourse.CreditHours <= termCap)
                 {
@@ -412,6 +419,7 @@ public static class GraduationDelayCalculator
         };
 
 }
+
 
 
 
