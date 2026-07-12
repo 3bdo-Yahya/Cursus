@@ -13,6 +13,7 @@ namespace Cursus.BLL.Services;
 public static class GraduationDelayCalculator
 {
     private const int DefaultMaxCreditsPerSemester = 18;
+    private const int SummerMaxCredits = 9;
     private const int SafetyLimit = 60;
 
     public sealed record ScheduledCourseEntry(
@@ -55,32 +56,39 @@ public static class GraduationDelayCalculator
         SemesterAvailability failedCourseAvailability,
         List<Course> allCurriculumCourses,
         HashSet<int> completedCourseIds,
-        Dictionary<int, List<int>> prerequisites)
+        Dictionary<int, List<int>> prerequisites,
+        int? baselineMaxCreditsOverride = null,
+        int? failureMaxCreditsOverride = null,
+        bool forceSummerRetake = false)
     {
-        var maxCredits = GetMaxCreditsPerSemester(standing, cgpa);
+        var baselineMaxCredits = baselineMaxCreditsOverride ?? GetMaxCreditsPerSemester(standing, cgpa);
+        var failureMaxCredits = failureMaxCreditsOverride ?? baselineMaxCredits;
 
         var baselineCompleted = new HashSet<int>(completedCourseIds) { failedCourseId };
         var baseline = SimulatePath(
             isFailurePath: false,
             failedCourseId: null,
+            failedCourseAvailability,
             baselineCompleted,
             allCurriculumCourses,
             prerequisites,
             currentSemester,
             academicYear,
-            maxCredits);
+            baselineMaxCredits);
 
         var failureCompleted = new HashSet<int>(completedCourseIds);
         failureCompleted.Remove(failedCourseId);
         var failure = SimulatePath(
             isFailurePath: true,
             failedCourseId: failedCourseId,
+            failedCourseAvailability,
             failureCompleted,
             allCurriculumCourses,
             prerequisites,
             currentSemester,
             academicYear,
-            maxCredits);
+            failureMaxCredits,
+            forceSummerRetake: forceSummerRetake);
 
         var graduationDelay = Math.Max(0, failure.TermCount - baseline.TermCount);
         var retakeDelay = FindRetakeDelaySemesters(failure.Schedule, failedCourseId);
@@ -95,7 +103,7 @@ public static class GraduationDelayCalculator
             RetakeDelaySemesters: retakeDelay,
             RecoverySemesters: recoverySemesters,
             SemestersAffected: semestersAffected,
-            MaxCreditsPerSemester: maxCredits,
+            MaxCreditsPerSemester: failureMaxCredits,
             RetakeSemesterLabel: retakeSemesterLabel,
             OriginalGraduationLabel: baseline.GraduationLabel,
             ProjectedGraduationLabel: failure.GraduationLabel,
@@ -106,12 +114,14 @@ public static class GraduationDelayCalculator
     private static SimulationResult SimulatePath(
         bool isFailurePath,
         int? failedCourseId,
+        SemesterAvailability failedCourseAvailability,
         HashSet<int> startingCompletedCourses,
         List<Course> allCurriculumCourses,
         Dictionary<int, List<int>> prerequisites,
         SemesterType currentSemester,
         string? academicYear,
-        int maxCredits)
+        int maxCredits,
+        bool forceSummerRetake = false)
     {
         var completed = new HashSet<int>(startingCompletedCourses);
         var remaining = allCurriculumCourses
@@ -135,6 +145,9 @@ public static class GraduationDelayCalculator
         var retakeCompleted = !isFailurePath || failedCourseId is null || completed.Contains(failedCourseId.Value);
         var unlockedAfterRetake = new HashSet<int>();
         var semesterCount = 0;
+        Course? failedCourse = null;
+        if (isFailurePath && failedCourseId.HasValue)
+            failedCourse = allCurriculumCourses.FirstOrDefault(c => c.Id == failedCourseId.Value);
 
         while (remaining.Count > 0 && semesterCount < SafetyLimit)
         {
@@ -142,21 +155,32 @@ public static class GraduationDelayCalculator
             semesterCount++;
 
             var termCourses = new List<ScheduledCourseEntry>();
+            var termCap = semester == SemesterType.Summer ? Math.Min(SummerMaxCredits, maxCredits) : maxCredits;
+            var failedAvailability = failedCourse?.SemesterAvailability ?? failedCourseAvailability;
 
-            if (isFailurePath && !retakeCompleted && failedCourseId.HasValue && semester == SemesterType.Summer)
+            var canRetake = forceSummerRetake
+                ? semester == SemesterType.Summer
+                : IsOfferedIn(semester, failedAvailability);
+
+            if (isFailurePath
+                && !retakeCompleted
+                && failedCourse is not null
+                && canRetake)
             {
-                var failed = allCurriculumCourses.First(c => c.Id == failedCourseId.Value);
-                termCourses.Add(new ScheduledCourseEntry(
-                    failed.Id,
-                    failed.Code,
-                    failed.Name,
-                    failed.CreditHours,
-                    IsRetake: true,
-                    IsNewlyUnlocked: false));
+                if (failedCourse.CreditHours <= termCap)
+                {
+                    termCourses.Add(new ScheduledCourseEntry(
+                        failedCourse.Id,
+                        failedCourse.Code,
+                        failedCourse.Name,
+                        failedCourse.CreditHours,
+                        IsRetake: true,
+                        IsNewlyUnlocked: false));
 
-                completed.Add(failed.Id);
-                remaining.RemoveAll(c => c.Id == failed.Id);
-                retakeCompleted = true;
+                    completed.Add(failedCourse.Id);
+                    remaining.RemoveAll(c => c.Id == failedCourse.Id);
+                    retakeCompleted = true;
+                }
             }
 
             var eligible = remaining
@@ -175,7 +199,7 @@ public static class GraduationDelayCalculator
 
             foreach (var course in prioritized)
             {
-                if (currentCredits + course.CreditHours > maxCredits)
+                if (currentCredits + course.CreditHours > termCap)
                     continue;
 
                 var isNewlyUnlocked = isFailurePath
@@ -395,5 +419,7 @@ public static class GraduationDelayCalculator
         };
 
 }
+
+
 
 

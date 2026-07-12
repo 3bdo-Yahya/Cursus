@@ -9,4 +9,5 @@ public class AiAdvisorViewModel
     public double Cgpa { get; init; }
     public required string AcademicStanding { get; init; }
     public string StandingCssClass { get; init; } = "good";
+    public string? InitialPrompt { get; init; }
 }

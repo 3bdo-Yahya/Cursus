@@ -77,7 +77,7 @@
           <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">refresh</span>
           New Simulation
         </button>
-        <a href="/Student/AiAdvisor" class="btn btn-primary d-flex align-items-center gap-2 fw-700"
+        <a href="/Student/AiAdvisor" id="ia-ai-advisor-header" data-ai-advisor-link class="btn btn-primary d-flex align-items-center gap-2 fw-700"
            style="border-radius:10px;font-size:13px;">
           <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
           Ask AI Advisor
@@ -211,19 +211,40 @@
       <div class="col-12 col-lg-5">
         <div style="position:sticky;top:84px;" class="d-flex flex-column gap-4">
 
-          <!-- Recovery timeline -->
-          <div class="surface ia-section-card">
+          <!-- Recovery plan (lean default + collapsed full schedule) -->
+          <div class="surface ia-section-card" id="ia-recovery-card">
             <div class="ia-section-header-row">
               <div class="d-flex align-items-center gap-2">
                 <span class="material-symbols-outlined" style="font-size:18px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">route</span>
                 <h3 class="fw-800 mb-0" style="font-size:14px;color:var(--c-text);">Recovery Plan</h3>
               </div>
-              <span class="ia-on-track-badge">
-                <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
-                Recoverable
-              </span>
+              <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                <div id="ia-projection-toggle" class="ia-projection-toggle d-none" role="group" aria-label="Recovery projection">
+                  <button type="button" class="ia-projection-btn is-active" data-view="actual" aria-pressed="true">Actual plan</button>
+                  <button type="button" class="ia-projection-btn" data-view="summer" aria-pressed="false">If offered in Summer</button>
+                </div>
+                <span id="ia-recovery-badge" class="ia-status-badge ia-status-ontrack">
+                  <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+                  <span id="ia-recovery-badge-text">Recoverable</span>
+                </span>
+              </div>
             </div>
-            <div id="ia-timeline" class="ia-timeline mt-3"></div>
+            <p id="ia-recovery-hint" class="ia-recovery-hint mt-2 mb-0">
+              What to do next: retake, affected courses, and what you can take instead.
+            </p>
+            <p id="ia-summer-note" class="ia-summer-note mt-2 mb-0 d-none">
+              Assumes the university offers it next Summer and you pass.
+            </p>
+            <div id="ia-recovery-swap" class="ia-recovery-swap">
+              <div id="ia-lean-recovery" class="ia-lean-recovery mt-3"></div>
+              <details id="ia-full-schedule" class="ia-full-schedule mt-3">
+                <summary class="ia-full-schedule-summary">
+                  <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 400">calendar_month</span>
+                  Full semester plan
+                </summary>
+                <div id="ia-timeline" class="ia-timeline mt-3"></div>
+              </details>
+            </div>
           </div>
 
           <!-- Recommendations -->
@@ -237,7 +258,7 @@
 
           <!-- Action buttons -->
           <div class="d-flex flex-column gap-2">
-            <a href="/Student/AiAdvisor" class="ia-btn-ai-full d-flex align-items-center justify-content-center gap-2 text-decoration-none">
+            <a href="/Student/AiAdvisor" id="ia-ai-advisor-recovery" data-ai-advisor-link class="ia-btn-ai-full d-flex align-items-center justify-content-center gap-2 text-decoration-none">
               <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
               Get AI-Powered Recovery Plan
             </a>
@@ -253,5 +274,8 @@
 @section Scripts {
     <script src="~/js/pages/student/impact-analyzer.js" asp-append-version="true"></script>
 }
+
+
+
 
 

@@ -227,6 +227,66 @@ namespace Cursus.BLL.Services
             return StudentCommandResult.Success(displayName);
         }
 
+        public async Task<StudentCommandResult> CompleteOnboardingAsync(
+            CompleteOnboardingRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+
+            var user = await _userManager.FindByIdAsync(request.StudentId);
+            if (user is null)
+                return StudentCommandResult.Failure("Student not found.");
+
+            if (!await _userManager.IsInRoleAsync(user, Roles.Student))
+            {
+                return StudentCommandResult.Failure(
+                    "Only student accounts can complete onboarding.");
+            }
+
+            if (user.DepartmentId is not null)
+            {
+                return StudentCommandResult.Failure(
+                    "You have already completed onboarding.");
+            }
+
+            var department = await _context.Departments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(
+                    d => d.Id == request.DepartmentId && d.IsActive,
+                    cancellationToken);
+
+            if (department is null)
+            {
+                return StudentCommandResult.Failure(
+                    "Please select a valid active department.",
+                    nameof(CompleteOnboardingRequest.DepartmentId));
+            }
+
+            if (department.UniversityId != request.UniversityId)
+            {
+                return StudentCommandResult.Failure(
+                    "The selected department does not belong to the chosen university.",
+                    nameof(CompleteOnboardingRequest.DepartmentId));
+            }
+
+            var year = DateTime.UtcNow.Year;
+            user.UniversityId = department.UniversityId;
+            user.DepartmentId = department.Id;
+            user.CurrentSemester = request.CurrentSemester;
+            user.EnrollmentDate = request.EnrollmentDate;
+            user.CurrentStanding = AcademicStanding.Good;
+            user.AcademicYear = $"{year}-{year + 1}";
+
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                return StudentCommandResult.Failures(
+                    updateResult.Errors.Select(e => e.Description));
+            }
+
+            return StudentCommandResult.Success(user.DisplayName);
+        }
+
         public async Task<StudentStandingSummary> GetStandingSummaryAsync(
             int? universityId = null,
             CancellationToken cancellationToken = default)
@@ -369,4 +429,5 @@ namespace Cursus.BLL.Services
             grade is "D+" or "D" or "D-" or "F";
     }
 }
+
 

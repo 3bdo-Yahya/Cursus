@@ -32,6 +32,13 @@ namespace Cursus.Domain.Interfaces.Services
             int? universityId = null,
             CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Places a not-yet-assigned student (onboarding-only; rejects when already placed).
+        /// </summary>
+        Task<StudentCommandResult> CompleteOnboardingAsync(
+            CompleteOnboardingRequest request,
+            CancellationToken cancellationToken = default);
+
         /// <summary>Standing breakdown across students in scope (single pass).</summary>
         Task<StudentStandingSummary> GetStandingSummaryAsync(
             int? universityId = null,
@@ -53,3 +60,4 @@ namespace Cursus.Domain.Interfaces.Services
         Task DeleteCourseRecordAsync(int recordId);
     }
 }
+

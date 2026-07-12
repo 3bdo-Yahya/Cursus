@@ -604,10 +604,50 @@ html.dark .cm-damage-headline {
   opacity:       0;
   animation:     slideInRow .3s ease forwards;
 }
-html.dark .cm-blocked-row { 
-  background:rgba(239,68,68,.05); 
-  border-color:rgba(239,68,68,.2); 
-  border-left-color:#ef4444; 
+.cm-blocked-row-direct {
+  border-left-color: #ef4444;
+  background: rgba(239,68,68,.05);
+}
+.cm-blocked-row-chain {
+  border-left-color: #d97706;
+  background: rgba(217,119,6,.05);
+}
+html.dark .cm-blocked-row {
+  background:rgba(239,68,68,.05);
+  border-color:rgba(239,68,68,.2);
+  border-left-color:#ef4444;
+}
+html.dark .cm-blocked-row-direct {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.25);
+}
+html.dark .cm-blocked-row-chain {
+  background: rgba(217,119,6,.1);
+  border-color: rgba(217,119,6,.25);
+  border-left-color: #d97706;
+}
+.cm-dep-tag {
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.cm-dep-direct {
+  background: rgba(239,68,68,.1);
+  color: #dc2626;
+}
+.cm-dep-chain {
+  background: rgba(245,158,11,.12);
+  color: #b45309;
+}
+html.dark .cm-dep-direct {
+  background: rgba(239,68,68,.18);
+  color: #fca5a5;
+}
+html.dark .cm-dep-chain {
+  background: rgba(245,158,11,.18);
+  color: #fcd34d;
 }
 
 
@@ -715,3 +755,4 @@ html.dark .cm-panel.open {
   box-shadow: 0 8px 24px rgba(79,70,229,.4);
   color:      #fff;
 }
+

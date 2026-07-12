@@ -34,5 +34,22 @@ public sealed record ImpactAnalysisResultDto(
     FailureScenarioType? ScenarioType = null,
     string ScenarioSummary = "",
     IReadOnlyList<RecoverySemesterDto>? RecoverySchedule = null,
-    IReadOnlyList<string>? Recommendations = null
+    IReadOnlyList<string>? Recommendations = null,
+    IReadOnlyList<RecoveryCourseDto>? ReplacementCourses = null,
+    WhatIfScenarioDto? WhatIfSummerRetake = null
 );
+
+/// <summary>
+/// Hypothetical recovery if the university offered the failed course
+/// next Summer and the student passed the retake.
+/// </summary>
+public sealed record WhatIfScenarioDto(
+    string RetakeSemesterLabel,
+    string ProjectedGraduationLabel,
+    int GraduationDelaySemesters,
+    int SemestersAffected,
+    int SemestersSaved,
+    IReadOnlyList<RecoverySemesterDto>? RecoverySchedule = null
+);
+
+
