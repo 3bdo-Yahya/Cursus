@@ -880,9 +880,18 @@ public static class StartupSeeder
         var updatedRequirementCount = 0;
         var skippedRequirementCount = 0;
 
+        var catalogDepartmentIds = coursesByDepartmentAndCode.Values
+            .Select(course => course.DepartmentId)
+            .ToHashSet();
+
         foreach (var seed in graduationRequirementSeeds)
         {
-            var targetDepartments = ResolveGraduationRequirementDepartments(seed, university, universityDepartments, departmentsByKey, universityDepartmentIds);
+            var targetDepartments = ResolveGraduationRequirementDepartments(
+                seed,
+                university,
+                universityDepartments,
+                departmentsByKey,
+                catalogDepartmentIds);
 
             if (targetDepartments.Count == 0)
             {
@@ -995,22 +1004,25 @@ public static class StartupSeeder
         University university,
         List<Department> universityDepartments,
         Dictionary<string, Department> departmentsByKey,
-        HashSet<int> universityDepartmentIds)
+        HashSet<int> catalogDepartmentIds)
     {
         if (string.IsNullOrWhiteSpace(seed.Major))
         {
-            // Scope to department catalog only - only include departments that have courses
             return universityDepartments
-                .Where(department => universityDepartmentIds.Contains(department.Id))
+                .Where(department => catalogDepartmentIds.Contains(department.Id))
                 .ToList();
         }
 
         var departmentName = MapMajorToDepartmentName(seed.Major);
         var departmentKey = $"{university.Id}:{departmentName}";
 
-        return departmentsByKey.TryGetValue(departmentKey, out var department)
-            ? [department]
-            : [];
+        if (!departmentsByKey.TryGetValue(departmentKey, out var department)
+            || !catalogDepartmentIds.Contains(department.Id))
+        {
+            return [];
+        }
+
+        return [department];
     }
 
     private static string ResolveSeedDataRoot()
@@ -1497,5 +1509,4 @@ public static class StartupSeeder
         }
     }
 }
-
 

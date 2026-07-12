@@ -133,6 +133,32 @@ public sealed class StartupSeederTests
                 Assert.Equal(idssDepartment.Id, course.DepartmentId);
                 Assert.True(course.IsActive);
             });
+
+            // FR-002d / FR-011: CSSE-only dept electives must not attach to IDSS.
+            var idssRequirementIds = await db.GraduationRequirements
+                .Where(requirement => requirement.DepartmentId == idssDepartment.Id)
+                .Select(requirement => requirement.Id)
+                .ToListAsync();
+
+            var idssLinkedCodes = await db.GraduationRequirementCourses
+                .Where(requirementCourse => idssRequirementIds.Contains(requirementCourse.GraduationRequirementId))
+                .Select(requirementCourse => requirementCourse.Course!.Code)
+                .ToListAsync();
+
+            Assert.DoesNotContain("CSW433", idssLinkedCodes);
+            Assert.DoesNotContain("ISD351", idssLinkedCodes);
+
+            var csw433 = await db.Courses
+                .Include(course => course.Department)
+                .ThenInclude(department => department!.University)
+                .SingleAsync(course =>
+                    course.Code == "CSW433" &&
+                    course.Department!.University!.Name == "Sinai University" &&
+                    course.IsActive);
+
+            Assert.Equal("Computer Science and Software Engineering", csw433.Department!.Name);
+            Assert.Equal(CourseType.DeptElective, csw433.CourseType);
         }
     }
 }
+
