@@ -326,11 +326,14 @@
             <span>Manage Departments</span>
             <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
           </a>
+          @if (User.IsInRole(Roles.SuperAdmin))
+          {
           <a asp-controller="Admin" asp-action="UniversityIndex" class="sp-quick-link">
             <span class="material-symbols-outlined sp-ql-icon" style="color:#d97706;">account_balance</span>
             <span>Manage Universities</span>
             <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
           </a>
+          }
           <a asp-controller="Admin" asp-action="AddStudent" class="sp-quick-link">
             <span class="material-symbols-outlined sp-ql-icon" style="color:#dc2626;">person_add</span>
             <span>Add New Student</span>
@@ -354,4 +357,5 @@ requestAnimationFrame(() => {
   document.querySelectorAll('.ap-bar-fill').forEach(b => b.classList.add('animated'));
 });
 </script>
+
 

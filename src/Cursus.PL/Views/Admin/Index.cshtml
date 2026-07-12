@@ -76,12 +76,19 @@
               </div>
             </div>
             <div class="pt-2" style="border-top:1px solid var(--c-border);">
+              @if (User.IsInRole(Roles.SuperAdmin))
+              {
               <a asp-action="UniversityIndex" class="fw-700 text-decoration-none d-flex align-items-center gap-1"
                  style="font-size:11px;color:var(--c-primary);">
                 Manage
                 <span class="material-symbols-outlined"
                       style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400">arrow_forward</span>
               </a>
+              }
+              else
+              {
+              <span class="fw-600" style="font-size:11px;color:var(--c-muted);">Your institution</span>
+              }
             </div>
           </div>
         </div>
@@ -174,6 +181,8 @@
                           <h2 class="fw-800 mb-3" style="font-size:15px;letter-spacing:-.2px;color:var(--c-text);">Quick Actions</h2>
                           <div class="row g-3">
 
+                            @if (User.IsInRole(Roles.SuperAdmin))
+                            {
                             <div class="col-12 col-sm-6 col-lg-3">
                               <a asp-action="UniversityIndex"
                                  class="surface action-card d-flex align-items-center gap-3 p-3 text-decoration-none h-100">
@@ -190,6 +199,7 @@
                                       style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
                               </a>
                             </div>
+                            }
 
                             <div class="col-12 col-sm-6 col-lg-3">
                               <a asp-action="DepartmentCreate"
@@ -247,3 +257,4 @@
                       </div>
 
                     </div>
+
