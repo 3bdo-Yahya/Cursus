@@ -1,0 +1,73 @@
+@using Cursus.Domain.DTOs
+@using Cursus.Domain.Constants
+@model AdminDashboardDto
+
+@{
+    ViewData["Title"] = "Platform Dashboard";
+    var adminCount = (int)(ViewData["UniversityAdminCount"] ?? 0);
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/admin-dashboard.css" asp-append-version="true" />
+}
+
+<div class="container-xl px-3 px-md-4 py-4">
+  <div class="mb-4 anim-fade-up">
+    <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Platform Console</h1>
+    <p class="mb-0" style="font-size:13px;color:var(--c-muted);">
+      Manage universities and assign each school its own administrator.
+    </p>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="surface metric-card h-100 p-4">
+        <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Universities</p>
+        <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@Model.TotalUniversities</p>
+        <a asp-action="UniversityIndex" class="fw-700 text-decoration-none" style="font-size:11px;color:var(--c-primary);">Manage universities</a>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="surface metric-card h-100 p-4">
+        <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">University Admins</p>
+        <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@adminCount</p>
+        <a asp-action="UniversityAdmins" class="fw-700 text-decoration-none" style="font-size:11px;color:var(--c-primary);">Assign admins</a>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="surface metric-card h-100 p-4">
+        <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Departments</p>
+        <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@Model.TotalDepartments</p>
+        <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Across all universities</p>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="surface metric-card h-100 p-4">
+        <p class="fw-700 mb-2 text-uppercase" style="font-size:10px;letter-spacing:.08em;color:var(--c-muted);">Students</p>
+        <p class="fw-900 lh-1 mb-1" style="font-size:2.2rem;letter-spacing:-1px;color:var(--c-text);">@Model.TotalStudents</p>
+        <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Platform-wide</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-md-6">
+      <a asp-action="UniversityCreate" class="surface action-card d-flex align-items-center gap-3 p-4 text-decoration-none h-100">
+        <span class="material-symbols-outlined" style="font-size:28px;color:var(--c-primary);">account_balance</span>
+        <div>
+          <p class="fw-700 mb-0" style="font-size:14px;color:var(--c-text);">Add University</p>
+          <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Onboard a new institution</p>
+        </div>
+      </a>
+    </div>
+    <div class="col-12 col-md-6">
+      <a asp-action="UniversityAdminCreate" class="surface action-card d-flex align-items-center gap-3 p-4 text-decoration-none h-100">
+        <span class="material-symbols-outlined" style="font-size:28px;color:#dc2626;">person_add</span>
+        <div>
+          <p class="fw-700 mb-0" style="font-size:14px;color:var(--c-text);">Assign University Admin</p>
+          <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Create an Admin linked to one university</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>

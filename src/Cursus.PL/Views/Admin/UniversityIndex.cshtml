@@ -71,7 +71,8 @@
               </td>
               <td class="col-actions text-end">
                 <div class="actions-cell justify-content-end">
-                  <span style="font-size:11px;color:var(--c-muted);">@item.Departments dept@(item.Departments == 1 ? "" : "s")</span>
+                  <a asp-action="UniversityAdminCreate" asp-route-universityId="@item.Id"
+                     class="btn btn-sm btn-outline-primary text-decoration-none">Assign Admin</a>
                 </div>
               </td>
             </tr>
@@ -91,4 +92,5 @@ else
   <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Create the first university to get started.</p>
 </div>
 }
+
 
