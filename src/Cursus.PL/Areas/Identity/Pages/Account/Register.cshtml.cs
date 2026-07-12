@@ -101,7 +101,8 @@ public class RegisterModel : PageModel
             }
 
             await _signInManager.SignInAsync(user, isPersistent: false);
-            return LocalRedirect(returnUrl);
+            var onboardingUrl = Url.Action("Onboarding", "Student");
+            return LocalRedirect(onboardingUrl ?? returnUrl);
         }
 
         foreach (var error in result.Errors)
@@ -122,3 +123,4 @@ public class RegisterModel : PageModel
         return (IUserEmailStore<AppUser>)_userStore;
     }
 }
+

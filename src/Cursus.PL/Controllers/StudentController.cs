@@ -2,6 +2,7 @@ using Cursus.BLL.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
@@ -25,6 +26,9 @@ public class StudentController : Controller
     private readonly IGeminiService _geminiService;
     private readonly IAcademicMetricsService _academicMetricsService;
     private readonly IPlannerService _plannerService;
+    private readonly IStudentManagementService _studentManagementService;
+    private readonly IUniversityService _universityService;
+    private readonly IDepartmentService _departmentService;
 
     public StudentController(
         UserManager<AppUser> userManager,
@@ -34,7 +38,10 @@ public class StudentController : Controller
         IImpactAnalysisService impactAnalysisService,
         IGeminiService geminiService,
         IAcademicMetricsService academicMetricsService,
-        IPlannerService plannerService)
+        IPlannerService plannerService,
+        IStudentManagementService studentManagementService,
+        IUniversityService universityService,
+        IDepartmentService departmentService)
     {
         _userManager = userManager;
         _db = db;
@@ -44,6 +51,85 @@ public class StudentController : Controller
         _geminiService = geminiService;
         _academicMetricsService = academicMetricsService;
         _plannerService = plannerService;
+        _studentManagementService = studentManagementService;
+        _universityService = universityService;
+        _departmentService = departmentService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Onboarding()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToPage("/Identity/Account/Login");
+
+        if (user.DepartmentId is not null)
+            return RedirectToAction(nameof(Dashboard));
+
+        var vm = new StudentOnboardingViewModel();
+        await PopulateOnboardingFormAsync(vm);
+        return View(vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Onboarding(StudentOnboardingViewModel vm)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToPage("/Identity/Account/Login");
+
+        if (user.DepartmentId is not null)
+            return RedirectToAction(nameof(Dashboard));
+
+        if (!ModelState.IsValid)
+        {
+            await PopulateOnboardingFormAsync(vm);
+            return View(vm);
+        }
+
+        var result = await _studentManagementService.CompleteOnboardingAsync(new CompleteOnboardingRequest
+        {
+            StudentId = user.Id,
+            UniversityId = vm.UniversityId,
+            DepartmentId = vm.DepartmentId,
+            CurrentSemester = vm.CurrentSemester,
+            EnrollmentDate = vm.EnrollmentDate
+        });
+
+        if (!result.IsSuccess)
+        {
+            var modelField = result.Field switch
+            {
+                nameof(CompleteOnboardingRequest.DepartmentId) => nameof(vm.DepartmentId),
+                nameof(CompleteOnboardingRequest.UniversityId) => nameof(vm.UniversityId),
+                _ => result.Field ?? string.Empty
+            };
+
+            if (!string.IsNullOrEmpty(modelField))
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(modelField, error);
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error);
+            }
+
+            await PopulateOnboardingFormAsync(vm);
+            return View(vm);
+        }
+
+        TempData["StatusMessage"] = "Your academic profile is set up. Welcome to Cursus!";
+        return RedirectToAction(nameof(Dashboard));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DepartmentsForUniversity(int universityId)
+    {
+        var departments = await _departmentService.GetAllAsync(universityId, isActive: true);
+        return Json(departments.Select(d => new { d.Id, d.Name }));
     }
 
     public async Task<IActionResult> Dashboard()
@@ -52,26 +138,43 @@ public class StudentController : Controller
         if (user is null)
             return RedirectToAction("Login", "Account");
 
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
         var dto = await _dashboardService.GetDashboardDataAsync(user.Id);
         if (dto is null)
             return RedirectToAction("Login", "Account");
 
-        if (dto.DepartmentName == "Not assigned")
-            TempData["Warning"] = "Please contact your admin to assign your department.";
-
-        else if (!dto.HasAcademicRecords)
+        if (!dto.HasAcademicRecords)
             TempData["Warning"] = "No academic records found yet. Your dashboard will populate once your admin enters your course history.";
 
         var model = MapToViewModel(dto);
         return View(model);
     }
 
-    public IActionResult CourseMap() => View();
+    public async Task<IActionResult> CourseMap()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToPage("/Identity/Account/Login");
+
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
+        return View();
+    }
+
     public async Task<IActionResult> Planner()
     {
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
             return RedirectToAction("Login", "Account");
+
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
 
         var student = await _db.Users
             .Include(u => u.Department)
@@ -247,6 +350,10 @@ public class StudentController : Controller
         if (user is null)
             return Unauthorized();
 
+        var onboardError = OnboardingRequiredResult(user);
+        if (onboardError is not null)
+            return onboardError;
+
         var student = await _db.Users
             .Include(u => u.Department)
             .Include(u => u.StudentCourses)
@@ -296,6 +403,10 @@ public class StudentController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
             return Unauthorized();
+
+        var onboardError = OnboardingRequiredResult(user);
+        if (onboardError is not null)
+            return onboardError;
 
         var student = await _db.Users
             .Include(u => u.Department)
@@ -396,6 +507,10 @@ public class StudentController : Controller
         if (user is null)
             return Unauthorized();
 
+        var onboardError = OnboardingRequiredResult(user);
+        if (onboardError is not null)
+            return onboardError;
+
         var removed = await _plannerService.RemovePlannedCourseAsync(
             user.Id,
             request.CourseId,
@@ -443,6 +558,10 @@ public class StudentController : Controller
         if (user is null)
             return RedirectToPage("/Identity/Account/Login");
 
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
         var audit = await _progressService.GetGraduationAuditAsync(user.Id);
         if (audit is null)
         {
@@ -457,6 +576,10 @@ public class StudentController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
             return RedirectToAction("Login", "Account");
+
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
 
         var dto = await _dashboardService.GetDashboardDataAsync(user.Id);
         if (dto is null)
@@ -487,6 +610,10 @@ public class StudentController : Controller
         if (user is null)
             return Unauthorized();
 
+        var onboardError = OnboardingRequiredResult(user);
+        if (onboardError is not null)
+            return onboardError;
+
         var audit = await _progressService.GetGraduationAuditAsync(user.Id);
         if (audit is null)
             return BadRequest(new { error = "Could not load student academic record." });
@@ -506,6 +633,10 @@ public class StudentController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
             return RedirectToAction("Login", "Account");
+
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
 
         var student = await _db.Users
             .Include(u => u.Department)
@@ -645,7 +776,18 @@ public class StudentController : Controller
 
         return View(model);
     }
-    public IActionResult ImpactAnalyzer() => View();
+    public async Task<IActionResult> ImpactAnalyzer()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToPage("/Identity/Account/Login");
+
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
+        return View();
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -655,8 +797,9 @@ public class StudentController : Controller
         if (user is null)
             return Unauthorized();
 
-        if (user.DepartmentId is null)
-            return BadRequest(new { error = "No department assigned to your account." });
+        var onboardError = OnboardingRequiredResult(user);
+        if (onboardError is not null)
+            return onboardError;
 
         var department = await _db.Departments
             .AsNoTracking()
@@ -694,13 +837,15 @@ public class StudentController : Controller
         if (user is null)
             return RedirectToAction("Login", "Account");
 
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
         var dto = await _dashboardService.GetDashboardDataAsync(user.Id);
         if (dto is null)
             return RedirectToAction("Login", "Account");
 
-        if (dto.DepartmentName == "Not assigned")
-            TempData["Warning"] = "Please contact your admin to assign your department.";
-        else if (!dto.HasAcademicRecords)
+        if (!dto.HasAcademicRecords)
             TempData["Warning"] = "No academic records found yet. Your profile will populate once your admin enters your course history.";
 
         ViewData["StudentEmail"] = user.Email ?? "";
@@ -811,7 +956,26 @@ public class StudentController : Controller
             CourseType.UniversityReq => ("University Req.", "type-univ"),
             _ => ("Core", "type-core")
         };
+
+    private IActionResult? RedirectIfNotOnboarded(AppUser user) =>
+        user.DepartmentId is null ? RedirectToAction(nameof(Onboarding)) : null;
+
+    private IActionResult? OnboardingRequiredResult(AppUser user) =>
+        user.DepartmentId is null
+            ? BadRequest(new { error = "Complete onboarding before using this feature." })
+            : null;
+
+    private async Task PopulateOnboardingFormAsync(StudentOnboardingViewModel vm)
+    {
+        var universities = await _universityService.GetAllAsync();
+        vm.UniversityOptions = universities
+            .Select(u => new SelectListItem(u.Name, u.Id.ToString()));
+
+        vm.SemesterOptions = Enum.GetValues<SemesterType>()
+            .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
+    }
 }
+
 
 
 

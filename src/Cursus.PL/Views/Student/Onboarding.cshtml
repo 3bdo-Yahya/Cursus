@@ -1,0 +1,151 @@
+@using Cursus.Domain.Enums
+@model Cursus.PL.Models.StudentOnboardingViewModel
+
+@{
+    ViewData["Title"] = "Complete Your Profile";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/add-student.css" asp-append-version="true"/>
+}
+
+<div class="mb-4 anim-fade-up">
+  <div class="d-flex align-items-center gap-3 mb-3">
+    <div class="step-panel-icon">
+      <span class="material-symbols-outlined" style="font-size:22px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 400">school</span>
+    </div>
+    <div>
+      <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Complete Your Academic Profile</h1>
+      <p class="mb-0" style="font-size:13px;color:var(--c-muted);max-width:560px;">
+        Choose your university and department so Cursus can unlock your dashboard, course map, and planner.
+        Fields marked <span style="color:#dc2626;">*</span> are required.
+      </p>
+    </div>
+  </div>
+</div>
+
+<form asp-action="Onboarding" method="post" novalidate>
+  @Html.AntiForgeryToken()
+
+  <div asp-validation-summary="ModelOnly" class="alert alert-danger anim-fade-up-1" style="border-radius:12px;font-size:13px;"></div>
+
+  <div class="surface p-4 p-md-5 mb-4 anim-fade-up-1">
+    <div class="row g-4">
+
+      <div class="col-12 col-md-6">
+        <div class="form-group-fancy">
+          <label asp-for="UniversityId" class="form-label-fancy">University <span style="color:#dc2626;">*</span></label>
+          <div class="input-wrap" style="position:relative;">
+            <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">account_balance</span></span>
+            <select asp-for="UniversityId" asp-items="Model.UniversityOptions"
+                    id="UniversityId"
+                    class="form-select fancy-input has-prefix" style="border-radius:10px;height:40px;">
+              <option value="">Select university…</option>
+            </select>
+          </div>
+          <span asp-validation-for="UniversityId" class="field-error" style="display:block;"></span>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="form-group-fancy">
+          <label asp-for="DepartmentId" class="form-label-fancy">Department <span style="color:#dc2626;">*</span></label>
+          <div class="input-wrap" style="position:relative;">
+            <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">apartment</span></span>
+            <select asp-for="DepartmentId"
+                    id="DepartmentId"
+                    class="form-select fancy-input has-prefix" style="border-radius:10px;height:40px;" disabled>
+              <option value="">Select university first…</option>
+            </select>
+          </div>
+          <span asp-validation-for="DepartmentId" class="field-error" style="display:block;"></span>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="form-group-fancy">
+          <label asp-for="CurrentSemester" class="form-label-fancy">Current Semester <span style="color:#dc2626;">*</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">today</span></span>
+            <select asp-for="CurrentSemester" asp-items="Model.SemesterOptions"
+                    class="form-select fancy-input has-prefix" style="border-radius:10px;height:40px;">
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="form-group-fancy">
+          <label asp-for="EnrollmentDate" class="form-label-fancy">Enrollment Date</label>
+          <div class="input-wrap">
+            <span class="input-prefix"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">event</span></span>
+            <input asp-for="EnrollmentDate" type="date" class="form-control fancy-input has-prefix" />
+          </div>
+          <p class="field-hint mt-2">Optional — when you started your program</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end anim-fade-up-2">
+    <button type="submit" class="btn-submit" id="onboarding-submit-btn">
+      <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+      Continue to Dashboard
+    </button>
+  </div>
+</form>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial"/>
+  <script>
+    (function () {
+      const universitySelect = document.getElementById('UniversityId');
+      const departmentSelect = document.getElementById('DepartmentId');
+      const selectedDepartmentId = '@Model.DepartmentId';
+
+      async function loadDepartments(universityId) {
+        departmentSelect.innerHTML = '<option value="">Loading departments…</option>';
+        departmentSelect.disabled = true;
+
+        if (!universityId) {
+          departmentSelect.innerHTML = '<option value="">Select university first…</option>';
+          return;
+        }
+
+        try {
+          const response = await fetch(`@Url.Action("DepartmentsForUniversity", "Student")?universityId=${universityId}`);
+          if (!response.ok) throw new Error('Failed to load departments');
+
+          const departments = await response.json();
+          departmentSelect.innerHTML = '<option value="">Select department…</option>';
+
+          departments.forEach(function (dept) {
+            const option = document.createElement('option');
+            option.value = dept.id;
+            option.textContent = dept.name;
+            if (selectedDepartmentId && String(dept.id) === selectedDepartmentId) {
+              option.selected = true;
+            }
+            departmentSelect.appendChild(option);
+          });
+
+          departmentSelect.disabled = departments.length === 0;
+          if (departments.length === 0) {
+            departmentSelect.innerHTML = '<option value="">No active departments found</option>';
+          }
+        } catch {
+          departmentSelect.innerHTML = '<option value="">Unable to load departments</option>';
+        }
+      }
+
+      universitySelect.addEventListener('change', function () {
+        loadDepartments(this.value);
+      });
+
+      if (universitySelect.value) {
+        loadDepartments(universitySelect.value);
+      }
+    })();
+  </script>
+}
