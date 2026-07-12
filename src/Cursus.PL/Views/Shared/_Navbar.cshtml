@@ -4,6 +4,7 @@
 @{
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
     var isAdmin = isAuthenticated && User.IsInRole(Roles.Admin);
+    var isSuperAdmin = isAuthenticated && User.IsInRole(Roles.SuperAdmin);
     var isStudent = isAuthenticated && User.IsInRole(Roles.Student);
 
     var accountEmail = isAuthenticated
@@ -23,7 +24,21 @@
   <div class="container-xl px-3 px-md-4 d-flex align-items-center justify-content-between w-100" style="height:64px;">
 
     <div class="d-flex align-items-center gap-3">
-      @if (isAdmin)
+      @if (isSuperAdmin)
+      {
+        <a asp-controller="Admin" asp-action="Index" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+          <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
+        </a>
+        <div class="d-none d-md-flex align-items-center gap-1">
+          <a asp-controller="Admin" asp-action="Index"
+             class="nav-pill @(currentController=="Admin"&&currentAction=="Index"?"active":"")">Dashboard</a>
+          <a asp-controller="Admin" asp-action="UniversityIndex"
+             class="nav-pill @(currentController=="Admin"&&(currentAction=="UniversityIndex"||currentAction=="UniversityCreate")?"active":"")">Universities</a>
+          <a asp-controller="Admin" asp-action="UniversityAdmins"
+             class="nav-pill @(currentController=="Admin"&&currentAction!=null&&currentAction.StartsWith("UniversityAdmin")?"active":"")">Admins</a>
+        </div>
+      }
+      else if (isAdmin)
       {
         <a asp-controller="Admin" asp-action="Index" class="d-flex align-items-center gap-2 text-decoration-none me-1">
           <span class="fw-900 brand-name" style="font-size:17px;letter-spacing:-.5px;color:#1a1f2e;">Cursus</span>
@@ -94,10 +109,10 @@
         <div class="custom-select-wrap position-relative ms-1 d-none d-md-block">
           <button id="user-btn" class="user-avatar-btn d-flex align-items-center gap-2" onclick="toggleDropdown('user')">
             <div class="d-flex align-items-center justify-content-center rounded-circle fw-700 flex-shrink-0"
-                 style="width:36px;height:36px;background:@(isAdmin?"rgba(239,68,68,0.1)":"var(--c-soft)");border:2px solid @(isAdmin?"rgba(239,68,68,0.2)":"rgba(79,70,229,.2)");color:@(isAdmin?"#dc2626":"var(--c-primary)");font-size:13px;">@initials</div>
+                 style="width:36px;height:36px;background:@(isAdmin||isSuperAdmin?"rgba(239,68,68,0.1)":"var(--c-soft)");border:2px solid @(isAdmin||isSuperAdmin?"rgba(239,68,68,0.2)":"rgba(79,70,229,.2)");color:@(isAdmin||isSuperAdmin?"#dc2626":"var(--c-primary)");font-size:13px;">@initials</div>
             <div class="d-none d-md-block text-start">
               <p class="mb-0 fw-700 lh-1" style="font-size:13.5px;color:var(--c-text);">@displayName</p>
-              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">@(isAdmin?"Administrator":"Student")</p>
+              <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">@(isSuperAdmin?"Super Admin":isAdmin?"Administrator":"Student")</p>
             </div>
             <span class="material-symbols-outlined" id="user-menu-chevron"
                   style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300;transition:transform 0.22s ease;">expand_more</span>
@@ -158,10 +173,10 @@
     <div class="mobile-drawer-header">
       <div class="d-flex align-items-center gap-2">
         <div class="d-flex align-items-center justify-content-center rounded-circle fw-700"
-             style="width:38px;height:38px;background:@(isAdmin?"rgba(239,68,68,0.1)":"var(--c-soft)");border:2px solid @(isAdmin?"rgba(239,68,68,0.2)":"rgba(79,70,229,.2)");color:@(isAdmin?"#dc2626":"var(--c-primary)");font-size:13px;flex-shrink:0;">@initials</div>
+             style="width:38px;height:38px;background:@(isAdmin||isSuperAdmin?"rgba(239,68,68,0.1)":"var(--c-soft)");border:2px solid @(isAdmin||isSuperAdmin?"rgba(239,68,68,0.2)":"rgba(79,70,229,.2)");color:@(isAdmin||isSuperAdmin?"#dc2626":"var(--c-primary)");font-size:13px;flex-shrink:0;">@initials</div>
         <div>
           <p class="mb-0 fw-700 lh-1" style="font-size:14px;color:var(--c-text);">@displayName</p>
-          <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">@(isAdmin?"Administrator":"Student")</p>
+          <p class="mb-0 lh-1" style="font-size:11px;color:var(--c-muted);">@(isSuperAdmin?"Super Admin":isAdmin?"Administrator":"Student")</p>
         </div>
       </div>
       <button id="mobile-drawer-close" class="btn btn-link p-1" aria-label="Close menu" style="color:var(--c-muted);">
@@ -170,7 +185,25 @@
     </div>
 
     <nav class="mobile-drawer-nav">
-      @if (isAdmin)
+      @if (isSuperAdmin)
+      {
+        <a asp-controller="Admin" asp-action="Index"
+           class="mobile-nav-item @(currentController=="Admin"&&currentAction=="Index"?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+        <a asp-controller="Admin" asp-action="UniversityIndex"
+           class="mobile-nav-item @(currentController=="Admin"&&(currentAction=="UniversityIndex"||currentAction=="UniversityCreate")?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">account_balance</span>
+          <span>Universities</span>
+        </a>
+        <a asp-controller="Admin" asp-action="UniversityAdmins"
+           class="mobile-nav-item @(currentController=="Admin"&&currentAction!=null&&currentAction.StartsWith("UniversityAdmin")?"active":"")">
+          <span class="material-symbols-outlined mobile-nav-icon">admin_panel_settings</span>
+          <span>Admins</span>
+        </a>
+      }
+      else if (isAdmin)
       {
         <a asp-controller="Admin" asp-action="Index"
            class="mobile-nav-item @(currentController=="Admin"&&currentAction=="Index"?"active":"")">
@@ -228,3 +261,4 @@
     </div>
   </aside>
 }
+

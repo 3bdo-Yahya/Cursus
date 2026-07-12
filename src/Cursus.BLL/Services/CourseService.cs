@@ -1,5 +1,8 @@
+using Cursus.BLL.Services;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Entities;
+using Cursus.Domain.Interfaces.Repositories;
+using Cursus.Domain.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.BLL.Services.Implementation
@@ -7,14 +10,25 @@ namespace Cursus.BLL.Services.Implementation
     public class CourseService : ICourseService
     {
         private readonly IGenericRepository<Course> _courseRepository;
+        private readonly IGenericRepository<Department> _departmentRepository;
 
-        public CourseService(IGenericRepository<Course> courseRepository)
+        public CourseService(
+            IGenericRepository<Course> courseRepository,
+            IGenericRepository<Department> departmentRepository)
         {
             _courseRepository = courseRepository;
+            _departmentRepository = departmentRepository;
         }
 
-        public async Task AddAsync(CreateCourseDto request)
+        public async Task AddAsync(CreateCourseDto request, int? universityId = null)
         {
+            if (universityId.HasValue &&
+                !await DepartmentBelongsToUniversityAsync(request.DepartmentId, universityId.Value))
+            {
+                throw new InvalidOperationException(
+                    "Department does not belong to the administrator's university.");
+            }
+
             var course = new Course()
             {
                 Code = request.Code,
@@ -30,31 +44,37 @@ namespace Cursus.BLL.Services.Implementation
             await _courseRepository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<CourseDto>> GetAllAsync()
+        public async Task<IEnumerable<CourseDto>> GetAllAsync(int? universityId = null)
         {
-            var courses = await _courseRepository.GetAll()
-            .Select(c => new CourseDto(
-                c.Id,
-                c.Code,
-                c.Name,
-                c.CreditHours,
-                c.CourseType,
-                c.SemesterAvailability,
-                c.PassingGradeThreshold,
-                c.DepartmentId,
-                c.IsActive,
-        c.Prerequisites.Select(p => new CoursePrerequisiteDto(
+            var query = _courseRepository.GetAll();
+            if (universityId.HasValue)
+                query = UniversityScope.ForUniversity(query, universityId.Value);
+
+            return await query
+                .Select(c => new CourseDto(
+                    c.Id,
+                    c.Code,
+                    c.Name,
+                    c.CreditHours,
+                    c.CourseType,
+                    c.SemesterAvailability,
+                    c.PassingGradeThreshold,
+                    c.DepartmentId,
+                    c.IsActive,
+                    c.Prerequisites.Select(p => new CoursePrerequisiteDto(
                         p.PrerequisiteId,
                         p.Prerequisite!.Code,
                         p.Prerequisite!.Name
                     )))).ToListAsync();
-
-            return courses;
         }
 
-        public async Task<CourseDto?> GetByIdAsync(int id)
+        public async Task<CourseDto?> GetByIdAsync(int id, int? universityId = null)
         {
-            return await _courseRepository.GetById(id)
+            var query = _courseRepository.GetById(id);
+            if (universityId.HasValue)
+                query = UniversityScope.ForUniversity(query, universityId.Value);
+
+            return await query
                 .Select(c => new CourseDto(
                     c.Id,
                     c.Code,
@@ -73,11 +93,13 @@ namespace Cursus.BLL.Services.Implementation
                 )).FirstOrDefaultAsync();
         }
 
-        public async Task ToggleActiveAsync(int id)
+        public async Task ToggleActiveAsync(int id, int? universityId = null)
         {
-            var course = await _courseRepository.GetById(id)
-                .FirstOrDefaultAsync();
+            var query = _courseRepository.GetById(id);
+            if (universityId.HasValue)
+                query = UniversityScope.ForUniversity(query, universityId.Value);
 
+            var course = await query.FirstOrDefaultAsync();
             if (course is null)
                 return;
 
@@ -86,8 +108,21 @@ namespace Cursus.BLL.Services.Implementation
             await _courseRepository.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(EditCourseDto request)
+        public async Task UpdateAsync(EditCourseDto request, int? universityId = null)
         {
+            if (universityId.HasValue)
+            {
+                var existing = await GetByIdAsync(request.Id, universityId);
+                if (existing is null)
+                    throw new KeyNotFoundException($"Course {request.Id} was not found in scope.");
+
+                if (!await DepartmentBelongsToUniversityAsync(request.DepartmentId, universityId.Value))
+                {
+                    throw new InvalidOperationException(
+                        "Department does not belong to the administrator's university.");
+                }
+            }
+
             var course = new Course()
             {
                 Id = request.Id,
@@ -103,6 +138,7 @@ namespace Cursus.BLL.Services.Implementation
             _courseRepository.Update(course);
             await _courseRepository.SaveChangesAsync();
         }
+
         public Task<bool> IsCodeDuplicateAsync(int departmentId, string code, int? excludeId = null)
         {
             var normalizedCode = code.ToUpper();
@@ -116,8 +152,17 @@ namespace Cursus.BLL.Services.Implementation
 
             return query.AnyAsync();
         }
-        public Task<bool> ExistsAsync(int id)
-            => _courseRepository.GetAll()
-                .AnyAsync(c => c.Id == id);
+
+        public Task<bool> ExistsAsync(int id, int? universityId = null)
+        {
+            var query = _courseRepository.GetAll().Where(c => c.Id == id);
+            if (universityId.HasValue)
+                query = UniversityScope.ForUniversity(query, universityId.Value);
+            return query.AnyAsync();
+        }
+
+        public Task<bool> DepartmentBelongsToUniversityAsync(int departmentId, int universityId) =>
+            _departmentRepository.GetAll()
+                .AnyAsync(d => d.Id == departmentId && d.UniversityId == universityId);
     }
 }

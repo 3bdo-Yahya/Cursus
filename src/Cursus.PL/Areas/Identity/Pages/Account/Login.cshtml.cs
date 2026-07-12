@@ -91,6 +91,9 @@ public class LoginModel : PageModel
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user is not null)
             {
+                if (await _userManager.IsInRoleAsync(user, Roles.SuperAdmin))
+                    return RedirectToAction("Index", "Admin");
+
                 if (await _userManager.IsInRoleAsync(user, Roles.Admin))
                     return RedirectToAction("Index", "Admin");
 
@@ -122,3 +125,4 @@ public class LoginModel : PageModel
         return string.Equals(destPath, rootPath, StringComparison.OrdinalIgnoreCase);
     }
 }
+

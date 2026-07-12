@@ -22,13 +22,7 @@
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
-                <div class="col-md-4">
-                    <label asp-for="UniversityId" class="form-label">University</label>
-                    <select asp-for="UniversityId" class="form-select" asp-items="ViewBag.UniversityId">
-                        <option value="">Select university...</option>
-                    </select>
-                    <span asp-validation-for="UniversityId" class="text-danger"></span>
-                </div>
+                <input type="hidden" asp-for="UniversityId" />
 
                 <div class="col-md-6">
                     <label asp-for="TotalCreditsRequired" class="form-label"></label>
