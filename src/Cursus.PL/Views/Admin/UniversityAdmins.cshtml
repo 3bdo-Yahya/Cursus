@@ -1,0 +1,88 @@
+@using Cursus.Domain.DTOs
+@using Cursus.PL.Models
+@model PaginatedList<UniversityAdminDto>
+
+@{
+    ViewData["Title"] = "University Admins";
+    var list = Model.Items.ToList();
+    var total = (int)(ViewData["TotalCount"] ?? 0);
+    var selectedUniversityId = ViewData["SelectedUniversityId"] as int?;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/courses.css" asp-append-version="true"/>
+}
+
+<partial name="_AdminAlerts" />
+
+<div class="d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3 mb-4 anim-fade-up">
+  <div>
+    <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">University Admins</h1>
+    <p class="mb-0" style="font-size:13px;color:var(--c-muted);">
+      Each admin manages courses, departments, and students for one university.
+    </p>
+  </div>
+  <a asp-action="UniversityAdminCreate"
+     asp-route-universityId="@selectedUniversityId"
+     class="btn btn-primary d-flex align-items-center gap-2 fw-700 flex-shrink-0 text-decoration-none"
+     style="border-radius:12px;font-size:13px;padding:9px 18px;">
+    <span class="material-symbols-outlined" style="font-size:17px;">person_add</span>
+    Assign Admin
+  </a>
+</div>
+
+<form method="get" asp-action="UniversityAdmins" class="d-flex flex-wrap gap-2 mb-4 align-items-end">
+  <div>
+    <label class="form-label" style="font-size:12px;">Filter by university</label>
+    <select name="universityId" class="form-select" asp-items="ViewBag.FilterUniversityId" onchange="this.form.submit()">
+      <option value="">All universities</option>
+    </select>
+  </div>
+</form>
+
+@if (total > 0)
+{
+<div class="surface overflow-hidden">
+  <div class="table-responsive">
+    <table class="table courses-table mb-0">
+      <thead>
+        <tr>
+          <th>Admin</th>
+          <th>Email</th>
+          <th>University</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var item in list)
+        {
+          <tr>
+            <td class="fw-600" style="font-size:13px;">@item.DisplayName</td>
+            <td style="font-size:13px;color:var(--c-muted);">@item.Email</td>
+            <td style="font-size:13px;">@(string.IsNullOrEmpty(item.UniversityName) ? "—" : item.UniversityName)</td>
+            <td class="text-end">
+              <a asp-action="UniversityAdminEdit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Reassign</a>
+              <form asp-action="UniversityAdminDelete" method="post" class="d-inline"
+                    onsubmit="return confirm('Delete this university admin?');">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@item.Id" />
+                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <partial name="_Pagination" />
+</div>
+}
+else
+{
+<div class="surface text-center py-5 px-3">
+  <span class="material-symbols-outlined d-block mb-3" style="font-size:40px;color:var(--c-muted);">group</span>
+  <p class="fw-700 mb-1" style="font-size:14px;color:var(--c-text);">No university admins yet</p>
+  <p class="mb-3" style="font-size:12px;color:var(--c-muted);">Assign an admin so a school can manage its own catalog.</p>
+  <a asp-action="UniversityAdminCreate" class="btn btn-primary btn-sm">Assign Admin</a>
+</div>
+}

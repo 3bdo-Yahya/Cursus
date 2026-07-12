@@ -1,5 +1,8 @@
+using Cursus.BLL.Services;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Entities;
+using Cursus.Domain.Interfaces.Repositories;
+using Cursus.Domain.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.BLL.Services.Implementation
@@ -7,17 +10,25 @@ namespace Cursus.BLL.Services.Implementation
     public class DepartmentService : IDepartmentService
     {
         private readonly IGenericRepository<Department> _departmentRepository;
+
         public DepartmentService(IGenericRepository<Department> departmentRepository)
         {
             _departmentRepository = departmentRepository;
         }
 
-        public async Task AddAsync(CreateDepartmentDto request)
+        public async Task AddAsync(CreateDepartmentDto request, int? universityId = null)
         {
+            var resolvedUniversityId = universityId ?? request.UniversityId;
+            if (universityId.HasValue && request.UniversityId != universityId.Value && request.UniversityId > 0)
+            {
+                throw new InvalidOperationException(
+                    "Cannot create a department for another university.");
+            }
+
             var department = new Department()
             {
                 Name = request.Name,
-                UniversityId = request.UniversityId,
+                UniversityId = resolvedUniversityId,
                 TotalCreditsRequired = request.TotalCreditsRequired,
                 MinGpaForGraduation = request.MinGpaForGraduation,
                 IsActive = request.IsActive
@@ -25,8 +36,19 @@ namespace Cursus.BLL.Services.Implementation
             await _departmentRepository.AddAsync(department);
             await _departmentRepository.SaveChangesAsync();
         }
-        public async Task UpdateAsync(EditDepartmentDto request)
+
+        public async Task UpdateAsync(EditDepartmentDto request, int? universityId = null)
         {
+            if (universityId.HasValue)
+            {
+                var existing = await GetByIdAsync(request.Id, universityId);
+                if (existing is null)
+                    throw new KeyNotFoundException($"Department {request.Id} was not found in scope.");
+
+                // University admins cannot move departments across universities.
+                request.UniversityId = universityId.Value;
+            }
+
             var department = new Department()
             {
                 Id = request.Id,
@@ -40,9 +62,13 @@ namespace Cursus.BLL.Services.Implementation
             await _departmentRepository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<DepartmentDto>> GetAllAsync(bool? isActive = null)
+        public async Task<IEnumerable<DepartmentDto>> GetAllAsync(
+            int? universityId = null, bool? isActive = null)
         {
             var query = _departmentRepository.GetAll();
+
+            if (universityId.HasValue)
+                query = UniversityScope.ForUniversity(query, universityId.Value);
 
             if (isActive.HasValue)
                 query = query.Where(d => d.IsActive == isActive.Value);
@@ -60,9 +86,13 @@ namespace Cursus.BLL.Services.Implementation
                 )).ToListAsync();
         }
 
-        public async Task<DepartmentDto?> GetByIdAsync(int id)
+        public async Task<DepartmentDto?> GetByIdAsync(int id, int? universityId = null)
         {
-            var department = await _departmentRepository.GetById(id)
+            var query = _departmentRepository.GetById(id);
+            if (universityId.HasValue)
+                query = UniversityScope.ForUniversity(query, universityId.Value);
+
+            return await query
                 .Select(d => new DepartmentDto(
                     d.Id,
                     d.Name,
@@ -72,15 +102,15 @@ namespace Cursus.BLL.Services.Implementation
                     d.MinGpaForGraduation,
                     d.IsActive
                 )).FirstOrDefaultAsync();
-
-            return department;
         }
 
-        public async Task ToggleActiveAsync(int id)
+        public async Task ToggleActiveAsync(int id, int? universityId = null)
         {
-            var department = await _departmentRepository.GetById(id)
-                .FirstOrDefaultAsync();
+            var query = _departmentRepository.GetById(id);
+            if (universityId.HasValue)
+                query = UniversityScope.ForUniversity(query, universityId.Value);
 
+            var department = await query.FirstOrDefaultAsync();
             if (department is null)
                 return;
 
@@ -88,6 +118,7 @@ namespace Cursus.BLL.Services.Implementation
             _departmentRepository.Update(department);
             await _departmentRepository.SaveChangesAsync();
         }
+
         public Task<bool> IsNameDuplicateAsync(int universityId, string name, int? excludeId = null)
         {
             var normalizedName = name.ToUpper();
@@ -101,8 +132,13 @@ namespace Cursus.BLL.Services.Implementation
 
             return query.AnyAsync();
         }
-        public Task<bool> ExistsAsync(int id)
-            => _departmentRepository.GetAll()
-                .AnyAsync(d => d.Id == id);
+
+        public Task<bool> ExistsAsync(int id, int? universityId = null)
+        {
+            var query = _departmentRepository.GetAll().Where(d => d.Id == id);
+            if (universityId.HasValue)
+                query = UniversityScope.ForUniversity(query, universityId.Value);
+            return query.AnyAsync();
+        }
     }
 }

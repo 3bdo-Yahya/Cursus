@@ -1,15 +1,16 @@
 @using Cursus.Domain.DTOs
-@model IEnumerable<CourseDto>
+@using Cursus.PL.Models
+@model PaginatedList<CourseDto>
 
 @{
     ViewData["Title"] = "Course Management";
-    var list = Model.ToList();
+    var list = Model.Items.ToList();
     var includeInactive = (bool?)ViewData["IncludeInactive"] ?? false;
     var searchTerm = ViewData["SearchTerm"] as string;
     var selectedDepartmentId = ViewData["SelectedDepartmentId"]?.ToString();
-    var total = list.Count;
-    var active = list.Count(c => c.IsActive);
-    var inactive = list.Count(c => !c.IsActive);
+    var total   = (int)(ViewData["TotalCount"] ?? 0);
+    var active  = (int)(ViewData["ActiveCount"] ?? list.Count(c => c.IsActive));
+    var inactive= (int)(ViewData["InactiveCount"] ?? list.Count(c => !c.IsActive));
 
     string AvailClass(SemesterAvailability s) => s switch
     {
@@ -184,29 +185,31 @@
                                 }
                             </td>
                             <td class="col-actions text-end">
-                                <a asp-action="CourseEdit" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-outline-primary">Edit</a>
-                                <form asp-action="CourseDeactivate" asp-route-id="@item.Id" asp-route-searchTerm="@searchTerm"
-                                      asp-route-departmentId="@selectedDepartmentId" asp-route-includeInactive="@includeInactive"
-                                      method="post" class="d-inline">
-                                    <button type="submit"
-                                            class="btn btn-sm @(item.IsActive ? "btn-outline-danger" : "btn-outline-success")"
-                                            onclick="return confirm('@(item.IsActive ? "Deactivate" : "Reactivate") this course?');">
-                                        @(item.IsActive ? "Deactivate" : "Reactivate")
-                                    </button>
-                                </form>
+                                <div class="actions-cell text-end d-flex align-items-center justify-content-end gap-1">
+                                    <a asp-action="CourseEdit" asp-route-id="@item.Id"
+                                       class="action-btn action-edit" title="Edit course">
+                                        <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
+                                    </a>
+                                    <form asp-action="CourseDeactivate" asp-route-id="@item.Id"
+                                          asp-route-searchTerm="@searchTerm" asp-route-departmentId="@selectedDepartmentId"
+                                          asp-route-includeInactive="@includeInactive"
+                                          method="post" class="d-inline"
+                                          onsubmit="return confirm(this.getAttribute('data-confirm'));"
+                                          data-confirm="@(item.IsActive ? "Deactivate" : "Reactivate") this course?">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="action-btn" title="@(item.IsActive ? "Deactivate" : "Reactivate")"
+                                                style="color:@(item.IsActive ? "#f59e0b" : "#10b981");border:none;background:transparent;cursor:pointer;padding:6px 8px;border-radius:8px;">
+                                            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">@(item.IsActive ? "block" : "check_circle")</span>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
-        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 px-4 py-3"
-             style="border-top:1px solid var(--c-border);">
-            <p class="mb-0" style="font-size:12px;color:var(--c-muted);">
-                Showing <span class="fw-700" style="color:var(--c-primary);">@total</span> course@(total == 1 ? "" : "s")
-            </p>
-        </div>
+        <partial name="_Pagination" />
     </div>
 }
 else

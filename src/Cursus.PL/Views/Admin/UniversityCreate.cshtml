@@ -2,32 +2,83 @@
 @model CreateUniversityDto
 
 @{
-    ViewData["Title"] = "Create University";
+    ViewData["Title"] = "Add University";
 }
 
-<h1 class="h3 mb-3">Create University</h1>
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/courses.css" asp-append-version="true"/>
+}
+
+<!-- Breadcrumb + Header -->
+<div class="mb-4 anim-fade-up">
+  <nav aria-label="breadcrumb" class="mb-2">
+    <ol class="breadcrumb mb-0" style="font-size:12px;">
+      <li class="breadcrumb-item"><a asp-action="UniversityIndex" style="color:var(--c-muted);text-decoration:none;">Universities</a></li>
+      <li class="breadcrumb-item active" style="color:var(--c-primary);font-weight:600;">Add University</li>
+    </ol>
+  </nav>
+  <div class="d-flex align-items-center justify-content-between gap-3">
+    <div>
+      <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Add University</h1>
+      <p class="mb-0" style="font-size:13px;color:var(--c-muted);">Create a new university record. Fields marked <span style="color:#dc2626;">*</span> are required.</p>
+    </div>
+    <a asp-action="UniversityIndex" class="btn d-flex align-items-center gap-2 fw-600 flex-shrink-0 text-decoration-none"
+       style="border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);border-radius:12px;font-size:13px;padding:8px 16px;">
+      <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 0,'wght' 300">arrow_back</span>
+      Back
+    </a>
+  </div>
+</div>
 
 <partial name="_AdminAlerts" />
 
-<div class="row">
-    <div class="col-lg-8">
-        <form asp-action="UniversityCreate" method="post" class="card shadow-sm">
-            <div class="card-body row g-3">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="UniversityCreate" method="post">
+  @Html.AntiForgeryToken()
 
-                <div class="col-12">
-                    <label asp-for="Name" class="form-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="card-footer d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a asp-action="UniversityIndex" class="btn btn-outline-secondary">Cancel</a>
-            </div>
-        </form>
+  <!-- University Details Card -->
+  <div class="surface p-4 p-md-5 mb-4 anim-fade-up-1">
+    <div class="step-panel-header mb-4">
+      <div class="step-panel-icon">
+        <span class="material-symbols-outlined" style="font-size:20px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 400">account_balance</span>
+      </div>
+      <div>
+        <h2 class="fw-800 mb-0" style="font-size:1.05rem;color:var(--c-text);">University Details</h2>
+        <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Basic information about the university</p>
+      </div>
     </div>
-</div>
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" style="border-radius:12px;font-size:13px;"></div>
+
+    <div class="row g-4">
+      <div class="col-12 col-md-8">
+        <div class="form-group-fancy">
+          <label asp-for="Name" class="form-label-fancy">University Name <span style="color:#dc2626;">*</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">
+              <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">account_balance</span>
+            </span>
+            <input asp-for="Name" class="form-control fancy-input has-prefix" placeholder="e.g. South Valley University" />
+          </div>
+          <span asp-validation-for="Name" class="field-error" style="display:block;"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="d-flex align-items-center justify-content-between gap-3 anim-fade-up-2">
+    <a asp-action="UniversityIndex" class="btn d-flex align-items-center gap-2 fw-600 text-decoration-none"
+       style="border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);border-radius:12px;font-size:13px;padding:9px 18px;">
+      <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
+      Cancel
+    </a>
+    <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 fw-700"
+            style="border-radius:12px;font-size:13px;padding:9px 20px;box-shadow:0 4px 14px rgba(79,70,229,.28);">
+      <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">add_circle</span>
+      Create University
+    </button>
+  </div>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -75,6 +75,8 @@ namespace Cursus.PL
             services.AddScoped<IUniversityService, UniversityService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+            services.AddScoped<IAdminScopeService, AdminScopeService>();
+            services.AddScoped<IUniversityAdminService, UniversityAdminService>();
             services.AddScoped<IStudentManagementService, StudentManagementService>();
             services.AddScoped<ICourseMapService, CourseMapService>();
             services.AddScoped<IProgressService, ProgressService>();
@@ -91,4 +93,5 @@ namespace Cursus.PL
         }
     }
 }
+
 

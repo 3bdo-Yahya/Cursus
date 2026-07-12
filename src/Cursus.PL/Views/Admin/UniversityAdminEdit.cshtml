@@ -1,0 +1,42 @@
+@model Cursus.PL.Models.EditUniversityAdminViewModel
+
+@{
+    ViewData["Title"] = "Reassign University Admin";
+}
+
+<partial name="_AdminAlerts" />
+
+<div class="mb-4">
+  <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Reassign University</h1>
+  <p class="mb-0" style="font-size:13px;color:var(--c-muted);">
+    @Model.DisplayName (@Model.Email)
+  </p>
+</div>
+
+<div class="row">
+  <div class="col-lg-6">
+    <form asp-action="UniversityAdminEdit" method="post" class="surface p-4">
+      <input type="hidden" asp-for="Id" />
+      <input type="hidden" asp-for="Email" />
+      <input type="hidden" asp-for="DisplayName" />
+      <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+      <div class="mb-4">
+        <label asp-for="UniversityId" class="form-label"></label>
+        <select asp-for="UniversityId" class="form-select" asp-items="Model.UniversityOptions">
+          <option value="">Select university...</option>
+        </select>
+        <span asp-validation-for="UniversityId" class="text-danger"></span>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="UniversityAdmins" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
