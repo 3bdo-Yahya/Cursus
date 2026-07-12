@@ -12,6 +12,11 @@ namespace Cursus.PL.Seeding;
 public static class StartupSeeder
 {
     private const string DemoStudentPassword = "Demo123!";
+    private static readonly Dictionary<string, string[]> UniversityNameAliasesBySlug = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["south-valley-university"] = ["South Valley National University"],
+        ["american-university-in-cairo"] = ["AUC", "The American University in Cairo"]
+    };
 
     public static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider)
     {
@@ -50,9 +55,10 @@ public static class StartupSeeder
                 var slug = Path.GetFileName(folder);
                 var universityName = GetUniversityNameFromSlug(slug);
 
-                if (!universitiesByName.ContainsKey(universityName))
+                if (!universitiesByName.TryGetValue(universityName, out var university)
+                    && !TryRenameLegacyUniversity(universitiesByName, slug, universityName, out university))
                 {
-                    var university = new University { Name = universityName };
+                    university = new University { Name = universityName };
                     context.Universities.Add(university);
                     universitiesByName[universityName] = university;
                     Console.WriteLine($"[Seeding] Added university: {universityName}");
@@ -97,12 +103,6 @@ public static class StartupSeeder
                 {
                     var departmentName = MapMajorToDepartmentName(major);
                     var departmentKey = $"{university.Id}:{departmentName}";
-
-                    if (departmentsByKey.ContainsKey(departmentKey))
-                    {
-                        continue;
-                    }
-
                     var (requiredCredits, minimumGpa) = graduationRules.GetDepartmentDefaults(major);
                     
                     // Validate GPA is in valid range
@@ -110,6 +110,36 @@ public static class StartupSeeder
                     {
                         Console.WriteLine($"[Seeding] WARNING: Department '{departmentName}' has invalid GPA {minimumGpa}, using 2.0");
                         minimumGpa = 2.00m;
+                    }
+
+                    if (departmentsByKey.TryGetValue(departmentKey, out var existingDepartment))
+                    {
+                        var departmentChanged = false;
+
+                        if (existingDepartment.TotalCreditsRequired != requiredCredits)
+                        {
+                            existingDepartment.TotalCreditsRequired = requiredCredits;
+                            departmentChanged = true;
+                        }
+
+                        if (existingDepartment.MinGpaForGraduation != minimumGpa)
+                        {
+                            existingDepartment.MinGpaForGraduation = minimumGpa;
+                            departmentChanged = true;
+                        }
+
+                        if (!existingDepartment.IsActive)
+                        {
+                            existingDepartment.IsActive = true;
+                            departmentChanged = true;
+                        }
+
+                        if (departmentChanged)
+                        {
+                            Console.WriteLine($"[Seeding] Updated department: {departmentName} (Credits: {requiredCredits}, Min GPA: {minimumGpa})");
+                        }
+
+                        continue;
                     }
 
                     var department = new Department
@@ -140,10 +170,10 @@ public static class StartupSeeder
                 var existingCoursesByKey = existingCourses.ToDictionary(
                     course => $"{course.DepartmentId}:{course.Code}",
                     StringComparer.OrdinalIgnoreCase);
-                var existingCourseKeySet = existingCoursesByKey.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
+                var desiredCourseKeySet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var coursesToAdd = new List<Course>();
-                var coursesToUpdate = new List<Course>();
-                int duplicateCourseCount = 0;
+                var updatedCourseCount = 0;
+                var duplicateSeedCourseCount = 0;
 
                 foreach (var curriculumCourse in curriculumCourses)
                 {
@@ -154,17 +184,10 @@ public static class StartupSeeder
                         var key = $"{department.Id}:{curriculumCourse.Code}";
                         var recommendedSemester = GetRecommendedSemester(curriculumCourse.Code, rule);
 
-                        if (existingCourseKeySet.Contains(key))
+                        if (!desiredCourseKeySet.Add(key))
                         {
-                            if (existingCoursesByKey.TryGetValue(key, out var existingCourse)
-                                && existingCourse.RecommendedSemester != recommendedSemester)
-                            {
-                                existingCourse.RecommendedSemester = recommendedSemester;
-                                coursesToUpdate.Add(existingCourse);
-                            }
-
-                            duplicateCourseCount++;
-                            Console.WriteLine($"[Seeding] WARNING: Duplicate course {curriculumCourse.Code} in {departmentName}, skipping");
+                            duplicateSeedCourseCount++;
+                            Console.WriteLine($"[Seeding] WARNING: Duplicate seed course {curriculumCourse.Code} in {departmentName}, skipping");
                             continue;
                         }
 
@@ -176,26 +199,57 @@ public static class StartupSeeder
                             validCreditHours = Math.Max(1, Math.Min(6, validCreditHours));
                         }
 
+                        var courseType = ParseCourseType(rule.CourseType);
+                        var semesterAvailability = ParseSemesterAvailability(curriculumCourse.SemesterAvailability);
+
+                        if (existingCoursesByKey.TryGetValue(key, out var existingCourse))
+                        {
+                            if (SyncSeededCourse(
+                                    existingCourse,
+                                    curriculumCourse,
+                                    validCreditHours,
+                                    courseType,
+                                    semesterAvailability,
+                                    recommendedSemester))
+                            {
+                                updatedCourseCount++;
+                            }
+
+                            continue;
+                        }
+
                         coursesToAdd.Add(new Course
                         {
                             Code = curriculumCourse.Code,
                             Name = curriculumCourse.Name,
                             CreditHours = validCreditHours,
-                            CourseType = ParseCourseType(rule.CourseType),
-                            SemesterAvailability = ParseSemesterAvailability(curriculumCourse.SemesterAvailability),
+                            CourseType = courseType,
+                            SemesterAvailability = semesterAvailability,
                             PassingGradeThreshold = NormalizePassingGrade(curriculumCourse.PassingGradeThreshold),
                             DepartmentId = department.Id,
                             IsActive = true,
                             RecommendedSemester = recommendedSemester
                         });
 
-                        existingCourseKeySet.Add(key);
                     }
                 }
 
-                if (duplicateCourseCount > 0)
+                var deactivatedCourseCount = 0;
+                foreach (var existingCourse in existingCourses)
                 {
-                    Console.WriteLine($"[Seeding] Skipped {duplicateCourseCount} duplicate course entries");
+                    var key = $"{existingCourse.DepartmentId}:{existingCourse.Code}";
+                    if (desiredCourseKeySet.Contains(key) || !existingCourse.IsActive)
+                    {
+                        continue;
+                    }
+
+                    existingCourse.IsActive = false;
+                    deactivatedCourseCount++;
+                }
+
+                if (duplicateSeedCourseCount > 0)
+                {
+                    Console.WriteLine($"[Seeding] Skipped {duplicateSeedCourseCount} duplicate seed course entries");
                 }
 
                 if (coursesToAdd.Count > 0)
@@ -205,14 +259,14 @@ public static class StartupSeeder
                     Console.WriteLine($"[Seeding] Added {coursesToAdd.Count} courses");
                 }
 
-                if (coursesToUpdate.Count > 0)
+                if (updatedCourseCount > 0 || deactivatedCourseCount > 0)
                 {
                     await context.SaveChangesAsync();
-                    Console.WriteLine($"[Seeding] Updated recommended semesters for {coursesToUpdate.Count} existing courses");
+                    Console.WriteLine($"[Seeding] Updated {updatedCourseCount} courses, deactivated {deactivatedCourseCount} stale courses");
                 }
 
                 var coursesByDepartmentAndCode = await context.Courses
-                    .Where(course => universityDepartmentIds.Contains(course.DepartmentId))
+                    .Where(course => universityDepartmentIds.Contains(course.DepartmentId) && course.IsActive)
                     .ToDictionaryAsync(
                         course => $"{course.DepartmentId}:{course.Code}",
                         StringComparer.OrdinalIgnoreCase);
@@ -236,11 +290,19 @@ public static class StartupSeeder
                 var prerequisites = LoadPrerequisites(prerequisitePath);
                 Console.WriteLine($"[Seeding] Loaded {prerequisites.Count} prerequisite relationships");
 
-                var existingPrerequisiteKeys = await context.CoursePrerequisites
-                    .Select(prerequisite => $"{prerequisite.CourseId}:{prerequisite.PrerequisiteId}")
+                var universityCourseIds = await context.Courses
+                    .Where(course => universityDepartmentIds.Contains(course.DepartmentId))
+                    .Select(course => course.Id)
+                    .ToHashSetAsync();
+
+                var existingPrerequisites = await context.CoursePrerequisites
+                    .Where(prerequisite => universityCourseIds.Contains(prerequisite.CourseId))
                     .ToListAsync();
 
-                var existingPrerequisiteSet = existingPrerequisiteKeys.ToHashSet(StringComparer.Ordinal);
+                var existingPrerequisiteSet = existingPrerequisites
+                    .Select(prerequisite => $"{prerequisite.CourseId}:{prerequisite.PrerequisiteId}")
+                    .ToHashSet(StringComparer.Ordinal);
+                var desiredPrerequisiteSet = new HashSet<string>(StringComparer.Ordinal);
                 var prerequisitesToAdd = new List<CoursePrerequisite>();
                 int prereqSkippedCount = 0;
 
@@ -262,7 +324,7 @@ public static class StartupSeeder
                         }
 
                         var key = $"{course.Id}:{prerequisiteCourse.Id}";
-                        if (existingPrerequisiteSet.Contains(key))
+                        if (!desiredPrerequisiteSet.Add(key) || existingPrerequisiteSet.Contains(key))
                         {
                             continue;
                         }
@@ -273,10 +335,14 @@ public static class StartupSeeder
                             PrerequisiteId = prerequisiteCourse.Id
                         });
 
-                        existingPrerequisiteSet.Add(key);
                         Console.WriteLine($"[Seeding] Added prerequisite: {prerequisite.CourseCode} requires {prerequisite.PrerequisiteCourseCode} in {department.Name}");
                     }
                 }
+
+                var prerequisitesToRemove = existingPrerequisites
+                    .Where(prerequisite => !desiredPrerequisiteSet.Contains(
+                        $"{prerequisite.CourseId}:{prerequisite.PrerequisiteId}"))
+                    .ToList();
 
                 if (prereqSkippedCount > 0)
                 {
@@ -286,8 +352,17 @@ public static class StartupSeeder
                 if (prerequisitesToAdd.Count > 0)
                 {
                     context.CoursePrerequisites.AddRange(prerequisitesToAdd);
+                }
+
+                if (prerequisitesToRemove.Count > 0)
+                {
+                    context.CoursePrerequisites.RemoveRange(prerequisitesToRemove);
+                }
+
+                if (prerequisitesToAdd.Count > 0 || prerequisitesToRemove.Count > 0)
+                {
                     await context.SaveChangesAsync();
-                    Console.WriteLine($"[Seeding] Added {prerequisitesToAdd.Count} prerequisites");
+                    Console.WriteLine($"[Seeding] Added {prerequisitesToAdd.Count} prerequisites, removed {prerequisitesToRemove.Count} stale prerequisites");
                 }
 
                 await transaction.CommitAsync();
@@ -639,14 +714,14 @@ public static class StartupSeeder
 
     private static IReadOnlyList<DemoStudentProfile> GetDemoStudentProfiles() =>
     [
-        new("freshman.cs@cursus.demo", "South Valley National University", "Computer Science", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 5, 5, 0, 3.40m, 3.48m),
-        new("sophomore.it@cursus.demo", "South Valley National University", "Information Technology", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 16, 5, 1, 2.86m, 2.94m),
-        new("junior.ai@cursus.demo", "South Valley National University", "Artificial Intelligence", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 28, 5, 1, 3.16m, 3.24m),
-        new("senior.is@cursus.demo", "South Valley National University", "Information Systems", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 42, 4, 0, 3.55m, 3.62m),
-        new("probation.cs@cursus.demo", "South Valley National University", "Computer Science", "2025-2026", SemesterType.Spring, AcademicStanding.Probation, 18, 4, 2, 1.88m, 1.94m),
+        new("freshman.cs@cursus.demo", "South Valley University", "Computer Science", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 5, 5, 0, 3.40m, 3.48m),
+        new("sophomore.it@cursus.demo", "South Valley University", "Information Technology", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 16, 5, 1, 2.86m, 2.94m),
+        new("junior.ai@cursus.demo", "South Valley University", "Artificial Intelligence", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 28, 5, 1, 3.16m, 3.24m),
+        new("senior.is@cursus.demo", "South Valley University", "Information Systems", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 42, 4, 0, 3.55m, 3.62m),
+        new("probation.cs@cursus.demo", "South Valley University", "Computer Science", "2025-2026", SemesterType.Spring, AcademicStanding.Probation, 18, 4, 2, 1.88m, 1.94m),
         new("junior.csse@cursus.demo", "Sinai University", "Computer Science and Software Engineering", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 30, 5, 1, 3.08m, 3.18m),
         new("freshman.idss@cursus.demo", "Sinai University", "Information and Decision Support Systems", "2025-2026", SemesterType.Spring, AcademicStanding.Warning, 6, 5, 1, 2.05m, 2.12m),
-        new("senior.auc@cursus.demo", "AUC", "Computer Science", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 38, 4, 0, 3.68m, 3.74m)
+        new("senior.auc@cursus.demo", "American University in Cairo", "Computer Science", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 38, 4, 0, 3.68m, 3.74m)
     ];
 
     private static IReadOnlyList<AcademicTerm> GetDemoHistoryTerms() =>
@@ -705,6 +780,68 @@ public static class StartupSeeder
     private static string GetStandingHistoryKey(StandingHistory history) =>
         $"{history.AcademicYear}:{history.Semester}";
 
+    private static bool SyncSeededCourse(
+        Course course,
+        CurriculumCourseSeed curriculumCourse,
+        int validCreditHours,
+        CourseType courseType,
+        SemesterAvailability semesterAvailability,
+        int? recommendedSemester)
+    {
+        var changed = false;
+        var passingGradeThreshold = NormalizePassingGrade(curriculumCourse.PassingGradeThreshold);
+
+        if (!string.Equals(course.Code, curriculumCourse.Code, StringComparison.Ordinal))
+        {
+            course.Code = curriculumCourse.Code;
+            changed = true;
+        }
+
+        if (!string.Equals(course.Name, curriculumCourse.Name, StringComparison.Ordinal))
+        {
+            course.Name = curriculumCourse.Name;
+            changed = true;
+        }
+
+        if (course.CreditHours != validCreditHours)
+        {
+            course.CreditHours = validCreditHours;
+            changed = true;
+        }
+
+        if (course.CourseType != courseType)
+        {
+            course.CourseType = courseType;
+            changed = true;
+        }
+
+        if (course.SemesterAvailability != semesterAvailability)
+        {
+            course.SemesterAvailability = semesterAvailability;
+            changed = true;
+        }
+
+        if (!string.Equals(course.PassingGradeThreshold, passingGradeThreshold, StringComparison.Ordinal))
+        {
+            course.PassingGradeThreshold = passingGradeThreshold;
+            changed = true;
+        }
+
+        if (course.RecommendedSemester != recommendedSemester)
+        {
+            course.RecommendedSemester = recommendedSemester;
+            changed = true;
+        }
+
+        if (!course.IsActive)
+        {
+            course.IsActive = true;
+            changed = true;
+        }
+
+        return changed;
+    }
+
     private static async Task SeedGraduationRequirementsAsync(
         ApplicationDbContext context,
         string universityFolder,
@@ -743,9 +880,18 @@ public static class StartupSeeder
         var updatedRequirementCount = 0;
         var skippedRequirementCount = 0;
 
+        var catalogDepartmentIds = coursesByDepartmentAndCode.Values
+            .Select(course => course.DepartmentId)
+            .ToHashSet();
+
         foreach (var seed in graduationRequirementSeeds)
         {
-            var targetDepartments = ResolveGraduationRequirementDepartments(seed, university, universityDepartments, departmentsByKey);
+            var targetDepartments = ResolveGraduationRequirementDepartments(
+                seed,
+                university,
+                universityDepartments,
+                departmentsByKey,
+                catalogDepartmentIds);
 
             if (targetDepartments.Count == 0)
             {
@@ -794,12 +940,14 @@ public static class StartupSeeder
             return;
         }
 
-        var existingRequirementCourseKeys = await context.GraduationRequirementCourses
+        var existingRequirementCourses = await context.GraduationRequirementCourses
             .Where(requirementCourse => touchedRequirementIds.Contains(requirementCourse.GraduationRequirementId))
-            .Select(requirementCourse => $"{requirementCourse.GraduationRequirementId}:{requirementCourse.CourseId}")
             .ToListAsync();
 
-        var existingRequirementCourseSet = existingRequirementCourseKeys.ToHashSet(StringComparer.Ordinal);
+        var existingRequirementCourseSet = existingRequirementCourses
+            .Select(requirementCourse => $"{requirementCourse.GraduationRequirementId}:{requirementCourse.CourseId}")
+            .ToHashSet(StringComparer.Ordinal);
+        var desiredRequirementCourseSet = new HashSet<string>(StringComparer.Ordinal);
         var requirementCoursesToAdd = new List<GraduationRequirementCourse>();
         var missingEligibleCourseCount = 0;
 
@@ -814,7 +962,7 @@ public static class StartupSeeder
                 }
 
                 var key = $"{requirement.Id}:{course.Id}";
-                if (existingRequirementCourseSet.Contains(key))
+                if (!desiredRequirementCourseSet.Add(key) || existingRequirementCourseSet.Contains(key))
                 {
                     continue;
                 }
@@ -824,37 +972,57 @@ public static class StartupSeeder
                     GraduationRequirementId = requirement.Id,
                     CourseId = course.Id
                 });
-                existingRequirementCourseSet.Add(key);
             }
         }
+
+        var requirementCoursesToRemove = existingRequirementCourses
+            .Where(requirementCourse => !desiredRequirementCourseSet.Contains(
+                $"{requirementCourse.GraduationRequirementId}:{requirementCourse.CourseId}"))
+            .ToList();
 
         if (requirementCoursesToAdd.Count > 0)
         {
             context.GraduationRequirementCourses.AddRange(requirementCoursesToAdd);
+        }
+
+        if (requirementCoursesToRemove.Count > 0)
+        {
+            context.GraduationRequirementCourses.RemoveRange(requirementCoursesToRemove);
+        }
+
+        if (requirementCoursesToAdd.Count > 0 || requirementCoursesToRemove.Count > 0)
+        {
             await context.SaveChangesAsync();
         }
 
         Console.WriteLine(
-            $"[Seeding] Graduation requirements added: {addedRequirementCount}, updated: {updatedRequirementCount}, skipped: {skippedRequirementCount}, course links added: {requirementCoursesToAdd.Count}, missing eligible courses: {missingEligibleCourseCount}");
+            $"[Seeding] Graduation requirements added: {addedRequirementCount}, updated: {updatedRequirementCount}, skipped: {skippedRequirementCount}, course links added: {requirementCoursesToAdd.Count}, course links removed: {requirementCoursesToRemove.Count}, missing eligible courses: {missingEligibleCourseCount}");
     }
 
     private static List<Department> ResolveGraduationRequirementDepartments(
         GraduationRequirementSeed seed,
         University university,
         List<Department> universityDepartments,
-        Dictionary<string, Department> departmentsByKey)
+        Dictionary<string, Department> departmentsByKey,
+        HashSet<int> catalogDepartmentIds)
     {
         if (string.IsNullOrWhiteSpace(seed.Major))
         {
-            return universityDepartments;
+            return universityDepartments
+                .Where(department => catalogDepartmentIds.Contains(department.Id))
+                .ToList();
         }
 
         var departmentName = MapMajorToDepartmentName(seed.Major);
         var departmentKey = $"{university.Id}:{departmentName}";
 
-        return departmentsByKey.TryGetValue(departmentKey, out var department)
-            ? [department]
-            : [];
+        if (!departmentsByKey.TryGetValue(departmentKey, out var department)
+            || !catalogDepartmentIds.Contains(department.Id))
+        {
+            return [];
+        }
+
+        return [department];
     }
 
     private static string ResolveSeedDataRoot()
@@ -893,12 +1061,43 @@ public static class StartupSeeder
             $"SeedData folder not found. Probed {candidates.Count} locations from current directory '{Directory.GetCurrentDirectory()}' and base directory '{AppContext.BaseDirectory}'.");
     }
 
+    private static bool TryRenameLegacyUniversity(
+        Dictionary<string, University> universitiesByName,
+        string slug,
+        string canonicalName,
+        out University university)
+    {
+        university = null!;
+
+        if (!UniversityNameAliasesBySlug.TryGetValue(slug, out var aliases))
+        {
+            return false;
+        }
+
+        foreach (var alias in aliases)
+        {
+            if (!universitiesByName.TryGetValue(alias, out var legacyUniversity))
+            {
+                continue;
+            }
+
+            university = legacyUniversity;
+            university.Name = canonicalName;
+            universitiesByName.Remove(alias);
+            universitiesByName[canonicalName] = university;
+            Console.WriteLine($"[Seeding] Renamed university '{alias}' to '{canonicalName}'");
+            return true;
+        }
+
+        return false;
+    }
+
     private static string GetUniversityNameFromSlug(string slug)
     {
         return slug switch
         {
-            "south-valley-university" => "South Valley National University",
-            "american-university-in-cairo" => "AUC",
+            "south-valley-university" => "South Valley University",
+            "american-university-in-cairo" => "American University in Cairo",
             "sinai-university" => "Sinai University",
             _ => string.Join(" ", slug.Split('-', StringSplitOptions.RemoveEmptyEntries)
                 .Select(part => char.ToUpperInvariant(part[0]) + part[1..]))
@@ -1309,81 +1508,5 @@ public static class StartupSeeder
             return (DefaultCredits, DefaultGpa);
         }
     }
-
-    [Obsolete("Use SeedDemoStudentsAsync — this method seeds ordinal AcademicYear values that break term labels.")]
-    public static Task SeedSampleStudentsAsync(IServiceProvider serviceProvider) =>
-        Task.CompletedTask;
-
-#if false
-    // Legacy body retained for reference — not invoked.
-    private static async Task SeedSampleStudentsAsync_Legacy(IServiceProvider serviceProvider)
-    {
-        using var scope = serviceProvider.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-        if (!await roleManager.RoleExistsAsync("Student"))
-        {
-            await roleManager.CreateAsync(new IdentityRole("Student"));
-        }
-
-        var csDept = await context.Departments.FirstOrDefaultAsync(d => d.Name == "Computer Science");
-        var isDept = await context.Departments.FirstOrDefaultAsync(d => d.Name == "Information Systems");
-        var aiDept = await context.Departments.FirstOrDefaultAsync(d => d.Name == "Artificial Intelligence");
-        var itDept = await context.Departments.FirstOrDefaultAsync(d => d.Name == "Information Technology");
-
-        var studentsToSeed = new List<(string Email, int? DeptId, string Year, SemesterType Semester, AcademicStanding Standing)>
-        {
-            ("ahmed.kamal@svu.edu.eg", csDept?.Id, "3", SemesterType.Spring, AcademicStanding.Good),
-            ("sara.mohamed@svu.edu.eg", isDept?.Id, "2", SemesterType.Spring, AcademicStanding.Warning),
-            ("mohamed.ali@svu.edu.eg", csDept?.Id, "4", SemesterType.Spring, AcademicStanding.Good),
-            ("nour.hassan@svu.edu.eg", aiDept?.Id, "1", SemesterType.Spring, AcademicStanding.Probation),
-            ("yasmine.farouk@svu.edu.eg", itDept?.Id, "3", SemesterType.Spring, AcademicStanding.Good),
-            ("omar.tarek@svu.edu.eg", csDept?.Id, "2", SemesterType.Spring, AcademicStanding.Dismissed)
-        };
-
-        foreach (var data in studentsToSeed)
-        {
-            var existingUser = await userManager.FindByEmailAsync(data.Email)
-                ?? await userManager.FindByNameAsync(data.Email);
-
-            if (existingUser is null)
-            {
-                var student = new AppUser
-                {
-                    UserName = data.Email,
-                    Email = data.Email,
-                    EmailConfirmed = true,
-                    DepartmentId = data.DeptId,
-                    AcademicYear = data.Year,
-                    CurrentSemester = data.Semester,
-                    CurrentStanding = data.Standing
-                };
-
-                var createResult = await userManager.CreateAsync(student, "StudentPass123!");
-                if (createResult.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(student, "Student");
-                }
-            }
-            else
-            {
-                existingUser.DepartmentId = data.DeptId;
-                existingUser.AcademicYear = data.Year;
-                existingUser.CurrentSemester = data.Semester;
-                existingUser.CurrentStanding = data.Standing;
-                
-                await userManager.UpdateAsync(existingUser);
-
-                if (!await userManager.IsInRoleAsync(existingUser, "Student"))
-                {
-                    await userManager.AddToRoleAsync(existingUser, "Student");
-                }
-            }
-        }
-    }
-#endif
 }
-
 
