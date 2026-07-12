@@ -32,6 +32,7 @@ public class PlannerTermViewModel
     public string AcademicYear { get; set; } = string.Empty;
     public SemesterType Semester { get; set; }
     public string Label { get; set; } = string.Empty;
+    public string ShortLabel { get; set; } = string.Empty;
     public bool IsPrimary { get; set; }
 }
 
@@ -81,6 +82,7 @@ public class PlannerCourseMutationRequest
     public string AcademicYear { get; set; } = string.Empty;
     public SemesterType Semester { get; set; }
 }
+
 
 
 

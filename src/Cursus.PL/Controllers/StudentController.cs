@@ -307,6 +307,7 @@ public class StudentController : Controller
                     AcademicYear = t.AcademicYear,
                     Semester = t.Semester,
                     Label = FormatSemester(t.Semester, t.AcademicYear),
+                    ShortLabel = FormatShortSemester(t.Semester, t.AcademicYear),
                     IsPrimary = t.IsPrimary
                 })
                 .ToList(),
@@ -571,7 +572,7 @@ public class StudentController : Controller
 
         return View(new ProgressViewModel { Audit = audit });
     }
-    public async Task<IActionResult> AiAdvisor()
+    public async Task<IActionResult> AiAdvisor(string? prompt)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
@@ -585,6 +586,10 @@ public class StudentController : Controller
         if (dto is null)
             return RedirectToAction("Login", "Account");
 
+        var initialPrompt = string.IsNullOrWhiteSpace(prompt)
+            ? null
+            : prompt.Trim()[..Math.Min(prompt.Trim().Length, 2000)];
+
         var model = new AiAdvisorViewModel
         {
             StudentName = dto.DisplayName,
@@ -593,7 +598,8 @@ public class StudentController : Controller
             Year = int.TryParse(dto.AcademicYear, out var advisorYear) ? advisorYear : (dto.SemestersCompleted / 2) + 1,
             Cgpa = (double)dto.Cgpa,
             AcademicStanding = FormatStanding(dto.Standing),
-            StandingCssClass = GetStandingCssClass(dto.Standing)
+            StandingCssClass = GetStandingCssClass(dto.Standing),
+            InitialPrompt = initialPrompt
         };
 
         return View(model);
@@ -921,6 +927,25 @@ public class StudentController : Controller
         return semesterName;
     }
 
+    private static string FormatShortSemester(SemesterType semester, string? academicYear)
+    {
+        var semesterName = semester switch
+        {
+            SemesterType.Fall => "Fall",
+            SemesterType.Spring => "Spring",
+            _ => "Summer"
+        };
+
+        if (string.IsNullOrWhiteSpace(academicYear))
+            return semesterName;
+
+        var firstChunk = academicYear.Split('-', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+        if (int.TryParse(firstChunk, out var yearStart))
+            return $"{semesterName} '{yearStart % 100:D2}–{(yearStart + 1) % 100:D2}";
+
+        return $"{semesterName} {academicYear}";
+    }
+
     private static string FormatStanding(AcademicStanding standing) => standing switch
     {
         AcademicStanding.Good => "Good Standing",
@@ -975,6 +1000,7 @@ public class StudentController : Controller
             .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
     }
 }
+
 
 
 

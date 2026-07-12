@@ -79,6 +79,26 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+function buildAiAdvisorUrl(prompt) {
+  return `/Student/AiAdvisor?prompt=${encodeURIComponent(prompt)}`;
+}
+
+function impactAdvisorPrompt(report, src, blockedCount, delay, originalGrad, projectedGrad) {
+  const label = src.name && src.id ? `${src.name} (${src.id})` : (src.name || src.id || 'a course');
+  const delayText = delay > 0
+    ? `Graduation shifts from ${originalGrad} to ${projectedGrad} (+${delay} sem).`
+    : 'There is no projected graduation delay.';
+  return `I'm reviewing an impact report for failing ${label}. ${blockedCount} course(s) are blocked. ${delayText} Can you walk me through my best recovery options and what to prioritize?`;
+}
+
+function updateImpactAdvisorLinks(report, src, blockedCount, delay, originalGrad, projectedGrad) {
+  const prompt = impactAdvisorPrompt(report, src, blockedCount, delay, originalGrad, projectedGrad);
+  const url = buildAiAdvisorUrl(prompt);
+  document.querySelectorAll('[data-ai-advisor-link]').forEach(link => {
+    link.href = url;
+  });
+}
+
 function formatCourseLabel(course, { retake = false, unlocked = false } = {}) {
   const code = course.code || '';
   const name = course.name || code;
@@ -457,6 +477,8 @@ function loadReport(report) {
   document.getElementById('report-subtitle').textContent =
     `Simulating failure of ${src.name || src.id}${src.id ? ` (${src.id})` : ''}`;
 
+  updateImpactAdvisorLinks(report, src, blocked.length, delay, originalGrad, projectedGrad);
+
   const scenarioEl = document.getElementById('ia-scenario-callout');
   const scenarioText = document.getElementById('ia-scenario-text');
   if (report.scenarioSummary && scenarioEl && scenarioText) {
@@ -583,6 +605,7 @@ function animCount(id, target) {
     if (current >= target) clearInterval(interval);
   }, 45);
 }
+
 
 
 

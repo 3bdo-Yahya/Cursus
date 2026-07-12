@@ -9,6 +9,7 @@ const chatInput = document.getElementById('chat-input');
 const sendBtn = document.getElementById('send-btn');
 const advisorPage = document.querySelector('.ai-advisor-page');
 const userInitials = advisorPage?.dataset.initials ?? 'U';
+const initialPrompt = advisorPage?.dataset.initialPrompt?.trim() ?? '';
 
 /* ── Enable / disable send button ──────────────────────── */
 chatInput.addEventListener('input', () => {
@@ -256,4 +257,11 @@ function clearChat() {
     }
     if (chipsRow) chipsRow.classList.remove('d-none');
   }, 220);
+}
+
+if (initialPrompt) {
+  chatInput.value = initialPrompt;
+  autoResize(chatInput);
+  sendBtn.disabled = false;
+  requestAnimationFrame(() => sendMessage());
 }

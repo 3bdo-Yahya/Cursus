@@ -29,6 +29,76 @@
   gap:         6px;
   flex-wrap:   wrap;
 }
+
+.semester-picker {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.semester-picker-label {
+  display:       block;
+  font-size:     10.5px;
+  font-weight:   700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color:         var(--c-muted);
+  margin-bottom: 6px;
+}
+
+.semester-select-wrap {
+  position:      relative;
+  display:       flex;
+  align-items:   center;
+  min-width:     200px;
+  max-width:     min(100%, 280px);
+}
+
+.semester-select-icon {
+  position:   absolute;
+  left:       12px;
+  font-size:  17px !important;
+  color:      var(--c-primary);
+  pointer-events: none;
+}
+
+.semester-select-chevron {
+  position:   absolute;
+  right:      10px;
+  font-size:  18px !important;
+  color:      var(--c-muted);
+  pointer-events: none;
+}
+
+.semester-select {
+  width:         100%;
+  appearance:    none;
+  padding:       9px 36px 9px 38px;
+  border-radius: 12px;
+  border:        1.5px solid var(--c-border);
+  background:    var(--c-surface);
+  color:         var(--c-text);
+  font-size:     13px;
+  font-weight:   700;
+  font-family:   'Outfit', sans-serif;
+  cursor:        pointer;
+  transition:    border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.semester-select:hover {
+  border-color: rgba(79,70,229,.3);
+}
+
+.semester-select:focus {
+  outline:      none;
+  border-color: var(--c-primary);
+  box-shadow:   0 0 0 3px rgba(79,70,229,.12);
+}
+
+.semester-select:disabled {
+  opacity: 0.65;
+  cursor:  not-allowed;
+}
+
 .sem-tab {
   padding:       7px 16px;
   border-radius: 10px;
@@ -590,6 +660,7 @@ html.dark .sidebar-alert:hover {
 .text-sub     { color: var(--c-text-sub) !important; }
 .border-token { border-color: var(--c-border) !important; }
 html.dark .text-muted { color: var(--c-muted) !important; }
+
 
 
 

@@ -224,11 +224,8 @@ async function switchTerm(academicYear, semester) {
   const key = termKey(academicYear, semester);
   if (key === activeTermKey) return;
 
-  document.querySelectorAll('.sem-tab').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.termKey === key);
-  });
-
-  document.getElementById('semester-tabs')?.classList.add('loading');
+  const select = document.getElementById('semester-select');
+  if (select) select.disabled = true;
 
   try {
     if (!termCache.has(key) || !termCache.get(key).loaded) {
@@ -254,8 +251,9 @@ async function switchTerm(academicYear, semester) {
     document.getElementById('add-dropdown')?.classList.remove('open');
   } catch (err) {
     showToast(err.message || 'Failed to switch term.', 'error', true);
+    if (select) select.value = activeTermKey;
   } finally {
-    document.getElementById('semester-tabs')?.classList.remove('loading');
+    if (select) select.disabled = false;
   }
 }
 
@@ -552,11 +550,13 @@ function init() {
   updateEmptyState();
   updateSummary();
 
-  document.querySelectorAll('.sem-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      switchTerm(btn.dataset.academicYear, parseInt(btn.dataset.semester, 10));
+  const select = document.getElementById('semester-select');
+  if (select) {
+    select.addEventListener('change', () => {
+      const [academicYear, semesterRaw] = select.value.split('|');
+      switchTerm(academicYear, parseInt(semesterRaw, 10));
     });
-  });
+  }
 
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); obs.unobserve(e.target); } });
@@ -570,4 +570,5 @@ window.removeCourse = removeCourse;
 window.savePlan = savePlan;
 
 init();
+
 

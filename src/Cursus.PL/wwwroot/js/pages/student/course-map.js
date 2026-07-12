@@ -47,6 +47,31 @@ let simTimeouts    = [];
 
 const IMPACT_STORAGE_KEY = 'cursusImpactReport';
 
+function buildAiAdvisorUrl(prompt) {
+  return `/Student/AiAdvisor?prompt=${encodeURIComponent(prompt)}`;
+}
+
+function courseAdvisorPrompt(course) {
+  const code = course.code || course.id || 'this course';
+  const name = course.name || '';
+  const label = name ? `${code}: ${name}` : code;
+  return `I'm viewing ${label} on my course map. Can you explain how this course fits my degree plan, its prerequisite chain, and when you'd recommend taking it?`;
+}
+
+function recoveryAdvisorPrompt(result) {
+  const blocked = result.blockedCoursesCount ?? (result.blockedCourses?.length ?? 0);
+  const delay = result.graduationDelaySemesters ?? 0;
+  const code = result.failedCourseCode || 'a course';
+  const name = result.failedCourseName || '';
+  const label = name ? `${code} (${name})` : code;
+  return `I simulated failing ${label} on my course map. ${blocked} course(s) are blocked and graduation may delay by ${delay} semester(s). Can you help me build a practical recovery plan?`;
+}
+
+function setPanelAskAiLink(prompt) {
+  const link = document.getElementById('panel-ask-ai-link');
+  if (link) link.href = buildAiAdvisorUrl(prompt);
+}
+
 
 function buildCourses(nodes, edges) {
   const prereqsById = {};
@@ -516,6 +541,8 @@ function openPanel(d) {
   document.getElementById('panel-simulate-wrap').style.display = canSim ? '' : 'none';
   document.getElementById('panel-clear-wrap').style.display    = simActive ? '' : 'none';
 
+  setPanelAskAiLink(courseAdvisorPrompt({ code: d.code, name: d.name, id: d.id }));
+
   panel.classList.add('open');
 }
 
@@ -819,7 +846,7 @@ function openImpactDrawer(result) {
       </button>
     </div>
     <div class="cm-panel-ask-ai">
-      <a href="/Student/AiAdvisor" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
+      <a id="panel-ask-ai-link" href="${buildAiAdvisorUrl(recoveryAdvisorPrompt(result))}" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
         <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
         Ask AI Advisor for recovery plan
       </a>
@@ -873,7 +900,7 @@ function closeImpactDrawer() {
       </button>
     </div>
     <div class="cm-panel-ask-ai">
-      <a href="/Student/AiAdvisor" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
+      <a id="panel-ask-ai-link" href="/Student/AiAdvisor" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
         <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
         Ask AI Advisor about this course
       </a>
@@ -883,6 +910,14 @@ function closeImpactDrawer() {
   document.getElementById('btn-close-panel').addEventListener('click', closePanel);
   document.getElementById('btn-simulate').addEventListener('click', startSim);
   document.getElementById('btn-clear-panel').addEventListener('click', clearSimAnimated);
+
+  if (selectedNode) {
+    setPanelAskAiLink(courseAdvisorPrompt({
+      code: selectedNode.data('code'),
+      name: selectedNode.data('name'),
+      id: selectedNode.data('id')
+    }));
+  }
 }
 
 function updateGraphFilter(filterType) {
@@ -928,6 +963,7 @@ function wireFilterControls() {
 }
 
 })();
+
 
 
 

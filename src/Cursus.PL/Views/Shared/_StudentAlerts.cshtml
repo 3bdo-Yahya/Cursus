@@ -1,15 +1,44 @@
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <section class="student-flash-section anim-fade-up" role="alert">
+        <div class="student-flash student-flash-success">
+            <div class="student-flash-icon">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
+            </div>
+            <div class="student-flash-body">
+                <p class="student-flash-title">Success</p>
+                <p class="student-flash-text mb-0">@statusMessage</p>
+            </div>
+        </div>
+    </section>
+}
+
 @if (TempData["Warning"] is string warningMessage)
 {
-    <div class="standing-alert status-warning">
-        <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400">warning</span>
-        <span>@warningMessage</span>
-    </div>
+    <section class="student-flash-section anim-fade-up" role="alert">
+        <div class="student-flash student-flash-warning">
+            <div class="student-flash-icon">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 400">warning</span>
+            </div>
+            <div class="student-flash-body">
+                <p class="student-flash-title">Heads up</p>
+                <p class="student-flash-text mb-0">@warningMessage</p>
+            </div>
+        </div>
+    </section>
 }
 
 @if (TempData["Error"] is string errorMessage)
 {
-    <div class="standing-alert status-danger">
-        <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400">warning</span>
-        <span>@errorMessage</span>
-    </div>
+    <section class="student-flash-section anim-fade-up" role="alert">
+        <div class="student-flash student-flash-danger">
+            <div class="student-flash-icon">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 400">error</span>
+            </div>
+            <div class="student-flash-body">
+                <p class="student-flash-title">Something went wrong</p>
+                <p class="student-flash-text mb-0">@errorMessage</p>
+            </div>
+        </div>
+    </section>
 }

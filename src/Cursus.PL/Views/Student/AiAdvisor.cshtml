@@ -11,7 +11,8 @@
 @Html.AntiForgeryToken()
 <!-- ─── Advisor Shell ────────────────────────────────────── -->
 <div class="ai-advisor-page"
-     data-initials="@Model.Initials">
+     data-initials="@Model.Initials"
+     data-initial-prompt="@Model.InitialPrompt">
   <div class="advisor-shell">
     <div class="chat-wrap">
 
@@ -111,3 +112,4 @@
   @section Scripts {
     <script src="~/js/pages/student/ai-advisor.js" asp-append-version="true"></script>
   }
+
