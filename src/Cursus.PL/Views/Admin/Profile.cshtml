@@ -1,3 +1,6 @@
+@using Cursus.PL.Models
+@model AdminProfileViewModel
+
 @{
     ViewData["Title"] = "My Profile";
 }
@@ -7,400 +10,337 @@
 }
 
 <!-- ── Admin Hero ─────────────────────────────────────── -->
-  <section class="ap-hero anim-fade-up">
-    <div class="ap-hero-bg"></div>
-    <div class="ap-hero-content">
-      <div class="ap-avatar-wrap">
-        <div class="ap-avatar">MA</div>
-        <div class="ap-role-dot" title="Admin"></div>
+<section class="ap-hero anim-fade-up">
+  <div class="ap-hero-bg"></div>
+  <div class="ap-hero-content">
+    <div class="ap-avatar-wrap">
+      <div class="ap-avatar">@Model.Initials</div>
+      <div class="ap-role-dot" title="Admin"></div>
+    </div>
+    <div class="ap-hero-info">
+      <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+        <h1 class="fw-900 mb-0" style="font-size:1.6rem;letter-spacing:-.4px;color:var(--c-text);">@Model.DisplayName</h1>
+        <span class="ap-admin-badge">
+          <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400">shield</span>
+          System Admin
+        </span>
       </div>
-      <div class="ap-hero-info">
-        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-          <h1 class="fw-900 mb-0" style="font-size:1.6rem;letter-spacing:-.4px;color:var(--c-text);">Dr. Mona Hassan</h1>
-          <span class="ap-admin-badge">
-            <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400">shield</span>
-            Department Admin
+      <p style="font-size:13.5px;color:var(--c-muted);margin:0 0 12px;">@Model.Email</p>
+      <div class="d-flex flex-wrap gap-2">
+        <span class="sp-tag">
+          <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">apartment</span>
+          @Model.TotalDepartments department@(Model.TotalDepartments == 1 ? "" : "s")
+        </span>
+        <span class="sp-tag">
+          <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">group</span>
+          @Model.TotalStudents student@(Model.TotalStudents == 1 ? "" : "s")
+        </span>
+        <span class="sp-tag">
+          <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">menu_book</span>
+          @Model.TotalCourses course@(Model.TotalCourses == 1 ? "" : "s")
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats strip ───────────────────────────────────── -->
+<section class="sp-stats anim-fade-up-1">
+  <div class="sp-stat">
+    <p class="sp-stat-val" style="color:#dc2626;">@Model.TotalStudents</p>
+    <p class="sp-stat-label">Students</p>
+  </div>
+  <div class="sp-stat-div"></div>
+  <div class="sp-stat">
+    <p class="sp-stat-val">@Model.ActiveCourses</p>
+    <p class="sp-stat-label">Active Courses</p>
+  </div>
+  <div class="sp-stat-div"></div>
+  <div class="sp-stat">
+    <p class="sp-stat-val">@Model.TotalDepartments</p>
+    <p class="sp-stat-label">Departments</p>
+  </div>
+  <div class="sp-stat-div"></div>
+  <div class="sp-stat">
+    <p class="sp-stat-val" style="color:#10b981;">@Model.GoodStandingPct%</p>
+    <p class="sp-stat-label">Good Standing</p>
+  </div>
+</section>
+
+<div class="row g-4 anim-fade-up-2">
+
+  <!-- LEFT col ──────────────────────────────────────── -->
+  <div class="col-12 col-lg-7 d-flex flex-column gap-4">
+
+    <!-- Account Information -->
+    <div class="sp-card">
+      <div class="sp-card-header">
+        <div class="d-flex align-items-center gap-2">
+          <div class="sp-card-icon" style="background:rgba(239,68,68,.1);">
+            <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">person</span>
+          </div>
+          <h3 class="sp-card-title">Account Information</h3>
+        </div>
+      </div>
+      <div class="sp-field-grid">
+        <div class="sp-field">
+          <p class="sp-field-label">Display Name</p>
+          <p class="sp-field-value">@Model.DisplayName</p>
+        </div>
+        <div class="sp-field">
+          <p class="sp-field-label">User ID</p>
+          <p class="sp-field-value" style="font-size:11px;font-family:monospace;word-break:break-all;">@Model.UserId</p>
+        </div>
+        <div class="sp-field">
+          <p class="sp-field-label">Email Address</p>
+          <p class="sp-field-value">@Model.Email</p>
+        </div>
+        <div class="sp-field">
+          <p class="sp-field-label">Role</p>
+          <p class="sp-field-value">
+            <span class="ap-admin-badge" style="font-size:11px;">
+              <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400">shield</span>
+              Administrator
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Role & Permissions -->
+    <div class="sp-card">
+      <div class="sp-card-header">
+        <div class="d-flex align-items-center gap-2">
+          <div class="sp-card-icon" style="background:var(--icon-amber-bg);">
+            <span class="material-symbols-outlined" style="font-size:17px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 300">admin_panel_settings</span>
+          </div>
+          <h3 class="sp-card-title">Role &amp; Permissions</h3>
+        </div>
+      </div>
+      <div class="d-flex flex-column gap-2">
+        @{
+            var perms = new[]
+            {
+                ("Course Catalog Management",      "Create, edit, and deactivate courses",          true),
+                ("Student Management",             "Add, edit, and remove students",                true),
+                ("Department Management",          "Create and manage academic departments",         true),
+                ("University Management",          "Manage university records",                     true),
+                ("Grade & Course Record Entry",    "Record and update student course records",       true),
+                ("Prerequisite Configuration",     "Define and modify prerequisite chains",          true),
+                ("Graduation Requirements",        "Configure degree completion rules",              true),
+            };
+        }
+        @foreach (var (title, desc, granted) in perms)
+        {
+            <div class="ap-perm-row @(granted ? "ap-perm-on" : "ap-perm-off")">
+              <span class="material-symbols-outlined" style="font-size:17px;color:@(granted ? "#10b981" : "var(--c-border)");font-variation-settings:'FILL' 1,'wght' 400">
+                @(granted ? "check_circle" : "cancel")
+              </span>
+              <div class="flex-fill">
+                <p class="fw-700 mb-0" style="font-size:13px;color:@(granted ? "var(--c-text)" : "var(--c-muted)");">@title</p>
+                <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">@desc</p>
+              </div>
+            </div>
+        }
+      </div>
+    </div>
+
+    <!-- Security -->
+    <div class="sp-card">
+      <div class="sp-card-header">
+        <div class="d-flex align-items-center gap-2">
+          <div class="sp-card-icon" style="background:var(--icon-blue-bg);">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">lock</span>
+          </div>
+          <h3 class="sp-card-title">Security</h3>
+        </div>
+      </div>
+      <div class="d-flex flex-column gap-2">
+        <div class="sp-security-row">
+          <div class="d-flex align-items-center gap-3">
+            <div class="sp-security-icon">
+              <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">password</span>
+            </div>
+            <div>
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Password</p>
+              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Managed via ASP.NET Identity</p>
+            </div>
+          </div>
+          <a asp-area="Identity" asp-page="/Account/Manage/ChangePassword" class="sp-edit-btn text-decoration-none">Change</a>
+        </div>
+        <div class="sp-security-row">
+          <div class="d-flex align-items-center gap-3">
+            <div class="sp-security-icon">
+              <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">verified_user</span>
+            </div>
+            <div>
+              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Email Confirmed</p>
+              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Account email verified by Identity</p>
+            </div>
+          </div>
+          <span class="status-badge status-active" style="font-size:11px;">
+            <span class="status-dot-sm"></span>Active
           </span>
         </div>
-        <p style="font-size:13.5px;color:var(--c-muted);margin:0 0 12px;">mona.hassan@svu.edu · Staff ID: SVU-STAFF-0042</p>
-        <div class="d-flex flex-wrap gap-2">
-          <span class="sp-tag">
-            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">business</span>
-            South Valley University
-          </span>
-          <span class="sp-tag">
-            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">laptop_mac</span>
-            Computer Science Dept.
-          </span>
-          <span class="sp-tag">
-            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 300">group</span>
-            142 Students Managed
-          </span>
-        </div>
-      </div>
-      <div class="ap-hero-actions">
-        <button class="sp-btn-primary ap-btn" onclick="openEditModal()">
-          <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
-          Edit Profile
-        </button>
       </div>
     </div>
-  </section>
 
-  <!-- ── Stats strip ───────────────────────────────────── -->
-  <section class="sp-stats anim-fade-up-1">
-    <div class="sp-stat">
-      <p class="sp-stat-val" style="color:#dc2626;">142</p>
-      <p class="sp-stat-label">Students</p>
-    </div>
-    <div class="sp-stat-div"></div>
-    <div class="sp-stat">
-      <p class="sp-stat-val">68</p>
-      <p class="sp-stat-label">Courses</p>
-    </div>
-    <div class="sp-stat-div"></div>
-    <div class="sp-stat">
-      <p class="sp-stat-val">4</p>
-      <p class="sp-stat-label">Years Active</p>
-    </div>
-    <div class="sp-stat-div"></div>
-    <div class="sp-stat">
-      <p class="sp-stat-val" style="color:#10b981;">97%</p>
-      <p class="sp-stat-label">Data Accuracy</p>
-    </div>
-  </section>
+  </div>
 
-  <div class="row g-4 anim-fade-up-2">
+  <!-- RIGHT col ─────────────────────────────────────── -->
+  <div class="col-12 col-lg-5">
+    <div style="position:sticky;top:84px;" class="d-flex flex-column gap-4">
 
-    <!-- LEFT col ──────────────────────────────────────── -->
-    <div class="col-12 col-lg-7 d-flex flex-column gap-4">
-
-      <!-- Personal Information -->
+      <!-- System Overview (real data) -->
       <div class="sp-card">
         <div class="sp-card-header">
           <div class="d-flex align-items-center gap-2">
-            <div class="sp-card-icon" style="background:rgba(239,68,68,.1);">
-              <span class="material-symbols-outlined" style="font-size:17px;color:#dc2626;font-variation-settings:'FILL' 0,'wght' 300">person</span>
+            <div class="sp-card-icon" style="background:var(--icon-purple-bg);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 300">bar_chart</span>
             </div>
-            <h3 class="sp-card-title">Personal Information</h3>
+            <h3 class="sp-card-title">System Overview</h3>
           </div>
-          <button class="sp-edit-btn" onclick="openEditModal()">
-            <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">edit</span>
-            Edit
-          </button>
         </div>
-        <div class="sp-field-grid">
-          <div class="sp-field">
-            <p class="sp-field-label">Full Name</p>
-            <p class="sp-field-value">Dr. Mona Hassan Ibrahim</p>
+        <div class="d-flex flex-column gap-3 mt-2">
+
+          <!-- Students -->
+          <div class="ap-dept-row">
+            <p class="sp-field-label mb-1">Students — Good Standing</p>
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="fw-700" style="font-size:13px;color:var(--c-text);">@Model.GoodStanding / @Model.TotalStudents</span>
+              <span style="font-size:11px;color:#10b981;font-weight:700;">@Model.GoodStandingPct%</span>
+            </div>
+            <div class="ap-bar-track">
+              <div class="ap-bar-fill" style="--w:@(Model.GoodStandingPct)%;background:#10b981;"></div>
+            </div>
           </div>
-          <div class="sp-field">
-            <p class="sp-field-label">Staff ID</p>
-            <p class="sp-field-value">SVU-STAFF-0042</p>
+
+          <!-- Warning/Probation -->
+          <div class="ap-dept-row">
+            <p class="sp-field-label mb-1">Students — Warning / Probation</p>
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="fw-700" style="font-size:13px;color:var(--c-text);">@Model.WarningOrProbation student@(Model.WarningOrProbation == 1 ? "" : "s")</span>
+              <span style="font-size:11px;color:#d97706;font-weight:700;">@Model.BarPct(Model.WarningOrProbation, Model.TotalStudents)%</span>
+            </div>
+            <div class="ap-bar-track">
+              <div class="ap-bar-fill" style="--w:@(Model.BarPct(Model.WarningOrProbation, Model.TotalStudents))%;background:#d97706;"></div>
+            </div>
           </div>
-          <div class="sp-field">
-            <p class="sp-field-label">Email Address</p>
-            <p class="sp-field-value">mona.hassan@svu.edu</p>
+
+          <!-- Active Courses -->
+          <div class="ap-dept-row">
+            <p class="sp-field-label mb-1">Active Courses</p>
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="fw-700" style="font-size:13px;color:var(--c-text);">@Model.ActiveCourses / @Model.TotalCourses</span>
+              <span style="font-size:11px;color:var(--c-primary);font-weight:700;">@Model.BarPct(Model.ActiveCourses, Model.TotalCourses)%</span>
+            </div>
+            <div class="ap-bar-track">
+              <div class="ap-bar-fill" style="--w:@(Model.BarPct(Model.ActiveCourses, Model.TotalCourses))%;background:var(--c-primary);"></div>
+            </div>
           </div>
-          <div class="sp-field">
-            <p class="sp-field-label">Office Phone</p>
-            <p class="sp-field-value">+20 96 512 3456</p>
+
+          <!-- Active Departments -->
+          <div class="ap-dept-row">
+            <p class="sp-field-label mb-1">Active Departments</p>
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="fw-700" style="font-size:13px;color:var(--c-text);">@Model.ActiveDepartments / @Model.TotalDepartments</span>
+              <span style="font-size:11px;color:#7c3aed;font-weight:700;">@Model.BarPct(Model.ActiveDepartments, Model.TotalDepartments)%</span>
+            </div>
+            <div class="ap-bar-track">
+              <div class="ap-bar-fill" style="--w:@(Model.BarPct(Model.ActiveDepartments, Model.TotalDepartments))%;background:#7c3aed;"></div>
+            </div>
           </div>
-          <div class="sp-field">
-            <p class="sp-field-label">Office Location</p>
-            <p class="sp-field-value">Faculty Building B, Room 214</p>
-          </div>
-          <div class="sp-field">
-            <p class="sp-field-label">Office Hours</p>
-            <p class="sp-field-value">Sun & Tue, 10:00–13:00</p>
-          </div>
+
         </div>
       </div>
 
-      <!-- Role & Permissions -->
+      <!-- Quick Stats Tiles -->
+      <div class="sp-card">
+        <div class="sp-card-header">
+          <div class="d-flex align-items-center gap-2">
+            <div class="sp-card-icon" style="background:rgba(79,70,229,.1);">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">grid_view</span>
+            </div>
+            <h3 class="sp-card-title">At a Glance</h3>
+          </div>
+        </div>
+        <div class="row g-2 mt-1">
+          @{
+              var tiles = new[]
+              {
+                  ("group",        "#4F46E5", Model.TotalStudents.ToString(),     "Total Students"),
+                  ("menu_book",    "#10b981", Model.ActiveCourses.ToString(),     "Active Courses"),
+                  ("apartment",    "#7c3aed", Model.ActiveDepartments.ToString(), "Active Depts"),
+                  ("account_balance","#d97706",Model.TotalUniversities.ToString(),"Universities"),
+                  ("warning",      "#f59e0b", Model.WarningOrProbation.ToString(),"At Risk"),
+                  ("block",        "#ef4444", Model.Dismissed.ToString(),         "Dismissed"),
+              };
+          }
+          @foreach (var (icon, color, val, label) in tiles)
+          {
+              <div class="col-6">
+                <div style="padding:14px;border-radius:12px;background:var(--c-bg);border:1px solid var(--c-border);">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="material-symbols-outlined" style="font-size:16px;color:@color;font-variation-settings:'FILL' 0,'wght' 300">@icon</span>
+                    <span class="fw-900" style="font-size:1.2rem;color:var(--c-text);">@val</span>
+                  </div>
+                  <p class="mb-0" style="font-size:11px;color:var(--c-muted);">@label</p>
+                </div>
+              </div>
+          }
+        </div>
+      </div>
+
+      <!-- Quick Admin Links -->
       <div class="sp-card">
         <div class="sp-card-header">
           <div class="d-flex align-items-center gap-2">
             <div class="sp-card-icon" style="background:var(--icon-amber-bg);">
-              <span class="material-symbols-outlined" style="font-size:17px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 300">admin_panel_settings</span>
+              <span class="material-symbols-outlined" style="font-size:17px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 300">grid_view</span>
             </div>
-            <h3 class="sp-card-title">Role & Permissions</h3>
+            <h3 class="sp-card-title">Quick Admin Links</h3>
           </div>
         </div>
-        <div class="d-flex flex-column gap-2">
-          <div class="ap-perm-row ap-perm-on">
-            <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
-            <div class="flex-fill">
-              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Course Catalog Management</p>
-              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Create, edit, and deactivate courses</p>
-            </div>
-          </div>
-          <div class="ap-perm-row ap-perm-on">
-            <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
-            <div class="flex-fill">
-              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Student Grade Entry</p>
-              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Record and update student grades</p>
-            </div>
-          </div>
-          <div class="ap-perm-row ap-perm-on">
-            <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
-            <div class="flex-fill">
-              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Prerequisite Configuration</p>
-              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Define and modify prerequisite chains</p>
-            </div>
-          </div>
-          <div class="ap-perm-row ap-perm-on">
-            <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">check_circle</span>
-            <div class="flex-fill">
-              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Graduation Requirements</p>
-              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Configure degree completion rules</p>
-            </div>
-          </div>
-          <div class="ap-perm-row ap-perm-off">
-            <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-border);font-variation-settings:'FILL' 1,'wght' 400">cancel</span>
-            <div class="flex-fill">
-              <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-muted);">Super Admin Access</p>
-              <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">University-level settings — not granted</p>
-            </div>
-          </div>
+        <div class="d-flex flex-column gap-2 mt-2">
+          <a asp-controller="Admin" asp-action="Courses" class="sp-quick-link">
+            <span class="material-symbols-outlined sp-ql-icon" style="color:var(--c-primary);">menu_book</span>
+            <span>Manage Courses</span>
+            <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+          </a>
+          <a asp-controller="Admin" asp-action="Students" class="sp-quick-link">
+            <span class="material-symbols-outlined sp-ql-icon" style="color:#10b981;">group</span>
+            <span>Manage Students</span>
+            <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+          </a>
+          <a asp-controller="Admin" asp-action="DepartmentIndex" class="sp-quick-link">
+            <span class="material-symbols-outlined sp-ql-icon" style="color:#7c3aed;">apartment</span>
+            <span>Manage Departments</span>
+            <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+          </a>
+          <a asp-controller="Admin" asp-action="UniversityIndex" class="sp-quick-link">
+            <span class="material-symbols-outlined sp-ql-icon" style="color:#d97706;">account_balance</span>
+            <span>Manage Universities</span>
+            <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+          </a>
+          <a asp-controller="Admin" asp-action="AddStudent" class="sp-quick-link">
+            <span class="material-symbols-outlined sp-ql-icon" style="color:#dc2626;">person_add</span>
+            <span>Add New Student</span>
+            <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+          </a>
+          <a asp-controller="Admin" asp-action="CourseCreate" class="sp-quick-link">
+            <span class="material-symbols-outlined sp-ql-icon" style="color:#059669;">add_circle</span>
+            <span>Add New Course</span>
+            <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
+          </a>
         </div>
       </div>
 
-      <!-- Security -->
-      <div class="sp-card">
-        <div class="sp-card-header">
-          <div class="d-flex align-items-center gap-2">
-            <div class="sp-card-icon" style="background:var(--icon-blue-bg);">
-              <span class="material-symbols-outlined" style="font-size:17px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">lock</span>
-            </div>
-            <h3 class="sp-card-title">Security</h3>
-          </div>
-        </div>
-        <div class="d-flex flex-column gap-2">
-          <div class="sp-security-row">
-            <div class="d-flex align-items-center gap-3">
-              <div class="sp-security-icon">
-                <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">password</span>
-              </div>
-              <div>
-                <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Password</p>
-                <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Last changed 1 month ago</p>
-              </div>
-            </div>
-            <button class="sp-edit-btn">Change</button>
-          </div>
-          <div class="sp-security-row">
-            <div class="d-flex align-items-center gap-3">
-              <div class="sp-security-icon">
-                <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">notifications_active</span>
-              </div>
-              <div>
-                <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">Failure-Rate Alerts</p>
-                <p class="mb-0" style="font-size:11.5px;color:var(--c-muted);">Get notified when course failure exceeds threshold</p>
-              </div>
-            </div>
-            <label class="sp-toggle">
-              <input type="checkbox" checked>
-              <span class="sp-toggle-track"></span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT col ─────────────────────────────────────── -->
-    <div class="col-12 col-lg-5">
-      <div style="position:sticky;top:84px;" class="d-flex flex-column gap-4">
-
-        <!-- Department Overview -->
-        <div class="sp-card">
-          <div class="sp-card-header">
-            <div class="d-flex align-items-center gap-2">
-              <div class="sp-card-icon" style="background:var(--icon-purple-bg);">
-                <span class="material-symbols-outlined" style="font-size:17px;color:#7c3aed;font-variation-settings:'FILL' 0,'wght' 300">domain</span>
-              </div>
-              <h3 class="sp-card-title">Department Overview</h3>
-            </div>
-          </div>
-          <div class="d-flex flex-column gap-3 mt-2">
-            <div class="ap-dept-row">
-              <p class="sp-field-label mb-1">Total Students</p>
-              <div class="d-flex align-items-center justify-content-between mb-1">
-                <span class="fw-700" style="font-size:13px;color:var(--c-text);">142 active</span>
-                <span style="font-size:11px;color:#10b981;font-weight:700;">+14 this semester</span>
-              </div>
-              <div class="ap-bar-track">
-                <div class="ap-bar-fill" style="--w:71%;background:var(--c-primary);"></div>
-              </div>
-            </div>
-            <div class="ap-dept-row">
-              <p class="sp-field-label mb-1">Good Standing Rate</p>
-              <div class="d-flex align-items-center justify-content-between mb-1">
-                <span class="fw-700" style="font-size:13px;color:var(--c-text);">114 students</span>
-                <span style="font-size:11px;color:#10b981;font-weight:700;">80.3%</span>
-              </div>
-              <div class="ap-bar-track">
-                <div class="ap-bar-fill" style="--w:80%;background:#10b981;"></div>
-              </div>
-            </div>
-            <div class="ap-dept-row">
-              <p class="sp-field-label mb-1">Avg. Department GPA</p>
-              <div class="d-flex align-items-center justify-content-between mb-1">
-                <span class="fw-700" style="font-size:13px;color:var(--c-text);">2.91 / 4.0</span>
-                <span style="font-size:11px;color:#d97706;font-weight:700;">72.8%</span>
-              </div>
-              <div class="ap-bar-track">
-                <div class="ap-bar-fill" style="--w:72.8%;background:#d97706;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="sp-card">
-          <div class="sp-card-header">
-            <div class="d-flex align-items-center gap-2">
-              <div class="sp-card-icon" style="background:var(--tile-green-bg);">
-                <span class="material-symbols-outlined" style="font-size:17px;color:#10b981;font-variation-settings:'FILL' 0,'wght' 300">history</span>
-              </div>
-              <h3 class="sp-card-title">Recent Activity</h3>
-            </div>
-          </div>
-          <div class="d-flex flex-column gap-1 mt-1">
-            <div class="ap-activity-row">
-              <div class="ap-activity-dot" style="background:#10b981;"></div>
-              <div>
-                <p class="fw-600 mb-0" style="font-size:12.5px;color:var(--c-text);">Grades entered for CS211 — 28 students</p>
-                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Today, 11:24 AM</p>
-              </div>
-            </div>
-            <div class="ap-activity-row">
-              <div class="ap-activity-dot" style="background:var(--c-primary);"></div>
-              <div>
-                <p class="fw-600 mb-0" style="font-size:12.5px;color:var(--c-text);">New course AI413 added to catalog</p>
-                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Yesterday, 2:15 PM</p>
-              </div>
-            </div>
-            <div class="ap-activity-row">
-              <div class="ap-activity-dot" style="background:#d97706;"></div>
-              <div>
-                <p class="fw-600 mb-0" style="font-size:12.5px;color:var(--c-text);">CS201 failure rate alert acknowledged</p>
-                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">Yesterday, 9:03 AM</p>
-              </div>
-            </div>
-            <div class="ap-activity-row">
-              <div class="ap-activity-dot" style="background:var(--c-primary);"></div>
-              <div>
-                <p class="fw-600 mb-0" style="font-size:12.5px;color:var(--c-text);">Prerequisite updated: AI301 → CS311</p>
-                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">3 days ago</p>
-              </div>
-            </div>
-            <div class="ap-activity-row" style="border-bottom:none;">
-              <div class="ap-activity-dot" style="background:#10b981;"></div>
-              <div>
-                <p class="fw-600 mb-0" style="font-size:12.5px;color:var(--c-text);">14 new students enrolled and assigned</p>
-                <p class="mb-0" style="font-size:11px;color:var(--c-muted);">5 days ago</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Admin Links -->
-        <div class="sp-card">
-          <div class="sp-card-header">
-            <div class="d-flex align-items-center gap-2">
-              <div class="sp-card-icon" style="background:var(--icon-amber-bg);">
-                <span class="material-symbols-outlined" style="font-size:17px;color:#d97706;font-variation-settings:'FILL' 0,'wght' 300">grid_view</span>
-              </div>
-              <h3 class="sp-card-title">Quick Admin Links</h3>
-            </div>
-          </div>
-          <div class="d-flex flex-column gap-2 mt-2">
-            <a asp-controller="Admin" asp-action="Courses" class="sp-quick-link">
-              <span class="material-symbols-outlined sp-ql-icon" style="color:var(--c-primary);">menu_book</span>
-              <span>Manage Courses</span>
-              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
-            </a>
-            <a asp-controller="Admin" asp-action="Students" class="sp-quick-link">
-              <span class="material-symbols-outlined sp-ql-icon" style="color:#10b981;">group</span>
-              <span>Manage Students</span>
-              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
-            </a>
-            <a asp-controller="Admin" asp-action="CourseCreate" class="sp-quick-link">
-              <span class="material-symbols-outlined sp-ql-icon" style="color:#7c3aed;">add_circle</span>
-              <span>Add New Course</span>
-              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
-            </a>
-            <a href="/Admin/AddStudent" class="sp-quick-link">
-              <span class="material-symbols-outlined sp-ql-icon" style="color:#d97706;">person_add</span>
-              <span>Add New Student</span>
-              <span class="material-symbols-outlined ms-auto" style="font-size:16px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 300">chevron_right</span>
-            </a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-</div>
-<!-- ── Edit Modal ──────────────────────────────────────── -->
-<div id="edit-modal" class="sp-modal-overlay" onclick="closeEditModal(event)">
-  <div class="sp-modal">
-    <div class="sp-modal-header">
-      <h3 class="fw-800 mb-0" style="font-size:15px;color:var(--c-text);">Edit Admin Profile</h3>
-      <button class="sp-modal-close" onclick="closeEditModal()">
-        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 300">close</span>
-      </button>
-    </div>
-    <div class="sp-modal-body">
-      <div class="row g-3">
-        <div class="col-12 col-sm-6">
-          <label class="sp-label">Full Name</label>
-          <input type="text" class="sp-input" value="Dr. Mona Hassan Ibrahim">
-        </div>
-        <div class="col-12 col-sm-6">
-          <label class="sp-label">Office Phone</label>
-          <input type="text" class="sp-input" value="+20 96 512 3456">
-        </div>
-        <div class="col-12">
-          <label class="sp-label">Email Address</label>
-          <input type="email" class="sp-input" value="mona.hassan@svu.edu">
-        </div>
-        <div class="col-12 col-sm-6">
-          <label class="sp-label">Office Location</label>
-          <input type="text" class="sp-input" value="Faculty Building B, Room 214">
-        </div>
-        <div class="col-12 col-sm-6">
-          <label class="sp-label">Office Hours</label>
-          <input type="text" class="sp-input" value="Sun &amp; Tue, 10:00–13:00">
-        </div>
-      </div>
-    </div>
-    <div class="sp-modal-footer">
-      <button class="sp-btn-ghost" onclick="closeEditModal()">Cancel</button>
-      <button class="sp-btn-primary ap-btn" onclick="saveProfile()">
-        <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300">save</span>
-        Save Changes
-      </button>
     </div>
   </div>
 </div>
 
 <script>
-function openEditModal() {
-  document.getElementById('edit-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeEditModal(e) {
-  if (e && e.target !== document.getElementById('edit-modal')) return;
-  document.getElementById('edit-modal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function saveProfile() { closeEditModal(); }
-
-// Animate progress bars
+// Animate progress bars on load
 requestAnimationFrame(() => {
   document.querySelectorAll('.ap-bar-fill').forEach(b => b.classList.add('animated'));
 });

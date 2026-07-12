@@ -5,6 +5,7 @@ using Cursus.Domain.Enums;
 using Cursus.Domain.Interfaces.Services;
 using Cursus.PL.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,9 @@ public class AdminController : Controller
     private readonly IDepartmentService _departmentService;
     private readonly IStudentManagementService _studentManagementService;
     private readonly IAcademicMetricsService _academicMetricsService;
+    private readonly UserManager<AppUser> _userManager;
+
+    private const int PageSize = 10;
 
     public AdminController(
         ApplicationDbContext context,
@@ -30,7 +34,8 @@ public class AdminController : Controller
         IUniversityService universityService,
         IDepartmentService departmentService,
         IStudentManagementService studentManagementService,
-        IAcademicMetricsService academicMetricsService)
+        IAcademicMetricsService academicMetricsService,
+        UserManager<AppUser> userManager)
     {
         _context = context;
         _courseService = courseService;
@@ -39,9 +44,10 @@ public class AdminController : Controller
         _departmentService = departmentService;
         _studentManagementService = studentManagementService;
         _academicMetricsService = academicMetricsService;
+        _userManager = userManager;
     }
 
-    public async Task<IActionResult> Courses(string? searchTerm, int? departmentId, bool includeInactive = false)
+    public async Task<IActionResult> Courses(string? searchTerm, int? departmentId, bool includeInactive = false, int page = 1)
     {
         ViewData["SearchTerm"] = searchTerm;
         ViewData["SelectedDepartmentId"] = departmentId;
@@ -71,14 +77,28 @@ public class AdminController : Controller
 
         await PopulateDepartmentsFilterDropDownListAsync(departmentId);
 
-        return View("CourseIndex", courses);
+        var paginated = PaginatedList<CourseDto>.Create(courses, page, PageSize);
+
+        ViewData["PageIndex"]  = paginated.PageIndex;
+        ViewData["TotalPages"] = paginated.TotalPages;
+        ViewData["TotalCount"] = paginated.TotalCount;
+        ViewData["PageSize"]   = paginated.PageSize;
+        ViewData["PagingAction"] = nameof(Courses);
+        ViewData["PagingRouteValues"] = new Dictionary<string, string?>
+        {
+            ["searchTerm"]      = searchTerm,
+            ["departmentId"]    = departmentId?.ToString(),
+            ["includeInactive"] = includeInactive ? "true" : null
+        };
+
+        return View("CourseIndex", paginated);
     }
 
     /// <summary>Legacy route — redirects to <see cref="Courses"/>.</summary>
     public IActionResult CourseIndex(string? searchTerm, int? departmentId, bool includeInactive = false)
         => RedirectToAction(nameof(Courses), new { searchTerm, departmentId, includeInactive });
 
-    public async Task<IActionResult> Students(string? searchTerm, int? departmentId)
+    public async Task<IActionResult> Students(string? searchTerm, int? departmentId, int page = 1)
     {
         ViewData["SearchTerm"] = searchTerm;
         ViewData["SelectedDepartmentId"] = departmentId;
@@ -87,7 +107,20 @@ public class AdminController : Controller
 
         await PopulateDepartmentsFilterDropDownListAsync(departmentId);
 
-        return View("Students/Index", students);
+        var paginated = PaginatedList<AppUser>.Create(students, page, PageSize);
+
+        ViewData["PageIndex"]  = paginated.PageIndex;
+        ViewData["TotalPages"] = paginated.TotalPages;
+        ViewData["TotalCount"] = paginated.TotalCount;
+        ViewData["PageSize"]   = paginated.PageSize;
+        ViewData["PagingAction"] = nameof(Students);
+        ViewData["PagingRouteValues"] = new Dictionary<string, string?>
+        {
+            ["searchTerm"]   = searchTerm,
+            ["departmentId"] = departmentId?.ToString()
+        };
+
+        return View("Students/Index", paginated);
     }
 
     public IActionResult AddCourse() => RedirectToAction(nameof(CourseCreate));
@@ -112,8 +145,141 @@ public class AdminController : Controller
         return RedirectToAction(nameof(CourseEdit), new { id = id.Value });
     }
 
-    public IActionResult AddStudent() => View();
-    public IActionResult Profile() => View();
+    public async Task<IActionResult> Profile()
+    {
+        // ── Current admin identity ────────────────────────────────────────────
+        var adminUser = await _userManager.GetUserAsync(User);
+        var email        = adminUser?.Email        ?? User.Identity?.Name ?? "admin";
+        var userName     = adminUser?.UserName      ?? email;
+        var userId       = adminUser?.Id            ?? string.Empty;
+
+        // Display name: derive from username (same logic as AppUser.DisplayName)
+        var namePart    = userName.Split('@')[0];
+        var nameParts   = namePart.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        var displayName = nameParts.Length > 0
+            ? string.Join(" ", nameParts.Select(p => p.Length > 0 ? char.ToUpper(p[0]) + p[1..].ToLower() : p))
+            : userName;
+
+        // Initials (up to 2 chars)
+        var initials = nameParts.Length >= 2
+            ? $"{char.ToUpper(nameParts[0][0])}{char.ToUpper(nameParts[1][0])}"
+            : displayName.Length >= 2 ? displayName[..2].ToUpper() : displayName.ToUpper();
+
+        // ── System-wide stats ─────────────────────────────────────────────────
+        var dashboard = await _adminDashboardService.GetAdminDashboardAsync();
+
+        // ── Student standing breakdown ────────────────────────────────────────
+        var allStudents = (await _studentManagementService.GetStudentsAsync(null, null)).ToList();
+        var goodStanding       = allStudents.Count(s => s.CurrentStanding == Domain.Enums.AcademicStanding.Good);
+        var warningOrProbation = allStudents.Count(s => s.CurrentStanding == Domain.Enums.AcademicStanding.Warning
+                                                     || s.CurrentStanding == Domain.Enums.AcademicStanding.Probation);
+        var dismissed          = allStudents.Count(s => s.CurrentStanding == Domain.Enums.AcademicStanding.Dismissed);
+
+        var vm = new AdminProfileViewModel
+        {
+            DisplayName      = displayName,
+            Email            = email,
+            UserId           = userId,
+            Initials         = initials,
+            TotalStudents    = dashboard.TotalStudents,
+            TotalCourses     = dashboard.TotalCourses,
+            ActiveCourses    = dashboard.ActiveCourses,
+            InactiveCourses  = dashboard.InactiveCourses,
+            TotalDepartments = dashboard.TotalDepartments,
+            ActiveDepartments= dashboard.ActiveDepartments,
+            TotalUniversities= dashboard.TotalUniversities,
+            GoodStanding       = goodStanding,
+            WarningOrProbation = warningOrProbation,
+            Dismissed          = dismissed
+        };
+
+        return View(vm);
+    }
+
+    // ── AddStudent ────────────────────────────────────────────────────────────
+
+    [HttpGet]
+    public async Task<IActionResult> AddStudent()
+    {
+        var vm = new CreateStudentViewModel
+        {
+            AcademicYear    = $"{DateTime.Today.Year}-{DateTime.Today.Year + 1}",
+            EnrollmentDate  = DateTime.Today,
+            CurrentSemester = SemesterType.Fall
+        };
+        await PopulateCreateStudentFormAsync(vm);
+        return View(vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddStudent(CreateStudentViewModel vm)
+    {
+        if (!ModelState.IsValid)
+        {
+            await PopulateCreateStudentFormAsync(vm);
+            return View(vm);
+        }
+
+        // ── Explicit email uniqueness check ───────────────────────────────────
+        // Done before CreateAsync so the error is bound to the Email field
+        // (Identity's own duplicate-email error is model-level and less specific).
+        var normalizedEmail = vm.Email.Trim().ToLower();
+        var existing = await _userManager.FindByEmailAsync(normalizedEmail);
+        if (existing is not null)
+        {
+            ModelState.AddModelError(nameof(vm.Email), "A student with this email address already exists.");
+            await PopulateCreateStudentFormAsync(vm);
+            return View(vm);
+        }
+
+        var user = new AppUser
+        {
+            UserName        = normalizedEmail,
+            Email           = vm.Email.Trim(),
+            DepartmentId    = vm.DepartmentId,
+            AcademicYear    = vm.AcademicYear.Trim(),
+            CurrentSemester = vm.CurrentSemester,
+            CurrentStanding = Domain.Enums.AcademicStanding.Good,
+            EnrollmentDate  = vm.EnrollmentDate
+        };
+
+        var result = await _userManager.CreateAsync(user, vm.Password);
+
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+                ModelState.AddModelError(string.Empty, error.Description);
+
+            await PopulateCreateStudentFormAsync(vm);
+            return View(vm);
+        }
+
+        await _userManager.AddToRoleAsync(user, Roles.Student);
+
+        TempData["StatusMessage"] = $"Student \u201c{user.DisplayName}\u201d created successfully.";
+        return RedirectToAction(nameof(Students));
+    }
+
+    // ── DeleteStudent ──────────────────────────────────────────────────────────
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteStudent(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        if (user is null)
+            return NotFound();
+
+        var result = await _userManager.DeleteAsync(user);
+
+        if (result.Succeeded)
+            TempData["StatusMessage"] = $"Student \u201c{user.DisplayName}\u201d deleted successfully.";
+        else
+            TempData["ErrorMessage"] = "Unable to delete student: " + string.Join(", ", result.Errors.Select(e => e.Description));
+
+        return RedirectToAction(nameof(Students));
+    }
 
     // ── EditStudent ────────────────────────────────────────────────────────────
 
@@ -410,11 +576,19 @@ public class AdminController : Controller
         return View(dashboard);
     }
 
-    public async Task<IActionResult> UniversityIndex()
+    public async Task<IActionResult> UniversityIndex(int page = 1)
     {
         var universities = await _universityService.GetAllAsync();
+        var paginated    = PaginatedList<UniversityDto>.Create(universities, page, PageSize);
 
-        return View(universities);
+        ViewData["PageIndex"]  = paginated.PageIndex;
+        ViewData["TotalPages"] = paginated.TotalPages;
+        ViewData["TotalCount"] = paginated.TotalCount;
+        ViewData["PageSize"]   = paginated.PageSize;
+        ViewData["PagingAction"]      = nameof(UniversityIndex);
+        ViewData["PagingRouteValues"] = new Dictionary<string, string?>();
+
+        return View(paginated);
     }
 
     [HttpGet]
@@ -454,10 +628,19 @@ public class AdminController : Controller
         }
     }
 
-    public async Task<IActionResult> DepartmentIndex()
+    public async Task<IActionResult> DepartmentIndex(int page = 1)
     {
         var departments = await _departmentService.GetAllAsync();
-        return View(departments);
+        var paginated   = PaginatedList<DepartmentDto>.Create(departments, page, PageSize);
+
+        ViewData["PageIndex"]  = paginated.PageIndex;
+        ViewData["TotalPages"] = paginated.TotalPages;
+        ViewData["TotalCount"] = paginated.TotalCount;
+        ViewData["PageSize"]   = paginated.PageSize;
+        ViewData["PagingAction"]      = nameof(DepartmentIndex);
+        ViewData["PagingRouteValues"] = new Dictionary<string, string?>();
+
+        return View(paginated);
     }
 
     [HttpGet]
@@ -809,6 +992,23 @@ public class AdminController : Controller
             .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
 
         vm.StandingOptions = Enum.GetValues<AcademicStanding>()
+            .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
+    }
+
+    private async Task PopulateCreateStudentFormAsync(CreateStudentViewModel vm)
+    {
+        var departments = await _context.Departments
+            .Include(d => d.University)
+            .Where(d => d.IsActive)
+            .AsNoTracking()
+            .OrderBy(d => d.Name)
+            .ToListAsync();
+
+        vm.DepartmentOptions = departments.Select(d => new SelectListItem(
+            d.University is null ? d.Name : $"{d.Name} ({d.University.Name})",
+            d.Id.ToString()));
+
+        vm.SemesterOptions = Enum.GetValues<SemesterType>()
             .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
     }
 

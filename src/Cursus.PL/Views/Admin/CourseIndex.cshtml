@@ -1,15 +1,16 @@
 @using Cursus.Domain.DTOs
-@model IEnumerable<CourseDto>
+@using Cursus.PL.Models
+@model PaginatedList<CourseDto>
 
 @{
     ViewData["Title"] = "Course Management";
-    var list = Model.ToList();
+    var list = Model.Items.ToList();
     var includeInactive = (bool?)ViewData["IncludeInactive"] ?? false;
     var searchTerm = ViewData["SearchTerm"] as string;
     var selectedDepartmentId = ViewData["SelectedDepartmentId"]?.ToString();
-    var total = list.Count;
-    var active = list.Count(c => c.IsActive);
-    var inactive = list.Count(c => !c.IsActive);
+    var total   = (int)(ViewData["TotalCount"] ?? 0);
+    var active  = list.Count(c => c.IsActive);
+    var inactive= list.Count(c => !c.IsActive);
 
     string AvailClass(SemesterAvailability s) => s switch
     {
@@ -201,12 +202,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 px-4 py-3"
-             style="border-top:1px solid var(--c-border);">
-            <p class="mb-0" style="font-size:12px;color:var(--c-muted);">
-                Showing <span class="fw-700" style="color:var(--c-primary);">@total</span> course@(total == 1 ? "" : "s")
-            </p>
-        </div>
+        <partial name="_Pagination" />
     </div>
 }
 else

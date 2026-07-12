@@ -1,33 +1,93 @@
 @using Cursus.Domain.DTOs
-@model IEnumerable<UniversityDto>
+@using Cursus.PL.Models
+@model PaginatedList<UniversityDto>
 
 @{
     ViewData["Title"] = "University Management";
+    var list  = Model.Items.ToList();
+    var total = (int)(ViewData["TotalCount"] ?? 0);
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">University Management</h1>
-    <a asp-action="UniversityCreate" class="btn btn-primary">Create University</a>
-</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/courses.css" asp-append-version="true"/>
+}
 
 <partial name="_AdminAlerts" />
 
-<div class="table-responsive">
-    <table class="table table-striped table-hover align-middle">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Departments</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Name</td>
-                    <td>@item.Departments</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<!-- Page Header -->
+<div class="d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3 mb-4 anim-fade-up">
+  <div>
+    <h1 class="fw-900 mb-1" style="font-size:1.65rem;letter-spacing:-.4px;color:var(--c-text);">Universities</h1>
+    <p class="mb-0" style="font-size:13px;color:var(--c-muted);">
+      Manage universities and their department counts.
+    </p>
+  </div>
+  <a asp-action="UniversityCreate"
+     class="btn btn-primary d-flex align-items-center gap-2 fw-700 flex-shrink-0 text-decoration-none"
+     style="border-radius:12px;font-size:13px;padding:9px 18px;box-shadow:0 4px 14px rgba(79,70,229,.28);">
+    <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1,'wght' 400">add</span>
+    Add University
+  </a>
 </div>
+
+<!-- Stat Pill -->
+<div class="d-flex flex-wrap gap-2 mb-4 anim-fade-up-1">
+  <div class="stat-pill d-flex align-items-center gap-2">
+    <span class="stat-pill-dot" style="background:#4F46E5;"></span>
+    <span class="fw-700" style="font-size:13px;color:var(--c-text);">@total</span>
+    <span style="font-size:12px;color:var(--c-muted);">Universities</span>
+  </div>
+</div>
+
+@if (list.Count > 0)
+{
+<div class="surface anim-fade-up-2 overflow-hidden">
+  <div class="table-responsive">
+    <table class="table courses-table mb-0">
+      <thead>
+        <tr>
+          <th style="width:60px;">#</th>
+          <th>Name</th>
+          <th class="text-center">Departments</th>
+          <th class="text-end col-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @{ int rowNum = (Model.PageIndex - 1) * Model.PageSize + 1; }
+        @foreach (var item in list)
+        {
+            <tr class="course-row">
+              <td>
+                <span class="course-code" style="font-variant-numeric:tabular-nums;">@rowNum</span>
+              </td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="material-symbols-outlined" style="font-size:18px;color:var(--c-primary);font-variation-settings:'FILL' 0,'wght' 300">account_balance</span>
+                  <span class="fw-600" style="font-size:13px;color:var(--c-text);">@item.Name</span>
+                </div>
+              </td>
+              <td class="text-center">
+                <span style="display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:8px;background:var(--c-bg);border:1px solid var(--c-border);font-size:12px;font-weight:700;color:var(--c-text-sub);white-space:nowrap;">@item.Departments <span style="font-weight:400;font-size:11px;">dept@(item.Departments == 1 ? "" : "s")</span></span>
+              </td>
+              <td class="col-actions text-end">
+                <div class="actions-cell justify-content-end">
+                  <span style="font-size:11px;color:var(--c-muted);">@item.Departments dept@(item.Departments == 1 ? "" : "s")</span>
+                </div>
+              </td>
+            </tr>
+            rowNum++;
+        }
+      </tbody>
+    </table>
+  </div>
+  <partial name="_Pagination" />
+</div>
+}
+else
+{
+<div class="surface anim-fade-up-2 overflow-hidden text-center py-5 px-3">
+  <span class="material-symbols-outlined d-block mb-3" style="font-size:40px;color:var(--c-muted);font-variation-settings:'FILL' 0,'wght' 200">account_balance</span>
+  <p class="fw-700 mb-1" style="font-size:14px;color:var(--c-text);">No universities yet</p>
+  <p class="mb-0" style="font-size:12px;color:var(--c-muted);">Create the first university to get started.</p>
+</div>
+}
