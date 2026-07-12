@@ -745,7 +745,7 @@ public static class StartupSeeder
 
         foreach (var seed in graduationRequirementSeeds)
         {
-            var targetDepartments = ResolveGraduationRequirementDepartments(seed, university, universityDepartments, departmentsByKey);
+            var targetDepartments = ResolveGraduationRequirementDepartments(seed, university, universityDepartments, departmentsByKey, universityDepartmentIds);
 
             if (targetDepartments.Count == 0)
             {
@@ -842,11 +842,15 @@ public static class StartupSeeder
         GraduationRequirementSeed seed,
         University university,
         List<Department> universityDepartments,
-        Dictionary<string, Department> departmentsByKey)
+        Dictionary<string, Department> departmentsByKey,
+        HashSet<int> universityDepartmentIds)
     {
         if (string.IsNullOrWhiteSpace(seed.Major))
         {
-            return universityDepartments;
+            // Scope to department catalog only - only include departments that have courses
+            return universityDepartments
+                .Where(department => universityDepartmentIds.Contains(department.Id))
+                .ToList();
         }
 
         var departmentName = MapMajorToDepartmentName(seed.Major);
@@ -1309,81 +1313,6 @@ public static class StartupSeeder
             return (DefaultCredits, DefaultGpa);
         }
     }
-
-    [Obsolete("Use SeedDemoStudentsAsync — this method seeds ordinal AcademicYear values that break term labels.")]
-    public static Task SeedSampleStudentsAsync(IServiceProvider serviceProvider) =>
-        Task.CompletedTask;
-
-#if false
-    // Legacy body retained for reference — not invoked.
-    private static async Task SeedSampleStudentsAsync_Legacy(IServiceProvider serviceProvider)
-    {
-        using var scope = serviceProvider.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-        if (!await roleManager.RoleExistsAsync("Student"))
-        {
-            await roleManager.CreateAsync(new IdentityRole("Student"));
-        }
-
-        var csDept = await context.Departments.FirstOrDefaultAsync(d => d.Name == "Computer Science");
-        var isDept = await context.Departments.FirstOrDefaultAsync(d => d.Name == "Information Systems");
-        var aiDept = await context.Departments.FirstOrDefaultAsync(d => d.Name == "Artificial Intelligence");
-        var itDept = await context.Departments.FirstOrDefaultAsync(d => d.Name == "Information Technology");
-
-        var studentsToSeed = new List<(string Email, int? DeptId, string Year, SemesterType Semester, AcademicStanding Standing)>
-        {
-            ("ahmed.kamal@svu.edu.eg", csDept?.Id, "3", SemesterType.Spring, AcademicStanding.Good),
-            ("sara.mohamed@svu.edu.eg", isDept?.Id, "2", SemesterType.Spring, AcademicStanding.Warning),
-            ("mohamed.ali@svu.edu.eg", csDept?.Id, "4", SemesterType.Spring, AcademicStanding.Good),
-            ("nour.hassan@svu.edu.eg", aiDept?.Id, "1", SemesterType.Spring, AcademicStanding.Probation),
-            ("yasmine.farouk@svu.edu.eg", itDept?.Id, "3", SemesterType.Spring, AcademicStanding.Good),
-            ("omar.tarek@svu.edu.eg", csDept?.Id, "2", SemesterType.Spring, AcademicStanding.Dismissed)
-        };
-
-        foreach (var data in studentsToSeed)
-        {
-            var existingUser = await userManager.FindByEmailAsync(data.Email)
-                ?? await userManager.FindByNameAsync(data.Email);
-
-            if (existingUser is null)
-            {
-                var student = new AppUser
-                {
-                    UserName = data.Email,
-                    Email = data.Email,
-                    EmailConfirmed = true,
-                    DepartmentId = data.DeptId,
-                    AcademicYear = data.Year,
-                    CurrentSemester = data.Semester,
-                    CurrentStanding = data.Standing
-                };
-
-                var createResult = await userManager.CreateAsync(student, "StudentPass123!");
-                if (createResult.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(student, "Student");
-                }
-            }
-            else
-            {
-                existingUser.DepartmentId = data.DeptId;
-                existingUser.AcademicYear = data.Year;
-                existingUser.CurrentSemester = data.Semester;
-                existingUser.CurrentStanding = data.Standing;
-                
-                await userManager.UpdateAsync(existingUser);
-
-                if (!await userManager.IsInRoleAsync(existingUser, "Student"))
-                {
-                    await userManager.AddToRoleAsync(existingUser, "Student");
-                }
-            }
-        }
-    }
-#endif
 }
 
 
