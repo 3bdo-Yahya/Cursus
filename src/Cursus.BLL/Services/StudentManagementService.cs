@@ -36,7 +36,7 @@ namespace Cursus.BLL.Services
         }
 
         public async Task<IEnumerable<AppUser>> GetStudentsAsync(
-            string? searchTerm, int? departmentId)
+            string? searchTerm, int? departmentId, int? universityId = null)
         {
             var studentRoleId = await _context.Roles
                 .Where(r => r.Name == "Student")
@@ -53,6 +53,9 @@ namespace Cursus.BLL.Services
                     .Any(ur => ur.UserId == u.Id && ur.RoleId == studentRoleId))
                 .AsNoTracking()
                 .AsQueryable();
+
+            if (universityId.HasValue)
+                query = query.Where(u => u.UniversityId == universityId.Value);
 
             if (departmentId.HasValue && departmentId.Value > 0)
                 query = query.Where(u => u.DepartmentId == departmentId.Value);
@@ -69,7 +72,7 @@ namespace Cursus.BLL.Services
         }
 
         public async Task<IEnumerable<AppUser>> GetAllStudentsAsync(
-            string? departmentFilter)
+            string? departmentFilter, int? universityId = null)
         {
             var studentRoleId = await _context.Roles
                 .Where(r => r.Name == "Student")
@@ -87,6 +90,9 @@ namespace Cursus.BLL.Services
                 .AsNoTracking()
                 .AsQueryable();
 
+            if (universityId.HasValue)
+                query = query.Where(u => u.UniversityId == universityId.Value);
+
             if (!string.IsNullOrWhiteSpace(departmentFilter))
             {
                 var filter = departmentFilter.Trim().ToLower();
@@ -98,9 +104,9 @@ namespace Cursus.BLL.Services
             return await query.OrderBy(u => u.UserName).ToListAsync();
         }
 
-        public async Task<AppUser?> GetStudentDetailAsync(string studentId)
+        public async Task<AppUser?> GetStudentDetailAsync(string studentId, int? universityId = null)
         {
-            return await _context.Users
+            var query = _context.Users
                 .Include(u => u.Department)
                     .ThenInclude(d => d!.University)
                 .Include(u => u.StudentCourses)
@@ -108,11 +114,17 @@ namespace Cursus.BLL.Services
                         .ThenInclude(c => c!.Department)
                 .Include(u => u.StandingHistories)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == studentId);
+                .Where(u => u.Id == studentId);
+
+            if (universityId.HasValue)
+                query = query.Where(u => u.UniversityId == universityId.Value);
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<StudentCommandResult> CreateStudentAsync(
             CreateStudentRequest request,
+            int? universityId = null,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(request);
@@ -128,11 +140,14 @@ namespace Cursus.BLL.Services
                     nameof(CreateStudentRequest.Email));
             }
 
-            var department = await _context.Departments
+            var departmentQuery = _context.Departments
                 .AsNoTracking()
-                .FirstOrDefaultAsync(
-                    d => d.Id == request.DepartmentId && d.IsActive,
-                    cancellationToken);
+                .Where(d => d.Id == request.DepartmentId && d.IsActive);
+
+            if (universityId.HasValue)
+                departmentQuery = departmentQuery.Where(d => d.UniversityId == universityId.Value);
+
+            var department = await departmentQuery.FirstOrDefaultAsync(cancellationToken);
 
             if (department is null)
             {
@@ -140,7 +155,6 @@ namespace Cursus.BLL.Services
                     "Please select a valid active department.",
                     nameof(CreateStudentRequest.DepartmentId));
             }
-
             var user = new AppUser
             {
                 UserName = normalizedEmail,
@@ -183,6 +197,7 @@ namespace Cursus.BLL.Services
 
         public async Task<StudentCommandResult> DeleteStudentAsync(
             string userId,
+            int? universityId = null,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -190,6 +205,9 @@ namespace Cursus.BLL.Services
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null)
+                return StudentCommandResult.Failure("Student not found.");
+
+            if (universityId.HasValue && user.UniversityId != universityId.Value)
                 return StudentCommandResult.Failure("Student not found.");
 
             if (!await _userManager.IsInRoleAsync(user, Roles.Student))
@@ -210,9 +228,10 @@ namespace Cursus.BLL.Services
         }
 
         public async Task<StudentStandingSummary> GetStandingSummaryAsync(
+            int? universityId = null,
             CancellationToken cancellationToken = default)
         {
-            var students = (await GetStudentsAsync(null, null)).ToList();
+            var students = (await GetStudentsAsync(null, null, universityId)).ToList();
             return new StudentStandingSummary(
                 Total: students.Count,
                 Good: students.Count(s => s.CurrentStanding == AcademicStanding.Good),
@@ -350,3 +369,4 @@ namespace Cursus.BLL.Services
             grade is "D+" or "D" or "D-" or "F";
     }
 }
+

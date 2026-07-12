@@ -4,7 +4,7 @@ namespace Cursus.Domain.Interfaces.Services
 {
     public interface IAdminDashboardService
     {
-        Task<AdminDashboardDto> GetAdminDashboardAsync();
-
+        /// <param name="universityId">When set, counts are limited to that university.</param>
+        Task<AdminDashboardDto> GetAdminDashboardAsync(int? universityId = null);
     }
 }
