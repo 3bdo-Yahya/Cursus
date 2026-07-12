@@ -34,5 +34,7 @@ public sealed record ImpactAnalysisResultDto(
     FailureScenarioType? ScenarioType = null,
     string ScenarioSummary = "",
     IReadOnlyList<RecoverySemesterDto>? RecoverySchedule = null,
-    IReadOnlyList<string>? Recommendations = null
+    IReadOnlyList<string>? Recommendations = null,
+    IReadOnlyList<RecoveryCourseDto>? ReplacementCourses = null
 );
+

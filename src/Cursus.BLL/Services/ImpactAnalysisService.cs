@@ -89,6 +89,16 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
             completedCreditsByType,
             failedCourse);
 
+        var studentCourses = await _db.StudentCourses
+            .AsNoTracking()
+            .Include(sc => sc.Course)
+            .Where(sc => sc.StudentId == studentId)
+            .ToListAsync();
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
+        var (projectedCgpa, cgpaDelta, projectedStanding, standingWouldChange) =
+            ComputeCgpaImpact(cgpa, standing, failedCourse, bestAttempts, gradeScale);
+        var failurePathMaxCredits = GraduationDelayCalculator.GetMaxCreditsPerSemester(projectedStanding, projectedCgpa);
+
         var delay = GraduationDelayCalculator.Calculate(
             currentSemester,
             academicYear,
@@ -98,20 +108,23 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
             failedCourse.SemesterAvailability,
             simulationCourses,
             completedCourseIds,
-            adjacency);
+            adjacency,
+            baselineMaxCreditsOverride: null,
+            failureMaxCreditsOverride: failurePathMaxCredits);
 
         var blockedWithTerms = EnrichBlockedTerms(orderedBlocked, delay);
-        var studentCourses = await _db.StudentCourses
-            .AsNoTracking()
-            .Include(sc => sc.Course)
-            .Where(sc => sc.StudentId == studentId)
-            .ToListAsync();
 
-        var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
-        var (projectedCgpa, cgpaDelta, projectedStanding, standingWouldChange) =
-            ComputeCgpaImpact(cgpa, standing, failedCourse, bestAttempts, gradeScale);
-
-        var scenario = DetectScenario(failedCourse, blockedWithTerms, courses, completedCourseIds, adjacency);
+        var replacementCourses = FindReplacementCourses(
+            failedCourse,
+            courses,
+            completedCourseIds,
+            blockedWithTerms.Select(b => b.CourseId).ToHashSet());
+        var scenario = DetectScenario(
+            failedCourse,
+            blockedWithTerms,
+            courses,
+            completedCourseIds,
+            replacementCourses);
         var recoverySchedule = MapRecoverySchedule(delay.FailureSchedule);
         var recommendations = BuildRecommendations(
             failedCourse,
@@ -148,7 +161,8 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
             ScenarioType: scenario.Type,
             ScenarioSummary: scenario.Summary,
             RecoverySchedule: recoverySchedule,
-            Recommendations: recommendations);
+            Recommendations: recommendations,
+            ReplacementCourses: replacementCourses);
     }
 
     private static Dictionary<int, List<int>> BuildAdjacency(
@@ -228,7 +242,14 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         Dictionary<CourseType, int> completedCreditsByType,
         Course failedCourse)
     {
+        var prereqIds = courses
+            .SelectMany(c => c.Prerequisites.Select(p => p.PrerequisiteId))
+            .ToHashSet();
+
         var simulationCourses = courses
+            .Where(c => c.CourseType == CourseType.Core
+                        || prereqIds.Contains(c.Id)
+                        || c.Id == failedCourse.Id)
             .Select(CopyCourseForSimulation)
             .ToList();
 
@@ -359,7 +380,7 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         List<BlockedCourseDto> blocked,
         List<Course> courses,
         HashSet<int> completedCourseIds,
-        Dictionary<int, List<int>> adjacency)
+        IReadOnlyList<RecoveryCourseDto> replacementCourses)
     {
         var recSem = failedCourse.RecommendedSemester
             ?? SemesterMath.InferFromCourseCode(failedCourse.Code);
@@ -368,7 +389,7 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         {
             return new ScenarioResult(
                 FailureScenarioType.Semester2Failure,
-                $"Failing {CourseDisplayHelper.Label(failedCourse)} in Spring delays dependents until after a Summer retake, then normal continuation resumes.");
+                $"Failing {CourseDisplayHelper.Label(failedCourse)} in Spring delays dependents until it can be retaken as soon as it is offered, then normal continuation resumes.");
         }
 
         var nextSpringSem = recSem.HasValue ? recSem.Value + 1 : (int?)null;
@@ -380,27 +401,21 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
 
         if (blockedSpringCourses.Count > 0)
         {
-            var replacements = FindReplacementCourses(
-                failedCourse,
-                courses,
-                completedCourseIds,
-                blocked.Select(b => b.CourseId).ToHashSet());
-
-            var replacementText = replacements.Count > 0
-                ? $" Consider {string.Join(", ", replacements.Take(3))} while waiting for Summer recovery."
+            var replacementText = replacementCourses.Count > 0
+                ? $" Consider {string.Join(", ", replacementCourses.Take(3).Select(c => CourseDisplayHelper.Label(c.Code, c.Name)))} while waiting to recover."
                 : string.Empty;
 
             return new ScenarioResult(
                 FailureScenarioType.Semester1WithBlock,
-                $"Failing {CourseDisplayHelper.Label(failedCourse)} blocks {string.Join(", ", blockedSpringCourses)} next Spring. Retake in Summer to unlock the blocked path.{replacementText}");
+                $"Failing {CourseDisplayHelper.Label(failedCourse)} blocks {string.Join(", ", blockedSpringCourses)} next Spring. Retake as soon as it is offered to unlock the blocked path.{replacementText}");
         }
 
         return new ScenarioResult(
             FailureScenarioType.Semester1NoBlock,
-            $"Failing {CourseDisplayHelper.Label(failedCourse)} does not block next-term courses. Continue as planned and retake in Summer.");
+            $"Failing {CourseDisplayHelper.Label(failedCourse)} does not block next-term courses. Continue as planned and retake as soon as it is offered.");
     }
 
-    private static List<string> FindReplacementCourses(
+    private static List<RecoveryCourseDto> FindReplacementCourses(
         Course failedCourse,
         List<Course> courses,
         HashSet<int> completedCourseIds,
@@ -418,7 +433,12 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
             .OrderBy(c => SemesterMath.ResolveRecommendedSemester(c))
             .GroupBy(c => c.Code, StringComparer.OrdinalIgnoreCase)
             .Select(g => g.First())
-            .Select(c => CourseDisplayHelper.Label(c))
+            .Select(c => new RecoveryCourseDto(
+                Code: c.Code,
+                Name: c.Name,
+                CreditHours: c.CreditHours,
+                IsRetake: false,
+                IsNewlyUnlocked: false))
             .Take(5)
             .ToList();
     }
@@ -458,7 +478,7 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
     {
         var recs = new List<string>
         {
-            $"Register for <strong>{CourseDisplayHelper.Label(failedCourse)}</strong> in {delay.RetakeSemesterLabel} (Summer retake, assume pass)."
+            $"Register for <strong>{CourseDisplayHelper.Label(failedCourse)}</strong> in {delay.RetakeSemesterLabel} (retake, assume pass)."
         };
 
         if (delay.GraduationDelaySemesters > 0)
@@ -468,7 +488,7 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         }
         else
         {
-            recs.Add("No graduation delay expected if you pass the Summer retake on schedule.");
+            recs.Add("No graduation delay expected if you pass the retake on schedule.");
         }
 
         if (blocked.Count > 0)
@@ -477,7 +497,7 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
                 .Where(b => b.Depth == 1)
                 .Select(b => CourseDisplayHelper.Label(b.Code, b.Name))
                 .Take(3);
-            recs.Add($"Blocked courses ({string.Join(", ", direct)}) unlock after the Summer retake.");
+            recs.Add($"Blocked courses ({string.Join(", ", direct)}) unlock after the retake.");
         }
 
         if (standingWouldChange)
@@ -499,6 +519,7 @@ public sealed class ImpactAnalysisService : IImpactAnalysisService
         return creditsAtRisk > 0 ? "Low" : "None";
     }
 }
+
 
 
 

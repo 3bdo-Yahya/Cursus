@@ -369,6 +369,22 @@ cy = cytoscape({
       },
     },
     {
+      selector: 'node.cascade-hit-direct',
+      style: {
+        'background-color': '#ef4444',
+        'border-color':     '#b91c1c',
+        'color':            '#fff',
+      },
+    },
+    {
+      selector: 'node.cascade-hit-chain',
+      style: {
+        'background-color': '#f59e0b',
+        'border-color':     '#b45309',
+        'color':            '#fff',
+      },
+    },
+    {
       selector: 'edge',
       style: {
         'width':                 2,
@@ -390,6 +406,14 @@ cy = cytoscape({
       style: {
         'line-color':         '#ef4444',
         'target-arrow-color': '#ef4444',
+        'width':              3,
+      },
+    },
+    {
+      selector: 'edge.cascade-edge-chain',
+      style: {
+        'line-color':         '#f59e0b',
+        'target-arrow-color': '#f59e0b',
         'width':              3,
       },
     },
@@ -602,11 +626,13 @@ async function startSim() {
     const tId = setTimeout(() => {
       const n = cy.getElementById(String(b.courseId));
       if (!n.length) return;
-      n.removeClass('dimmed').addClass('cascade-hit');
+      const hitClass = b.depth === 1 ? 'cascade-hit cascade-hit-direct' : 'cascade-hit cascade-hit-chain';
+      const edgeClass = b.depth === 1 ? 'cascade-edge' : 'cascade-edge cascade-edge-chain';
+      n.removeClass('dimmed').addClass(hitClass);
       pulseNode(n);
       n.incomers('edge').forEach(edge => {
         if (coveredIds.has(edge.source().id())) {
-          edge.removeClass('dimmed').addClass('cascade-edge');
+          edge.removeClass('dimmed').addClass(edgeClass);
           pulseEdge(edge);
         }
       });
@@ -654,7 +680,7 @@ function clearSimAnimated() {
         {
           duration: 180,
           complete: () => {
-            n.removeClass('cascade-hit dimmed');
+            n.removeClass('cascade-hit cascade-hit-direct cascade-hit-chain dimmed');
             n.removeStyle('opacity width height');
           }
         }
@@ -665,7 +691,7 @@ function clearSimAnimated() {
 
   cascadeEdges.forEach((e, i) => {
     const tId = setTimeout(() => {
-      e.removeClass('cascade-edge dimmed');
+      e.removeClass('cascade-edge cascade-edge-chain dimmed');
       e.removeStyle('width line-color target-arrow-color');
     }, i * 120);
     simTimeouts.push(tId);
@@ -676,8 +702,8 @@ function clearSimAnimated() {
   const finalTId = setTimeout(() => {
     simTimeouts = [];
     cy.nodes().stop(true).removeStyle('width height opacity');
-    cy.nodes().removeClass('dimmed cascade-hit cascade-source');
-    cy.edges().removeClass('dimmed cascade-edge');
+    cy.nodes().removeClass('dimmed cascade-hit cascade-hit-direct cascade-hit-chain cascade-source');
+    cy.edges().removeClass('dimmed cascade-edge cascade-edge-chain');
     cy.nodes().style('opacity', 1);
 
     simActive   = false;
@@ -767,15 +793,18 @@ function openImpactDrawer(result) {
     <div class="cm-panel-section">
       <p class="cm-panel-section-title">Blocked Courses</p>
       <div class="d-flex flex-column gap-1">
-        ${blocked.map((b,i) => `
-          <div class="cm-blocked-row" style="animation-delay:${i*60}ms">
-            <span class="material-symbols-outlined" style="font-size:15px;color:#ef4444;font-variation-settings:'FILL' 1,'wght' 400">error</span>
+        ${blocked.map((b,i) => {
+          const isDirect = b.depth === 1;
+          return `
+          <div class="cm-blocked-row ${isDirect ? 'cm-blocked-row-direct' : 'cm-blocked-row-chain'}" style="animation-delay:${i*60}ms">
+            <span class="material-symbols-outlined" style="font-size:15px;color:${isDirect ? '#ef4444' : '#d97706'};font-variation-settings:'FILL' 1,'wght' 400">${isDirect ? 'error' : 'account_tree'}</span>
             <div class="flex-fill">
               <p class="fw-700 mb-0" style="font-size:12px;color:var(--c-text);">${b.code} — ${b.name}</p>
-              <p style="font-size:10.5px;color:var(--c-muted);margin:0;">${b.depth === 1 ? 'Direct' : 'Chain'} dependency</p>
+              <p style="font-size:10.5px;color:var(--c-muted);margin:0;">${isDirect ? 'Direct' : 'Chain'} dependency</p>
             </div>
-          </div>
-        `).join('')}
+            <span class="cm-dep-tag ${isDirect ? 'cm-dep-direct' : 'cm-dep-chain'}">${isDirect ? 'Direct' : 'Chain'}</span>
+          </div>`;
+        }).join('')}
       </div>
     </div>
 
@@ -899,5 +928,6 @@ function wireFilterControls() {
 }
 
 })();
+
 
 

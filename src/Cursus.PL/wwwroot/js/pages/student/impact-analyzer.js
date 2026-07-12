@@ -93,6 +93,200 @@ function formatCourseLabel(course, { retake = false, unlocked = false } = {}) {
   return `<strong>${safePrimary}</strong>${suffix}`;
 }
 
+/** Matches GraduationDelayCalculator.SafetyLimit — delay at/above this means path projection failed. */
+const RECOVERY_SAFETY_LIMIT = 60;
+
+/**
+ * Derive badge + graduation copy from existing report fields.
+ * - ontrack: delay === 0
+ * - delayed: delay > 0 but still under safety limit
+ * - uncertain: simulator hit safety limit / incomplete path
+ */
+function resolveRecoveryStatus({ delay, originalGrad, projectedGrad }) {
+  if (delay >= RECOVERY_SAFETY_LIMIT) {
+    return {
+      key: 'uncertain',
+      badgeLabel: 'Needs review',
+      badgeIcon: 'warning',
+      badgeClass: 'ia-status-badge ia-status-uncertain',
+      graduationHtml: 'Unable to project a complete path — meet your advisor',
+      hint: 'Simulation could not finish a full recovery path. Confirm next steps with your advisor.'
+    };
+  }
+
+  if (delay > 0) {
+    return {
+      key: 'delayed',
+      badgeLabel: 'Recoverable · delayed',
+      badgeIcon: 'schedule',
+      badgeClass: 'ia-status-badge ia-status-delayed',
+      graduationHtml: `<strong>${escapeHtml(originalGrad)}</strong> → <strong>${escapeHtml(projectedGrad)}</strong> (+${delay} sem)`,
+      hint: 'What to do next: retake, affected courses, and what you can take instead.'
+    };
+  }
+
+  return {
+    key: 'ontrack',
+    badgeLabel: 'Recoverable',
+    badgeIcon: 'check_circle',
+    badgeClass: 'ia-status-badge ia-status-ontrack',
+    graduationHtml: `<strong>${escapeHtml(projectedGrad)}</strong> — no graduation delay`,
+    hint: 'What to do next: retake, affected courses, and what you can take instead.'
+  };
+}
+
+function applyRecoveryBadge(status) {
+  const badge = document.getElementById('ia-recovery-badge');
+  const badgeText = document.getElementById('ia-recovery-badge-text');
+  const hint = document.getElementById('ia-recovery-hint');
+  if (badge) {
+    badge.className = status.badgeClass;
+    const icon = badge.querySelector('.material-symbols-outlined');
+    if (icon) icon.textContent = status.badgeIcon;
+  }
+  if (badgeText) badgeText.textContent = status.badgeLabel;
+  if (hint) hint.textContent = status.hint;
+}
+
+function renderLeanRecovery({ src, retakeLabel, blockedRaw, replacements, recoveryStatus }) {
+  const leanEl = document.getElementById('ia-lean-recovery');
+  if (!leanEl) return;
+
+  const failedLabel = formatCourseLabel({ code: src.id, name: src.name });
+  const directAffected = (blockedRaw || []).filter(b => (b.depth ?? 1) === 1);
+  const affectedItems = directAffected.map(b => {
+    const label = formatCourseLabel({ code: b.code, name: b.name });
+    let timing = '';
+    if (b.newTermLabel && b.normalTermLabel && b.newTermLabel !== b.normalTermLabel) {
+      timing = ` <span class="ia-lean-course-meta">· was ${escapeHtml(b.normalTermLabel)}, unlocks ${escapeHtml(b.newTermLabel)}</span>`;
+    } else if (b.newTermLabel) {
+      timing = ` <span class="ia-lean-course-meta">· unlocks ${escapeHtml(b.newTermLabel)}</span>`;
+    }
+    return `<li>${label}${timing}</li>`;
+  }).join('');
+
+  const replacementItems = (replacements || []).map(c =>
+    `<li>${formatCourseLabel(c)} <span class="ia-lean-course-meta">· ${c.creditHours ?? c.credits ?? 3} cr</span></li>`
+  ).join('');
+
+  leanEl.innerHTML = `
+    <div class="ia-lean-block">
+      <p class="ia-lean-block-title">
+        <span class="material-symbols-outlined" style="font-size:14px;color:#d97706;font-variation-settings:'FILL' 1,'wght' 400">refresh</span>
+        Do now
+      </p>
+      <p class="ia-lean-block-body">Retake ${failedLabel} in <strong>${escapeHtml(retakeLabel)}</strong> (assume pass).</p>
+    </div>
+    <div class="ia-lean-block">
+      <p class="ia-lean-block-title">
+        <span class="material-symbols-outlined" style="font-size:14px;color:#ef4444;font-variation-settings:'FILL' 1,'wght' 400">block</span>
+        Directly affected
+      </p>
+      ${affectedItems
+        ? `<ul class="ia-lean-course-list">${affectedItems}</ul>`
+        : `<p class="ia-lean-empty">No direct dependents are blocked. See Blocked Courses for the full cascade.</p>`}
+    </div>
+    <div class="ia-lean-block">
+      <p class="ia-lean-block-title">
+        <span class="material-symbols-outlined" style="font-size:14px;color:#10b981;font-variation-settings:'FILL' 1,'wght' 400">swap_horiz</span>
+        Take instead
+      </p>
+      ${replacementItems
+        ? `<ul class="ia-lean-course-list">${replacementItems}</ul>`
+        : `<p class="ia-lean-empty">No eligible replacements found while you wait for the retake.</p>`}
+    </div>
+    <div class="ia-lean-block">
+      <p class="ia-lean-block-title">
+        <span class="material-symbols-outlined" style="font-size:14px;color:var(--c-primary);font-variation-settings:'FILL' 1,'wght' 400">school</span>
+        Graduation
+      </p>
+      <p class="ia-lean-block-body">${recoveryStatus.graduationHtml}</p>
+    </div>
+  `;
+}
+
+function renderFullSchedule({ recoverySchedule, recoveryStatus, src, retakeLabel, blockedCount }) {
+  const tlEl = document.getElementById('ia-timeline');
+  const detailsEl = document.getElementById('ia-full-schedule');
+  if (!tlEl) return;
+
+  tlEl.innerHTML = '';
+
+  if (!recoverySchedule.length) {
+    if (detailsEl) detailsEl.classList.toggle('d-none', recoveryStatus.key !== 'uncertain');
+    if (recoveryStatus.key === 'uncertain') {
+      tlEl.innerHTML = `
+        <div class="ia-tl-item ia-tl-retake" style="opacity:1;">
+          <div class="ia-tl-marker"><div class="ia-tl-dot" style="background:#ef4444;"></div></div>
+          <div class="ia-tl-content">
+            <p class="ia-tl-sem">Projection</p>
+            <p class="ia-tl-action">Complete recovery schedule unavailable — confirm course sequence with your advisor</p>
+          </div>
+        </div>`;
+    }
+    return;
+  }
+
+  if (detailsEl) detailsEl.classList.remove('d-none');
+
+  const steps = [
+    {
+      color: '#ef4444',
+      sem: 'Now',
+      label: `<strong>${escapeHtml(src.name || src.id)}</strong>${src.name && src.id ? ` <span style="color:var(--c-muted);font-weight:500;">(${escapeHtml(src.id)})</span>` : ''} failure — ${blockedCount} course${blockedCount === 1 ? '' : 's'} blocked`,
+      type: 'fail',
+      collapsible: false
+    }
+  ];
+
+  recoverySchedule.forEach((term) => {
+    const termCourses = term.courses || [];
+    const courseLabels = termCourses.map(c => formatCourseLabel(c, {
+      retake: c.isRetake,
+      unlocked: c.isNewlyUnlocked
+    }));
+    const count = termCourses.length;
+    const summary = count === 0
+      ? 'Continue planned courses'
+      : `${count} course${count === 1 ? '' : 's'}`;
+
+    steps.push({
+      color: term.isRetakeTerm ? '#d97706' : '#10b981',
+      sem: term.label,
+      label: courseLabels.length
+        ? `<details class="ia-term-courses"><summary class="ia-term-courses-summary">${summary}</summary><ul class="ia-term-courses-list">${courseLabels.map(l => `<li>${l}</li>`).join('')}</ul></details>`
+        : summary,
+      type: term.isRetakeTerm ? 'retake' : 'unlock',
+      collapsible: true
+    });
+  });
+
+  steps.push({
+    color: recoveryStatus.key === 'uncertain' ? '#ef4444' : 'var(--c-primary)',
+    sem: 'Graduation',
+    label: recoveryStatus.graduationHtml,
+    type: 'grad',
+    collapsible: false
+  });
+
+  steps.forEach((s, i) => {
+    const el = document.createElement('div');
+    el.className = 'ia-tl-item ia-tl-' + s.type;
+    el.style.animationDelay = (i * 80) + 'ms';
+    el.innerHTML = `
+      <div class="ia-tl-marker">
+        <div class="ia-tl-dot" style="background:${s.color};"></div>
+        ${i < steps.length - 1 ? '<div class="ia-tl-line"></div>' : ''}
+      </div>
+      <div class="ia-tl-content">
+        <p class="ia-tl-sem">${escapeHtml(s.sem)}</p>
+        <div class="ia-tl-action">${s.label}</div>
+      </div>
+    `;
+    tlEl.appendChild(el);
+  });
+}
+
 function loadReport(report) {
   const src = report.src || {
     id: report.failedCourseCode,
@@ -101,7 +295,8 @@ function loadReport(report) {
     avail: report.retakeSemesterLabel || 'See schedule',
     type: 'Core',
   };
-  const blocked = (report.blockedCourses || []).map(b => ({
+  const blockedRaw = report.blockedCourses || [];
+  const blocked = blockedRaw.map(b => ({
     id: b.code,
     name: b.name,
     credits: b.creditHours,
@@ -117,11 +312,17 @@ function loadReport(report) {
   const retakeLabel = report.retakeSemesterLabel || 'Next Summer';
   const creditsAtRisk = report.creditsAtRisk ?? blocked.reduce((s, b) => s + b.credits, 0);
   const recoverySchedule = report.recoverySchedule || [];
+  const replacements = report.replacementCourses || [];
   const recommendations = report.recommendations || [];
   const projectedCgpa = report.projectedCgpa ?? report.currentCgpa;
   const cgpaDelta = report.cgpaDelta ?? 0;
   const standingWouldChange = report.standingWouldChange === true;
   const projectedStanding = formatStanding(report.projectedStanding);
+  const recoveryStatus = resolveRecoveryStatus({
+    delay,
+    originalGrad,
+    projectedGrad
+  });
 
   document.getElementById('report-severity').textContent = severity;
   document.getElementById('report-severity').className = 'ia-severity-badge ia-sev-' + severity.toLowerCase();
@@ -141,18 +342,28 @@ function loadReport(report) {
   animCount('kpi-semesters', semAff);
 
   const delayEl = document.getElementById('kpi-delay');
-  delayEl.textContent = delay > 0 ? `+${delay} sem` : 'None';
-  delayEl.style.color = delay > 0 ? '#ef4444' : '#10b981';
+  if (recoveryStatus.key === 'uncertain') {
+    delayEl.textContent = 'Uncertain';
+    delayEl.style.color = '#ef4444';
+  } else {
+    delayEl.textContent = delay > 0 ? `+${delay} sem` : 'None';
+    delayEl.style.color = delay > 0 ? '#ef4444' : '#10b981';
+  }
 
   const gradEl = document.getElementById('kpi-new-grad');
   const gradDetail = document.getElementById('kpi-grad-detail');
-  if (delay > 0) {
+  if (recoveryStatus.key === 'uncertain') {
+    gradEl.textContent = 'Needs review';
+    if (gradDetail) gradDetail.textContent = 'Path projection incomplete';
+  } else if (delay > 0) {
     gradEl.textContent = projectedGrad;
     if (gradDetail) gradDetail.textContent = `Was ${originalGrad}`;
   } else {
     gradEl.textContent = projectedGrad;
     if (gradDetail) gradDetail.textContent = 'On track — no graduation delay';
   }
+
+  applyRecoveryBadge(recoveryStatus);
 
   const cgpaKpi = document.getElementById('kpi-cgpa');
   if (cgpaKpi) {
@@ -179,15 +390,15 @@ function loadReport(report) {
   blocked.forEach((b, i) => {
     const isDirect = (b.depth ?? 1) === 1;
     const row = document.createElement('div');
-    row.className = 'ia-blocked-row';
+    row.className = `ia-blocked-row ${isDirect ? 'ia-blocked-row-direct' : 'ia-blocked-row-chain'}`;
     row.style.animationDelay = (i * 70) + 'ms';
     row.innerHTML = `
       <div class="ia-blocked-num">${i+1}</div>
       <div class="flex-fill min-w-0">
-        <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">${b.id}
-          <span style="font-weight:500;color:var(--c-text-sub);">— ${b.name}</span>
+        <p class="fw-700 mb-0" style="font-size:13px;color:var(--c-text);">${escapeHtml(b.id)}
+          <span style="font-weight:500;color:var(--c-text-sub);">— ${escapeHtml(b.name)}</span>
         </p>
-        <p style="font-size:11px;color:var(--c-muted);margin:2px 0 0;">${isDirect ? 'Direct dependency' : 'Chain dependency'} · ${b.credits} cr${b.avail ? ' · ' + b.avail : ''}</p>
+        <p style="font-size:11px;color:var(--c-muted);margin:2px 0 0;">${isDirect ? 'Direct dependency' : 'Chain dependency'} · ${b.credits} cr${b.avail ? ' · ' + escapeHtml(b.avail) : ''}</p>
       </div>
       <span class="ia-dep-tag ${isDirect ? 'ia-dep-direct' : 'ia-dep-chain'}">${isDirect ? 'Direct' : 'Chain'}</span>
     `;
@@ -198,79 +409,26 @@ function loadReport(report) {
   document.getElementById('risk-avail').textContent    = retakeLabel;
   document.getElementById('risk-credits').textContent  = creditsAtRisk + ' cr';
 
-  const tlEl = document.getElementById('ia-timeline');
-  tlEl.innerHTML = '';
-
-  const steps = [
-    {
-      color: '#ef4444',
-      icon: 'bolt',
-      sem: 'Now',
-      label: `<strong>${src.name || src.id}</strong>${src.name && src.id ? ` <span style="color:var(--c-muted);font-weight:500;">(${src.id})</span>` : ''} failure — ${blocked.length} course${blocked.length === 1 ? '' : 's'} blocked`,
-      type: 'fail'
-    }
-  ];
-
-  if (recoverySchedule.length > 0) {
-    recoverySchedule.forEach((term) => {
-      const visible = (term.courses || []).slice(0, 5);
-      const overflow = (term.courses || []).length - visible.length;
-      const courseLabels = visible.map(c => formatCourseLabel(c, {
-        retake: c.isRetake,
-        unlocked: c.isNewlyUnlocked
-      })).join(', ');
-
-      steps.push({
-        color: term.isRetakeTerm ? '#d97706' : '#10b981',
-        icon: term.isRetakeTerm ? 'refresh' : 'calendar_month',
-        sem: term.label,
-        label: courseLabels
-          ? courseLabels + (overflow > 0 ? `, <span style="color:var(--c-muted);">+${overflow} more</span>` : '')
-          : 'Continue planned courses',
-        type: term.isRetakeTerm ? 'retake' : 'unlock'
-      });
-    });
-  } else {
-    steps.push({
-      color: '#d97706',
-      icon: 'refresh',
-      sem: retakeLabel,
-      label: `Retake ${formatCourseLabel({ code: src.id, name: src.name })}`,
-      type: 'retake'
-    });
-  }
-
-  steps.push({
-    color: 'var(--c-primary)',
-    icon: 'school',
-    sem: 'Graduation',
-    label: delay > 0
-      ? `<strong>${originalGrad}</strong> → <strong>${projectedGrad}</strong>`
-      : `<strong>${projectedGrad}</strong> on schedule`,
-    type: 'grad'
+  renderLeanRecovery({
+    src,
+    retakeLabel,
+    blockedRaw,
+    replacements,
+    recoveryStatus
   });
 
-  steps.forEach((s, i) => {
-    const el = document.createElement('div');
-    el.className = 'ia-tl-item ia-tl-' + s.type;
-    el.style.animationDelay = (i * 80) + 'ms';
-    el.innerHTML = `
-      <div class="ia-tl-marker">
-        <div class="ia-tl-dot" style="background:${s.color};"></div>
-        ${i < steps.length-1 ? '<div class="ia-tl-line"></div>' : ''}
-      </div>
-      <div class="ia-tl-content">
-        <p class="ia-tl-sem">${s.sem}</p>
-        <p class="ia-tl-action">${s.label}</p>
-      </div>
-    `;
-    tlEl.appendChild(el);
+  renderFullSchedule({
+    recoverySchedule,
+    recoveryStatus,
+    src,
+    retakeLabel,
+    blockedCount: blocked.length
   });
 
   const recEl = document.getElementById('ia-recommendations');
   recEl.innerHTML = '';
   const recList = recommendations.length > 0 ? recommendations : [
-    `Prioritize <strong>${src.name || src.id}</strong> — register for ${retakeLabel}.`,
+    `Prioritize <strong>${escapeHtml(src.name || src.id)}</strong> — register for ${escapeHtml(retakeLabel)}.`,
     `Speak to your advisor about the ${delay}-semester graduation impact.`
   ];
 
@@ -295,6 +453,7 @@ function animCount(id, target) {
     if (current >= target) clearInterval(interval);
   }, 45);
 }
+
 
 
 
