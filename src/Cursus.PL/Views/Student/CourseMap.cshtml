@@ -2,6 +2,8 @@
     ViewData["Title"] = "Course Map";
 }
 
+@Html.AntiForgeryToken()
+
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/student/course-map.css" asp-append-version="true"/>
 }
@@ -10,6 +12,7 @@
 <div class="cm-layout">
 
   <div id="cy" class="cm-canvas"></div>
+  <div id="cm-semester-headers" class="cm-semester-headers" aria-hidden="true"></div>
 
   <!-- ── Filter Bar ── -->
   <div class="cm-filter-bar surface anim-fade-up">
@@ -42,6 +45,7 @@
     <div class="cm-legend-items">
       <div class="cm-legend-item"><span class="cm-dot" style="background:#10b981;"></span>Passed</div>
       <div class="cm-legend-item"><span class="cm-dot" style="background:#3b82f6;"></span>In Progress</div>
+      <div class="cm-legend-item"><span class="cm-dot cm-dot-planned"></span>Planned (next term)</div>
       <div class="cm-legend-item"><span class="cm-dot" style="background:#8492A6;"></span>Remaining</div>
       <div class="cm-legend-item"><span class="cm-dot" style="background:#334155;"></span>Blocked</div>
       <div class="cm-legend-item"><span class="cm-dot" style="background:#ef4444;"></span>Failed / Cascade</div>
@@ -130,7 +134,7 @@
       </button>
     </div>
     <div class="cm-panel-ask-ai">
-      <a href="/Student/AiAdvisor" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
+      <a id="panel-ask-ai-link" href="/Student/AiAdvisor" class="d-flex align-items-center gap-1" style="font-size:12px;color:var(--c-primary);text-decoration:none;font-weight:600;">
         <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 0,'wght' 300">auto_awesome</span>
         Ask AI Advisor about this course
       </a>
@@ -141,3 +145,6 @@
     <script src="~/lib/cytoscape/dist/cytoscape.min.js" asp-append-version="true"></script>
     <script src="~/js/pages/student/course-map.js" asp-append-version="true"></script>
 }
+
+
+

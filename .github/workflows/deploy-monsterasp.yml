@@ -1,0 +1,38 @@
+name: Deploy to MonsterASP.NET
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  build_and_deploy:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: src
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build Cursus.PL/Cursus.PL.csproj --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish Cursus.PL/Cursus.PL.csproj --configuration Release --output ./publish --runtime win-x86 --self-contained false
+
+      - name: Deploy to MonsterASP.NET
+        uses: rasmusbuchholdt/simply-web-deploy@2.1.0
+        with:
+          website-name: ${{ secrets.WEBSITE_NAME }}
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}
+          server-username: ${{ secrets.SERVER_USERNAME }}
+          server-password: ${{ secrets.SERVER_PASSWORD }}
+          source-path: src/publish/

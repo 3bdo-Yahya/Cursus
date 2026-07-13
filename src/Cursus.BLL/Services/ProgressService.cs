@@ -1,6 +1,7 @@
 using Cursus.DAL.Database;
 using Cursus.Domain.DTOs;
 using Cursus.Domain.Enums;
+using Cursus.Domain.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.BLL.Services;
@@ -14,6 +15,7 @@ namespace Cursus.BLL.Services;
 public sealed class ProgressService : IProgressService
 {
     private readonly ApplicationDbContext _db;
+    private readonly IAcademicMetricsService _academicMetricsService;
 
     // Average credits per semester used for the graduation projection.
     private const int AvgCreditsPerSemester = 15;
@@ -28,7 +30,11 @@ public sealed class ProgressService : IProgressService
             [CourseType.UniversityReq] = ("University Requirements",   "Required by all graduates"),
         };
 
-    public ProgressService(ApplicationDbContext db) => _db = db;
+    public ProgressService(ApplicationDbContext db, IAcademicMetricsService academicMetricsService)
+    {
+        _db = db;
+        _academicMetricsService = academicMetricsService;
+    }
 
     // ── Public API ────────────────────────────────────────────────────────
 
@@ -41,7 +47,6 @@ public sealed class ProgressService : IProgressService
             .Include(u => u.StudentCourses)
                 .ThenInclude(sc => sc.Course)
                     .ThenInclude(c => c!.Prerequisites)
-            .Include(u => u.StandingHistories)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == studentId);
 
@@ -57,33 +62,17 @@ public sealed class ProgressService : IProgressService
             .Where(r => r.DepartmentId == student.DepartmentId)
             .ToListAsync();
 
-        // ── 3. Build a set of courseIds the student has COMPLETED ─────────
-        var completedCourseIds = student.StudentCourses
+        var gradeScale = await _academicMetricsService.GetGradeScaleAsync(student.Department.UniversityId);
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(student.StudentCourses);
+
+        var completedCourseIds = bestAttempts
             .Where(sc => sc.Status == StudentCourseStatus.Completed)
             .Select(sc => sc.CourseId)
             .ToHashSet();
 
-        // ── 4. Build a lookup from courseId → student record ──────────────
-        var studentCourseMap = student.StudentCourses
-            .GroupBy(sc => sc.CourseId)
-            // Prefer Completed > InProgress > Failed when a student re-took a course
-            .ToDictionary(
-                g => g.Key,
-                g => g.OrderBy(sc => sc.Status switch
-                {
-                    StudentCourseStatus.Completed => 0,
-                    StudentCourseStatus.InProgress => 1,
-                    StudentCourseStatus.Failed => 2,
-                    _ => 3
-                }).First());
+        var studentCourseMap = bestAttempts.ToDictionary(sc => sc.CourseId);
 
-        // ── 5. Resolve CGPA from the most recent StandingHistory ──────────
-        var latestStanding = student.StandingHistories
-            .OrderByDescending(h => h.AcademicYear)
-            .ThenByDescending(h => h.Semester)
-            .FirstOrDefault();
-
-        var cgpa = latestStanding?.CumulativeGpa ?? 0m;
+        var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScale);
 
         // ── 6. Build per-category progress ────────────────────────────────
         var categories = new List<CategoryProgressDto>();
@@ -165,7 +154,7 @@ public sealed class ProgressService : IProgressService
     /// explicit list of eligible courses in <c>GraduationRequirementCourses</c>.
     /// Each course is individually classified as Completed/InProgress/Failed/Available/Locked.
     /// </summary>
-    private static CategoryProgressDto BuildExplicitCategoryProgress(
+    private CategoryProgressDto BuildExplicitCategoryProgress(
         CourseType courseType,
         string label,
         string description,
@@ -226,7 +215,7 @@ public sealed class ProgressService : IProgressService
     /// explicit course list (e.g. FreeElective). Credits are counted from the
     /// student's own records for that <see cref="CourseType"/>.
     /// </summary>
-    private static CategoryProgressDto BuildCreditCountCategoryProgress(
+    private CategoryProgressDto BuildCreditCountCategoryProgress(
         CourseType courseType,
         string label,
         string description,
@@ -234,28 +223,21 @@ public sealed class ProgressService : IProgressService
         List<Cursus.Domain.Entities.StudentCourse> studentCourses)
     {
         var relevantCourses = studentCourses
-            .Where(sc => sc.Course?.CourseType == courseType)
-            .GroupBy(sc => sc.CourseId)
-            // Prefer Completed > InProgress > Failed when a student took/retook a course
-            .ToDictionary(
-                g => g.Key,
-                g => g.OrderBy(sc => sc.Status switch
-                {
-                    StudentCourseStatus.Completed => 0,
-                    StudentCourseStatus.InProgress => 1,
-                    StudentCourseStatus.Failed => 2,
-                    _ => 3
-                }).First());
+            .Where(sc => sc.Course?.CourseType == courseType);
 
-        int earnedCredits = relevantCourses.Values
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(relevantCourses);
+
+        var relevantCoursesMap = bestAttempts.ToDictionary(sc => sc.CourseId);
+
+        int earnedCredits = bestAttempts
             .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
             .Sum(sc => sc.Course!.CreditHours);
 
-        int inProgressCredits = relevantCourses.Values
+        int inProgressCredits = bestAttempts
             .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
             .Sum(sc => sc.Course!.CreditHours);
 
-        var auditItems = relevantCourses.Values
+        var auditItems = bestAttempts
             .Where(sc => sc.Course is not null)
             .Select(sc => new CourseAuditItemDto
             {

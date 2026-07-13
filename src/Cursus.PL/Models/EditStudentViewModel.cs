@@ -28,6 +28,8 @@ public class EditStudentViewModel
     [Required(ErrorMessage = "Please select a standing.")]
     public AcademicStanding CurrentStanding { get; set; }
 
+    public DateTime? EnrollmentDate { get; set; }
+
     // ── Dropdown data ────────────────────────────────────────────────────
     public IEnumerable<SelectListItem> DepartmentOptions  { get; set; } = [];
     public IEnumerable<SelectListItem> SemesterOptions    { get; set; } = [];

@@ -54,6 +54,9 @@ namespace Cursus.DAL.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("EnrollmentDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -146,6 +149,9 @@ namespace Cursus.DAL.Migrations
                         .HasMaxLength(2)
                         .HasColumnType("nvarchar(2)");
 
+                    b.Property<int?>("RecommendedSemester")
+                        .HasColumnType("int");
+
                     b.Property<int>("SemesterAvailability")
                         .HasColumnType("int");
 
@@ -159,6 +165,8 @@ namespace Cursus.DAL.Migrations
                     b.ToTable("Courses", t =>
                         {
                             t.HasCheckConstraint("CK_Courses_CreditHours_Range", "[CreditHours] >= 1 AND [CreditHours] <= 6");
+
+                            t.HasCheckConstraint("CK_Courses_RecommendedSemester_Range", "[RecommendedSemester] IS NULL OR ([RecommendedSemester] >= 1 AND [RecommendedSemester] <= 8)");
                         });
                 });
 
@@ -330,6 +338,41 @@ namespace Cursus.DAL.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("GraduationRequirementCourses");
+                });
+
+            modelBuilder.Entity("Cursus.Domain.Entities.PlannedCourse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicYear")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Semester")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("StudentId", "AcademicYear", "Semester");
+
+                    b.HasIndex("StudentId", "CourseId", "AcademicYear", "Semester")
+                        .IsUnique();
+
+                    b.ToTable("PlannedCourses");
                 });
 
             modelBuilder.Entity("Cursus.Domain.Entities.StandingHistory", b =>
@@ -684,6 +727,25 @@ namespace Cursus.DAL.Migrations
                     b.Navigation("GraduationRequirement");
                 });
 
+            modelBuilder.Entity("Cursus.Domain.Entities.PlannedCourse", b =>
+                {
+                    b.HasOne("Cursus.Domain.Entities.Course", "Course")
+                        .WithMany("PlannedCourses")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Cursus.Domain.Entities.AppUser", "Student")
+                        .WithMany("PlannedCourses")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Cursus.Domain.Entities.StandingHistory", b =>
                 {
                     b.HasOne("Cursus.Domain.Entities.AppUser", "Student")
@@ -767,6 +829,8 @@ namespace Cursus.DAL.Migrations
 
             modelBuilder.Entity("Cursus.Domain.Entities.AppUser", b =>
                 {
+                    b.Navigation("PlannedCourses");
+
                     b.Navigation("StandingHistories");
 
                     b.Navigation("StudentCourses");
@@ -777,6 +841,8 @@ namespace Cursus.DAL.Migrations
                     b.Navigation("GraduationRequirementCourses");
 
                     b.Navigation("IsPrerequisiteFor");
+
+                    b.Navigation("PlannedCourses");
 
                     b.Navigation("Prerequisites");
 

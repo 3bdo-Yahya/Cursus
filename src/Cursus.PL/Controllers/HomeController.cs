@@ -11,7 +11,7 @@ public class HomeController : Controller
     {
         if (User.Identity?.IsAuthenticated == true)
         {
-            if (User.IsInRole(Roles.Admin))
+            if (User.IsInRole(Roles.SuperAdmin) || User.IsInRole(Roles.Admin))
                 return RedirectToAction("Index", "Admin");
 
             if (User.IsInRole(Roles.Student))
@@ -32,3 +32,4 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
+

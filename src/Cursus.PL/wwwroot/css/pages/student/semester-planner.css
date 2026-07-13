@@ -29,6 +29,76 @@
   gap:         6px;
   flex-wrap:   wrap;
 }
+
+.semester-picker {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.semester-picker-label {
+  display:       block;
+  font-size:     10.5px;
+  font-weight:   700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color:         var(--c-muted);
+  margin-bottom: 6px;
+}
+
+.semester-select-wrap {
+  position:      relative;
+  display:       flex;
+  align-items:   center;
+  min-width:     200px;
+  max-width:     min(100%, 280px);
+}
+
+.semester-select-icon {
+  position:   absolute;
+  left:       12px;
+  font-size:  17px !important;
+  color:      var(--c-primary);
+  pointer-events: none;
+}
+
+.semester-select-chevron {
+  position:   absolute;
+  right:      10px;
+  font-size:  18px !important;
+  color:      var(--c-muted);
+  pointer-events: none;
+}
+
+.semester-select {
+  width:         100%;
+  appearance:    none;
+  padding:       9px 36px 9px 38px;
+  border-radius: 12px;
+  border:        1.5px solid var(--c-border);
+  background:    var(--c-surface);
+  color:         var(--c-text);
+  font-size:     13px;
+  font-weight:   700;
+  font-family:   'Outfit', sans-serif;
+  cursor:        pointer;
+  transition:    border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.semester-select:hover {
+  border-color: rgba(79,70,229,.3);
+}
+
+.semester-select:focus {
+  outline:      none;
+  border-color: var(--c-primary);
+  box-shadow:   0 0 0 3px rgba(79,70,229,.12);
+}
+
+.semester-select:disabled {
+  opacity: 0.65;
+  cursor:  not-allowed;
+}
+
 .sem-tab {
   padding:       7px 16px;
   border-radius: 10px;
@@ -52,6 +122,21 @@
   box-shadow:   0 2px 8px rgba(79,70,229,.1);
 }
 
+.sem-tab .tab-primary-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.semester-tabs.loading .sem-tab {
+  pointer-events: none;
+  opacity: 0.65;
+}
+
 /* ── Plan card ─────────────────────── */
 .plan-card {
   background:    var(--c-surface);
@@ -59,6 +144,11 @@
   border-radius: 18px;
   overflow:      hidden;
   transition:    box-shadow 0.22s ease, border-color 0.22s ease !important;
+  position:      relative;
+}
+.plan-card:has(.add-dropdown.open) {
+  overflow: visible;
+  z-index:  50;
 }
 .plan-card:hover {
   box-shadow:   0 6px 24px rgba(79,70,229,.08);
@@ -115,6 +205,16 @@ html.dark .credit-chip-over { color: #fca5a5; }
 }
 
 /* ── Planned course row ─────────────────────────────────── */
+.planned-empty-state {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            8px;
+  padding:        28px 20px;
+  text-align:     center;
+  border-bottom:  1px solid var(--c-border);
+}
+
 .planned-row {
   display:        flex;
   align-items:    center;
@@ -241,27 +341,33 @@ html.dark .type-free { color: #fcd34d; }
 }
 
 /* ── Add course dropdown ────────────────────────────────── */
-.add-dropdown-wrap { position: relative; }
+.add-dropdown-wrap { position: relative; z-index: 20; }
 .add-dropdown {
-  position:      absolute;
-  top:           calc(100% + 4px);
-  left:          12px;
-  right:         12px;
-  background:    var(--c-surface);
-  border:        1px solid var(--c-border);
-  border-radius: 14px;
-  box-shadow:    0 8px 28px rgba(0,0,0,.13);
-  z-index:       200;
-  overflow:      hidden;
-  display:       none;
-  animation:     dropIn .18s ease both;
+  position:         absolute;
+  top:              calc(100% + 6px);
+  left:             0;
+  right:            0;
+  min-width:        100%;
+  background-color: var(--c-surface);
+  border:           1px solid var(--c-border);
+  border-radius:    14px;
+  box-shadow:       0 16px 48px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.04);
+  z-index:          300;
+  overflow:         hidden;
+  display:          none;
+  isolation:        isolate;
+  animation:        dropIn .18s ease both;
 }
-html.dark .add-dropdown { box-shadow: 0 8px 28px rgba(0,0,0,.4); }
+html.dark .add-dropdown {
+  background-color: var(--c-surface);
+  box-shadow:       0 16px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06);
+}
 .add-dropdown.open { display: block; }
 
 .add-search-wrap {
-  padding:    10px 12px;
-  border-bottom: 1px solid var(--c-border);
+  padding:          10px 12px;
+  border-bottom:    1px solid var(--c-border);
+  background-color: var(--c-surface);
 }
 .add-search-input {
   width:        100%;
@@ -285,33 +391,79 @@ html.dark .add-dropdown { box-shadow: 0 8px 28px rgba(0,0,0,.4); }
   color:      var(--c-muted);
 }
 
-.add-dropdown-list { max-height: 200px; overflow-y: auto; }
+.add-dropdown-list {
+  max-height: min(360px, 55vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background-color: var(--c-surface);
+}
 .add-dropdown-item {
-  display:     flex;
-  align-items: center;
-  gap:         10px;
-  padding:     9px 14px;
-  cursor:      pointer;
-  font-size:   12.5px;
-  transition:  background-color 0.1s ease !important;
+  display:          flex;
+  align-items:      center;
+  gap:              12px;
+  padding:          10px 16px;
+  cursor:           pointer;
+  font-size:        13px;
+  background-color: var(--c-surface);
+  transition:       background-color 0.1s ease !important;
 }
 .add-dropdown-item:hover { background: rgba(79,70,229,.05); }
 .add-dropdown-item.disabled { opacity: .4; cursor: not-allowed; }
 .add-dropdown-item.disabled:hover { background: none; }
 .add-item-code { 
-  font-size: 10.5px; 
+  font-size: 11px; 
   font-weight: 700; 
   color: var(--c-muted); 
-  min-width: 48px; 
+  min-width: 64px;
+  flex-shrink: 0;
 }
 .add-item-name { 
   flex: 1; 
+  min-width: 0;
   font-weight: 600; 
-  color: var(--c-text); 
+  color: var(--c-text);
+  line-height: 1.35;
 }
 .add-item-credits { 
   font-size: 11px;
-  color: var(--c-muted); 
+  color: var(--c-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.add-category-section + .add-category-section {
+  border-top: 1px solid var(--c-border);
+}
+
+.add-category-toggle {
+  width: 100%;
+  border: none;
+  background: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-text-sub);
+  cursor: pointer;
+}
+
+.add-category-toggle .material-symbols-outlined {
+  font-size: 16px !important;
+  transition: transform 0.15s ease;
+}
+
+.add-category-toggle.open .material-symbols-outlined {
+  transform: rotate(180deg);
+}
+
+.add-category-body {
+  display: none;
+}
+
+.add-category-body.open {
+  display: block;
 }
 
 /* ── Sticky sidebar ─────────────────────────────────────── */
@@ -508,3 +660,7 @@ html.dark .sidebar-alert:hover {
 .text-sub     { color: var(--c-text-sub) !important; }
 .border-token { border-color: var(--c-border) !important; }
 html.dark .text-muted { color: var(--c-muted) !important; }
+
+
+
+

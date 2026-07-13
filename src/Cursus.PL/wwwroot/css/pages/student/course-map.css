@@ -39,6 +39,37 @@ html.dark .cm-canvas {
   background-image: radial-gradient(circle at 1px 1px, rgba(79,70,229,.08) 1px, transparent 0);
 }
 
+.cm-semester-headers {
+  position:       absolute;
+  inset:          0;
+  z-index:        10;
+  pointer-events: none;
+}
+
+.cm-semester-header {
+  position:       absolute;
+  top:            0;
+  left:           0;
+  padding:        6px 12px;
+  border:         1px solid var(--c-border);
+  border-radius:  999px;
+  background:     rgba(255,255,255,.82);
+  color:          var(--c-text-sub);
+  font-family:    'Outfit', system-ui, sans-serif;
+  font-size:      11px;
+  font-weight:    800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  box-shadow:     0 8px 20px rgba(15,23,42,.08);
+  white-space:    nowrap;
+  transition:     background-color .2s ease, border-color .2s ease, color .2s ease !important;
+}
+
+html.dark .cm-semester-header {
+  background: rgba(14,16,24,.82);
+  box-shadow: 0 8px 20px rgba(0,0,0,.24);
+}
+
 
 /* ── Filter Bar ─────────────────────────────────────────── */
 .cm-filter-bar {
@@ -160,6 +191,11 @@ html.dark .cm-filter-bar {
   border-radius: 50%;
   flex-shrink:   0;
 }
+.cm-dot-planned {
+  background:    #93c5fd;
+  border:        2px dashed #3b82f6;
+  box-sizing:    border-box;
+}
 
 /* ── Simulation banner ─────────────────────── */
 .cm-sim-banner {
@@ -280,6 +316,11 @@ html.dark .cm-panel { box-shadow: -8px 0 32px rgba(0,0,0,.4); }
   background:rgba(59,130,246,.1); 
   color:#1d4ed8; 
 }
+.cm-status-planned {
+  background:rgba(147,197,253,.25);
+  color:#1d4ed8;
+  border:1px dashed #60a5fa;
+}
 .cm-status-remaining { 
   background:var(--c-bg); 
   color:var(--c-muted); 
@@ -301,6 +342,11 @@ html.dark .cm-status-passed {
 html.dark .cm-status-in-progress { 
   background:rgba(59,130,246,.12); 
   color:#93c5fd; 
+}
+html.dark .cm-status-planned {
+  background:rgba(96,165,250,.15);
+  color:#93c5fd;
+  border-color:#60a5fa;
 }
 html.dark .cm-status-blocked { 
   background:rgba(71,85,105,.18); 
@@ -558,10 +604,50 @@ html.dark .cm-damage-headline {
   opacity:       0;
   animation:     slideInRow .3s ease forwards;
 }
-html.dark .cm-blocked-row { 
-  background:rgba(239,68,68,.05); 
-  border-color:rgba(239,68,68,.2); 
-  border-left-color:#ef4444; 
+.cm-blocked-row-direct {
+  border-left-color: #ef4444;
+  background: rgba(239,68,68,.05);
+}
+.cm-blocked-row-chain {
+  border-left-color: #d97706;
+  background: rgba(217,119,6,.05);
+}
+html.dark .cm-blocked-row {
+  background:rgba(239,68,68,.05);
+  border-color:rgba(239,68,68,.2);
+  border-left-color:#ef4444;
+}
+html.dark .cm-blocked-row-direct {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.25);
+}
+html.dark .cm-blocked-row-chain {
+  background: rgba(217,119,6,.1);
+  border-color: rgba(217,119,6,.25);
+  border-left-color: #d97706;
+}
+.cm-dep-tag {
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.cm-dep-direct {
+  background: rgba(239,68,68,.1);
+  color: #dc2626;
+}
+.cm-dep-chain {
+  background: rgba(245,158,11,.12);
+  color: #b45309;
+}
+html.dark .cm-dep-direct {
+  background: rgba(239,68,68,.18);
+  color: #fca5a5;
+}
+html.dark .cm-dep-chain {
+  background: rgba(245,158,11,.18);
+  color: #fcd34d;
 }
 
 
@@ -669,3 +755,4 @@ html.dark .cm-panel.open {
   box-shadow: 0 8px 24px rgba(79,70,229,.4);
   color:      #fff;
 }
+

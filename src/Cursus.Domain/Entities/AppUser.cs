@@ -19,6 +19,8 @@ namespace Cursus.Domain.Entities
 
         public AcademicStanding CurrentStanding { get; set; }
 
+        public DateTime? EnrollmentDate { get; set; }
+
         public University? University { get; set; }
         public Department? Department { get; set; }
 
@@ -34,6 +36,8 @@ namespace Cursus.Domain.Entities
         }
 
         public ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
+        public ICollection<PlannedCourse> PlannedCourses { get; set; } = new List<PlannedCourse>();
         public ICollection<StandingHistory> StandingHistories { get; set; } = new List<StandingHistory>();
     }
 }
+

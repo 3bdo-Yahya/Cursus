@@ -245,7 +245,8 @@ function createStudent() {
       department: selectedDept,
       academicYear: document.getElementById('student-acyear').value.trim(),
       semester: selectedSem,
-      yearLevel: selectedYear
+      yearLevel: selectedYear,
+      enrollmentDate: document.getElementById('student-enrollment-date')?.value || null
     });
 
     if (successAlert) {
@@ -259,7 +260,7 @@ function createStudent() {
 }
 
 function resetStudentForm() {
-  ['student-fullname', 'student-email', 'student-password', 'student-acyear'].forEach((id) => {
+  ['student-fullname', 'student-email', 'student-password', 'student-acyear', 'student-enrollment-date'].forEach((id) => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -339,7 +340,7 @@ function bindStudentFormEvents() {
     });
   }
 
-  ['student-fullname', 'student-email', 'student-password', 'student-acyear'].forEach((id) => {
+  ['student-fullname', 'student-email', 'student-password', 'student-acyear', 'student-enrollment-date'].forEach((id) => {
     const field = document.getElementById(id);
     if (!field) return;
 

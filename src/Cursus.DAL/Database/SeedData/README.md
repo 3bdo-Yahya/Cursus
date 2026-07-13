@@ -32,7 +32,7 @@ SeedData/
 | Folder slug | University name | Course rows |
 | --- | --- | ---: |
 | `south-valley-university` | South Valley University | 134 |
-| `american-university-in-cairo` | The American University in Cairo | 414 |
+| `american-university-in-cairo` | American University in Cairo | 414 |
 | `sinai-university` | Sinai University | 102 |
 
 
@@ -147,7 +147,7 @@ Majors found in the data:
 - `IS`
 - `AI`
 
-### The American University in Cairo
+### American University in Cairo
 
 - Stored under `american-university-in-cairo`.
 - The dataset is mainly a CS curriculum package.

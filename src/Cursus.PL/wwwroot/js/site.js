@@ -1,15 +1,26 @@
 ﻿window.CursusUI = window.CursusUI || {};
 
 /* ── Dark Mode Toggle ────────────────────────────────────── */
-const darkToggle = document.getElementById('dark-toggle');
-const darkIcon   = document.getElementById('dark-icon');
-if (darkToggle && darkIcon) {
+(function () {
+  const darkToggle = document.getElementById('dark-toggle');
+  const darkIcon   = document.getElementById('dark-icon');
+  if (!darkToggle || !darkIcon) return;
+
+  function applyTheme(isDark) {
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.classList.toggle('light', !isDark);
+    document.documentElement.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+    darkIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+  }
+
+  // Sync icon/theme attrs to current class (set by inline script in _Layout)
+  applyTheme(document.documentElement.classList.contains('dark'));
+
   darkToggle.addEventListener('click', () => {
-    document.documentElement.classList.toggle('dark');
-    darkIcon.textContent = document.documentElement.classList.contains('dark')
-      ? 'light_mode' : 'dark_mode';
+    applyTheme(!document.documentElement.classList.contains('dark'));
   });
-}
+})();
 
 /* ── Notifications ────────────────────────────────────────── */
 const notifBtn   = document.getElementById('notif-btn');
@@ -93,3 +104,4 @@ document.querySelectorAll('[data-scroll],[data-scroll-group]').forEach(el => _vc
     if (window.innerWidth >= 768) closeDrawer();
   });
 }());
+

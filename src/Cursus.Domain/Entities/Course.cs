@@ -35,6 +35,8 @@ namespace Cursus.Domain.Entities
 
         public bool IsActive { get; set; } = true;
 
+        public int? RecommendedSemester { get; set; }
+
         // Link to a department
         // each course is belong to a departments and department have many courses
         // many to many this will lead to a new junction table
@@ -49,6 +51,7 @@ namespace Cursus.Domain.Entities
         public ICollection<CoursePrerequisite> IsPrerequisiteFor { get; set; } = new List<CoursePrerequisite>();
 
         public ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
+        public ICollection<PlannedCourse> PlannedCourses { get; set; } = new List<PlannedCourse>();
         public ICollection<GraduationRequirementCourse> GraduationRequirementCourses { get; set; } = new List<GraduationRequirementCourse>();
 
 
@@ -57,3 +60,4 @@ namespace Cursus.Domain.Entities
 
     }
 }
+

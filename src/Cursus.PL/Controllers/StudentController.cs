@@ -1,6 +1,8 @@
+using Cursus.BLL.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cursus.DAL.Database;
 using Cursus.Domain.Entities;
@@ -22,6 +24,11 @@ public class StudentController : Controller
     private readonly IStudentDashboardService _dashboardService;
     private readonly IImpactAnalysisService _impactAnalysisService;
     private readonly IGeminiService _geminiService;
+    private readonly IAcademicMetricsService _academicMetricsService;
+    private readonly IPlannerService _plannerService;
+    private readonly IStudentManagementService _studentManagementService;
+    private readonly IUniversityService _universityService;
+    private readonly IDepartmentService _departmentService;
 
     public StudentController(
         UserManager<AppUser> userManager,
@@ -29,7 +36,12 @@ public class StudentController : Controller
         IProgressService progressService,
         IStudentDashboardService dashboardService,
         IImpactAnalysisService impactAnalysisService,
-        IGeminiService geminiService)
+        IGeminiService geminiService,
+        IAcademicMetricsService academicMetricsService,
+        IPlannerService plannerService,
+        IStudentManagementService studentManagementService,
+        IUniversityService universityService,
+        IDepartmentService departmentService)
     {
         _userManager = userManager;
         _db = db;
@@ -37,6 +49,87 @@ public class StudentController : Controller
         _dashboardService = dashboardService;
         _impactAnalysisService = impactAnalysisService;
         _geminiService = geminiService;
+        _academicMetricsService = academicMetricsService;
+        _plannerService = plannerService;
+        _studentManagementService = studentManagementService;
+        _universityService = universityService;
+        _departmentService = departmentService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Onboarding()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToPage("/Identity/Account/Login");
+
+        if (user.DepartmentId is not null)
+            return RedirectToAction(nameof(Dashboard));
+
+        var vm = new StudentOnboardingViewModel();
+        await PopulateOnboardingFormAsync(vm);
+        return View(vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Onboarding(StudentOnboardingViewModel vm)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToPage("/Identity/Account/Login");
+
+        if (user.DepartmentId is not null)
+            return RedirectToAction(nameof(Dashboard));
+
+        if (!ModelState.IsValid)
+        {
+            await PopulateOnboardingFormAsync(vm);
+            return View(vm);
+        }
+
+        var result = await _studentManagementService.CompleteOnboardingAsync(new CompleteOnboardingRequest
+        {
+            StudentId = user.Id,
+            UniversityId = vm.UniversityId,
+            DepartmentId = vm.DepartmentId,
+            CurrentSemester = vm.CurrentSemester,
+            EnrollmentDate = vm.EnrollmentDate
+        });
+
+        if (!result.IsSuccess)
+        {
+            var modelField = result.Field switch
+            {
+                nameof(CompleteOnboardingRequest.DepartmentId) => nameof(vm.DepartmentId),
+                nameof(CompleteOnboardingRequest.UniversityId) => nameof(vm.UniversityId),
+                _ => result.Field ?? string.Empty
+            };
+
+            if (!string.IsNullOrEmpty(modelField))
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(modelField, error);
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error);
+            }
+
+            await PopulateOnboardingFormAsync(vm);
+            return View(vm);
+        }
+
+        TempData["StatusMessage"] = "Your academic profile is set up. Welcome to Cursus!";
+        return RedirectToAction(nameof(Dashboard));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DepartmentsForUniversity(int universityId)
+    {
+        var departments = await _departmentService.GetAllAsync(universityId, isActive: true);
+        return Json(departments.Select(d => new { d.Id, d.Name }));
     }
 
     public async Task<IActionResult> Dashboard()
@@ -45,27 +138,430 @@ public class StudentController : Controller
         if (user is null)
             return RedirectToAction("Login", "Account");
 
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
         var dto = await _dashboardService.GetDashboardDataAsync(user.Id);
         if (dto is null)
             return RedirectToAction("Login", "Account");
 
-        if (dto.DepartmentName == "Not assigned")
-            TempData["Warning"] = "Please contact your admin to assign your department.";
-
-        else if (!dto.HasAcademicRecords)
+        if (!dto.HasAcademicRecords)
             TempData["Warning"] = "No academic records found yet. Your dashboard will populate once your admin enters your course history.";
 
         var model = MapToViewModel(dto);
         return View(model);
     }
 
-    public IActionResult CourseMap() => View();
-    public IActionResult Planner() => View();
+    public async Task<IActionResult> CourseMap()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToPage("/Identity/Account/Login");
+
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
+        return View();
+    }
+
+    public async Task<IActionResult> Planner()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToAction("Login", "Account");
+
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
+        var student = await _db.Users
+            .Include(u => u.Department)
+            .Include(u => u.StudentCourses)
+                .ThenInclude(sc => sc.Course)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+        if (student is null)
+            return NotFound();
+
+        var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
+        var studentCourses = student.StudentCourses.ToList();
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
+        var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScaleDecimal);
+        var termGpas = _academicMetricsService.CalculateSgpaByTerm(studentCourses, gradeScaleDecimal);
+
+        var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+        var isOverloadEligible = student.CurrentStanding == AcademicStanding.Good && cgpa >= 3.0m;
+        var overloadLimit = isOverloadEligible ? 21 : creditLimit;
+
+        var completedCourses = bestAttempts
+            .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
+            .Select(sc => sc.Course!.Code)
+            .ToList();
+
+        var completedCredits = bestAttempts
+            .Where(sc => sc.Status == StudentCourseStatus.Completed && sc.Course is not null)
+            .Sum(sc => sc.Course!.CreditHours);
+
+        var inProgressCourses = studentCourses
+            .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
+            .Select(sc => sc.Course!.Code)
+            .ToList();
+
+        var currentlyEnrolled = studentCourses
+            .Where(sc => sc.Status == StudentCourseStatus.InProgress && sc.Course is not null)
+            .Select(sc =>
+            {
+                var (type, typeClass) = MapPlannerCourseType(sc.Course!.CourseType);
+                return new PlannerEnrolledCourseViewModel
+                {
+                    Id = sc.Course.Code,
+                    Name = sc.Course.Name,
+                    Credits = sc.Course.CreditHours,
+                    Type = type,
+                    TypeClass = typeClass
+                };
+            })
+            .ToList();
+
+        var planningTerms = await _plannerService.GetPlanningTermsAsync(student.Id, creditLimit);
+        var primaryTerm = planningTerms.FirstOrDefault(t => t.IsPrimary) ?? planningTerms.FirstOrDefault();
+        if (primaryTerm is null)
+            return NotFound();
+
+        var primaryCapacity = await _plannerService.GetTermCapacityAsync(
+            student.Id,
+            primaryTerm.AcademicYear,
+            primaryTerm.Semester,
+            creditLimit);
+
+        var allPlannedCourses = await _plannerService.GetAllPlansAsync(student.Id);
+        var primaryPlannedCourses = allPlannedCourses
+            .Where(pc => pc.AcademicYear == primaryTerm.AcademicYear && pc.Semester == primaryTerm.Semester)
+            .ToList();
+        var plannedCodes = allPlannedCourses
+            .Select(pc => pc.Code)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var catalogCourses = await _db.Courses
+            .Include(c => c.Prerequisites)
+                .ThenInclude(p => p.Prerequisite)
+            .Where(c => c.DepartmentId == student.DepartmentId && c.IsActive)
+            .Where(c =>
+                c.SemesterAvailability == SemesterAvailability.All
+                || c.SemesterAvailability == SemesterAvailability.FallSpring
+                || (primaryTerm.Semester == SemesterType.Fall && c.SemesterAvailability == SemesterAvailability.Fall)
+                || (primaryTerm.Semester == SemesterType.Spring && c.SemesterAvailability == SemesterAvailability.Spring))
+            .AsNoTracking()
+            .ToListAsync();
+
+        var catalog = catalogCourses
+            .Select(c =>
+            {
+                var (type, typeClass) = MapPlannerCourseType(c.CourseType);
+                return new PlannerCourseViewModel
+                {
+                    CourseId = c.Id,
+                    Id = c.Code,
+                    Name = c.Name,
+                    Credits = c.CreditHours,
+                    Type = type,
+                    TypeClass = typeClass,
+                    Category = c.CourseType,
+                    Prereqs = c.Prerequisites
+                        .Where(p => p.Prerequisite is not null)
+                        .Select(p => p.Prerequisite!.Code)
+                        .ToList()
+                };
+            })
+            .Where(c => !completedCourses.Contains(c.Id))
+            .Where(c => !inProgressCourses.Contains(c.Id))
+            .Where(c => !plannedCodes.Contains(c.Id))
+            .GroupBy(c => c.Id, StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
+            .ToList();
+
+        var model = new PlannerViewModel
+        {
+            StudentId = student.Id,
+            StudentName = student.DisplayName,
+            Department = student.Department?.Name ?? "Not assigned",
+            Year = AcademicYearHelper.DeriveYearNumber(termGpas.Count),
+            Semester = FormatSemester(student.CurrentSemester, student.AcademicYear),
+            CurrentCgpa = (double)cgpa,
+            AcademicStanding = FormatStanding(student.CurrentStanding),
+            StandingCssClass = GetStandingCssClass(student.CurrentStanding),
+            CompletedCredits = completedCredits,
+            TotalCreditsRequired = student.Department?.TotalCreditsRequired ?? 132,
+            CreditLimit = creditLimit,
+            OverloadLimit = overloadLimit,
+            IsOverloadEligible = isOverloadEligible,
+            CompletedCourses = completedCourses,
+            InProgressCourses = inProgressCourses,
+            CurrentlyEnrolledCourses = currentlyEnrolled,
+            Terms = planningTerms
+                .Select(t => new PlannerTermViewModel
+                {
+                    AcademicYear = t.AcademicYear,
+                    Semester = t.Semester,
+                    Label = FormatSemester(t.Semester, t.AcademicYear),
+                    ShortLabel = FormatShortSemester(t.Semester, t.AcademicYear),
+                    IsPrimary = t.IsPrimary
+                })
+                .ToList(),
+            PrimaryTermCapacity = new PlannerTermCapacityViewModel
+            {
+                AcademicYear = primaryCapacity.AcademicYear,
+                Semester = primaryCapacity.Semester,
+                ForcedInProgressCredits = primaryCapacity.ForcedInProgressCredits,
+                PlannedCredits = primaryCapacity.PlannedCredits,
+                RemainingRoom = primaryCapacity.RemainingRoom
+            },
+            PlannedCourses = primaryPlannedCourses
+                .Select(pc =>
+                {
+                    var (type, typeClass) = MapPlannerCourseType(pc.CourseType);
+                    return new PlannerPlannedCourseViewModel
+                    {
+                        CourseId = pc.CourseId,
+                        Code = pc.Code,
+                        Name = pc.Name,
+                        Credits = pc.CreditHours,
+                        Type = type,
+                        TypeClass = typeClass
+                    };
+                })
+                .ToList(),
+            Catalog = catalog
+        };
+
+        return View(model);
+    }
+
+    [HttpGet]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PlannerPlan(string academicYear, SemesterType semester)
+    {
+        if (string.IsNullOrWhiteSpace(academicYear))
+            return BadRequest(new { error = "Academic year is required." });
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return Unauthorized();
+
+        var onboardError = OnboardingRequiredResult(user);
+        if (onboardError is not null)
+            return onboardError;
+
+        var student = await _db.Users
+            .Include(u => u.Department)
+            .Include(u => u.StudentCourses)
+                .ThenInclude(sc => sc.Course)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+        if (student is null)
+            return NotFound();
+
+        var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
+        var cgpa = _academicMetricsService.CalculateCgpa(
+            _academicMetricsService.ResolveBestAttempts(student.StudentCourses),
+            gradeScaleDecimal);
+        var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+
+        var plannedCourses = await _plannerService.GetPlanAsync(student.Id, academicYear, semester);
+        var capacity = await _plannerService.GetTermCapacityAsync(student.Id, academicYear, semester, creditLimit);
+
+        return Json(new
+        {
+            term = new { academicYear, semester = semester.ToString() },
+            capacity = new
+            {
+                forcedInProgressCredits = capacity.ForcedInProgressCredits,
+                plannedCredits = capacity.PlannedCredits,
+                remainingRoom = capacity.RemainingRoom
+            },
+            plannedCourses = plannedCourses.Select(pc => new
+            {
+                courseId = pc.CourseId,
+                code = pc.Code,
+                name = pc.Name,
+                credits = pc.CreditHours,
+                type = pc.CourseType.ToString()
+            })
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddPlannedCourse([FromBody] PlannerCourseMutationRequest request)
+    {
+        if (request is null || request.CourseId <= 0 || string.IsNullOrWhiteSpace(request.AcademicYear))
+            return BadRequest(new { error = "Invalid request payload." });
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return Unauthorized();
+
+        var onboardError = OnboardingRequiredResult(user);
+        if (onboardError is not null)
+            return onboardError;
+
+        var student = await _db.Users
+            .Include(u => u.Department)
+            .Include(u => u.StudentCourses)
+                .ThenInclude(sc => sc.Course)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+        if (student is null)
+            return NotFound();
+
+        var course = await _db.Courses
+            .Include(c => c.Prerequisites)
+                .ThenInclude(p => p.Prerequisite)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == request.CourseId && c.IsActive);
+
+        if (course is null)
+            return NotFound(new { error = "Course not found." });
+
+        if (course.CourseType != CourseType.UniversityReq && course.DepartmentId != student.DepartmentId)
+            return BadRequest(new { error = "Course is out of your department scope." });
+
+        if (student.StudentCourses.Any(sc => sc.CourseId == request.CourseId))
+            return BadRequest(new { error = "Course is already completed/in progress/recorded." });
+
+        var existingPlan = await _plannerService.GetPlanAsync(student.Id, request.AcademicYear, request.Semester);
+        if (existingPlan.Any(pc => pc.CourseId == request.CourseId))
+            return BadRequest(new { error = "Course is already planned for this term." });
+
+        var allPlans = await _plannerService.GetAllPlansAsync(student.Id);
+        var availableCodes = student.StudentCourses
+            .Where(sc => sc.Course is not null
+                         && (sc.Status == StudentCourseStatus.Completed
+                             || sc.Status == StudentCourseStatus.InProgress))
+            .Select(sc => sc.Course!.Code)
+            .Concat(allPlans.Select(pc => pc.Code))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var missingPrereq = course.Prerequisites
+            .Where(p => p.Prerequisite is not null)
+            .Select(p => p.Prerequisite!.Code)
+            .FirstOrDefault(code => !availableCodes.Contains(code));
+
+        if (!string.IsNullOrWhiteSpace(missingPrereq))
+            return BadRequest(new { error = $"Prerequisite {missingPrereq} is not satisfied." });
+
+        var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
+        var cgpa = _academicMetricsService.CalculateCgpa(
+            _academicMetricsService.ResolveBestAttempts(student.StudentCourses),
+            gradeScaleDecimal);
+        var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+
+        var capacity = await _plannerService.GetTermCapacityAsync(
+            student.Id,
+            request.AcademicYear,
+            request.Semester,
+            creditLimit);
+
+        if (capacity.RemainingRoom < course.CreditHours)
+            return BadRequest(new { error = "Adding this course exceeds term credit capacity." });
+
+        var added = await _plannerService.AddPlannedCourseAsync(
+            student.Id,
+            request.CourseId,
+            request.AcademicYear,
+            request.Semester);
+
+        if (!added)
+            return BadRequest(new { error = "Unable to add planned course." });
+
+        var updatedCapacity = await _plannerService.GetTermCapacityAsync(
+            student.Id,
+            request.AcademicYear,
+            request.Semester,
+            creditLimit);
+
+        return Json(new
+        {
+            success = true,
+            capacity = new
+            {
+                forcedInProgressCredits = updatedCapacity.ForcedInProgressCredits,
+                plannedCredits = updatedCapacity.PlannedCredits,
+                remainingRoom = updatedCapacity.RemainingRoom
+            }
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemovePlannedCourse([FromBody] PlannerCourseMutationRequest request)
+    {
+        if (request is null || request.CourseId <= 0 || string.IsNullOrWhiteSpace(request.AcademicYear))
+            return BadRequest(new { error = "Invalid request payload." });
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return Unauthorized();
+
+        var onboardError = OnboardingRequiredResult(user);
+        if (onboardError is not null)
+            return onboardError;
+
+        var removed = await _plannerService.RemovePlannedCourseAsync(
+            user.Id,
+            request.CourseId,
+            request.AcademicYear,
+            request.Semester);
+
+        if (!removed)
+            return NotFound(new { error = "Planned course was not found for this term." });
+
+        var student = await _db.Users
+            .Include(u => u.Department)
+            .Include(u => u.StudentCourses)
+                .ThenInclude(sc => sc.Course)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+        if (student is null)
+            return NotFound();
+
+        var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
+        var cgpa = _academicMetricsService.CalculateCgpa(
+            _academicMetricsService.ResolveBestAttempts(student.StudentCourses),
+            gradeScaleDecimal);
+        var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+        var capacity = await _plannerService.GetTermCapacityAsync(
+            student.Id,
+            request.AcademicYear,
+            request.Semester,
+            creditLimit);
+
+        return Json(new
+        {
+            success = true,
+            capacity = new
+            {
+                forcedInProgressCredits = capacity.ForcedInProgressCredits,
+                plannedCredits = capacity.PlannedCredits,
+                remainingRoom = capacity.RemainingRoom
+            }
+        });
+    }
     public async Task<IActionResult> Progress()
     {
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
             return RedirectToPage("/Identity/Account/Login");
+
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
 
         var audit = await _progressService.GetGraduationAuditAsync(user.Id);
         if (audit is null)
@@ -76,7 +572,39 @@ public class StudentController : Controller
 
         return View(new ProgressViewModel { Audit = audit });
     }
-    public IActionResult AiAdvisor() => View();
+    public async Task<IActionResult> AiAdvisor(string? prompt)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToAction("Login", "Account");
+
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
+        var dto = await _dashboardService.GetDashboardDataAsync(user.Id);
+        if (dto is null)
+            return RedirectToAction("Login", "Account");
+
+        var initialPrompt = string.IsNullOrWhiteSpace(prompt)
+            ? null
+            : prompt.Trim()[..Math.Min(prompt.Trim().Length, 2000)];
+
+        var model = new AiAdvisorViewModel
+        {
+            StudentName = dto.DisplayName,
+            Initials = GetInitials(dto.DisplayName),
+            Department = dto.DepartmentName,
+            Year = int.TryParse(dto.AcademicYear, out var advisorYear) ? advisorYear : (dto.SemestersCompleted / 2) + 1,
+            Cgpa = (double)dto.Cgpa,
+            AcademicStanding = FormatStanding(dto.Standing),
+            StandingCssClass = GetStandingCssClass(dto.Standing),
+            InitialPrompt = initialPrompt
+        };
+
+        return View(model);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AiAdvisorChat([FromBody] ChatRequestDto request, CancellationToken cancellationToken)
@@ -87,6 +615,10 @@ public class StudentController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
             return Unauthorized();
+
+        var onboardError = OnboardingRequiredResult(user);
+        if (onboardError is not null)
+            return onboardError;
 
         var audit = await _progressService.GetGraduationAuditAsync(user.Id);
         if (audit is null)
@@ -108,60 +640,27 @@ public class StudentController : Controller
         if (user is null)
             return RedirectToAction("Login", "Account");
 
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
         var student = await _db.Users
             .Include(u => u.Department)
             .Include(u => u.StudentCourses)
                 .ThenInclude(sc => sc.Course)
-            .Include(u => u.StandingHistories)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == user.Id);
 
         if (student is null)
             return NotFound();
 
-        // Resolve Grade Scale for their university, safe from null department
-        var gradeScale = student.Department is not null
-            ? await _db.GradeScales
-                .AsNoTracking()
-                .Where(gs => gs.UniversityId == student.Department.UniversityId)
-                .ToDictionaryAsync(gs => gs.LetterGrade.ToUpper(), gs => (double)gs.PointValue)
-            : new Dictionary<string, double>();
-
-        if (gradeScale.Count == 0) // Default fallback
-        {
-            gradeScale = new Dictionary<string, double>
-            {
-                ["A+"] = 4.0,
-                ["A"] = 4.0,
-                ["A-"] = 3.7,
-                ["B+"] = 3.3,
-                ["B"] = 3.0,
-                ["B-"] = 2.7,
-                ["C+"] = 2.3,
-                ["C"] = 2.0,
-                ["C-"] = 1.7,
-                ["D+"] = 1.3,
-                ["D"] = 1.0,
-                ["F"] = 0.0
-            };
-        }
+        var gradeScaleDecimal = await _academicMetricsService.GetGradeScaleAsync(student.Department?.UniversityId);
+        var gradeScale = gradeScaleDecimal.ToDictionary(kvp => kvp.Key, kvp => (double)kvp.Value);
 
         var studentCourses = student.StudentCourses.ToList();
 
-        // Group by CourseId to filter out duplicates / retakes (Completed > InProgress > Failed)
-        var studentCourseMap = studentCourses
-            .GroupBy(sc => sc.CourseId)
-            .ToDictionary(
-                g => g.Key,
-                g => g.OrderBy(sc => sc.Status switch
-                {
-                    StudentCourseStatus.Completed => 0,
-                    StudentCourseStatus.Failed => 1,
-                    StudentCourseStatus.InProgress => 2,
-                    _ => 3
-                }).First());
-
-        var bestAttempts = studentCourseMap.Values.ToList();
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
+        var studentCourseMap = bestAttempts.ToDictionary(sc => sc.CourseId);
 
         // Completed Courses (only status == Completed)
         var completedCourses = bestAttempts
@@ -169,6 +668,10 @@ public class StudentController : Controller
             .ToList();
 
         var completedCredits = completedCourses.Sum(sc => sc.Course!.CreditHours);
+
+        var completedCourseCodes = completedCourses
+            .Select(sc => sc.Course!.Code)
+            .ToList();
 
         // Graded Courses (Completed or Failed best attempts with grades)
         var gradedCourses = bestAttempts
@@ -208,12 +711,10 @@ public class StudentController : Controller
             .Select(sc => sc.CourseId)
             .ToHashSet();
 
-
         var improvableCourses = bestAttempts
             .Where(sc => (sc.Status == StudentCourseStatus.Failed || sc.Grade == "D" || sc.Grade == "D+")
                 && sc.Course is not null
                 && !inProgressCourseIds.Contains(sc.CourseId))
-
             .Select(sc => new ImprovableCourseViewModel
             {
                 Id = sc.Course!.Code,
@@ -224,64 +725,137 @@ public class StudentController : Controller
             })
             .ToList();
 
-        var latestStanding = student.StandingHistories
-            .OrderByDescending(h => h.AcademicYear)
-            .ThenByDescending(h => h.Semester)
-            .FirstOrDefault();
+        var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScaleDecimal);
+        var termGpas = _academicMetricsService.CalculateSgpaByTerm(studentCourses, gradeScaleDecimal);
 
-        var lastSgpa = latestStanding?.SemesterGpa ?? 0m;
-        var currentCgpa = latestStanding?.CumulativeGpa ?? 0m;
+        var latestGraded = _academicMetricsService.GetLatestGradedTerms(termGpas, 1);
+        var lastSgpa = latestGraded.Count > 0 ? latestGraded[^1].SemesterGpa : 0m;
+
+        var creditLimit = _academicMetricsService.GetCreditLimits(student.CurrentStanding, cgpa);
+        var planningTerms = await _plannerService.GetPlanningTermsAsync(student.Id, creditLimit);
+        var primaryTerm = planningTerms.FirstOrDefault(t => t.IsPrimary) ?? planningTerms.FirstOrDefault();
+
+        var blockedPlannedCodes = completedCourseCodes
+            .Concat(currentCourses.Select(c => c.Id))
+            .Concat(improvableCourses.Select(c => c.Id))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var plannedCourses = new List<SimulatedCourseViewModel>();
+        if (primaryTerm is not null)
+        {
+            var primaryPlan = await _plannerService.GetPlanAsync(
+                student.Id,
+                primaryTerm.AcademicYear,
+                primaryTerm.Semester);
+
+            plannedCourses = primaryPlan
+                .Where(pc => !blockedPlannedCodes.Contains(pc.Code))
+                .Select(pc => new SimulatedCourseViewModel
+                {
+                    Id = pc.Code,
+                    Name = pc.Name,
+                    Credits = pc.CreditHours
+                })
+                .ToList();
+        }
 
         var model = new GpaSimulatorViewModel
         {
+            StudentId = student.Id,
             StudentName = student.DisplayName,
             Department = student.Department?.Name ?? "Not assigned",
-            Year = (student.StandingHistories.Count / 2) + 1,
-            Semester = $"{student.CurrentSemester} {student.AcademicYear}",
-            CurrentCgpa = (double)currentCgpa,
+            Year = AcademicYearHelper.DeriveYearNumber(termGpas.Count),
+            Semester = FormatSemester(student.CurrentSemester, student.AcademicYear),
+            CurrentCgpa = (double)cgpa,
             LastSgpa = (double)lastSgpa,
-            AcademicStanding = student.CurrentStanding.ToString(),
+            AcademicStanding = FormatStanding(student.CurrentStanding),
+            StandingCssClass = GetStandingCssClass(student.CurrentStanding),
             CompletedCredits = completedCredits,
             CompletedQp = completedQp,
             GpaHours = gpaHours,
             CurrentCourses = currentCourses,
+            PlannedCourses = plannedCourses,
             ImprovableCourses = improvableCourses,
+            CompletedCourses = completedCourseCodes,
             GradeScale = gradeScale
         };
 
         return View(model);
     }
-    public IActionResult ImpactAnalyzer() => View();
+    public async Task<IActionResult> ImpactAnalyzer()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToPage("/Identity/Account/Login");
 
-    /// <summary>
-    /// AJAX endpoint for the Impact Analyzer.
-    /// Accepts a course ID and returns the list of courses blocked
-    /// by simulating that course as failed.
-    /// </summary>
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
+        return View();
+    }
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> SimulateFailure([FromBody] SimulateFailureRequest request)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
             return Unauthorized();
 
-        if (user.DepartmentId is null)
-            return BadRequest(new { error = "No department assigned to your account." });
+        var onboardError = OnboardingRequiredResult(user);
+        if (onboardError is not null)
+            return onboardError;
 
-        var blocked = await _impactAnalysisService
-            .GetBlockedCoursesAsync(request.CourseId, user.DepartmentId.Value);
+        var department = await _db.Departments
+            .AsNoTracking()
+            .FirstOrDefaultAsync(d => d.Id == user.DepartmentId.Value);
 
-        return Json(blocked);
+        var studentCourses = await _db.StudentCourses
+            .Include(sc => sc.Course)
+            .Where(sc => sc.StudentId == user.Id)
+            .AsNoTracking()
+            .ToListAsync();
+
+        var gradeScale = await _academicMetricsService.GetGradeScaleAsync(department?.UniversityId);
+        var bestAttempts = _academicMetricsService.ResolveBestAttempts(studentCourses);
+        var cgpa = _academicMetricsService.CalculateCgpa(bestAttempts, gradeScale);
+
+        var result = await _impactAnalysisService
+            .GetBlockedCoursesAsync(
+                user.Id,
+                request.CourseId,
+                user.DepartmentId.Value,
+                user.CurrentSemester,
+                user.AcademicYear,
+                user.CurrentStanding,
+                cgpa);
+
+        if (result is null)
+            return NotFound(new { error = "Selected course was not found in your department's curriculum." });
+
+        return Json(result);
     }
 
     public async Task<IActionResult> Profile()
     {
         var user = await _userManager.GetUserAsync(User);
-        var username = user?.UserName?.Split('@').FirstOrDefault() ?? "Student";
-        ViewData["StudentName"] = username;
-        ViewData["StudentEmail"] = user?.Email ?? "";
-        ViewData["Initials"] = GetInitials(username);
-        return View();
+        if (user is null)
+            return RedirectToAction("Login", "Account");
+
+        var onboardRedirect = RedirectIfNotOnboarded(user);
+        if (onboardRedirect is not null)
+            return onboardRedirect;
+
+        var dto = await _dashboardService.GetDashboardDataAsync(user.Id);
+        if (dto is null)
+            return RedirectToAction("Login", "Account");
+
+        if (!dto.HasAcademicRecords)
+            TempData["Warning"] = "No academic records found yet. Your profile will populate once your admin enters your course history.";
+
+        ViewData["StudentEmail"] = user.Email ?? "";
+        return View(MapToViewModel(dto));
     }
 
     private static StudentDashboardViewModel MapToViewModel(StudentDashboardDto dto)
@@ -291,7 +865,7 @@ public class StudentController : Controller
             StudentName = dto.DisplayName,
             Initials = GetInitials(dto.DisplayName),
             Department = dto.DepartmentName,
-            Year = (dto.SemestersCompleted / 2) + 1,
+            Year = int.TryParse(dto.AcademicYear, out var dashYear) ? dashYear : (dto.SemestersCompleted / 2) + 1,
             Semester = FormatSemester(dto.CurrentSemester, dto.AcademicYear),
             AcademicStanding = FormatStanding(dto.Standing),
             StandingCssClass = GetStandingCssClass(dto.Standing),
@@ -323,6 +897,17 @@ public class StudentController : Controller
                     CreditHours = c.CreditHours,
                     IsElective = c.IsElective
                 })
+                .ToList(),
+
+            UniversityName = dto.UniversityName,
+            EnrollmentDate = dto.EnrollmentDate,
+            HighestSgpa = (double)dto.HighestSgpa,
+            GpaHistory = dto.GpaHistory
+                .Select(h => new GpaHistoryPointViewModel
+                {
+                    SemLabel = h.SemLabel,
+                    Sgpa = (double)h.Sgpa
+                })
                 .ToList()
         };
     }
@@ -337,12 +922,28 @@ public class StudentController : Controller
         };
 
         if (!string.IsNullOrWhiteSpace(academicYear))
-        {
-            var year = academicYear.Split('-').FirstOrDefault() ?? DateTime.UtcNow.Year.ToString();
-            return $"{semesterName} {year}";
-        }
+            return $"{semesterName} — Year {academicYear}";
 
-        return $"{semesterName} {DateTime.UtcNow.Year}";
+        return semesterName;
+    }
+
+    private static string FormatShortSemester(SemesterType semester, string? academicYear)
+    {
+        var semesterName = semester switch
+        {
+            SemesterType.Fall => "Fall",
+            SemesterType.Spring => "Spring",
+            _ => "Summer"
+        };
+
+        if (string.IsNullOrWhiteSpace(academicYear))
+            return semesterName;
+
+        var firstChunk = academicYear.Split('-', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+        if (int.TryParse(firstChunk, out var yearStart))
+            return $"{semesterName} '{yearStart % 100:D2}–{(yearStart + 1) % 100:D2}";
+
+        return $"{semesterName} {academicYear}";
     }
 
     private static string FormatStanding(AcademicStanding standing) => standing switch
@@ -370,4 +971,42 @@ public class StudentController : Controller
             return $"{char.ToUpper(parts[0][0])}{char.ToUpper(parts[1][0])}";
         return name.Length >= 2 ? name[..2].ToUpper() : name.ToUpper();
     }
+
+    private static (string Type, string TypeClass) MapPlannerCourseType(CourseType courseType) =>
+        courseType switch
+        {
+            CourseType.Core => ("Core", "type-core"),
+            CourseType.DeptElective => ("Dept. Elective", "type-elec"),
+            CourseType.FreeElective => ("Free Elective", "type-free"),
+            CourseType.UniversityReq => ("University Req.", "type-univ"),
+            _ => ("Core", "type-core")
+        };
+
+    private IActionResult? RedirectIfNotOnboarded(AppUser user) =>
+        user.DepartmentId is null ? RedirectToAction(nameof(Onboarding)) : null;
+
+    private IActionResult? OnboardingRequiredResult(AppUser user) =>
+        user.DepartmentId is null
+            ? BadRequest(new { error = "Complete onboarding before using this feature." })
+            : null;
+
+    private async Task PopulateOnboardingFormAsync(StudentOnboardingViewModel vm)
+    {
+        var universities = await _universityService.GetAllAsync();
+        vm.UniversityOptions = universities
+            .Select(u => new SelectListItem(u.Name, u.Id.ToString()));
+
+        vm.SemesterOptions = Enum.GetValues<SemesterType>()
+            .Select(s => new SelectListItem(s.ToString(), ((int)s).ToString()));
+    }
 }
+
+
+
+
+
+
+
+
+
+

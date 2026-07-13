@@ -21,7 +21,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddApplicationServices(builder.Configuration);
+        builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
 
         // Email Settings
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -40,12 +40,16 @@ public class Program
             app.UseHsts();
         }
 
-        await StartupSeeder.InitializeDatabaseAsync(app.Services);
-        await SeedRolesAsync(app.Services);
-        await StartupSeeder.SeedSampleCatalogAsync(app.Services);
-        await StartupSeeder.SeedGradeScaleAsync(app.Services);
-        await SeedDefaultAdminAsync(app.Services);
-        await StartupSeeder.SeedDemoStudentsAsync(app.Services);
+        if (!app.Environment.IsEnvironment("Testing"))
+        {
+            await StartupSeeder.InitializeDatabaseAsync(app.Services);
+            await SeedRolesAsync(app.Services);
+            await StartupSeeder.SeedSampleCatalogAsync(app.Services);
+            await StartupSeeder.SeedGradeScaleAsync(app.Services);
+            await SeedDefaultAdminAsync(app.Services);
+            await SeedSuperAdminAsync(app.Services);
+            await StartupSeeder.SeedDemoStudentsAsync(app.Services);
+        }
 
         app.UseHttpsRedirection();
         app.UseRouting();
@@ -69,7 +73,7 @@ public class Program
         using var scope = services.CreateScope();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        foreach (var roleName in new[] { Roles.Admin, Roles.Student })
+        foreach (var roleName in new[] { Roles.Admin, Roles.SuperAdmin, Roles.Student })
         {
             if (await roleManager.RoleExistsAsync(roleName))
                 continue;
@@ -162,6 +166,60 @@ public class Program
         Console.WriteLine($"[Seeding] Admin user seeded and linked to {adminUniversity.Name} university");
     }
 
+    private static async Task SeedSuperAdminAsync(IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var options = scope.ServiceProvider.GetRequiredService<IOptions<IdentitySeedOptions>>().Value;
+
+        if (string.IsNullOrWhiteSpace(options.SuperAdminEmail) ||
+            string.IsNullOrWhiteSpace(options.SuperAdminPassword))
+        {
+            return;
+        }
+
+        var email = options.SuperAdminEmail.Trim();
+        var superAdmin = await userManager.FindByEmailAsync(email)
+            ?? await userManager.FindByNameAsync(email);
+
+        if (superAdmin is null)
+        {
+            superAdmin = new AppUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                UniversityId = null
+            };
+
+            var createResult = await userManager.CreateAsync(superAdmin, options.SuperAdminPassword);
+            if (!createResult.Succeeded)
+            {
+                var isDuplicate = createResult.Errors.Any(error =>
+                    string.Equals(error.Code, nameof(IdentityErrorDescriber.DuplicateUserName), StringComparison.Ordinal) ||
+                    string.Equals(error.Code, nameof(IdentityErrorDescriber.DuplicateEmail), StringComparison.Ordinal));
+
+                if (isDuplicate)
+                    superAdmin = await userManager.FindByEmailAsync(email)
+                        ?? await userManager.FindByNameAsync(email);
+
+                if (superAdmin is null)
+                    throw new InvalidOperationException(
+                        $"Unable to create super-admin user: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+            }
+        }
+
+        if (!await userManager.IsInRoleAsync(superAdmin, Roles.SuperAdmin))
+        {
+            var addRoleResult = await userManager.AddToRoleAsync(superAdmin, Roles.SuperAdmin);
+            if (!addRoleResult.Succeeded)
+                throw new InvalidOperationException(
+                    $"Unable to assign 'SuperAdmin' role: {string.Join(", ", addRoleResult.Errors.Select(e => e.Description))}");
+        }
+
+        Console.WriteLine($"[Seeding] SuperAdmin user seeded: {email}");
+    }
+
     private static async Task<University?> ResolveAdminUniversityAsync(ApplicationDbContext context, string? universityName)
     {
         if (string.IsNullOrWhiteSpace(universityName))
@@ -169,7 +227,46 @@ public class Program
             return null;
         }
 
-        return await context.Universities
-            .FirstOrDefaultAsync(u => u.Name == universityName.Trim());
+        foreach (var candidate in GetAdminUniversityNameCandidates(universityName))
+        {
+            var university = await context.Universities
+                .FirstOrDefaultAsync(u => u.Name == candidate);
+
+            if (university is not null)
+            {
+                return university;
+            }
+        }
+
+        return null;
+    }
+
+    private static IReadOnlyList<string> GetAdminUniversityNameCandidates(string universityName)
+    {
+        var requestedName = universityName.Trim();
+        var candidates = new List<string> { requestedName };
+
+        switch (requestedName.ToUpperInvariant())
+        {
+            case "SOUTH VALLEY NATIONAL UNIVERSITY":
+            case "SOUTH VALLEY UNIVERSITY":
+                candidates.Add("South Valley University");
+                candidates.Add("South Valley National University");
+                break;
+
+            case "AUC":
+            case "THE AMERICAN UNIVERSITY IN CAIRO":
+            case "AMERICAN UNIVERSITY IN CAIRO":
+                candidates.Add("American University in Cairo");
+                candidates.Add("The American University in Cairo");
+                candidates.Add("AUC");
+                break;
+        }
+
+        return candidates
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 }
+
+
