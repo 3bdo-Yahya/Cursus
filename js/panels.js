@@ -218,13 +218,16 @@ export class PanelDirector {
       const on = id === sceneId;
       el.classList.toggle('is-visible', on);
       el.classList.toggle('is-hot', on && !!opts.hot);
+      if (!on) {
+        el.style.opacity = '';
+      }
     }
 
     // Toggle Code Inspector panel visibility
     if (this.inspector) {
-      const showCode = sceneId === 'datastructure';
+      const showCode = sceneId === 'architecture';
       this.inspector.classList.toggle('is-visible', showCode);
-      if (sceneId === 'datastructure') {
+      if (sceneId === 'architecture') {
         const titleEl = this.inspector.querySelector('.code-tab span:not(.file-icon)');
         if (titleEl) titleEl.textContent = 'ImpactAnalysisService.cs';
         const codeBlock = this.inspector.querySelector('.code-content code');
@@ -253,7 +256,7 @@ export class PanelDirector {
       }
     }
 
-    if (sceneId === 'datastructure') {
+    if (sceneId === 'architecture') {
       this.runTerminalLogs();
     } else {
       this.stopTerminalLogs();
@@ -282,16 +285,29 @@ export class PanelDirector {
     const panel = this.panels.get(this.activeId);
     if (!panel) return;
 
+    if (this.activeId === 'cover') {
+      const w = this.stage.mount.clientWidth;
+      const h = this.stage.mount.clientHeight;
+      panel.style.left = `${w / 2}px`;
+      panel.style.top = `${h / 2}px`;
+      panel.style.opacity = '';
+      this.thread.classList.remove('is-visible');
+      return;
+    }
+
     const dockMap = {
       cover: 'UNI101',
-      idea: 'CS211',
-      wireframe: 'CS211',
-      users: 'DATA',
-      datastructure: 'UNI101',
-      techstack: 'CS411',
-      liveapp: 'IS313',
-      deliverables: 'CS451',
-      team: 'CS492',
+      intro: 'CS211',
+      architecture: 'UNI101',
+      impact: 'CS211',
+      gpa: 'MA222',
+      progress: 'CS411',
+      planner: 'IS313',
+      advisor: 'CS451',
+      admin: 'ADMIN',
+      superadmin: 'PLAT',
+      challenges: 'DATA',
+      close: 'CS492',
     };
 
     const dockId = dockMap[this.activeId]
@@ -309,14 +325,17 @@ export class PanelDirector {
 
     const offsets = {
       cover:         { x: 0, y: 120 },
-      idea:          { x: 210, y: -10 },
-      wireframe:     { x: -240, y: -40 },
-      users:         { x: -200, y: -40 },
-      datastructure: { x: -20, y: 140 },
-      techstack:     { x: -220, y: -20 },
-      liveapp:       { x: 200, y: -30 },
-      deliverables:  { x: -210, y: 10 },
-      team:          { x: -180, y: 40 },
+      intro:         { x: 210, y: -10 },
+      architecture:  { x: -20, y: 140 },
+      impact:        { x: -240, y: -40 },
+      gpa:           { x: 200, y: -30 },
+      progress:      { x: -210, y: 10 },
+      planner:       { x: -220, y: -20 },
+      advisor:       { x: -200, y: -40 },
+      admin:         { x: -210, y: 10 },
+      superadmin:    { x: -210, y: 10 },
+      challenges:    { x: 200, y: -30 },
+      close:         { x: -180, y: 40 },
     };
     const off = offsets[this.activeId] || { x: 200, y: 0 };
 

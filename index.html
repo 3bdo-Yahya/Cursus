@@ -23,6 +23,11 @@
     <span class="sub">Defense · Living Map</span>
   </div>
 
+  <div class="chrome partner-logos">
+    <img src="./assets/logo2.png" alt="DEPI Logo" />
+    <img src="./assets/logo1.png" alt="Sinai Logo" />
+  </div>
+
   <aside id="avatar" class="avatar-dock" data-mood="dormant" aria-label="Mazen emotional avatar">
     <div class="avatar-face" aria-hidden="true">
       <span class="avatar-brow left"></span>
@@ -38,126 +43,50 @@
   </aside>
 
   <div id="panels">
-    <!-- Slide 0: Cover (Cold Open) -->
+    <!-- Beat 0: Cover (Cold Open) -->
     <article class="glass-panel cover-hero" data-panel="cover">
       <div class="logo-mark" style="width: 48px; height: 48px; border-radius: 12px; margin-bottom: 20px; background: linear-gradient(135deg, var(--primary), var(--violet)); box-shadow: 0 0 32px rgba(79, 70, 229, 0.6); position: relative; display: flex; align-items: center; justify-content: center;" aria-hidden="true">
         <div style="position: absolute; inset: 12px; border-radius: 4px; border: 2.5px solid rgba(255, 255, 255, 0.85); border-right-color: transparent; border-bottom-color: transparent; transform: rotate(45deg);"></div>
       </div>
-      <h1 class="stagger">Cursus</h1>
+      <h1 class="stagger">Cursus<span class="cursor"></span></h1>
       <p class="subtitle stagger">AI-Powered Academic Advisor & Smart Graduation Planner</p>
-      <div class="cover-meta stagger">
+      <div class="login-pills stagger">
+        <span class="login-pill">BFS/DFS Traversal</span>
+        <span class="login-pill">Prerequisite Auditing</span>
+        <span class="login-pill">Generative Guidance</span>
+        <span class="login-pill">Multi-Tenant Scoping</span>
+      </div>
+      <div class="cover-meta stagger" style="margin-top: 2rem;">
         <span><strong>Track:</strong> DEPI Graduation Project</span>
         <span><strong>Domain:</strong> Full-Stack Web Development (.NET)</span>
-        <span><strong>Date:</strong> July 2026</span>
+        <span><strong>Date:</strong> July 14, 2026</span>
       </div>
     </article>
 
-    <!-- Slide 1: Project Idea (Story-hybrid) -->
-    <article class="glass-panel" data-panel="idea">
+    <!-- Beat 1: Intro / Problem -->
+    <article class="glass-panel" data-panel="intro">
       <div class="panel-header stagger">
-        <div class="eyebrow">Project Idea</div>
-        <span class="speaker-badge">Abdo</span>
+        <div class="eyebrow">Meet Mazen</div>
+        <span class="speaker-badge">Abdelrahman</span>
       </div>
-      <h2 class="stagger">Meet Mazen.</h2>
-      <p class="stagger" style="margin-bottom: 12px;">SVU CS sophomore · enrolled Oct 2024 · Spring Year 2. Dashboard looks fine — until CS211 goes at risk. Is he going to make it?</p>
-      <p class="stagger" style="font-size: 13.5px; margin-bottom: 12px; color: var(--text-muted);"><strong>Problem:</strong> One silent failure cascades through prerequisites, delaying graduation and risking standing without warning.</p>
-      <p class="stagger" style="font-size: 13.5px; color: var(--text-muted);"><strong>UVP:</strong> Core algorithms (BFS/DFS traversal) handle academic rules deterministically. AI (Gemini 2.5 Flash) is the supportive <em>voice</em>, not the brain.</p>
+      <h2 class="stagger">Academic Standing Risk</h2>
+      <p class="stagger" style="margin-bottom: 12px;"><strong>Problem:</strong> Students face silent prerequisite failures that cascade through academic paths, causing unexpected graduation delays and financial/academic risks without early warnings.</p>
+      <p class="stagger" style="font-size: 13.5px; margin-bottom: 12px; color: var(--text-muted);">Mazen Hassan is an SVU CS sophomore. He currently has a 2.9 CGPA and looks fine. But his CS211 Data Structures class is at risk, which can delay graduation.</p>
       <div class="metrics stagger">
         <div class="metric"><span class="value success">2.9</span><span class="label">CGPA</span></div>
-        <div class="metric"><span class="value danger">CS211</span><span class="label">At risk</span></div>
+        <div class="metric"><span class="value danger">CS211</span><span class="label">At Risk</span></div>
         <div class="metric"><span class="value">Good</span><span class="label">Standing</span></div>
       </div>
     </article>
 
-    <!-- Slide 2: Project Wireframe (Story-hybrid) -->
-    <article class="glass-panel" data-panel="wireframe">
+    <!-- Beat 2: Architecture -->
+    <article class="glass-panel" data-panel="architecture">
       <div class="panel-header stagger">
-        <div class="eyebrow">Wireframe & Journey</div>
-        <span class="speaker-badge">Abdo</span>
-      </div>
-      <h2 class="stagger">The Advisor's Journey</h2>
-      <p class="stagger">A cohesive, user-first workflow that turns complex academic regulations into intuitive student micro-steps.</p>
-      
-      <div class="wireframe-gallery stagger">
-        <div class="screenshot-slot">
-          <span class="slot-icon">🗺️</span>
-          <span class="slot-label">Course Map</span>
-        </div>
-        <div class="screenshot-slot">
-          <span class="slot-icon">⚡</span>
-          <span class="slot-label">Impact Analysis</span>
-        </div>
-        <div class="screenshot-slot">
-          <span class="slot-icon">📈</span>
-          <span class="slot-label">GPA Simulator</span>
-        </div>
-        <div class="screenshot-slot">
-          <span class="slot-icon">📅</span>
-          <span class="slot-label">Semester Planner</span>
-        </div>
-      </div>
-      
-      <p class="stagger" style="font-size: 12px; color: var(--text-dim); text-align: center; font-style: italic;">
-        [Screenshots will be demonstrated in the Live Application segment]
-      </p>
-    </article>
-
-    <!-- Slide 3: End Users + Features (Formal) -->
-    <article class="glass-panel" data-panel="users" style="width: min(680px, 92vw);">
-      <div class="panel-header stagger">
-        <div class="eyebrow">End Users & Features</div>
-        <span class="speaker-badge">Esraa</span>
-      </div>
-      <h2 class="stagger">One Platform, Three Personas</h2>
-      
-      <div class="persona-grid stagger">
-        <div class="persona-card">
-          <h3>👤 Student</h3>
-          <p>Credit-hour students needing planning clarity.</p>
-          <ul class="persona-features">
-            <li>Interactive Course Map</li>
-            <li>Prereq Impact Analyzer</li>
-            <li>Target GPA Simulator</li>
-            <li>AI Academic Advisor</li>
-          </ul>
-        </div>
-        <div class="persona-card">
-          <h3>🏢 University Admin</h3>
-          <p>Department staff managing degree rules.</p>
-          <ul class="persona-features">
-            <li>Course Catalog CRUD</li>
-            <li>Prerequisite graph setup</li>
-            <li>Student record entry</li>
-            <li>Graduation policy config</li>
-          </ul>
-        </div>
-        <div class="persona-card">
-          <h3>🛡️ Super Admin</h3>
-          <p>System operators managing tenants.</p>
-          <ul class="persona-features">
-            <li>Multi-tenant scoping</li>
-            <li>University provisioning</li>
-            <li>Tenant data isolation</li>
-            <li>Global usage metrics</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="metrics stagger">
-        <div class="metric"><span class="value info">3</span><span class="label">Roles</span></div>
-        <div class="metric"><span class="value success">6</span><span class="label">Student Tools</span></div>
-        <div class="metric"><span class="value">Isolated</span><span class="label">Tenancies</span></div>
-      </div>
-    </article>
-
-    <!-- Slide 4: Data Structure (Formal) -->
-    <article class="glass-panel" data-panel="datastructure">
-      <div class="panel-header stagger">
-        <div class="eyebrow">Data Structure</div>
+        <div class="eyebrow">Architecture & Rules</div>
         <span class="speaker-badge">Hussein</span>
       </div>
-      <h2 class="stagger">Prerequisite Graph Database</h2>
-      <p class="stagger">Relational schema mapping self-referencing prerequisite chains and academic standing history. Managed with Entity Framework Core.</p>
+      <h2 class="stagger">Deterministic Rules Engine</h2>
+      <p class="stagger" style="margin-bottom: 8px;"><strong>4-Layer N-Tier Isolation:</strong> Domain (zero deps) → DAL (EF Core) → BLL (all logic) → PL (MVC + JS).</p>
       
       <!-- Mock terminal -->
       <div class="terminal-widget stagger" id="term-widget">
@@ -167,71 +96,99 @@
         </div>
       </div>
 
-      <div class="metrics stagger">
-        <div class="metric"><span class="value success">SQL</span><span class="label">Server</span></div>
-        <div class="metric"><span class="value info">11</span><span class="label">Entities</span></div>
+      <p class="stagger" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+        BFS/DFS traversal algorithms handle course rules deterministically. AI acts as a supportive academic voice, not the rule evaluator.
+      </p>
+
+      <div class="metrics stagger" style="margin-top: 8px; padding-top: 8px;">
+        <div class="metric"><span class="value success">4 Layers</span><span class="label">Architecture</span></div>
+        <div class="metric"><span class="value info">3 Roles</span><span class="label">Student/Admin/Super</span></div>
         <div class="metric"><span class="value success">EF Core</span><span class="label">Code-First</span></div>
       </div>
     </article>
 
-    <!-- Slide 5: Programming Languages + Frameworks (Formal) -->
-    <article class="glass-panel" data-panel="techstack">
+    <!-- Beat 3: Impact Analyzer -->
+    <article class="glass-panel" data-panel="impact">
       <div class="panel-header stagger">
-        <div class="eyebrow">Tech Stack</div>
+        <div class="eyebrow">Impact Analyzer</div>
+        <span class="speaker-badge">Esraa</span>
+      </div>
+      <h2 class="stagger">Prerequisite Failure Cascade</h2>
+      <p class="stagger" style="margin-bottom: 12px;">Simulating failure on <strong>CS211</strong> reveals transitively blocked courses. BFS traversal propagates the impact through dependencies, illustrating risk scope and recovery timelines.</p>
+      <div class="metrics stagger">
+        <div class="metric"><span class="value danger">~20</span><span class="label">Blocked Courses</span></div>
+        <div class="metric"><span class="value danger">~60</span><span class="label">Credits at Risk</span></div>
+        <div class="metric"><span class="value">2 Sem</span><span class="label">Grad Delay</span></div>
+      </div>
+      <p class="stagger" style="font-size: 11px; color: var(--text-dim); font-style: italic; margin-top: 10px; text-align: center;">
+        [Trigger live demo with the Cascade button below]
+      </p>
+    </article>
+
+    <!-- Beat 4: GPA Simulator -->
+    <article class="glass-panel" data-panel="gpa">
+      <div class="panel-header stagger">
+        <div class="eyebrow">GPA Simulator</div>
         <span class="speaker-badge">Hazem</span>
       </div>
-      <h2 class="stagger">N-Tier .NET 10 System</h2>
+      <h2 class="stagger">Live Scenario Planning</h2>
+      <p class="stagger">Students can simulate grade scenarios for in-progress classes or use the target GPA back-calculator to discover needed grades.</p>
       
-      <div class="tech-grid stagger">
-        <div class="tech-card">
-          <h3>Backend Core</h3>
-          <p>4-layer N-tier isolation: Domain → DAL → BLL → PL.</p>
-          <div class="tech-tag-group">
-            <span class="tech-tag">C# / .NET 10</span>
-            <span class="tech-tag">ASP.NET MVC</span>
+      <div style="display: flex; gap: var(--space-4); align-items: center; margin-top: 12px;">
+        <div class="gpa-select-container" style="flex: 1; margin-top: 0;">
+          <div class="gpa-select-row">
+            <span>CS211 (4cr):</span>
+            <select id="grade-cs211" class="gpa-select">
+              <option value="4.0">A (4.0)</option>
+              <option value="3.0">B (3.0)</option>
+              <option value="2.0">C (2.0)</option>
+              <option value="0.0" selected>F (0.0)</option>
+            </select>
+          </div>
+          <div class="gpa-select-row">
+            <span>MA222 (3cr):</span>
+            <select id="grade-ma222" class="gpa-select">
+              <option value="4.0" selected>A (4.0)</option>
+              <option value="3.0">B (3.0)</option>
+              <option value="2.0">C (2.0)</option>
+              <option value="0.0">F (0.0)</option>
+            </select>
+          </div>
+          <div class="gpa-select-row">
+            <span>IS211 (3cr):</span>
+            <select id="grade-is211" class="gpa-select">
+              <option value="4.0">A (4.0)</option>
+              <option value="3.0" selected>B (3.0)</option>
+              <option value="2.0">C (2.0)</option>
+              <option value="0.0">F (0.0)</option>
+            </select>
           </div>
         </div>
-        <div class="tech-card">
-          <h3>Data & Intelligence</h3>
-          <p>Fully typed ORM matching academic models + generative advice.</p>
-          <div class="tech-tag-group">
-            <span class="tech-tag">EF Core 10</span>
-            <span class="tech-tag">Gemini 2.5 Flash</span>
-          </div>
-        </div>
-        <div class="tech-card">
-          <h3>Client Layer</h3>
-          <p>Clean Bootstrap grid with vanilla interactive components.</p>
-          <div class="tech-tag-group">
-            <span class="tech-tag">Bootstrap 5</span>
-            <span class="tech-tag">Vanilla JS</span>
-          </div>
-        </div>
-        <div class="tech-card">
-          <h3>Visualization</h3>
-          <p>Client-side rendering of degree program requirements.</p>
-          <div class="tech-tag-group">
-            <span class="tech-tag">Cytoscape.js</span>
-            <span class="tech-tag">CSS Gradients</span>
-          </div>
+
+        <div class="ring-card" style="flex-shrink: 0; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; display: flex; flex-direction: column; align-items: center; width: 110px;">
+          <svg viewBox="0 0 36 36" class="circular-chart sky" style="max-width: 64px; max-height: 64px;">
+            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <path id="gpa-gauge-fill" class="circle path-animate" stroke-dasharray="67.5, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <text x="18" y="20.35" id="gpa-gauge-value" class="percentage">2.70</text>
+          </svg>
+          <span class="ring-label" style="font-size: 9px; margin-top: 6px; text-align: center;">CGPA</span>
         </div>
       </div>
-
-      <div class="metrics stagger">
-        <div class="metric"><span class="value info">4</span><span class="label">Layers</span></div>
-        <div class="metric"><span class="value">Gemini</span><span class="label">Flash 2.5</span></div>
-        <div class="metric"><span class="value success">Docker</span><span class="label">Ready</span></div>
+      
+      <div style="display: flex; gap: var(--space-4); margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px solid rgba(255, 255, 255, 0.04);">
+        <div class="metric"><span class="value success" id="live-sgpa">1.20</span><span class="label">Pred SGPA</span></div>
+        <div class="metric"><span class="value info" id="live-cgpa">2.70</span><span class="label">Pred CGPA</span></div>
       </div>
     </article>
 
-    <!-- Slide 6: Live Application (Formal) -->
-    <article class="glass-panel" data-panel="liveapp">
+    <!-- Beat 5: Progress Tracker -->
+    <article class="glass-panel" data-panel="progress">
       <div class="panel-header stagger">
-        <div class="eyebrow">Live Application</div>
+        <div class="eyebrow">Progress Tracker</div>
         <span class="speaker-badge">Ezz</span>
       </div>
-      <h2 class="stagger">Production Deployed</h2>
-      <p class="stagger">Deployed and live at <a href="http://cursus.runasp.net" target="_blank" style="color: var(--primary-soft); text-decoration: none; font-weight: 500;">cursus.runasp.net</a>. Real-time audit checks by academic category:</p>
+      <h2 class="stagger">Graduation Requirements Audit</h2>
+      <p class="stagger">Audit course completion by category: Core, Department Electives, Free Electives, and University Requirements. Visualizes completion percentage and graduation progress.</p>
       
       <!-- Dynamic SVG Progress Rings -->
       <div class="progress-rings stagger">
@@ -262,87 +219,128 @@
       </div>
 
       <div class="metrics stagger" style="margin-top: 12px;">
-        <button type="button" class="cascade-btn scrubber-cascade-btn" style="width: 100%; border-radius: 8px; font-weight: 700; height: 38px;">Trigger Prereq Cascade Simulation</button>
+        <div class="metric"><span class="value info">134</span><span class="label">Total Credits</span></div>
+        <div class="metric"><span class="value success">Audit</span><span class="label">Status</span></div>
       </div>
     </article>
 
-    <!-- Slide 7: Deliverables (Formal) -->
-    <article class="glass-panel" data-panel="deliverables">
+    <!-- Beat 6: Semester Planner -->
+    <article class="glass-panel" data-panel="planner">
       <div class="panel-header stagger">
-        <div class="eyebrow">Deliverables</div>
+        <div class="eyebrow">Semester Planner</div>
+        <span class="speaker-badge">Abdelrahman</span>
+      </div>
+      <h2 class="stagger">Recovery Scheduling & Healing</h2>
+      <p class="stagger" style="margin-bottom: 12px;">Mazen schedules the CS211 retake in a future term via Cursus Semester Planner. The system automatically validates prerequisites on add and enforces credit caps. Persisted plans across terms trigger graph healing.</p>
+      <div class="metrics stagger">
+        <div class="metric"><span class="value success">Persisted DB</span><span class="label">Storage</span></div>
+        <div class="metric"><span class="value info">Automated</span><span class="label">Prereq Check</span></div>
+        <div class="metric"><span class="value">Healed</span><span class="label">Graph State</span></div>
+      </div>
+    </article>
+
+    <!-- Beat 7: AI Advisor -->
+    <article class="glass-panel" data-panel="advisor">
+      <div class="panel-header stagger">
+        <div class="eyebrow">AI Advisor</div>
+        <span class="speaker-badge">Hussein</span>
+      </div>
+      <h2 class="stagger">Generative Guidance</h2>
+      <p class="stagger">Gemini 2.5 Flash receives the full student audit as context and answers academic planning questions grounded strictly in the institutional database.</p>
+      
+      <div class="chat-widget" style="margin-top: var(--space-3); border: 1px solid rgba(129, 140, 248, 0.15); border-radius: 12px; background: rgba(255, 255, 255, 0.01); display: flex; flex-direction: column; height: 140px; overflow: hidden;">
+        <div id="chat-thread" style="flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
+          <div class="chat-bubble ai">Hi Mazen, I see you failed CS211. What would you like to plan?</div>
+        </div>
+        <div class="chat-actions" style="display: flex; gap: 6px; padding: 6px; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(0, 0, 0, 0.2);">
+          <button type="button" class="chat-prompt-btn" data-question="retake" style="background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); color: var(--text); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Should I retake in Fall?</button>
+          <button type="button" class="chat-prompt-btn" data-question="warning" style="background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); color: var(--text); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Am I on warning?</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beat 8: University Admin -->
+    <article class="glass-panel" data-panel="admin">
+      <div class="panel-header stagger">
+        <div class="eyebrow">University Admin</div>
         <span class="speaker-badge">Tawfik</span>
       </div>
-      <h2 class="stagger">Documentation & Code</h2>
-      <p class="stagger">Artifacts and tracking delivered over three developmental milestones mapped on ClickUp.</p>
-      
-      <div class="deliverable-list stagger">
-        <div class="deliverable-item">
-          <div class="deliverable-info">
-            <span class="icon">📄</span>
-            <span class="title">Software Requirements Spec (SRS)</span>
-          </div>
-          <span class="deliverable-badge done">Complete</span>
-        </div>
-        <div class="deliverable-item">
-          <div class="deliverable-info">
-            <span class="icon">💻</span>
-            <span class="title">Source Code Repository (GitHub)</span>
-          </div>
-          <span class="deliverable-badge done">Complete</span>
-        </div>
-        <div class="deliverable-item">
-          <div class="deliverable-info">
-            <span class="icon">🌐</span>
-            <span class="title">Working Live App (cursus.runasp.net)</span>
-          </div>
-          <span class="deliverable-badge done">Live</span>
-        </div>
-      </div>
-
+      <h2 class="stagger">Institutional Rule Governance</h2>
+      <p class="stagger" style="margin-bottom: 12px;">Scoped to one university. Handles student transcript CRUD, course catalog configurations, grade entries, and prerequisite graphing. Administrative rules define student planning limits.</p>
       <div class="metrics stagger">
-        <div class="metric"><span class="value info">3</span><span class="label">Sprints</span></div>
-        <div class="metric"><span class="value success">ClickUp</span><span class="label">Agile</span></div>
-        <div class="metric"><span class="value">GitHub</span><span class="label">Gitflow Lite</span></div>
+        <div class="metric"><span class="value success">Scoped</span><span class="label">Access</span></div>
+        <div class="metric"><span class="value info">Adjacency</span><span class="label">Graph Setup</span></div>
+        <div class="metric"><span class="value">Audit</span><span class="label">Integrity</span></div>
       </div>
     </article>
 
-    <!-- Slide 8: Project Team + Roles (Formal) -->
-    <article class="glass-panel" data-panel="team" style="width: min(600px, 92vw);">
+    <!-- Beat 9: Super Admin -->
+    <article class="glass-panel" data-panel="superadmin">
       <div class="panel-header stagger">
-        <div class="eyebrow">Project Team</div>
-        <span class="speaker-badge">Tawfik & All</span>
+        <div class="eyebrow">Super Admin</div>
+        <span class="speaker-badge">Tawfik</span>
       </div>
-      <h2 class="stagger">The Cursus Team</h2>
+      <h2 class="stagger">Multi-Tenant Provisioning</h2>
+      <p class="stagger" style="margin-bottom: 12px;">Platform-wide dashboard provisioning isolated university tenants (e.g. SVU, Sinai, AUC). Manages institutional domains, tenant isolation keys, and global system metrics.</p>
+      <div class="metrics stagger">
+        <div class="metric"><span class="value success">3 Tenants</span><span class="label">Seeded</span></div>
+        <div class="metric"><span class="value info">Isolated</span><span class="label">Data Schema</span></div>
+        <div class="metric"><span class="value">Platform</span><span class="label">Metrics</span></div>
+      </div>
+    </article>
+
+    <!-- Beat 10: Challenges & Lessons -->
+    <article class="glass-panel" data-panel="challenges">
+      <div class="panel-header stagger">
+        <div class="eyebrow">Challenges & Lessons</div>
+        <span class="speaker-badge">Tawfik</span>
+      </div>
+      <h2 class="stagger">Seed Pipelines & Consistency</h2>
+      <p class="stagger" style="margin-bottom: 12px;">Key engineering challenges: mapping 280+ course prerequisite relations from JSON, debugging tenant data scopes, clearing ghost records, and auditing documentation constraints.</p>
+      <div class="metrics stagger">
+        <div class="metric"><span class="value danger">280+</span><span class="label">Graph Edges</span></div>
+        <div class="metric"><span class="value success">Agile</span><span class="label">ClickUp</span></div>
+        <div class="metric"><span class="value">Audited</span><span class="label">Data</span></div>
+      </div>
+    </article>
+
+    <!-- Beat 11: Close / Q&A -->
+    <article class="glass-panel" data-panel="close" style="width: min(600px, 92vw);">
+      <div class="panel-header stagger">
+        <div class="eyebrow">Close & Team</div>
+        <span class="speaker-badge">Abdelrahman & All</span>
+      </div>
+      <h2 class="stagger">Cursus: Living Course-Map</h2>
       
-      <div class="team-grid stagger">
+      <div class="team-grid stagger" style="margin-top: 10px;">
         <div class="team-card">
           <h3>Abdelrahman Yahia</h3>
-          <span class="role">Full-Stack Developer (Lead)</span>
+          <span class="role">Full-Stack Lead (BFS/DFS Engine, Core Auth)</span>
         </div>
         <div class="team-card">
           <h3>Hussein Hashiem</h3>
-          <span class="role">Full-Stack Developer</span>
+          <span class="role">Full-Stack Developer (Database, API Services)</span>
         </div>
         <div class="team-card">
           <h3>Esraa Ahmed</h3>
-          <span class="role">Full-Stack Developer</span>
+          <span class="role">Full-Stack Developer (Cascade UI, Admin Tools)</span>
         </div>
         <div class="team-card">
           <h3>Mohamed Hazem</h3>
-          <span class="role">Full-Stack Developer</span>
+          <span class="role">Full-Stack Developer (GPA Simulator UI, Client Routing)</span>
         </div>
         <div class="team-card">
           <h3>Mohamed Ezz</h3>
-          <span class="role">Full-Stack Developer</span>
+          <span class="role">Full-Stack Developer (Live Metrics, Multi-Tenant Setup)</span>
         </div>
         <div class="team-card">
           <h3>Mohamed Tawfik</h3>
-          <span class="role">Full-Stack Developer</span>
+          <span class="role">Full-Stack Developer (AI Advisor, Deliverable Docs)</span>
         </div>
       </div>
 
-      <p class="stagger" style="margin-top: 12px; font-size: 13px; color: var(--text-muted); line-height: 1.4;">
-        <strong>Collaboration & Agile Methodologies:</strong> Managed tasks through ClickUp; version synchronization using Gitflow Lite on GitHub.
+      <p class="stagger" style="margin-top: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+        <strong>Deliverables:</strong> SRS document, source code (GitHub), and deployed working application at cursus.runasp.net.
       </p>
     </article>
   </div>
@@ -384,9 +382,9 @@
   <div class="chrome scrubber-bar">
     <div class="scrub-container">
       <div class="scrub-ticks">
-        <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span>
+        <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span>
       </div>
-      <input type="range" id="timeline-scrubber" min="0" max="8" value="0" step="1" />
+      <input type="range" id="timeline-scrubber" min="0" max="11" value="0" step="1" />
     </div>
     <button type="button" class="cascade-btn scrubber-cascade-btn" title="Play cascade (C)">Cascade</button>
   </div>

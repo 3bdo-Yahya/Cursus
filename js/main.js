@@ -8,30 +8,35 @@ import { PanelDirector } from './panels.js';
 /** Beats match presentation_outline_order (v2). */
 const SCENES = [
   'cover',
-  'idea',
-  'wireframe',
-  'users',
-  'datastructure',
-  'techstack',
-  'liveapp',
-  'deliverables',
-  'team',
+  'intro',
+  'architecture',
+  'impact',
+  'gpa',
+  'progress',
+  'planner',
+  'advisor',
+  'admin',
+  'superadmin',
+  'challenges',
+  'close',
 ];
 
 /**
- * Mazen avatar moods along the outline spine:
- * cover (dormant) → idea (worried) → wireframe (focused) → rest (off)
+ * Mazen avatar moods along the 12-beat outline spine
  */
 const AVATAR_MOOD = {
   cover: 'dormant',
-  idea: 'worried',
-  wireframe: 'focused',
-  users: 'off',
-  datastructure: 'off',
-  techstack: 'off',
-  liveapp: 'off',
-  deliverables: 'off',
-  team: 'off',
+  intro: 'worried',
+  architecture: 'neutral',
+  impact: 'panic',
+  gpa: 'focused',
+  progress: 'focused',
+  planner: 'reassured',
+  advisor: 'confident',
+  admin: 'steady',
+  superadmin: 'off',
+  challenges: 'off',
+  close: 'proud',
 };
 
 function $(sel) {
@@ -88,20 +93,16 @@ function boot() {
       scrubber.value = sceneIndex;
     }
 
-    // Stop previous code highlighting if navigating away from datastructure
-    if (id !== 'datastructure') {
+    // Stop previous code highlighting if navigating away from architecture
+    if (id !== 'architecture') {
       panels.stopCodeHighlight();
     }
 
     stage.flyTo(id);
-    if (id === 'cover') {
-      panels.hideAll();
-    } else {
-      panels.show(id, { hot: withCascade });
-    }
+    panels.show(id, { hot: withCascade });
     setAvatarMood(AVATAR_MOOD[id] || 'calm');
 
-    if (id === 'liveapp' || id === 'team') {
+    if (id === 'planner' || id === 'close') {
       stage.playHeal();
     }
   }
@@ -120,7 +121,7 @@ function boot() {
     if (cascading) return;
     cascading = true;
 
-    sceneIndex = SCENES.indexOf('liveapp');
+    sceneIndex = SCENES.indexOf('impact');
     goTo(sceneIndex, { withCascade: true });
 
     setTimeout(() => {

@@ -37,14 +37,17 @@ function colorToThree(hex) {
 function buildGraphData() {
   const clusters = {
     cover:         { id: 'cover',         focus: new THREE.Vector3(0, 0.8, 0),   distance: 32 },
-    idea:          { id: 'idea',          focus: new THREE.Vector3(-8, 1.2, 0),  distance: 15 },
-    wireframe:     { id: 'wireframe',     focus: new THREE.Vector3(1, 0.4, 1.5), distance: 12 },
-    users:         { id: 'users',         focus: new THREE.Vector3(10, -0.5, 1), distance: 16 },
-    datastructure: { id: 'datastructure', focus: new THREE.Vector3(0, 2.5, -2),  distance: 22 },
-    techstack:     { id: 'techstack',     focus: new THREE.Vector3(6, 1.5, -1),  distance: 14 },
-    liveapp:       { id: 'liveapp',       focus: new THREE.Vector3(4, 0.5, 1),   distance: 13 },
-    deliverables:  { id: 'deliverables',  focus: new THREE.Vector3(8, 1.8, 0.5), distance: 14 },
-    team:          { id: 'team',          focus: new THREE.Vector3(2, 1.0, 0),   distance: 26 },
+    intro:         { id: 'intro',         focus: new THREE.Vector3(-8, 1.2, 0),  distance: 15 },
+    architecture:  { id: 'architecture',  focus: new THREE.Vector3(0, 2.5, -2),  distance: 22 },
+    impact:        { id: 'impact',        focus: new THREE.Vector3(1, 0.4, 1.5), distance: 12 },
+    gpa:           { id: 'gpa',           focus: new THREE.Vector3(-3.5, -1.0, 1.0), distance: 12 },
+    progress:      { id: 'progress',      focus: new THREE.Vector3(8, 1.8, 0.5), distance: 14 },
+    planner:       { id: 'planner',       focus: new THREE.Vector3(5.5, 2.0, 1.0), distance: 12 },
+    advisor:       { id: 'advisor',       focus: new THREE.Vector3(9.5, 0.2, 1.2), distance: 12 },
+    admin:         { id: 'admin',         focus: new THREE.Vector3(13.5, 0.8, -1.2), distance: 14 },
+    superadmin:    { id: 'superadmin',    focus: new THREE.Vector3(15.5, 2.4, -2.0), distance: 14 },
+    challenges:    { id: 'challenges',    focus: new THREE.Vector3(12.0, -1.4, 0.8), distance: 14 },
+    close:         { id: 'close',         focus: new THREE.Vector3(2.0, 1.0, 0),   distance: 26 },
   };
 
   // Mazen / SVU CS constellation — CS211 is the fail seed (Impact Analyzer keystone)
