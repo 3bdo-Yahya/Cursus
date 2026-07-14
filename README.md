@@ -17,13 +17,13 @@ Cursus is a web platform that helps university students **see, understand, and p
 ## Tech Stack
 
 | Layer          | Technology                                  |
-|----------------|---------------------------------------------|
-| Application    | ASP.NET Core 10 MVC, C#, Razor Views       |
+|---|---|
+| Application    | ASP.NET Core 10 MVC, C#, Razor Views        |
 | Styling        | Bootstrap 5 + custom CSS design system      |
 | Graph Viz      | Cytoscape.js (interactive prerequisite map) |
 | Database       | SQL Server + Entity Framework Core          |
 | Auth           | ASP.NET Identity (cookie-based, role-based) |
-| AI             | OpenAI API (GPT-3.5-turbo)                  |
+| AI             | Google Gemini API (Gemini 2.5 Flash)        |
 | CI/CD          | GitHub Actions (`dotnet-ci.yml`)            |
 
 ---
@@ -47,11 +47,11 @@ graph LR
 ```
 
 | Layer | Project | Responsibility |
-|-------|---------|----------------|
-| **Presentation** | `Cursus.PL` | ASP.NET MVC controllers, Razor views, static assets, Identity UI, seeding |
-| **Business Logic** | `Cursus.BLL` | Service interfaces & implementations, business rules, validation |
-| **Data Access** | `Cursus.DAL` | EF Core `ApplicationDbContext`, entity configurations, migrations, seed data |
-| **Domain** | `Cursus.Domain` | Pure C# entities and enums — zero infrastructure dependencies |
+|---|---|---|
+| **Presentation** | `Cursus.PL` | ASP.NET MVC controllers (Admin, Student, Courses, Departments), Razor views, ViewModels, static assets |
+| **Business Logic** | `Cursus.BLL` | Service implementations (CourseMap, ImpactAnalysis, Planner, Progress, Gemini, etc.) and business rules |
+| **Data Access** | `Cursus.DAL` | EF Core `ApplicationDbContext`, repositories, entity configurations, migrations, seed data |
+| **Domain** | `Cursus.Domain` | Core entities (AppUser, Course, PlannedCourse, etc.), DTOs, interfaces, and enums |
 
 ### Key Principle
 
@@ -71,34 +71,33 @@ Cursus/
 │   ├── Cursus.sln                    # Solution file
 │   │
 │   ├── Cursus.Domain/                # Domain layer (entities & enums)
-│   │   ├── Entities/                 #   AppUser, Course, Department, University, ...
-│   │   └── Enums/                    #   AcademicStanding, CourseType, StudentCourseStatus, ...
+│   │   ├── Entities/                 #   AppUser, Course, PlannedCourse, Department, University, ...
+│   │   ├── DTOs/                     #   Data Transfer Objects (CourseGraphDto, ImpactAnalysisResultDto, ...)
+│   │   └── Enums/                    #   AcademicStanding, CourseType, StudentCourseStatus, SemesterType, ...
 │   │
 │   ├── Cursus.DAL/                   # Data Access layer
 │   │   ├── Database/
-│   │   │   ├── ApplicationDbContext.cs
-│   │   │   └── SeedData/             #   JSON seed files per university
+│   │   │   └── ApplicationDbContext.cs
 │   │   ├── Configurations/           #   EF Core Fluent API configs
+│   │   ├── Repositories/             #   GenericRepository implementation
 │   │   └── Migrations/
 │   │
 │   ├── Cursus.BLL/                   # Business Logic layer
-│   │   └── (services added per feature in Sprint 2+)
+│   │   ├── Services/                 #   CourseMapService, ImpactAnalysisService, PlannerService, GeminiService, ...
+│   │   └── Options/                  #   GeminiOptions configuration bindings
 │   │
 │   └── Cursus.PL/                    # Presentation layer (startup project)
-│       ├── Controllers/              #   AdminController, StudentController, HomeController, ...
-│       ├── Models/                   #   ViewModels (AdminDashboardVM, CourseNodeVM, ...)
-│       ├── Views/                    #   Razor views organized by controller
-│       │   ├── Shared/               #     _Layout, _Navbar, _AuthLayout, partials
-│       │   ├── Admin/
-│       │   ├── Student/
-│       │   └── Home/
-│       ├── Areas/Identity/           #   Scaffolded Identity pages (Login, Register, ...)
+│       ├── Controllers/              #   AdminController, StudentController, CoursesController, DepartmentsController, ...
+│       ├── Models/                   #   ViewModels (AdminDashboardViewModel, PlannerViewModel, StudentOnboardingViewModel, ...)
+│       ├── Views/                    #   Razor views organized by controller (Admin, Student, Courses, Departments, Home)
+│       │   └── Shared/               #     _Layout, _Navbar, partials, badges
 │       ├── Seeding/                  #   StartupSeeder for catalog data
 │       ├── wwwroot/                  #   Static assets
-│       │   ├── css/pages/            #     Per-page stylesheets
-│       │   ├── js/pages/             #     Per-page scripts
-│       │   └── lib/                  #     Bootstrap, jQuery
+│       │   ├── css/                  #     Per-page stylesheets
+│       │   ├── js/                   #     Per-page scripts (e.g. course-map.js, gpa-simulator.js)
+│       │   └── lib/                  #     Bootstrap, Cytoscape.js, jQuery
 │       ├── Program.cs
+│       ├── DependencyInjection.cs    #   Application service configuration
 │       └── appsettings.json
 │
 ├── .github/workflows/dotnet-ci.yml   # CI pipeline

@@ -11,7 +11,11 @@ namespace Cursus.Domain.DTOs
         string? Grade,
         CourseType CourseType,
         bool IsPlanned = false,
-        int? RecommendedSemester = null
+        int? RecommendedSemester = null,
+        string? Type = null,
+        string? Availability = null,
+        string? PassingGrade = null,
+        string? DepartmentName = null
     );
 }
 

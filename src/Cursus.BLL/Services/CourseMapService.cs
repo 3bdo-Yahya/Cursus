@@ -33,6 +33,7 @@ namespace Cursus.BLL.Services
         {
             var courses = await _courseRepository.GetAll()
                 .Where(c => c.DepartmentId == departmentId && c.IsActive)
+                .Include(c => c.Department)
                 .Include(c => c.Prerequisites)
                     .ThenInclude(p => p.Prerequisite)
                 .AsNoTracking()
@@ -75,7 +76,21 @@ namespace Cursus.BLL.Services
                     Grade: hasStudentRecord ? record.Grade : null,
                     CourseType: c.CourseType,
                     IsPlanned: isPlanned,
-                    RecommendedSemester: c.RecommendedSemester
+                    RecommendedSemester: c.RecommendedSemester,
+                    Type: c.CourseType switch
+                    {
+                        CourseType.DeptElective => "Dept. Elective",
+                        CourseType.FreeElective => "Free Elective",
+                        CourseType.UniversityReq => "University Req",
+                        _ => c.CourseType.ToString()
+                    },
+                    Availability: c.SemesterAvailability switch
+                    {
+                        SemesterAvailability.FallSpring => "Fall / Spring",
+                        _ => c.SemesterAvailability.ToString()
+                    },
+                    PassingGrade: c.PassingGradeThreshold,
+                    DepartmentName: c.Department?.Name
                 );
             }).ToList();
 
