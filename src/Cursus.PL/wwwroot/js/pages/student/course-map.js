@@ -108,6 +108,10 @@ function buildCourses(nodes, edges) {
       prereqs,
       courseType: n.courseType,
       recommendedSemester: normalizeSemester(n.recommendedSemester),
+      type: n.type,
+      avail: n.availability,
+      passing: n.passingGrade,
+      dept: n.departmentName
     };
   });
 }
