@@ -1,0 +1,14 @@
+# Ignore Cursus project files and folders on the presentation-only branch
+/.agents/
+/.cursor/
+/.idea/
+/.vs/
+/.vscode/
+/docs/
+/graphify-out/
+/src/
+/tests/
+/scripts/
+/.env
+/Folder.DotSettings.user
+/CLAUDE.md
