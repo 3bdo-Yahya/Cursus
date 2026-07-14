@@ -466,7 +466,8 @@ public static class StartupSeeder
                     DepartmentId = department.Id,
                     AcademicYear = profile.AcademicYear,
                     CurrentSemester = profile.CurrentSemester,
-                    CurrentStanding = profile.Standing
+                    CurrentStanding = profile.Standing,
+                    EnrollmentDate = ResolveEnrollmentDate(profile)
                 };
 
                 var createResult = await userManager.CreateAsync(user, DemoStudentPassword);
@@ -483,6 +484,7 @@ public static class StartupSeeder
                 user.AcademicYear = profile.AcademicYear;
                 user.CurrentSemester = profile.CurrentSemester;
                 user.CurrentStanding = profile.Standing;
+                user.EnrollmentDate = ResolveEnrollmentDate(profile) ?? user.EnrollmentDate;
 
                 var updateResult = await userManager.UpdateAsync(user);
                 if (!updateResult.Succeeded)
@@ -626,6 +628,11 @@ public static class StartupSeeder
         DemoStudentProfile profile,
         List<Course> courses)
     {
+        if (IsMazenPresentationPersona(profile))
+        {
+            return BuildMazenPresentationCourseHistory(studentId, profile, courses);
+        }
+
         var desiredCourses = new List<StudentCourse>();
         var historyTerms = GetDemoHistoryTerms();
         var completedCapacity = Math.Max(0, courses.Count - profile.FailedCourseCount - profile.CurrentCourseCount);
@@ -714,6 +721,8 @@ public static class StartupSeeder
 
     private static IReadOnlyList<DemoStudentProfile> GetDemoStudentProfiles() =>
     [
+        // Defense presentation persona — SVU CS sophomore, Spring Y2, CS211 keystone at risk
+        new("mazen.hassan@cursus.demo", "South Valley University", "Computer Science", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 19, 5, 0, 2.85m, 2.90m),
         new("freshman.cs@cursus.demo", "South Valley University", "Computer Science", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 5, 5, 0, 3.40m, 3.48m),
         new("sophomore.it@cursus.demo", "South Valley University", "Information Technology", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 16, 5, 1, 2.86m, 2.94m),
         new("junior.ai@cursus.demo", "South Valley University", "Artificial Intelligence", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 28, 5, 1, 3.16m, 3.24m),
@@ -723,6 +732,92 @@ public static class StartupSeeder
         new("freshman.idss@cursus.demo", "Sinai University", "Information and Decision Support Systems", "2025-2026", SemesterType.Spring, AcademicStanding.Warning, 6, 5, 1, 2.05m, 2.12m),
         new("senior.auc@cursus.demo", "American University in Cairo", "Computer Science", "2025-2026", SemesterType.Spring, AcademicStanding.Good, 38, 4, 0, 3.68m, 3.74m)
     ];
+
+    /// <summary>
+    /// Presentation defense account — enrolled 1 Oct 2024, Year 2 Spring, CS211 in progress.
+    /// </summary>
+    private static bool IsMazenPresentationPersona(DemoStudentProfile profile) =>
+        string.Equals(profile.Email, "mazen.hassan@cursus.demo", StringComparison.OrdinalIgnoreCase);
+
+    private static DateTime? ResolveEnrollmentDate(DemoStudentProfile profile) =>
+        IsMazenPresentationPersona(profile)
+            ? new DateTime(2024, 10, 1, 0, 0, 0, DateTimeKind.Utc)
+            : null;
+
+    /// <summary>
+    /// Curriculum-aligned transcript for Mazen: semesters 1–3 completed, semester-4 spring
+    /// in progress with CS211 Data Structures I as the Impact Analyzer keystone.
+    /// </summary>
+    private static List<StudentCourse> BuildMazenPresentationCourseHistory(
+        string studentId,
+        DemoStudentProfile profile,
+        List<Course> courses)
+    {
+        var byCode = courses
+            .GroupBy(course => course.Code, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+
+        var gradeCycle = ResolveGradeCycle(profile.CumulativeGpa);
+        var desired = new List<StudentCourse>();
+        var gradeIndex = 0;
+
+        void AddCompleted(IEnumerable<string> codes, string academicYear, SemesterType semester)
+        {
+            foreach (var code in codes)
+            {
+                if (!byCode.TryGetValue(code, out var course))
+                {
+                    continue;
+                }
+
+                desired.Add(new StudentCourse
+                {
+                    StudentId = studentId,
+                    CourseId = course.Id,
+                    Status = StudentCourseStatus.Completed,
+                    Grade = gradeCycle[gradeIndex % gradeCycle.Length],
+                    AcademicYear = academicYear,
+                    Semester = semester
+                });
+                gradeIndex++;
+            }
+        }
+
+        // Enrolled Oct 2024 → Y1 Fall / Y1 Spring / Y2 Fall completed; Y2 Spring in progress
+        AddCompleted(
+            ["CS121", "EE101", "HU111", "HU141", "HU151", "HU153", "MA111"],
+            "2024-2025",
+            SemesterType.Fall);
+        AddCompleted(
+            ["CS141", "HU112", "HU122", "HU132", "MA112", "MA113", "MA121"],
+            "2024-2025",
+            SemesterType.Spring);
+        AddCompleted(
+            ["CS241", "EE201", "IS221", "IT231", "MA231"],
+            "2025-2026",
+            SemesterType.Fall);
+
+        // Spring Y2 — CS211 is the keystone fail-seed for the defense cascade
+        foreach (var code in new[] { "CS211", "MA222", "IS211", "CS242", "PH201" })
+        {
+            if (!byCode.TryGetValue(code, out var course))
+            {
+                continue;
+            }
+
+            desired.Add(new StudentCourse
+            {
+                StudentId = studentId,
+                CourseId = course.Id,
+                Status = StudentCourseStatus.InProgress,
+                Grade = null,
+                AcademicYear = profile.AcademicYear,
+                Semester = profile.CurrentSemester
+            });
+        }
+
+        return desired;
+    }
 
     private static IReadOnlyList<AcademicTerm> GetDemoHistoryTerms() =>
     [
@@ -1509,4 +1604,5 @@ public static class StartupSeeder
         }
     }
 }
+
 
