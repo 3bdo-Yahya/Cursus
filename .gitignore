@@ -12,3 +12,5 @@
 /.env
 /Folder.DotSettings.user
 /CLAUDE.md
+node_modules/
+*.pdf

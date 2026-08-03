@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1080" />
+  <title>Cursus — LinkedIn Carousel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Outfit:wght@500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="carousel.css" />
+</head>
+
+<body>
+
+  <!-- Slide 1: Hook -->
+  <section class="slide slide-hook">
+    <div class="slide-content hook-content">
+      <div class="hero-brand-block">
+        <img src="../assets/mcit-logo.png" alt="Cursus Logo" class="hero-brand-logo" />
+        <h1 class="hero-brand-name">CURSUS</h1>
+      </div>
+
+      <p class="eyebrow hook-eyebrow">Academic Advisor &amp; Audit</p>
+
+      <h2 class="headline hook-headline">
+        <span class="hook-line">Fail <span class="num-danger">1</span>.</span>
+        <span class="hook-line">Block <span class="num-gradient">14</span>.</span>
+      </h2>
+
+      <p class="subline hook-subline">Do you know your degree's single point of failure?</p>
+    </div>
+
+    <div class="slide-meta">
+      <span class="swipe-cue swipe-cue-strong">Swipe to uncover the cascade <svg viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg></span>
+      <span class="slide-counter">01 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 2: Meet Mazen -->
+  <section class="slide">
+    <div class="slide-content">
+      <p class="eyebrow">Meet Mazen</p>
+      <h2 class="headline h-md">On paper, he's fine.</h2>
+      <p class="body mb-sm">SVU Computer Science · Year 2 Spring · <strong>2.9 CGPA</strong> · Good standing. One course
+        at risk: <strong>CS211 Data Structures I</strong>.</p>
+      <div class="browser-frame flex-grow">
+        <div class="browser-chrome">
+          <div class="browser-dots"><span></span><span></span><span></span></div>
+          <div class="browser-url">cursus.runasp.net/Student</div>
+        </div>
+        <div class="browser-viewport">
+          <img src="assets/shots/01-dashboard.png" alt="Student dashboard" />
+        </div>
+      </div>
+    </div>
+    <div class="wordmark">
+      <img src="../assets/mcit-logo.png" alt="" />
+      <span>Cursus</span>
+    </div>
+    <div class="slide-meta">
+      <span class="swipe-cue">Swipe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg></span>
+      <span class="slide-counter">02 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 3: A degree is a graph -->
+  <section class="slide">
+    <div class="slide-content">
+      <p class="eyebrow">Interactive course map</p>
+      <h2 class="headline h-md">A degree is a <span class="accent">directed graph</span>.</h2>
+      <p class="body mb-sm">"What if I fail?" walks the prerequisite chain — instantly, not by guesswork.</p>
+      <div class="browser-frame flex-grow">
+        <div class="browser-chrome">
+          <div class="browser-dots"><span></span><span></span><span></span></div>
+          <div class="browser-url">cursus.runasp.net/Student/CourseMap</div>
+        </div>
+        <div class="browser-viewport">
+          <img src="assets/shots/02-course-map.png" alt="Interactive course map" />
+        </div>
+      </div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot"
+            style="background: var(--status-done);"></span>Completed</span>
+        <span class="legend-item"><span class="legend-dot" style="background: var(--status-active);"></span>In
+          progress</span>
+        <span class="legend-item"><span class="legend-dot"
+            style="background: var(--status-idle);"></span>Available</span>
+        <span class="legend-item"><span class="legend-dot" style="background: var(--status-fail);"></span>Failed</span>
+        <span class="legend-item"><span class="legend-dot"
+            style="background: var(--status-locked);"></span>Blocked</span>
+      </div>
+    </div>
+    <div class="wordmark">
+      <img src="../assets/mcit-logo.png" alt="" />
+      <span>Cursus</span>
+    </div>
+    <div class="slide-meta">
+      <span class="swipe-cue">Swipe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg></span>
+      <span class="slide-counter">03 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 4: The cascade -->
+  <section class="slide slide-hero-cascade">
+    <div class="slide-content">
+      <p class="eyebrow">Simulate failure on CS211</p>
+      <h2 class="headline h-lg">The cascade is <span class="danger">instant</span>.</h2>
+      <div class="kpi-row kpi-row-tight">
+        <div class="kpi"><span class="kpi-value danger">14</span><span class="kpi-label">Blocked courses</span></div>
+        <div class="kpi"><span class="kpi-value danger">42</span><span class="kpi-label">Credits at risk</span></div>
+        <div class="kpi"><span class="kpi-value">+1 yr</span><span class="kpi-label">Graduation delay</span></div>
+      </div>
+      <p class="body body-sm mb-xs">Graduation: Spring 2028 → <strong class="danger">Spring 2029</strong></p>
+      <div class="browser-frame flex-grow">
+        <div class="browser-chrome">
+          <div class="browser-dots"><span></span><span></span><span></span></div>
+          <div class="browser-url">cursus.runasp.net/Student/CourseMap</div>
+        </div>
+        <div class="browser-viewport">
+          <img src="assets/shots/03-cascade.png" alt="Prerequisite failure cascade" />
+        </div>
+      </div>
+    </div>
+    <div class="wordmark">
+      <img src="../assets/mcit-logo.png" alt="" />
+      <span>Cursus</span>
+    </div>
+    <div class="slide-meta">
+      <span class="swipe-cue">Swipe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg></span>
+      <span class="slide-counter">04 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 5: Impact Analyzer -->
+  <section class="slide">
+    <div class="slide-content">
+      <p class="eyebrow">Impact Analyzer</p>
+      <h2 class="headline h-md">Blast radius in <span class="accent">one click</span>.</h2>
+      <p class="body mb-sm">Blocked courses, credits at risk, graduation delay, recovery path — <strong>pure algorithm,
+          zero AI</strong>.</p>
+      <div class="browser-frame flex-grow">
+        <div class="browser-chrome">
+          <div class="browser-dots"><span></span><span></span><span></span></div>
+          <div class="browser-url">cursus.runasp.net/Student/ImpactAnalyzer</div>
+        </div>
+        <div class="browser-viewport">
+          <img src="assets/shots/04-impact-report.png" alt="Impact Analyzer report" />
+        </div>
+      </div>
+    </div>
+    <div class="wordmark">
+      <img src="../assets/mcit-logo.png" alt="" />
+      <span>Cursus</span>
+    </div>
+    <div class="slide-meta">
+      <span class="slide-counter">05 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 6: GPA + Planner + Progress -->
+  <section class="slide">
+    <div class="slide-content">
+      <p class="eyebrow">Plan before you commit</p>
+      <h2 class="headline h-sm">Simulate grades.<br />Plan terms &amp; track progress.</h2>
+      <div class="slide-trio">
+        <figure class="shot-block shot-hero">
+          <figcaption class="shot-label">GPA Simulator</figcaption>
+          <div class="browser-frame">
+            <div class="browser-chrome">
+              <div class="browser-dots"><span></span><span></span><span></span></div>
+              <div class="browser-url">cursus.runasp.net/Student/GpaSimulator</div>
+            </div>
+            <div class="browser-viewport">
+              <img src="assets/shots/05-gpa-simulator.png" alt="GPA Simulator" />
+            </div>
+          </div>
+        </figure>
+        <div class="shot-row">
+          <figure class="shot-block">
+            <figcaption class="shot-label">Smart Course Planner</figcaption>
+            <div class="browser-frame">
+              <div class="browser-chrome">
+                <div class="browser-dots"><span></span><span></span><span></span></div>
+                <div class="browser-url">cursus.runasp.net/Student/CoursePlanner</div>
+              </div>
+              <div class="browser-viewport">
+                <img src="assets/shots/planner.png" alt="Smart Course Planner" />
+              </div>
+            </div>
+          </figure>
+          <figure class="shot-block">
+            <figcaption class="shot-label">Progress Tracker</figcaption>
+            <div class="browser-frame">
+              <div class="browser-chrome">
+                <div class="browser-dots"><span></span><span></span><span></span></div>
+                <div class="browser-url">cursus.runasp.net/Student/Progress</div>
+              </div>
+              <div class="browser-viewport">
+                <img src="assets/shots/06-progress.png" alt="Progress tracker" />
+              </div>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </div>
+    <div class="wordmark">
+      <img src="../assets/mcit-logo.png" alt="" />
+      <span>Cursus</span>
+    </div>
+    <div class="slide-meta">
+      <span class="swipe-cue">Swipe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg></span>
+      <span class="slide-counter">06 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 7: AI Advisor -->
+  <section class="slide">
+    <div class="slide-content">
+      <p class="eyebrow">AI Advisor</p>
+      <h2 class="headline h-sm">AI is the <span class="accent">voice</span>,<br />not the brain.</h2>
+      <p class="body mb-sm">All math is deterministic. Gemini turns Mazen's real audit into plain-language guidance.</p>
+      <div class="browser-frame flex-grow">
+        <div class="browser-chrome">
+          <div class="browser-dots"><span></span><span></span><span></span></div>
+          <div class="browser-url">cursus.runasp.net/Student/AIAdvisor</div>
+        </div>
+        <div class="browser-viewport">
+          <img src="assets/shots/07-ai-advisor.png" alt="AI Advisor chat" />
+        </div>
+      </div>
+    </div>
+    <div class="wordmark">
+      <img src="../assets/mcit-logo.png" alt="" />
+      <span>Cursus</span>
+    </div>
+    <div class="slide-meta">
+      <span class="slide-counter">07 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 8: Architecture + admin proof -->
+  <section class="slide slide-arch">
+    <div class="slide-content">
+      <p class="eyebrow">Clean Architecture</p>
+      <h2 class="headline h-sm">Under the hood.</h2>
+      <div class="arch-graph">
+        <div class="graph-node node-pl">
+          <span class="node-badge">Presentation</span>
+          <span class="node-title">Cursus.PL</span>
+          <span class="node-sub">MVC · Razor · Cytoscape.js</span>
+        </div>
+        <div class="graph-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+          <span>depends on</span>
+        </div>
+        <div class="graph-node node-bll">
+          <span class="node-badge">Business Logic</span>
+          <span class="node-title">Cursus.BLL</span>
+          <span class="node-sub">Failure Engine · Gemini AI</span>
+        </div>
+        <div class="graph-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+          <span>depends on</span>
+        </div>
+        <div class="graph-row">
+          <div class="graph-node node-dal">
+            <span class="node-badge">Data Access</span>
+            <span class="node-title">Cursus.DAL</span>
+            <span class="node-sub">EF Core 10 · SQL Server</span>
+          </div>
+          <div class="graph-node node-domain">
+            <span class="node-badge">Core Domain</span>
+            <span class="node-title">Cursus.Domain</span>
+            <span class="node-sub">Entities · Zero External Deps</span>
+          </div>
+        </div>
+      </div>
+      <div class="tech-pills">
+        <span class="tech-pill">ASP.NET Core 10</span>
+        <span class="tech-pill">EF Core 10</span>
+        <span class="tech-pill">ASP.NET Identity</span>
+        <span class="tech-pill">Cytoscape.js</span>
+        <span class="tech-pill">Gemini 2.5 Flash</span>
+        <span class="tech-pill">GitHub Actions CI</span>
+      </div>
+      <p class="body body-sm text-center shot-pair-intro">Multi-tenant role management across 3 portals</p>
+      <div class="admin-duo">
+        <figure class="shot-block">
+          <figcaption class="shot-label">University Admin</figcaption>
+          <div class="browser-frame">
+            <div class="browser-chrome">
+              <div class="browser-dots"><span></span><span></span><span></span></div>
+              <div class="browser-url">cursus.runasp.net/Admin</div>
+            </div>
+            <div class="browser-viewport">
+              <img src="assets/shots/08-admin.png" alt="University Admin" />
+            </div>
+          </div>
+        </figure>
+        <figure class="shot-block">
+          <figcaption class="shot-label">Super Admin</figcaption>
+          <div class="browser-frame">
+            <div class="browser-chrome">
+              <div class="browser-dots"><span></span><span></span><span></span></div>
+              <div class="browser-url">cursus.runasp.net/SuperAdmin</div>
+            </div>
+            <div class="browser-viewport">
+              <img src="assets/shots/09-super-admin.png" alt="Super Admin" />
+            </div>
+          </div>
+        </figure>
+      </div>
+    </div>
+    <div class="wordmark">
+      <img src="../assets/mcit-logo.png" alt="" />
+      <span>Cursus</span>
+    </div>
+    <div class="slide-meta">
+      <span class="swipe-cue">Swipe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg></span>
+      <span class="slide-counter">08 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 9: Team -->
+  <section class="slide slide-team">
+    <div class="slide-content">
+      <p class="eyebrow">DEPI Graduation Project 2026</p>
+      <h2 class="headline h-md">Built by <span class="accent">six</span>.</h2>
+
+      <div class="team-stats-row">
+        <div class="team-stat-item">
+          <span class="team-stat-num">6</span>
+          <span class="team-stat-label">Engineers</span>
+        </div>
+        <div class="team-stat-divider"></div>
+        <div class="team-stat-item">
+          <span class="team-stat-num">4</span>
+          <span class="team-stat-label">Architecture Layers</span>
+        </div>
+        <div class="team-stat-divider"></div>
+        <div class="team-stat-item">
+          <span class="team-stat-num">1</span>
+          <span class="team-stat-label">Unified Goal</span>
+        </div>
+      </div>
+      <div class="team-grid">
+        <div class="team-card team-card-lead">
+          <div class="team-avatar">AY</div>
+          <div class="team-info">
+            <div class="team-name">Abdelrahman Yahia</div>
+            <div class="team-role"><span class="role-badge lead-badge">Team Lead</span> <span
+                class="role-badge">Architect</span></div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">HH</div>
+          <div class="team-info">
+            <div class="team-name">Hussein Hashiem</div>
+            <div class="team-role"><span class="role-badge">Backend Architect</span></div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">EA</div>
+          <div class="team-info">
+            <div class="team-name">Esraa Ahmed</div>
+            <div class="team-role"><span class="role-badge">UI/UX &amp; Frontend</span></div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">MH</div>
+          <div class="team-info">
+            <div class="team-name">Mohamed Hazem</div>
+            <div class="team-role"><span class="role-badge">Frontend / JS</span></div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">ME</div>
+          <div class="team-info">
+            <div class="team-name">Mohamed Ezz</div>
+            <div class="team-role"><span class="role-badge">Backend Developer</span></div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">MT</div>
+          <div class="team-info">
+            <div class="team-name">Mohamed Tawfik</div>
+            <div class="team-role"><span class="role-badge">Data &amp; QA</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="team-footer">
+        <span class="track-pill">Full-Stack Web Development (.NET track)</span>
+      </div>
+    </div>
+    <div class="wordmark">
+      <img src="../assets/mcit-logo.png" alt="" />
+      <span>Cursus</span>
+    </div>
+    <div class="slide-meta">
+      <span class="swipe-cue">Swipe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg></span>
+      <span class="slide-counter">09 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 10: CTA -->
+  <section class="slide slide-cta">
+    <div class="slide-content cta-content">
+      <p class="eyebrow">It's live</p>
+      <h2 class="headline">Try the failure simulator</h2>
+      <p class="subline cta-question">Which course was the bottleneck in your degree?</p>
+      <div class="cta-row">
+        <img class="cta-qr" src="assets/qr-cursus.png" alt="QR code to cursus.runasp.net" width="220" height="220" />
+        <div class="cta-actions">
+          <div class="cta-url">cursus.runasp.net</div>
+          <p class="cta-live">Scan or type the URL · ask us anything in the comments</p>
+        </div>
+      </div>
+    </div>
+    <div class="wordmark">
+      <img src="../assets/mcit-logo.png" alt="" />
+      <span>Cursus</span>
+    </div>
+    <div class="slide-meta">
+      <span class="slide-counter">10 / 10</span>
+    </div>
+  </section>
+
+</body>
+
+</html>
