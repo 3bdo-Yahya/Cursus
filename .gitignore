@@ -14,3 +14,14 @@
 /CLAUDE.md
 node_modules/
 *.pdf
+
+# Internal docs
+NARRATION.md
+arabic_presentation_script.md
+speaker_guide.md
+LIVE_DEMO.md
+MAZEN_STORY_SCRIPT.md
+AVATAR_SPEC.md
+CASCADE_KPIS.md
+implementation_plan.md
+linkedin-carousel/CAPTION.md
